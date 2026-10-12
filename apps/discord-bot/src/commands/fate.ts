@@ -1,4 +1,4 @@
-import { roll } from '@randsum/games/fate'
+import { inputs, roll } from '@randsum/games/fate'
 import type { FateRollResult } from '@randsum/games/fate'
 import { SlashCommandBuilder } from '../utils/builders.js'
 import { FATE, GLYPH } from '../utils/palette.js'
@@ -7,13 +7,12 @@ import {
   encodeReroll,
   formatSignedModifier,
   getInitialRolls,
-  rollContainer
+  rollContainer,
+  specRange,
+  withSpecRange
 } from './lib/index.js'
 import type { CommandContext, ViewFact } from './lib/index.js'
 import type { Command, RollView } from '../types.js'
-
-const SKILL_MIN = -2
-const SKILL_MAX = 5
 
 // Keyed by the exported FateRollResult union so the ladder map stays
 // exhaustive: renaming the result strings surfaces here as a type error rather
@@ -90,7 +89,7 @@ function shiftOutcome(shifts: number): {
 
 function buildFateView(context: CommandContext): RollView {
   const rawSkill = context.options.getInteger('skill') ?? 0
-  const skill = Math.max(SKILL_MIN, Math.min(SKILL_MAX, rawSkill))
+  const skill = Math.max(inputs.modifier.minimum, Math.min(inputs.modifier.maximum, rawSkill))
   const opposition = context.options.getInteger('opposition')
 
   const result = roll({ modifier: skill })
@@ -150,12 +149,10 @@ export const fateCommand: Command = createGameCommand({
     .setName('fate')
     .setDescription('Roll 4dF + skill against the Fate ladder (Fate Core)')
     .addIntegerOption(option =>
-      option
+      withSpecRange(option, inputs.modifier)
         .setName('skill')
-        .setDescription('Skill rating (-2 to 5)')
+        .setDescription(`Skill rating (${specRange(inputs.modifier)})`)
         .setRequired(false)
-        .setMinValue(SKILL_MIN)
-        .setMaxValue(SKILL_MAX)
     )
     .addIntegerOption(option =>
       option

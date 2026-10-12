@@ -2217,6 +2217,8 @@ export function roll(
   }
 }
 
+export const inputs = { tableName: { type: 'string' } } as const
+
 export { SchemaError }
 export type { GameRollResult, RollRecord, SchemaErrorCode }
 

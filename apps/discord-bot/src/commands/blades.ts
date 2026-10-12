@@ -1,4 +1,4 @@
-import { roll } from '@randsum/games/blades'
+import { inputs, roll } from '@randsum/games/blades'
 import { SlashCommandBuilder } from '../utils/builders.js'
 import { BLADES, GLYPH } from '../utils/palette.js'
 import {
@@ -7,7 +7,8 @@ import {
   getInitialRolls,
   getKeptRolls,
   markKeptRolls,
-  rollContainer
+  rollContainer,
+  withSpecRange
 } from './lib/index.js'
 import type { CommandContext } from './lib/index.js'
 import type { Command, RollView } from '../types.js'
@@ -80,12 +81,10 @@ export const bladesCommand: Command = createGameCommand({
     .setName('blades')
     .setDescription('Roll dice for Blades in the Dark')
     .addIntegerOption(option =>
-      option
+      withSpecRange(option, inputs.rating)
         .setName('dice')
         .setDescription('Dice pool size (0 = roll two, take the worst)')
         .setRequired(true)
-        .setMinValue(0)
-        .setMaxValue(10)
     )
     .addBooleanOption(option =>
       option

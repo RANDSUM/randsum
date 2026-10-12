@@ -77,5 +77,12 @@ export function roll(input?: {
   return { total, result: 'fear', rolls, details }
 }
 
+export const inputs = {
+  modifier: { type: 'integer', minimum: -30, maximum: 30, default: 0 },
+  amplifyHope: { type: 'boolean', default: false },
+  amplifyFear: { type: 'boolean', default: false },
+  rollingWith: { type: 'string', enum: ['Advantage', 'Disadvantage'], optional: true }
+} as const
+
 export { SchemaError }
 export type { GameRollResult, RollRecord, SchemaErrorCode }

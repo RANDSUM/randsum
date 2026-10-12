@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, mock, test } from 'bun:test'
+import { specInputs } from './lib/specInputs.js'
 import { makeContext } from './lib/context.js'
 import { accentsOf, textOf } from '../lib/view.js'
 import { FIFTH } from '../../src/utils/palette.js'
@@ -20,7 +21,10 @@ const plain = (): FifthResult => ({
 
 const mockRoll = mock(plain)
 
-void mock.module('@randsum/games/fifth', () => ({ roll: mockRoll }))
+void mock.module('@randsum/games/fifth', () => ({
+  roll: mockRoll,
+  inputs: specInputs('fifth')
+}))
 
 const { fifthCommand } = await import('../../src/commands/fifth.js')
 

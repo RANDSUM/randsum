@@ -126,6 +126,12 @@ async function buildCodeString(
 
   for (const [key, rollDef] of Object.entries(nspec.rolls)) {
     parts.push(...generateRollParts(key, rollDef, nspec.name, nspec.shortcode))
+    // The spec's input declarations, verbatim, so every surface that asks for
+    // these inputs (bot options, MCP schemas) reads ranges and enums from the
+    // spec instead of keeping its own copy.
+    const inputsName = key === 'roll' ? 'inputs' : `${key}Inputs`
+    parts.push(`export const ${inputsName} = ${JSON.stringify(rollDef.inputs ?? {})} as const`)
+    parts.push(``)
   }
 
   parts.push(`export { SchemaError }`)

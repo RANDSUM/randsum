@@ -1,11 +1,14 @@
-import { roll } from '@randsum/games/daggerheart'
+import { inputs, roll } from '@randsum/games/daggerheart'
 import { SlashCommandBuilder } from '../utils/builders.js'
 import { DAGGERHEART, GLYPH } from '../utils/palette.js'
 import {
   createGameCommand,
   encodeReroll,
   formatSignedModifier,
-  rollContainer
+  rollContainer,
+  specRange,
+  withSpecChoices,
+  withSpecRange
 } from './lib/index.js'
 import type { CommandContext, ViewFact } from './lib/index.js'
 import type { Command, RollView } from '../types.js'
@@ -124,22 +127,16 @@ export const dhCommand: Command = createGameCommand({
     .setName('dh')
     .setDescription('Roll dice for Daggerheart')
     .addIntegerOption(option =>
-      option
+      withSpecRange(option, inputs.modifier)
         .setName('modifier')
-        .setDescription('Modifier to add to the roll (-30 to 30)')
+        .setDescription(`Modifier to add to the roll (${specRange(inputs.modifier)})`)
         .setRequired(false)
-        .setMinValue(-30)
-        .setMaxValue(30)
     )
     .addStringOption(option =>
-      option
+      withSpecChoices(option, inputs.rollingWith)
         .setName('rolling_with')
         .setDescription('Roll with advantage or disadvantage')
         .setRequired(false)
-        .addChoices(
-          { name: 'Advantage', value: 'Advantage' },
-          { name: 'Disadvantage', value: 'Disadvantage' }
-        )
     )
     .addBooleanOption(option =>
       option

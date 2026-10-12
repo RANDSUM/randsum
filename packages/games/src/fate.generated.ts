@@ -61,5 +61,15 @@ export function roll(
   throw new SchemaError(`No table entry matches total ${total}`, 'NO_TABLE_MATCH')
 }
 
+export const inputs = {
+  modifier: {
+    type: 'integer',
+    minimum: -2,
+    maximum: 5,
+    default: 0,
+    description: 'Skill rating (Fate ladder rung, Terrible -2 to Superb +5) added to the 4dF total'
+  }
+} as const
+
 export { SchemaError }
 export type { GameRollResult, RollRecord, SchemaErrorCode }

@@ -57,5 +57,16 @@ export function roll(
   throw new SchemaError(`No table entry matches total ${total}`, 'NO_TABLE_MATCH')
 }
 
+export const inputs = {
+  rating: {
+    type: 'integer',
+    minimum: 0,
+    maximum: 10,
+    default: 1,
+    description:
+      'Dice pool size including action rating, assists, and push (0 = roll two, take the worst)'
+  }
+} as const
+
 export { SchemaError }
 export type { GameRollResult, RollRecord, SchemaErrorCode }

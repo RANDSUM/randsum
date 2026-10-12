@@ -11,6 +11,7 @@ export {
   rollContainer
 } from './view.js'
 export { decodeReroll, encodeReroll, isRerollId } from './reroll.js'
+export { specRange, withSpecChoices, withSpecRange } from './specInputs.js'
 
 interface CreateGameCommandOptions {
   readonly data: Command['data']

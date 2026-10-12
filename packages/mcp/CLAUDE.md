@@ -23,7 +23,8 @@ Three tools, each backed by a pure, directly-testable handler:
 
 Zod schemas live in `server.ts` (not the tool files): `isolatedDeclarations` forbids exporting a
 Zod raw shape without an explicit type annotation, so the shapes stay module-local and the tool
-handlers take plain explicit-interface inputs.
+handlers take plain explicit-interface inputs. The `roll_game` `params` schema is built from each
+game's generated `inputs` export (`GAME_INPUTS` in `tools/rollGame.ts`); never hand-write a range.
 
 ## Commands
 

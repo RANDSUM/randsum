@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, mock, test } from 'bun:test'
+import { specInputs } from './lib/specInputs.js'
 import { makeContext } from './lib/context.js'
 import { accentsOf, textOf } from '../lib/view.js'
 import { DAGGERHEART } from '../../src/utils/palette.js'
@@ -29,7 +30,10 @@ const withHope = (): DhResult => ({
 
 const mockRoll = mock(withHope)
 
-void mock.module('@randsum/games/daggerheart', () => ({ roll: mockRoll }))
+void mock.module('@randsum/games/daggerheart', () => ({
+  roll: mockRoll,
+  inputs: specInputs('daggerheart')
+}))
 
 const { dhCommand } = await import('../../src/commands/dh.js')
 

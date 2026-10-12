@@ -9,7 +9,6 @@ import starlightPageActions from 'starlight-page-actions'
 import starlightSidebarTopics from 'starlight-sidebar-topics'
 import cloudflare from '@astrojs/cloudflare'
 import react from '@astrojs/react'
-import { copySchemaToDist } from './src/integrations/copy-schema-to-dist'
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url))
 
@@ -232,8 +231,7 @@ export default defineConfig({
       ],
       customCss: ['./src/styles/custom.css']
     }),
-    react(),
-    copySchemaToDist()
+    react()
   ],
   prefetch: false,
   vite: {
