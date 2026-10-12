@@ -3,7 +3,7 @@
   "description": "TTRPG game packages using RDN-conformant dice notation for the RANDSUM ecosystem",
   "version": "4.0.0",
   "type": "module",
-  "sideEffects": false,
+  "sideEffects": true,
   "private": false,
   "files": [
     "dist",

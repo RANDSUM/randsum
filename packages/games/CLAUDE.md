@@ -135,6 +135,6 @@ For the formal modifier taxonomy and classification system, see https://notation
 
 ## Publishing
 
-Always `bun publish`. Never `npm publish`. See root `CLAUDE.md` for why.
+Publish only via `bun scripts/publish.ts` (root `CLAUDE.md`). Never `npm publish` or a direct `bun publish`. In-repo `sideEffects` stays `true` (bunup self-DCE otherwise breaks `dist/index.js`); that script flips it to `false` in the tarball. See ADR-018.
 
 See the root `CLAUDE.md` for monorepo-wide conventions (TypeScript style, testing framework, build output).

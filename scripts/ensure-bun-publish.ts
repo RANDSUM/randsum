@@ -1,34 +1,35 @@
 #!/usr/bin/env bun
 
 /**
- * Publish-client guard — enforce "always publish through bun so workspace: resolves".
+ * Publish guard — enforce "publish only through scripts/publish.ts".
  *
- * The bun/pnpm `workspace:` protocol is a dev-time reference that must be resolved
- * to a real semver range at pack time. `bun` (via `bun pm pack` / `bun publish`)
- * does this; a raw `npm publish` does NOT — it ships the literal `workspace:~`,
- * producing a package that is completely uninstallable:
+ * Runs as each publishable package's `prepublishOnly` hook, so it fires on any
+ * publish straight from a package directory and refuses all of them:
  *
- *     npm error code EUNSUPPORTEDPROTOCOL
- *     npm error Unsupported URL Type "workspace:": workspace:~
+ * - A raw `npm publish` ships the literal `workspace:~` (npm does not resolve the
+ *   bun/pnpm `workspace:` protocol), producing an uninstallable package:
  *
- * That is exactly how the legacy standalone game packages (@randsum/salvageunion,
- * daggerheart, blades, fifth, root-rpg, pbta) were broken. This runs as each
- * publishable package's `prepublishOnly` hook.
+ *       npm error code EUNSUPPORTEDPROTOCOL
+ *       npm error Unsupported URL Type "workspace:": workspace:~
  *
- * npm runs `prepublishOnly` on `npm publish <dir>` but NOT on `npm publish <tarball>`,
- * and the sanctioned path (scripts/publish.ts) publishes an already-resolved tarball —
- * so this guard never trips the sanctioned path, only a direct `npm publish` footgun.
- * Publishing via `bun run publish` or a direct `bun publish` passes.
+ *   That is exactly how the legacy standalone game packages (@randsum/salvageunion,
+ *   daggerheart, blades, fifth, root-rpg, pbta) were broken.
+ * - A direct `bun publish` resolves `workspace:` but skips the pack-time
+ *   `sideEffects: true` -> `false` flip that scripts/publish.ts applies to roller and
+ *   games (ADR-018), so it would ship a manifest that defeats consumer tree-shaking.
+ *
+ * The sanctioned path never reaches this guard: scripts/publish.ts packs with
+ * `bun pm pack` (which does not run `prepublishOnly`) and publishes the resulting
+ * tarball with `npm publish <tarball>` (which does not run it either). It also sets
+ * RANDSUM_PUBLISH_SCRIPT=1 so the guard passes should a lifecycle ever invoke it.
  */
 
-const userAgent = process.env['npm_config_user_agent'] ?? ''
-
-if (!userAgent.startsWith('bun')) {
+if (process.env['RANDSUM_PUBLISH_SCRIPT'] !== '1') {
+  const client = (process.env['npm_config_user_agent'] ?? '').split('/')[0] || 'this client'
   console.error(
-    `Refusing to publish via ${userAgent.split('/')[0] || 'a non-bun client'}: it does not ` +
-      'resolve the `workspace:` protocol, so the published package would be uninstallable ' +
-      '(npm EUNSUPPORTEDPROTOCOL).\n' +
-      'Publish with `bun run publish` (from the repo root) or a direct `bun publish`.'
+    `Refusing to publish via ${client} from a package directory: only scripts/publish.ts ` +
+      'resolves `workspace:` and applies the ADR-018 sideEffects flip.\n' +
+      'Publish with `bun run publish` (from the repo root).'
   )
   process.exit(1)
 }

@@ -337,5 +337,4 @@ first.
 
 ## Publishing
 
-Always `bun publish`, never `npm publish` (npm does not resolve `workspace:~`).
-See the root `CLAUDE.md`.
+Publish only via `bun scripts/publish.ts` (root `CLAUDE.md`). Never `npm publish` or a direct `bun publish`. In-repo `sideEffects` stays `true` (bunup self-DCE otherwise breaks the dist); that script flips it to `false` in the tarball. See ADR-018.
