@@ -23,11 +23,6 @@
       "project": ["src/**/*.ts", "__tests__/**/*.ts"],
       "includeEntryExports": true
     },
-    "packages/dice-ui": {
-      "entry": ["src/index.ts"],
-      "project": ["src/**/*.{ts,tsx}"],
-      "includeEntryExports": true
-    },
     "packages/mcp": {
       "entry": ["src/index.ts", "__tests__/**/*.test.ts"],
       "project": ["src/**/*.ts", "__tests__/**/*.ts"],

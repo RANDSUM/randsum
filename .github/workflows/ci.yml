@@ -22,7 +22,6 @@ jobs:
       mcp: ${{ steps.filter.outputs.mcp }}
       site: ${{ steps.filter.outputs.site }}
       rdn: ${{ steps.filter.outputs.rdn }}
-      dice-ui: ${{ steps.filter.outputs.dice-ui }}
       skill: ${{ steps.filter.outputs.skill }}
       discord-bot: ${{ steps.filter.outputs.discord-bot }}
       changesets: ${{ steps.filter.outputs.changesets }}
@@ -75,10 +74,6 @@ jobs:
               - 'apps/rdn/**'
               - 'packages/roller/**'
               - '.github/workflows/ci.yml'
-            dice-ui:
-              - 'packages/roller/**'
-              - 'packages/dice-ui/**'
-              - '.github/workflows/ci.yml'
             skill:
               - 'skills/**'
               - '.claude-plugin/**'
@@ -109,8 +104,7 @@ jobs:
             {"pkg":"mcp"},
             {"pkg":"discord-bot"},
             {"pkg":"site","node":"22"},
-            {"pkg":"rdn","node":"22"},
-            {"pkg":"dice-ui","coverage":"dice-ui"}
+            {"pkg":"rdn","node":"22"}
           ]'
           changed='${{ toJSON(steps.filter.outputs) }}'
           include=$(jq -cn --argjson all "$all" --argjson changed "$changed" \
@@ -315,9 +309,9 @@ jobs:
     name: CI Success
     if: always()
     # `package` is the consolidated matrix job: its single `result` aggregates
-    # every leg (roller, games, mcp, discord-bot, site, rdn, dice-ui) — if
+    # every leg (roller, games, mcp, discord-bot, site, rdn) — if
     # any leg fails, the aggregate is `failure`, so listing it once still covers
-    # all seven packages. `repo` runs the repo-wide gates, including the
+    # all six packages. `repo` runs the repo-wide gates, including the
     # `ci-aggregator` step that guards this very list.
     #
     # `changes` is listed even though nothing here reads its outputs: a failure in

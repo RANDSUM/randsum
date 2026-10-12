@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'bun:test'
-import { tokenColor } from '../src/tokenColor'
+import { tokenColor } from '../../src/components/dice-ui/tokenColor'
 
 describe('tokenColor', () => {
   test('returns dark color for dark theme', () => {

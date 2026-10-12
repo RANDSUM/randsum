@@ -2,7 +2,12 @@
 
 ## Status
 
-Accepted.
+Accepted (amended).
+
+> Update (2026-10-11): `@randsum/dice-ui` is no longer a package. Its only consumer was
+> `apps/site`, so its source was folded into `apps/site/src/components/dice-ui/` and the
+> workspace package was deleted. The decision is unchanged: the components are web-only
+> and have no TUI target. Paths below that name `packages/dice-ui/` are historical.
 
 > Update (2026-06-23): the React Native target described below has since been removed
 > along with the `apps/expo` app — `@randsum/dice-ui` is now **web-only**. The core
@@ -65,5 +70,5 @@ Record that the "Ink TUI / dice-ui TUI target" direction is **retired, not pendi
 ## References
 
 - `apps/cli/src/{index,run,format}.ts`, `apps/cli/package.json`, `apps/cli/bunup.config.ts`
-- `packages/dice-ui/package.json`, `packages/dice-ui/src/index.ts`
+- `apps/site/src/components/dice-ui/index.ts` (formerly `packages/dice-ui/src/index.ts`)
 - `packages/games/src/lib/normalizedTypes.ts` (IR definition; consumers under `packages/games/src/lib/`)

@@ -1,12 +1,12 @@
 import { useState } from 'react'
-import { NotationRoller as DuNotationRoller, RollResultPanel } from '@randsum/dice-ui'
-import type { RollResult } from '@randsum/dice-ui'
+import { NotationRoller as DuNotationRoller, RollResultPanel } from '../dice-ui'
+import type { RollResult } from '../dice-ui'
 import { buildStackBlitzProject } from '../../helpers/stackblitz'
 import { ErrorBoundary } from '../ErrorBoundary'
 import './NotationRoller.css'
 
 // Re-export RollResultDisplay for tests
-export { RollResultDisplay as RollResult } from '@randsum/dice-ui'
+export { RollResultDisplay as RollResult } from '../dice-ui'
 
 function SiteActions(notation: string): React.JSX.Element {
   return (

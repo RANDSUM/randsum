@@ -19,8 +19,7 @@ Private app, deploys to Cloudflare Workers once CI is green on `main` via
   - `starlight-page-actions` — per-page action links
 - **`@astrojs/react` 5.0.7** — interactive React islands (playground, REPL)
 - **`astro-expressive-code`** — code block rendering
-- **`@randsum/roller` + `@randsum/dice-ui`** — workspace-linked, power the live
-  playground / notation components
+- **`@randsum/roller`** — workspace-linked, powers the live notation components
 - Fonts (Inter, JetBrains Mono) via Astro's Google font provider, loaded by the
   `<Font />` tags in `Head.astro`
 
@@ -75,7 +74,14 @@ Starlight component overrides (in `src/components/`, wired in `astro.config.mjs`
 Interactive / shared components:
 
 - `live-repl/` — live code examples (used via `<CodeExample>` in MDX)
-- `NotationRoller/` — notation input component
+- `dice-ui/` — the web-only React dice UI: `NotationRoller` (token-overlay
+  input + roll button), `RollResultPanel`/`RollResultDisplay` (roll steps), and
+  their internals (`TokenOverlayInput`, `RollSteps`, `useTheme`, `tokenColor`).
+  `index.ts` is the barrel and loads `tokens.css` once. Light mode keys on
+  `[data-theme='light']` alone. Its component tests live in `__tests__/dice-ui/`
+  and mount through happy-dom, which `bunfig.toml` preloads for every site test.
+- `NotationRoller/` — wraps `dice-ui`'s roller with the StackBlitz action and
+  the floating result overlay
 - `HeroInteractive.tsx` — hero dice playground
 - `GameSchemaViewer.tsx` — schema viewer
 - `IntegrationViewer.tsx` — integration viewer
