@@ -80,8 +80,6 @@ Interactive / shared components:
 
 ## Build Pipeline
 
-- `src/integrations/copy-schema-to-dist.ts` — copies the games meta-schema into
-  `dist/schemas/v1/randsum.json`.
 - `src/integrations/curated-llms-txt.ts` — prepends the repo-root `llms.txt` to
   the page list `starlight-page-actions` writes to `dist/llms.txt`. Edit the
   root file; there is no `public/` copy. It must stay after `starlight()`.
