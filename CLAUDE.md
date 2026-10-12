@@ -17,6 +17,8 @@ Bun workspace monorepo for a dice rolling ecosystem targeting tabletop RPGs. All
 
 Game packages never depend on each other — only on `@randsum/roller`.
 
+Boundaries are enforced by tools, not review. Bun's isolated linker (`bunfig.toml`) lets a package import only what its own `package.json` declares, which holds the package DAG. Biome's `noImportCycles` rejects import cycles, and its `noRestrictedImports` rejects reach-ins to `@randsum/*/src` or `@randsum/*/dist`. Games are subpaths of one package, so the linker cannot keep them apart: a `biome.json` override bans `@randsum/games/<game>` imports (except `/schema`) in the hand-written `packages/games/src/**`, and `packages/games/__tests__/generated-imports.test.ts` holds each `*.generated.ts` entry to `@randsum/roller*`, `./types` and `./lib/**`. Biome excludes `*.generated.ts`, so `noImportCycles` does not see edges through them.
+
 ## Commands
 
 ```bash
@@ -135,7 +137,7 @@ roll("5d10F{3}") // Count failures <= 3
 ## Git Hooks (Lefthook)
 
 **pre-commit**: `bun install --frozen-lockfile` first (nothing else runs if it fails), then in parallel: Biome (`check --write`: lint + format, covering `.astro`), typecheck, and codegen check (`gen:check`)
-**pre-push**: build first (nothing else runs if it fails), then in parallel: codegen check, conformance check (`@randsum/rdn conformance:check`), tests, knip, and arch check (`arch:check`)
+**pre-push**: build first (nothing else runs if it fails), then in parallel: codegen check, conformance check (`@randsum/rdn conformance:check`), tests, and knip
 
 A failing hook step prints its output and its own fix (`fail_text` in `lefthook.yml`).
 
@@ -159,7 +161,7 @@ Per-package `CLAUDE.md` files exist in each `packages/*/`, `games/*/`, and `apps
 
 **Codegen issues**: Game packages are generated from `.randsum.json` specs. Generated files live at `packages/games/src/*.generated.ts`. Regenerate with `bun run --filter @randsum/games gen`. Verify generated output matches specs: `bun run --filter @randsum/games gen:check`.
 
-**Hook failures**: Pre-commit runs install first (nothing else runs if it fails), then lint --fix, format, typecheck, and codegen check (`gen:check`) in parallel. Pre-push runs build, then codegen check, conformance check, test, knip, and arch check in parallel. Each failing step prints its fix. See `lefthook.yml` for full config.
+**Hook failures**: Pre-commit runs install first (nothing else runs if it fails), then lint --fix, format, typecheck, and codegen check (`gen:check`) in parallel. Pre-push runs build, then codegen check, conformance check, test, and knip in parallel. Each failing step prints its fix. See `lefthook.yml` for full config.
 
 ## Dice Notation Reference
 

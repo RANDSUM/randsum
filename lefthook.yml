@@ -64,10 +64,3 @@ pre-push:
           - name: knip
             run: bun run knip
             fail_text: Remove the unused files, exports or dependencies knip lists above (`bun run knip`)
-          # Cycle + boundary invariants (audit X7b / architecture R2+R3): no
-          # circular deps, no game-to-game import, no @randsum/*/src or /dist
-          # reach-in. Also runs in CI feeding the CI Success gate so it cannot be
-          # bypassed with --no-verify.
-          - name: arch-check
-            run: bun run arch:check
-            fail_text: Fix the dependency violations above (`bun run arch:check`)
