@@ -22,8 +22,7 @@ export const corePackages: PackageInfo[] = [
     npmPackage: '@randsum/roller',
     sourceUrl: 'https://github.com/RANDSUM/randsum/tree/main/packages/roller',
     version: rollerPkg.version,
-    category: 'core',
-    color: '#f8fafc' // white (slate-50) — uses --tool-roller CSS var which adapts dark/light
+    category: 'core'
   },
   {
     id: 'games',
@@ -33,8 +32,7 @@ export const corePackages: PackageInfo[] = [
     npmPackage: '@randsum/games',
     sourceUrl: 'https://github.com/RANDSUM/randsum/tree/main/packages/games',
     version: gamesPkg.version,
-    category: 'core',
-    color: '#a855f7' // purple accent
+    category: 'core'
   }
 ]
 
@@ -48,8 +46,7 @@ export const gamePackages: PackageInfo[] = [
     npmPackage: '@randsum/games/blades',
     sourceUrl: 'https://github.com/RANDSUM/randsum/tree/main/packages/games',
     version: gamesPkg.version,
-    category: 'game',
-    color: '#64748b' // slate-500 — noir, shadowy
+    category: 'game'
   },
   {
     id: 'daggerheart',
@@ -60,8 +57,7 @@ export const gamePackages: PackageInfo[] = [
     npmPackage: '@randsum/games/daggerheart',
     sourceUrl: 'https://github.com/RANDSUM/randsum/tree/main/packages/games',
     version: gamesPkg.version,
-    category: 'game',
-    color: '#eab308' // yellow-500 — gold
+    category: 'game'
   },
   {
     id: 'fate',
@@ -72,8 +68,7 @@ export const gamePackages: PackageInfo[] = [
     npmPackage: '@randsum/games/fate',
     sourceUrl: 'https://github.com/RANDSUM/randsum/tree/main/packages/games',
     version: gamesPkg.version,
-    category: 'game',
-    color: '#0ea5e9' // sky-500 — Fate blue
+    category: 'game'
   },
   {
     id: 'fifth',
@@ -83,8 +78,7 @@ export const gamePackages: PackageInfo[] = [
     npmPackage: '@randsum/games/fifth',
     sourceUrl: 'https://github.com/RANDSUM/randsum/tree/main/packages/games',
     version: gamesPkg.version,
-    category: 'game',
-    color: '#dc2626' // red
+    category: 'game'
   },
   {
     id: 'root-rpg',
@@ -94,8 +88,7 @@ export const gamePackages: PackageInfo[] = [
     npmPackage: '@randsum/games/root-rpg',
     sourceUrl: 'https://github.com/RANDSUM/randsum/tree/main/packages/games',
     version: gamesPkg.version,
-    category: 'game',
-    color: '#22c55e' // green
+    category: 'game'
   },
   {
     id: 'salvageunion',
@@ -105,8 +98,7 @@ export const gamePackages: PackageInfo[] = [
     npmPackage: '@randsum/games/salvageunion',
     sourceUrl: 'https://github.com/RANDSUM/randsum/tree/main/packages/games',
     version: gamesPkg.version,
-    category: 'game',
-    color: '#f59e0b' // amber — industrial/salvage aesthetic
+    category: 'game'
   },
   {
     id: 'pbta',
@@ -117,8 +109,7 @@ export const gamePackages: PackageInfo[] = [
     npmPackage: '@randsum/games/pbta',
     sourceUrl: 'https://github.com/RANDSUM/randsum/tree/main/packages/games',
     version: gamesPkg.version,
-    category: 'game',
-    color: '#6b7280' // grey
+    category: 'game'
   }
 ]
 
@@ -133,7 +124,7 @@ export const toolPackages: PackageInfo[] = [
     sourceUrl: 'https://github.com/RANDSUM/randsum/tree/main/skills',
     version: '1.0.0',
     category: 'tool',
-    color: '#E07A2F' // Claude orange
+    color: 'var(--rs-claude)'
   },
   {
     id: 'discord-bot',
@@ -144,7 +135,7 @@ export const toolPackages: PackageInfo[] = [
     sourceUrl: 'https://github.com/RANDSUM/randsum/tree/main/apps/discord-bot',
     version: '1.1.2',
     category: 'tool',
-    color: '#5865F2' // Discord purple
+    color: 'var(--rs-discord)'
   },
   {
     id: 'mcp',
@@ -155,6 +146,6 @@ export const toolPackages: PackageInfo[] = [
     npmPackage: '@randsum/mcp',
     sourceUrl: 'https://github.com/RANDSUM/randsum/tree/main/packages/mcp',
     category: 'tool',
-    color: '#E07A2F' // Claude orange
+    color: 'var(--rs-claude)'
   }
 ]

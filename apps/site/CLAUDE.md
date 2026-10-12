@@ -32,6 +32,17 @@ Private app, deploys to Cloudflare Workers once CI is green on `main` via
 > `getTsconfig`. Revisit when `@astrojs/check` ships a release whose peer range admits
 > TypeScript 7.
 
+## Theme
+
+`src/styles/theme.css` is the only file that spells a colour, for this site
+and for `apps/rdn`, which `@import`s it. Each mode-dependent token is written
+once as `light-dark(light, dark)`; the page's `color-scheme`, which Starlight
+sets from `data-theme`, picks the arm. `custom.css` maps Starlight's
+`--sl-color-*` onto it, and a game's colour is always `--game-<id>`. Tint with
+`color-mix(in srgb, var(--token) N%, transparent)`. The `no-raw-color` Biome
+plugin fails hex in any other `.css` file, and `__tests__/theme.test.ts` does
+the same for Astro `<style>` blocks.
+
 ## Content Structure
 
 Docs live in `src/content/docs/` as `.mdx` files; Starlight auto-routes them.
@@ -77,8 +88,8 @@ Interactive / shared components:
 - `dice-ui/` — the web-only React dice UI: `NotationRoller` (token-overlay
   input + roll button), `RollResultPanel`/`RollResultDisplay` (roll steps), and
   their internals (`TokenOverlayInput`, `RollSteps`, `useTheme`, `tokenColor`).
-  `index.ts` is the barrel and loads `tokens.css` once. Light mode keys on
-  `[data-theme='light']` alone. Its component tests live in `__tests__/dice-ui/`
+  `index.ts` is the barrel and loads `tokens.css` (spacing and radii) once;
+  colours and fonts are the site theme's `--rs-*`. Its component tests live in `__tests__/dice-ui/`
   and mount through happy-dom, which `bunfig.toml` preloads for every site test.
 - `NotationRoller/` — wraps `dice-ui`'s roller with the StackBlitz action and
   the floating result overlay

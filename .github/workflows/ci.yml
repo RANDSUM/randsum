@@ -72,6 +72,8 @@ jobs:
               - '.github/workflows/ci.yml'
             rdn:
               - 'apps/rdn/**'
+              # rdn's global.css @imports the site's theme file.
+              - 'apps/site/src/styles/theme.css'
               - 'packages/roller/**'
               - '.github/workflows/ci.yml'
             skill:

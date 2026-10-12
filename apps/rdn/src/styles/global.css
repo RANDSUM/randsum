@@ -1,3 +1,7 @@
+/* The shared palette. Every colour below is an alias of it, so the spec site
+   and randsum.dev cannot drift; only the accent differs (cyan here). */
+@import '../../../site/src/styles/theme.css';
+
 /* === Reset === */
 *,
 *::before,
@@ -18,27 +22,26 @@ html {
   }
 }
 
-/* === Custom Properties (Dark mode default) === */
+/* === Custom Properties ===
+   color-scheme picks each theme token's light-dark() arm. */
 :root {
   color-scheme: dark;
 
   /* Accent */
-  --accent: #06b6d4;
-  --accent-light: #22d3ee;
-  --accent-dark: #0891b2;
-  --accent-tint: rgba(6, 182, 212, 0.08);
-  --accent-border: rgba(6, 182, 212, 0.2);
+  --accent: var(--rs-cyan);
+  --accent-light: var(--rs-cyan-high);
+  --accent-tint: color-mix(in srgb, var(--accent) 8%, transparent);
+  --accent-border: color-mix(in srgb, var(--accent) 20%, transparent);
 
   /* Surfaces */
-  --bg: #1a1a1f;
-  --surface: #222228;
-  --border: #2e2e35;
+  --bg: var(--rs-bg);
+  --surface: var(--rs-gray-6);
+  --border: var(--rs-gray-5);
 
   /* Text */
-  --text-primary: #fafafa;
-  --text-secondary: #a1a1aa;
-  --text-muted: #71717a;
-  --text-dim: #52525b;
+  --text-primary: var(--rs-fg);
+  --text-secondary: var(--rs-gray-2);
+  --text-muted: var(--rs-gray-3);
 
   /* Layout */
   --sidebar-width: 220px;
@@ -46,28 +49,8 @@ html {
   --content-max-width: 720px;
 }
 
-/* === Light Mode === */
 :root[data-theme='light'] {
   color-scheme: light;
-
-  --accent: #0891b2;
-  --accent-light: #06b6d4;
-  --accent-dark: #0e7490;
-  --accent-tint: rgba(8, 145, 178, 0.06);
-  --accent-border: rgba(8, 145, 178, 0.2);
-
-  --bg: #fafafa;
-  --surface: #f1f1f4;
-  --border: #e0e0e6;
-
-  --text-primary: #18181b;
-  --text-secondary: #52525b;
-  --text-muted: #71717a;
-  --text-dim: #a1a1aa;
-}
-
-:root[data-theme='light'] .version-banner-link {
-  color: #a16207; /* was #eab308 — 1.84:1 light; now ~4.8:1 (amber-700, WCAG AA) */
 }
 
 /* === Body === */
@@ -254,7 +237,7 @@ body {
 /* === HeroHeader === */
 .spec-hero {
   position: relative;
-  background: linear-gradient(180deg, rgba(6, 182, 212, 0.08), transparent);
+  background: linear-gradient(180deg, var(--accent-tint), transparent);
   padding: 2.5rem 2rem 2rem;
 }
 
@@ -364,20 +347,6 @@ body {
 }
 :root[data-theme='light'] .theme-icon--sun {
   display: none;
-}
-
-/* Light mode overrides for specific elements */
-:root[data-theme='light'] .spec-hero {
-  background: linear-gradient(180deg, rgba(8, 145, 178, 0.06), transparent);
-}
-
-:root[data-theme='light'] .spec-content-body thead th {
-  background: var(--accent);
-  color: #fff;
-}
-
-:root[data-theme='light'] .version-banner {
-  background: rgba(234, 179, 8, 0.06);
 }
 
 /* === VersionDropdown === */
@@ -493,26 +462,26 @@ body {
   align-items: center;
   gap: 1rem;
   padding: 0.6rem 2rem;
-  background: rgba(234, 179, 8, 0.08);
-  border-bottom: 1px solid rgba(234, 179, 8, 0.2);
+  background: color-mix(in srgb, var(--rs-warn) 8%, transparent);
+  border-bottom: 1px solid color-mix(in srgb, var(--rs-warn) 20%, transparent);
   font-family: var(--font-inter), system-ui, sans-serif;
   font-size: 13px;
-  color: #ca8a04;
+  color: var(--rs-warn);
 }
 
 .version-banner-link {
-  color: #eab308;
+  color: var(--rs-warn);
   text-decoration: none;
   font-weight: 600;
   transition: color 0.15s ease;
 }
 
 .version-banner-link:hover {
-  color: #fde047;
+  color: color-mix(in srgb, var(--rs-warn) 60%, var(--text-primary));
 }
 
 .version-banner-link:focus-visible {
-  outline: 2px solid #eab308;
+  outline: 2px solid var(--rs-warn);
   outline-offset: 2px;
 }
 
@@ -855,7 +824,7 @@ body.mobile-menu-open {
 
 .spec-content-body thead th {
   background: var(--accent);
-  color: #fff;
+  color: var(--rs-on-accent);
   font-family: var(--font-jetbrains-mono), monospace;
   font-size: 13px;
   font-weight: 600;
@@ -917,13 +886,9 @@ body.mobile-menu-open {
   line-height: 1.5;
 }
 
-/* Shiki emits both themes as variables (defaultColor: false); pick by data-theme. */
+/* Shiki emits both themes as variables (defaultColor: false); color-scheme picks one. */
 .spec-content-body pre span {
-  color: var(--shiki-dark);
-}
-
-:root[data-theme='light'] .spec-content-body pre span {
-  color: var(--shiki-light);
+  color: light-dark(var(--shiki-light), var(--shiki-dark));
 }
 
 .spec-content-body pre code {

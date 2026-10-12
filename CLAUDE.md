@@ -151,7 +151,7 @@ Per-package `CLAUDE.md` files exist in each `packages/*/`, `games/*/`, and `apps
 
 **Test failures**: Isolate with `bun test packages/roller/__tests__/roll/roll.test.ts`. Use `--bail` to stop on the first failure: `bun test --bail`. Filter by package: `bun run --filter @randsum/roller test`.
 
-**Lint failures (Biome)**: Common violations: the `no-let` GritQL plugin (use `const`), `useImportType` (use `import type`), and the plugin banning `as unknown as T`. Auto-fix with `bun run fix:all` (biome check --write).
+**Lint failures (Biome)**: Common violations: the `no-let` GritQL plugin (use `const`), `useImportType` (use `import type`), the plugin banning `as unknown as T`, and `no-raw-color` (hex in a `.css` file other than `apps/site/src/styles/theme.css`). Auto-fix with `bun run fix:all` (biome check --write).
 
 **Type errors**: Run `bun run typecheck`. Common strict-mode issues:
 

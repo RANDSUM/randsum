@@ -10,21 +10,21 @@ const games = [
     command: '/fifth',
     name: 'D&D 5th Edition',
     description: 'd20 + modifier with advantage/disadvantage. Nat 20 and nat 1 highlighted.',
-    color: '#dc2626',
+    color: 'var(--game-fifth)',
     href: '/games/fifth/'
   },
   {
     command: '/blades',
     name: 'Blades in the Dark',
     description: 'Action dice pool — critical, success, partial, or failure.',
-    color: '#64748b',
+    color: 'var(--game-blades)',
     href: '/games/blades/'
   },
   {
     command: '/dh',
     name: 'Daggerheart',
     description: 'Hope and fear dice with modifiers and amplification.',
-    color: '#eab308',
+    color: 'var(--game-daggerheart)',
     href: '/games/daggerheart/'
   },
   {
@@ -38,14 +38,14 @@ const games = [
     command: '/pbta',
     name: 'Powered by the Apocalypse',
     description: '2d6 + stat. Miss, weak hit, or strong hit for any PbtA game.',
-    color: '#6b7280',
+    color: 'var(--game-pbta)',
     href: '/games/pbta/'
   },
   {
     command: '/root',
     name: 'Root RPG',
     description: '2d6 + bonus. Strong hit, weak hit, or miss.',
-    color: '#22c55e',
+    color: 'var(--game-root-rpg)',
     href: '/games/root-rpg/'
   }
 ]
@@ -330,13 +330,13 @@ const commands = [
   }
 
   .btn-discord {
-    background: #5865f2;
-    color: #fff;
-    box-shadow: 0 2px 8px rgba(88, 101, 242, 0.4);
+    background: var(--rs-discord);
+    color: var(--rs-on-accent);
+    box-shadow: 0 2px 8px color-mix(in srgb, var(--rs-discord) 40%, transparent);
   }
 
   .btn-discord:hover {
-    box-shadow: 0 4px 16px rgba(88, 101, 242, 0.55);
+    box-shadow: 0 4px 16px color-mix(in srgb, var(--rs-discord) 55%, transparent);
     opacity: 1;
   }
 
@@ -389,7 +389,12 @@ const commands = [
     font-family: var(--sl-font-heading);
     font-size: clamp(2rem, 6vw, 3.25rem);
     font-weight: 800;
-    background: linear-gradient(135deg, #818cf8, #5865f2, #4752c4);
+    background: linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--rs-discord) 70%, white),
+      var(--rs-discord),
+      color-mix(in srgb, var(--rs-discord) 80%, black)
+    );
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -448,12 +453,12 @@ const commands = [
     left: 0;
     right: 0;
     height: 3px;
-    background: var(--game-accent, #5865f2);
+    background: var(--game-accent);
     opacity: 0.8;
   }
 
   .game-card:hover {
-    border-color: var(--game-accent, #5865f2);
+    border-color: var(--game-accent);
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
     transform: translateY(-2px);
   }
@@ -462,7 +467,7 @@ const commands = [
     font-family: var(--sl-font-mono, monospace);
     font-size: 0.8125rem;
     font-weight: 700;
-    color: var(--game-accent, #5865f2);
+    color: var(--game-accent);
     margin-bottom: 0.375rem;
   }
 
@@ -522,13 +527,13 @@ const commands = [
   }
 
   .commands-table tr:hover td {
-    background: rgba(255, 255, 255, 0.02);
+    background: color-mix(in srgb, var(--sl-color-white) 2%, transparent);
   }
 
   .cmd-name {
     font-family: var(--sl-font-mono, monospace);
     font-size: 0.875rem;
-    color: #5865f2;
+    color: var(--rs-discord);
     font-weight: 700;
     white-space: nowrap;
   }
@@ -570,7 +575,7 @@ const commands = [
 
   .screenshot figcaption code {
     font-family: var(--sl-font-mono, monospace);
-    color: #5865f2;
+    color: var(--rs-discord);
   }
 
   /* ---- Footer CTA ---- */

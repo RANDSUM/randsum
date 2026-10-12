@@ -1,83 +1,32 @@
-/* Custom Starlight theme - dark-first Zed/Shadcn inspired */
-
-/* ===== Dark mode (default in Starlight) ===== */
+/* Starlight's tokens, mapped onto the RANDSUM theme (theme.css). Starlight
+   declares them in a cascade layer, so this unlayered block wins in both modes:
+   each theme token already carries its light and dark value. */
 :root {
-  /* Accent - purple-500 (#a855f7) based */
-  --sl-color-accent-low: #2e1065;
-  --sl-color-accent: #a855f7;
-  --sl-color-accent-high: #d8b4fe;
+  --sl-color-accent-low: var(--rs-accent-low);
+  --sl-color-accent: var(--rs-accent);
+  --sl-color-accent-high: var(--rs-accent-high);
 
-  /* Zinc gray scale (dark mode: gray-1 = lightest, gray-6 = darkest) */
-  --sl-color-white: #fafafa; /* zinc-50 */
-  --sl-color-gray-1: #e4e4e7; /* zinc-200 */
-  --sl-color-gray-2: #a1a1aa; /* zinc-400 */
-  --sl-color-gray-3: #71717a; /* zinc-500 */
-  --sl-color-gray-4: #52525b; /* zinc-600 */
-  --sl-color-gray-5: #2e2e35; /* zinc-800 */
-  --sl-color-gray-6: #222228; /* zinc-900 */
-  --sl-color-black: #1a1a1f; /* zinc-950 */
+  --sl-color-white: var(--rs-fg);
+  --sl-color-gray-1: var(--rs-gray-1);
+  --sl-color-gray-2: var(--rs-gray-2);
+  --sl-color-gray-3: var(--rs-gray-3);
+  --sl-color-gray-4: var(--rs-gray-4);
+  --sl-color-gray-5: var(--rs-gray-5);
+  --sl-color-gray-6: var(--rs-gray-6);
+  --sl-color-gray-7: var(--rs-gray-7);
+  --sl-color-black: var(--rs-bg);
 
   /* Border radius */
   --radius: 5px;
 
   /* Fonts */
-  --sl-font: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
-  --sl-font-mono: var(--font-jetbrains-mono), ui-monospace, SFMono-Regular, monospace;
-
-  /* Game package colors */
-  --game-fifth: #ef4444; /* red-500 */
-  --game-salvageunion: #7a9baa; /* steel blue — industrial/salvage aesthetic */
-  --game-daggerheart: #eab308; /* yellow-500 — gold */
-  --game-root-rpg: #10b981; /* emerald-500 */
-  --game-blades: #64748b; /* slate-500 — noir aesthetic */
-  --game-pbta: #6b7280; /* gray-500 */
-
-  /* Core package colors */
-  --core-roller: #a855f7; /* purple-500 — matches site accent */
-  --core-notation: #f9a8d4; /* rose-300 — pastel pink */
-
-  /* Tool package colors */
-  --tool-roller: var(--sl-color-white); /* white in dark mode, near-black in light mode */
-  --tool-skill: #06b6d4; /* cyan-500 */
-}
-
-/* ===== Light mode ===== */
-:root[data-theme='light'] {
-  /* Accent - purple, softened for light backgrounds */
-  --sl-color-accent-low: #f5f0ff; /* purple-50 tinted */
-  --sl-color-accent: #7c3aed; /* purple-600 desaturated */
-  --sl-color-accent-high: #5b21b6; /* purple-700 */
-
-  /* Zinc gray scale (light mode: gray-1 = darkest, gray-6 = lightest) */
-  --sl-color-white: #18181b; /* zinc-900 */
-  --sl-color-gray-1: #27272a; /* zinc-800 */
-  --sl-color-gray-2: #3f3f46; /* zinc-700 */
-  --sl-color-gray-3: #71717a; /* zinc-500 */
-  --sl-color-gray-4: #a1a1aa; /* zinc-400 */
-  --sl-color-gray-5: #e4e4e7; /* zinc-200 */
-  --sl-color-gray-6: #ebebed; /* zinc-100 warmer */
-  --sl-color-gray-7: #f0f0f2; /* zinc-50 warmer */
-  --sl-color-black: #f4f4f6; /* warm off-white */
-
-  /* Game package colors - slightly deeper for light backgrounds */
-  --game-fifth: #dc2626; /* red-600 */
-  --game-salvageunion: #5a7f8f; /* steel blue — darker for light bg */
-  --game-daggerheart: #a16207; /* yellow-700 — gold for light bg */
-  --game-root-rpg: #059669; /* emerald-600 */
-  --game-blades: #475569; /* slate-600 */
-  --game-pbta: #4b5563; /* gray-600 */
-
-  /* Core package colors */
-  --core-roller: #9333ea; /* purple-600 — matches site accent for light bg */
-  --core-notation: #be185d; /* pink-700 — pastel rose for light bg */
-
-  /* Tool package colors */
-  --tool-skill: #0891b2; /* cyan-600 for light bg */
+  --sl-font: var(--rs-font-sans);
+  --sl-font-mono: var(--rs-font-mono);
 }
 
 /* ===== Heading typography ===== */
 :root {
-  --sl-font-heading: var(--font-jetbrains-mono), ui-monospace, SFMono-Regular, monospace;
+  --sl-font-heading: var(--rs-font-mono);
 }
 
 h1,

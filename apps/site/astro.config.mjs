@@ -177,7 +177,7 @@ export default defineConfig({
           }
         ])
       ],
-      customCss: ['./src/styles/custom.css']
+      customCss: ['./src/styles/theme.css', './src/styles/custom.css']
     }),
     // Must stay after starlight(): it rewrites the llms.txt that
     // starlight-page-actions generates in the same build:done phase.

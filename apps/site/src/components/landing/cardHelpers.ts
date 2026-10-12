@@ -5,26 +5,16 @@
 interface CardPackage {
   readonly id: string
   readonly npmPackage: string
+  readonly category: 'core' | 'game' | 'tool'
   readonly version?: string | undefined
   readonly color?: string | undefined
 }
 
-const gameColorMap: Record<string, string> = {
-  roller: 'var(--core-roller)',
-  fifth: 'var(--game-fifth)',
-  blades: 'var(--game-blades)',
-  daggerheart: 'var(--game-daggerheart)',
-  'root-rpg': 'var(--game-root-rpg)',
-  salvageunion: 'var(--game-salvageunion)',
-  pbta: 'var(--game-pbta)'
-}
-
-// Light accent colors need dark text on hover
+// Daggerheart's gold is bright in dark mode only, so its hover text flips with it
 const darkTextOnAccent = new Set(['daggerheart'])
 
 // Cards that get the RANDSUM gradient instead of a flat color
 const gradientAccent = new Set(['roller'])
-const randsumGradient = 'linear-gradient(135deg, #c084fc, #a855f7, #7c3aed)'
 
 export function getBadgeUrl(pkg: Pick<CardPackage, 'npmPackage' | 'version'>): string | null {
   if (pkg.version) {
@@ -36,14 +26,20 @@ export function getBadgeUrl(pkg: Pick<CardPackage, 'npmPackage' | 'version'>): s
   return null
 }
 
-export function getAccentColor(pkg: Pick<CardPackage, 'id' | 'color'>): string {
-  return gameColorMap[pkg.id] ?? pkg.color ?? 'var(--sl-color-accent)'
+// A game's colour is always the theme's --game-<id>, so no page can disagree on it.
+export function getAccentColor(pkg: Pick<CardPackage, 'id' | 'category' | 'color'>): string {
+  if (pkg.category === 'game') return `var(--game-${pkg.id})`
+  return pkg.color ?? 'var(--sl-color-accent)'
 }
 
-export function getCardStyle(pkg: Pick<CardPackage, 'id' | 'color'>): string {
+export function getCardStyle(pkg: Pick<CardPackage, 'id' | 'category' | 'color'>): string {
   const accent = getAccentColor(pkg)
-  const textColor = darkTextOnAccent.has(pkg.id) ? '#18181b' : '#fff'
-  const gradientBg = gradientAccent.has(pkg.id) ? `; --card-accent-bg: ${randsumGradient}` : ''
+  const textColor = darkTextOnAccent.has(pkg.id)
+    ? 'light-dark(var(--rs-on-accent), var(--rs-ink))'
+    : 'var(--rs-on-accent)'
+  const gradientBg = gradientAccent.has(pkg.id)
+    ? '; --card-accent-bg: var(--rs-brand-gradient)'
+    : ''
   return `--card-accent: ${accent}; --card-hover-text: ${textColor}${gradientBg}`
 }
 
