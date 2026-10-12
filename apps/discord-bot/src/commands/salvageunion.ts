@@ -7,7 +7,6 @@ import {
   TextDisplayBuilder
 } from '../utils/builders.js'
 import { FOOTER_ATTRIBUTION } from '../utils/constants.js'
-import { createGameCommand } from './lib/index.js'
 import type { Command } from '../types.js'
 
 /**
@@ -29,7 +28,7 @@ const SUREF_INFO_URL = 'https://salvageunion.io/discord'
 
 const RUST = 0xb7410e
 
-export const salvageUnionCommand: Command = createGameCommand({
+export const salvageUnionCommand: Command = {
   data: new SlashCommandBuilder()
     .setName('salvageunion')
     .setDescription('Salvage Union rolls have moved to the SURef bot from salvageunion.io')
@@ -69,4 +68,4 @@ export const salvageUnionCommand: Command = createGameCommand({
       )
       .addTextDisplayComponents(new TextDisplayBuilder().setContent(`-# ${FOOTER_ATTRIBUTION}`))
   ]
-})
+}

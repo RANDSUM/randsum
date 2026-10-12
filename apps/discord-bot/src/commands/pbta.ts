@@ -2,7 +2,6 @@ import { inputs, roll } from '@randsum/games/pbta'
 import { SlashCommandBuilder } from '../utils/builders.js'
 import { GLYPH, PBTA } from '../utils/palette.js'
 import {
-  createGameCommand,
   encodeReroll,
   formatSignedModifier,
   getInitialRolls,
@@ -104,7 +103,7 @@ function buildPbtaView(context: CommandContext): RollView {
   ]
 }
 
-export const pbtaCommand: Command = createGameCommand({
+export const pbtaCommand: Command = {
   data: new SlashCommandBuilder()
     .setName('pbta')
     .setDescription('Roll dice for Powered by the Apocalypse games')
@@ -139,4 +138,4 @@ export const pbtaCommand: Command = createGameCommand({
         .setRequired(false)
     ),
   buildView: buildPbtaView
-})
+}

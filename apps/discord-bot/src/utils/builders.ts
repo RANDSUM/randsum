@@ -41,10 +41,18 @@ export {
 export {
   ButtonStyle,
   ComponentType,
+  InteractionResponseType,
+  InteractionType,
   MessageFlags,
   SeparatorSpacingSize
 } from 'discord-api-types/v10'
 
 export type { SlashCommandIntegerOption, SlashCommandStringOption } from '@discordjs/builders'
 
-export type { APIContainerComponent } from 'discord-api-types/v10'
+export type {
+  APIAllowedMentions,
+  APIContainerComponent,
+  APIInteraction,
+  APIInteractionResponse,
+  APIMessageComponentInteraction
+} from 'discord-api-types/v10'

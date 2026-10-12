@@ -138,8 +138,8 @@ src/
 ### Adding New Commands
 
 1. Create a new file in `src/commands/` (e.g., `mycommand.ts`)
-2. Export a command object with `data` (SlashCommandBuilder) and a `buildEmbed(context)` renderer
-   — usually via the `createGameCommand` factory in `src/commands/lib/`
+2. Export a `Command` object literal with `data` (SlashCommandBuilder) and a `buildView(context)`
+   renderer
 3. Add the import and entry to `src/commands/index.ts` — the command barrel is the single source of truth (both `src/worker/index.ts` and `src/deploy-commands.ts` import from it)
 4. Deploy, then run `bun run deploy-commands` — registration is a separate, explicit step (see [Slash Commands](#slash-commands))
 

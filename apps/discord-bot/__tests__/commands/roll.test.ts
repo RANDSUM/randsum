@@ -65,7 +65,7 @@ void mock.module('@randsum/roller/validate', () => ({
 const { rollCommand } = await import('../../src/commands/roll.js')
 
 function render(notation: string): RollView {
-  return rollCommand.buildView!(makeContext([{ name: 'notation', value: notation }]))
+  return rollCommand.buildView(makeContext([{ name: 'notation', value: notation }]))
 }
 
 beforeEach(() => {

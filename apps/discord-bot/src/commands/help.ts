@@ -6,7 +6,6 @@ import {
   TextDisplayBuilder
 } from '../utils/builders.js'
 import { FOOTER_ATTRIBUTION } from '../utils/constants.js'
-import { createGameCommand } from './lib/index.js'
 import { commandRegistry } from './lib/registry.js'
 import { BRAND } from '../utils/palette.js'
 import type { Command } from '../types.js'
@@ -31,7 +30,7 @@ function requiredOptionHint(command: Command): string {
   return options.length > 0 ? ` ${options.join(' ')}` : ''
 }
 
-export const helpCommand: Command = createGameCommand({
+export const helpCommand: Command = {
   data: new SlashCommandBuilder()
     .setName('help')
     .setDescription('List all available RANDSUM commands')
@@ -72,4 +71,4 @@ export const helpCommand: Command = createGameCommand({
         .addTextDisplayComponents(new TextDisplayBuilder().setContent(`-# ${FOOTER_ATTRIBUTION}`))
     ]
   }
-})
+}

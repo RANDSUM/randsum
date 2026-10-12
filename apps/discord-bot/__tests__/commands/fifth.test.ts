@@ -29,7 +29,7 @@ void mock.module('@randsum/games/fifth', () => ({
 const { fifthCommand } = await import('../../src/commands/fifth.js')
 
 function render(options: { name: string; value: unknown }[] = []): RollView {
-  return fifthCommand.buildView!(makeContext(options))
+  return fifthCommand.buildView(makeContext(options))
 }
 
 beforeEach(() => {

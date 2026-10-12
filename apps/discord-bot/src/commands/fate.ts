@@ -3,7 +3,6 @@ import type { FateRollResult } from '@randsum/games/fate'
 import { SlashCommandBuilder } from '../utils/builders.js'
 import { FATE, GLYPH } from '../utils/palette.js'
 import {
-  createGameCommand,
   encodeReroll,
   formatSignedModifier,
   getInitialRolls,
@@ -144,7 +143,7 @@ function buildFateView(context: CommandContext): RollView {
   ]
 }
 
-export const fateCommand: Command = createGameCommand({
+export const fateCommand: Command = {
   data: new SlashCommandBuilder()
     .setName('fate')
     .setDescription('Roll 4dF + skill against the Fate ladder (Fate Core)')
@@ -169,4 +168,4 @@ export const fateCommand: Command = createGameCommand({
         .setRequired(false)
     ),
   buildView: buildFateView
-})
+}

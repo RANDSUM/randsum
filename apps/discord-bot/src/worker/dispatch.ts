@@ -15,8 +15,16 @@
 import {
   ComponentType,
   ContainerBuilder,
+  InteractionResponseType,
+  InteractionType,
   MessageFlags,
   TextDisplayBuilder
+} from '../utils/builders.js'
+import type {
+  APIAllowedMentions,
+  APIInteraction,
+  APIInteractionResponse,
+  APIMessageComponentInteraction
 } from '../utils/builders.js'
 import { clampContent } from '../commands/lib/view.js'
 import { FOOTER_ATTRIBUTION } from '../utils/constants.js'
@@ -39,51 +47,12 @@ import type { Command, RollView } from '../types.js'
  * once here rather than per call site, where the next new response type would
  * silently miss it.
  */
-const NO_MENTIONS = { parse: [] as const }
+const NO_MENTIONS: APIAllowedMentions = { parse: [] }
 
 /**
  * Room for the heading and footer that share the error container's budget.
  */
 const ERROR_MESSAGE_LIMIT = 3500
-
-/** Discord's interaction type numbers. */
-export const InteractionType = {
-  Ping: 1,
-  ApplicationCommand: 2,
-  MessageComponent: 3,
-  Autocomplete: 4,
-  ModalSubmit: 5
-} as const
-
-/** Discord's interaction *response* type numbers. */
-export const InteractionResponseType = {
-  Pong: 1,
-  ChannelMessageWithSource: 4,
-  DeferredChannelMessageWithSource: 5,
-  /** Acknowledges a component without showing a loading state. */
-  DeferredMessageUpdate: 6,
-  /** Replaces the message the component is attached to, in place. */
-  UpdateMessage: 7,
-  AutocompleteResult: 8,
-  Modal: 9
-} as const
-
-/** The subset of an interaction payload this dispatcher reads. */
-export interface InteractionPayload {
-  readonly type: number
-  readonly data?: {
-    readonly name?: string
-    readonly options?: readonly { readonly name: string; readonly value?: unknown }[]
-    /** Present on component interactions — identifies which control was used. */
-    readonly custom_id?: string
-    /** A select menu's chosen options. This is where its state arrives. */
-    readonly values?: readonly string[]
-  }
-  readonly member?: {
-    readonly user?: { readonly global_name?: string; readonly username?: string }
-  }
-  readonly user?: { readonly global_name?: string; readonly username?: string }
-}
 
 /**
  * Resolve the invoking user's display name.
@@ -93,7 +62,7 @@ export interface InteractionPayload {
  * this wrong renders "undefined" into a public message, so it falls back
  * explicitly rather than optionally.
  */
-function resolveDisplayName(payload: InteractionPayload): string {
+function resolveDisplayName(payload: APIInteraction): string {
   const user = payload.member?.user ?? payload.user
   return user?.global_name ?? user?.username ?? 'Adventurer'
 }
@@ -106,7 +75,7 @@ function resolveDisplayName(payload: InteractionPayload): string {
  * rows and a container is rejected. It composes with `Ephemeral` as a normal
  * bit flag — 32768 | 64 — so the `hidden` option keeps working unchanged.
  */
-function viewResponse(view: RollView, hidden: boolean): unknown {
+function viewResponse(view: RollView, hidden: boolean): APIInteractionResponse {
   return {
     type: InteractionResponseType.ChannelMessageWithSource,
     data: {
@@ -124,7 +93,7 @@ function viewResponse(view: RollView, hidden: boolean): unknown {
  * whole point: it is what `worker/index.ts` falls back to when building a real
  * response failed.
  */
-export function fallbackErrorResponse(): unknown {
+export function fallbackErrorResponse(): APIInteractionResponse {
   return {
     type: InteractionResponseType.ChannelMessageWithSource,
     data: {
@@ -160,7 +129,7 @@ export function fallbackErrorResponse(): unknown {
  * Always ephemeral, regardless of the `hidden` option: an error is for the
  * person who typed the command, not the channel.
  */
-function errorResponse(message: string): unknown {
+function errorResponse(message: string): APIInteractionResponse {
   return {
     type: InteractionResponseType.ChannelMessageWithSource,
     data: {
@@ -200,14 +169,14 @@ function errorResponse(message: string): unknown {
  */
 function dispatchReroll(
   customId: string,
-  payload: InteractionPayload,
+  payload: APIInteraction,
   commands: ReadonlyMap<string, Command>
-): unknown {
+): APIInteractionResponse | undefined {
   const target = decodeReroll(customId)
   if (target === undefined) return undefined
 
   const command = commands.get(target.commandName)
-  if (command?.buildView === undefined) {
+  if (command === undefined) {
     // A button from an older deployment whose command has since been removed.
     return errorResponse(`\`/${target.commandName}\` is no longer available.`)
   }
@@ -242,17 +211,16 @@ function dispatchReroll(
  * matching the gateway path's `.update()` rather than posting a new reply.
  */
 function dispatchComponent(
-  payload: InteractionPayload,
+  payload: APIMessageComponentInteraction,
   commands: ReadonlyMap<string, Command>
-): unknown {
-  const customId = payload.data?.custom_id
-  if (customId === undefined) return undefined
+): APIInteractionResponse | undefined {
+  const customId = payload.data.custom_id
 
   if (isRerollId(customId)) return dispatchReroll(customId, payload, commands)
 
   if (customId !== NOTATION_SELECT_ID) return undefined
 
-  const view = buildNotationView(payload.data?.values?.[0])
+  const view = buildNotationView('values' in payload.data ? payload.data.values[0] : undefined)
   return {
     type: InteractionResponseType.UpdateMessage,
     data: {
@@ -273,9 +241,9 @@ function dispatchComponent(
  * the caller can decide the HTTP status rather than having one invented here.
  */
 export function dispatchInteraction(
-  payload: InteractionPayload,
+  payload: APIInteraction,
   commands: ReadonlyMap<string, Command>
-): unknown {
+): APIInteractionResponse | undefined {
   if (payload.type === InteractionType.Ping) {
     return { type: InteractionResponseType.Pong }
   }
@@ -286,9 +254,7 @@ export function dispatchInteraction(
 
   if (payload.type !== InteractionType.ApplicationCommand) return undefined
 
-  const name = payload.data?.name
-  if (name === undefined) return errorResponse('Malformed interaction: no command name.')
-
+  const { name } = payload.data
   const command = commands.get(name)
   if (command === undefined) {
     // Mirrors the gateway bot's unknown-command behaviour: answer, do not time
@@ -296,11 +262,7 @@ export function dispatchInteraction(
     return errorResponse(`Unknown command: \`/${name}\`. It may have been removed.`)
   }
 
-  if (command.buildView === undefined) {
-    return errorResponse(`\`/${name}\` is not available on this deployment yet.`)
-  }
-
-  const options = optionsFromPayload(payload.data?.options)
+  const options = optionsFromPayload('options' in payload.data ? payload.data.options : undefined)
   // Outside the try so the catch block can pass it to `describeError`, which
   // needs the invocation's options to say anything specific about what failed.
   const context = { options, userDisplayName: resolveDisplayName(payload) }

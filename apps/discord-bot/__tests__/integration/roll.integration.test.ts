@@ -32,7 +32,7 @@ function seededRandom(seed: number): () => number {
 }
 
 function render(notationString: string): RollView {
-  return rollCommand.buildView!(makeContext([{ name: 'notation', value: notationString }]))
+  return rollCommand.buildView(makeContext([{ name: 'notation', value: notationString }]))
 }
 
 beforeEach(() => {

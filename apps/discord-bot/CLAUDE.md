@@ -42,7 +42,7 @@ apps/discord-bot/
       roll.ts            # /roll — generic notation roller
       root.ts            # /root — Root RPG
       salvageunion.ts    # /salvageunion — pointer to the SURef bot (rolls nothing)
-      lib/               # Shared scaffolding (context, view renderer, reroll codec, factory, spec input bounds)
+      lib/               # Shared scaffolding (context, view renderer, reroll codec, spec input bounds)
     utils/
       builders.ts        # PORTABLE Discord primitives — safe on workerd. Commands import here.
       palette.ts         # Accent colours and outcome glyphs — the visual vocabulary
@@ -159,9 +159,8 @@ Each command file exports a named `*Command` object with:
 > `embeds` outright, so the two shapes cannot be mixed on one message. Errors are the
 > dispatcher's job: `buildView` throws, and `dispatchInteraction` renders the error container.
 >
-> `buildView` is optional on the interface so the dispatcher can answer "not available on this
-> deployment" rather than guess, but every command in the barrel has one and
-> `__tests__/worker/dispatch.test.ts` holds that line.
+> `buildView` is required on the interface, so a command without a renderer does not compile.
+> Commands export plain object literals typed `Command`; there is no factory.
 
 **Building a view.** Route through `rollContainer()` in `commands/lib/view.ts` rather than
 assembling a container by hand — it owns the headline / consequence / facts / body / derivation
@@ -214,7 +213,10 @@ the text changes.
 the suite; supply explicit fixtures instead.
 
 `worker/dispatch.ts` is pure — no network, no client, no side effects — which is what makes the
-bot's actual behaviour testable without a Worker runtime. It is the half worth protecting; the
+bot's actual behaviour testable without a Worker runtime. It is typed with `discord-api-types`
+(`APIInteraction` in, `APIInteractionResponse` out, the enums re-exported through
+`utils/builders.ts`), so a malformed response is a type error; `worker/index.ts` narrows the
+parsed body with an `isInteraction` guard rather than a cast. It is the half worth protecting; the
 transport around it is replaceable.
 
 ## Key Constraints

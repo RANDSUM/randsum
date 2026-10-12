@@ -19,7 +19,7 @@ function selectOptions(view: RollView): { label: string; default: boolean | unde
 }
 
 describe('notationCommand', () => {
-  const view = notationCommand.buildView!(makeContext([]))
+  const view = notationCommand.buildView(makeContext([]))
 
   test('renders one container, with the selector inside it', () => {
     // Under embeds this was an embed plus a detached action row beneath. The

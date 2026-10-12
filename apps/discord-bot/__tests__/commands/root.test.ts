@@ -21,7 +21,7 @@ void mock.module('@randsum/games/root-rpg', () => ({
 const { rootCommand } = await import('../../src/commands/root.js')
 
 function render(options: { name: string; value: unknown }[] = []): RollView {
-  return rootCommand.buildView!(makeContext(options))
+  return rootCommand.buildView(makeContext(options))
 }
 
 beforeEach(() => {
