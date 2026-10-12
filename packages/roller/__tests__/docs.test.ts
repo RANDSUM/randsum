@@ -158,10 +158,12 @@ describe('NOTATION_DOCS', () => {
     }
   })
 
-  test('total count equals MODIFIER_DOCS + DICE_DOCS', () => {
+  test('total count equals MODIFIER_DOCS + DICE_DOCS + the repeat and annotation docs', () => {
     expect(Object.keys(NOTATION_DOCS).length).toBe(
-      Object.keys(MODIFIER_DOCS).length + Object.keys(DICE_DOCS).length
+      Object.keys(MODIFIER_DOCS).length + Object.keys(DICE_DOCS).length + 2
     )
+    expect(NOTATION_DOCS['xN']?.title).toBe('Repeat')
+    expect(NOTATION_DOCS['label']?.title).toBe('Annotation')
   })
 
   test('xDN is in NOTATION_DOCS', () => {

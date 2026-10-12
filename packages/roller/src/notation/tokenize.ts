@@ -78,6 +78,23 @@ function describeToken(role: string, poolKind: PoolKind | undefined, text: strin
 }
 
 /**
+ * The NOTATION_DOCS key for a lexer token. The lexer keys tokens by the schema
+ * that matched them (`drop`, `!s`), which the parser dispatches on; one schema
+ * can match several documented forms, so the public key is resolved from the
+ * text here and every emitted key has a doc entry.
+ */
+function docKey(key: string, text: string): string {
+  if (key === 'drop') {
+    const head = text[0]?.toUpperCase()
+    return head === 'D' ? 'D{..}' : head === 'H' ? 'H' : 'L'
+  }
+  if (key === '!s') {
+    return text[1]?.toLowerCase() === 's' ? '!s{..}' : text.slice(0, 2).toLowerCase()
+  }
+  return key
+}
+
+/**
  * Tokenize a notation string into positioned tokens.
  *
  * This is a direct view over the single cursor lexer (`scan`): the lexer produces
@@ -87,7 +104,7 @@ function describeToken(role: string, poolKind: PoolKind | undefined, text: strin
 export function tokenize(notation: string): readonly Token[] {
   return scan(notation).map(t => ({
     text: t.text,
-    key: t.key,
+    key: docKey(t.key, t.text),
     category: t.category,
     start: t.start,
     end: t.end,
