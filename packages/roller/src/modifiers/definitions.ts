@@ -1,3 +1,5 @@
+import type { ModifierOptions } from '../notation/types'
+import { MODIFIER_SCHEMAS } from '../notation/definitions'
 import type { ModifierDefinition } from './schema'
 import { capModifier } from './cap'
 import { compoundModifier } from './compound'
@@ -19,28 +21,32 @@ import { sortModifier } from './sort'
 import { uniqueModifier } from './unique'
 import { wildDieModifier } from './wildDie'
 
+const MODIFIERS_BY_NAME: Readonly<Record<keyof ModifierOptions, ModifierDefinition>> = {
+  cap: capModifier,
+  compound: compoundModifier,
+  count: countModifier,
+  drop: dropModifier,
+  explode: explodeModifier,
+  explodeSequence: explodeSequenceModifier,
+  integerDivide: integerDivideModifier,
+  keep: keepModifier,
+  minus: minusModifier,
+  modulo: moduloModifier,
+  multiply: multiplyModifier,
+  multiplyTotal: multiplyTotalModifier,
+  penetrate: penetrateModifier,
+  plus: plusModifier,
+  replace: replaceModifier,
+  reroll: rerollModifier,
+  sort: sortModifier,
+  unique: uniqueModifier,
+  wildDie: wildDieModifier
+}
+
 /**
- * All modifier definitions in priority order (lowest priority number runs first).
- * This is the single source of truth for which modifiers exist and their execution order.
+ * Every modifier definition in execution order: MODIFIER_SCHEMAS (sorted by
+ * priority) mapped to the behavior registered under each schema's name.
  */
-export const RANDSUM_MODIFIERS: readonly ModifierDefinition[] = Object.freeze([
-  capModifier as ModifierDefinition, // 10 - Clamp
-  replaceModifier as ModifierDefinition, // 30 - Map
-  rerollModifier as ModifierDefinition, // 40 - Substitute
-  explodeModifier as ModifierDefinition, // 50 - Generate
-  compoundModifier as ModifierDefinition, // 51 - Accumulate
-  penetrateModifier as ModifierDefinition, // 52 - Accumulate
-  explodeSequenceModifier as ModifierDefinition, // 53 - Generate
-  wildDieModifier as ModifierDefinition, // 55 - Dispatch
-  uniqueModifier as ModifierDefinition, // 60 - Substitute
-  dropModifier as ModifierDefinition, // 65 - Filter (moved after explosions)
-  keepModifier as ModifierDefinition, // 66 - Filter (moved after explosions)
-  countModifier as ModifierDefinition, // 80 - Reinterpret
-  multiplyModifier as ModifierDefinition, // 85 - Scale
-  plusModifier as ModifierDefinition, // 90 - Scale
-  minusModifier as ModifierDefinition, // 91 - Scale
-  integerDivideModifier as ModifierDefinition, // 93 - Scale
-  moduloModifier as ModifierDefinition, // 94 - Scale
-  sortModifier as ModifierDefinition, // 95 - Order (moved after arithmetic)
-  multiplyTotalModifier as ModifierDefinition // 100 - Scale
-])
+export const RANDSUM_MODIFIERS: readonly ModifierDefinition[] = Object.freeze(
+  MODIFIER_SCHEMAS.map(schema => MODIFIERS_BY_NAME[schema.name])
+)

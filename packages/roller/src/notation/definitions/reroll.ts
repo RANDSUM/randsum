@@ -12,6 +12,8 @@ const rerollPattern = new RegExp(
 export const rerollSchema: NotationSchema<RerollOptions> = defineNotationSchema<RerollOptions>({
   name: 'reroll',
   priority: 40,
+  tokenKey: 'R{..}',
+  category: 'Substitute',
 
   pattern: /[Rr]([Oo])?\{((?:>=|<=|>|<|=)?\d+(?:,(?:>=|<=|>|<|=)?\d+)*)\}(\d+)?/,
 

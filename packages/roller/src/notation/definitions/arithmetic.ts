@@ -22,6 +22,8 @@ export function createArithmeticNotation(
   return defineNotationSchema<number>({
     name,
     priority,
+    tokenKey: operator,
+    category: 'Scale',
 
     pattern,
 

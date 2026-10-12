@@ -5,6 +5,8 @@ const explodeSequencePattern = /![sS]\{[\d,]+\}/
 export const explodeSequenceSchema: NotationSchema<number[]> = defineNotationSchema<number[]>({
   name: 'explodeSequence',
   priority: 53,
+  tokenKey: '!s',
+  category: 'Generate',
 
   pattern: /![sS]\{[\d,]+\}|![iI]|![rR]/,
 

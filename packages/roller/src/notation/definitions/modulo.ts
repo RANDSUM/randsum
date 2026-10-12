@@ -6,6 +6,8 @@ const moduloPattern = /%([1-9]\d*)/
 export const moduloSchema: NotationSchema<number> = defineNotationSchema<number>({
   name: 'modulo',
   priority: 94,
+  tokenKey: '%',
+  category: 'Scale',
 
   pattern: moduloPattern,
 

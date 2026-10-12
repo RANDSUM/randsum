@@ -6,6 +6,8 @@ export const countSuccessesSchema: NotationSchema<CountOptions> =
   defineNotationSchema<CountOptions>({
     name: 'count',
     priority: 80,
+    tokenKey: 'S{..}',
+    category: 'Reinterpret',
 
     pattern: countSuccessesPattern,
 

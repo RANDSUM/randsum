@@ -815,10 +815,10 @@ export const multiplyTotalDocs: readonly NotationDoc[] = [
 ]
 
 /**
- * Modifier name → its doc surface(s). Re-establishes the modifier↔docs linkage
- * explicitly now that docs no longer live on the schema/modifier objects. Keyed
- * by the same `name` used in RANDSUM_MODIFIERS. A doc group's first entry is the
- * modifier's primary surface (its category classifies the modifier).
+ * Modifier name → its doc surface(s), keyed by the schema `name` and listed in
+ * MODIFIER_SCHEMAS priority order (a test holds the two in step; importing the
+ * schemas here would pull them into the docs bundle). A doc group's first entry
+ * is the modifier's primary surface (its category classifies the modifier).
  */
 export const MODIFIER_DOCS_BY_NAME: Readonly<Record<string, readonly NotationDoc[]>> = {
   cap: capDocs,
@@ -842,27 +842,6 @@ export const MODIFIER_DOCS_BY_NAME: Readonly<Record<string, readonly NotationDoc
   multiplyTotal: multiplyTotalDocs
 }
 
-/**
- * All modifier docs in RANDSUM_MODIFIERS priority order.
- */
-export const MODIFIER_NOTATION_DOCS: readonly NotationDoc[] = [
-  ...capDocs,
-  ...replaceDocs,
-  ...rerollDocs,
-  ...explodeDocs,
-  ...compoundDocs,
-  ...penetrateDocs,
-  ...explodeSequenceDocs,
-  ...wildDieDocs,
-  ...uniqueDocs,
-  ...dropDocs,
-  ...keepDocs,
-  ...countDocs,
-  ...multiplyDocs,
-  ...plusDocs,
-  ...minusDocs,
-  ...integerDivideDocs,
-  ...moduloDocs,
-  ...sortDocs,
-  ...multiplyTotalDocs
-]
+/** All modifier docs, in MODIFIER_SCHEMAS priority order. */
+export const MODIFIER_NOTATION_DOCS: readonly NotationDoc[] =
+  Object.values(MODIFIER_DOCS_BY_NAME).flat()

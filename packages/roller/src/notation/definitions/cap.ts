@@ -11,6 +11,8 @@ export const capSchema: NotationSchema<ComparisonOptions> = defineNotationSchema
   {
     name: 'cap',
     priority: 10,
+    tokenKey: 'C{..}',
+    category: 'Clamp',
 
     pattern: capPattern,
 

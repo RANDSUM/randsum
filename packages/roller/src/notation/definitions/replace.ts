@@ -7,6 +7,8 @@ export const replaceSchema: NotationSchema<ReplaceOptions | ReplaceOptions[]> =
   defineNotationSchema<ReplaceOptions | ReplaceOptions[]>({
     name: 'replace',
     priority: 30,
+    tokenKey: 'V{..}',
+    category: 'Map',
 
     pattern: replacePattern,
 

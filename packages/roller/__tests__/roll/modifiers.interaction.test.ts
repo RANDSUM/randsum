@@ -17,7 +17,7 @@ describe('modifier interactions', () => {
     test('4d6!L! explodes the dice and drops the lowest', () => {
       const result = roll('4d6!L!', { randomFn: () => 0.99 })
       const record = result.rolls[0]
-      expect(record?.notation).toBe('4d6L!')
+      expect(record?.notation).toBe('4d6!L')
       expect(record?.initialRolls).toHaveLength(4)
       expect(record?.rolls.length).toBeGreaterThan(4)
     })

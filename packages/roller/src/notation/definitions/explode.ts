@@ -15,6 +15,8 @@ export const explodeSchema: NotationSchema<boolean | ComparisonOptions> = define
 >({
   name: 'explode',
   priority: 50,
+  tokenKey: '!',
+  category: 'Generate',
 
   pattern: /(?<!!)!(?!!|[pPsSiIrR])(\{((?:>=|<=|>|<|=)?\d+(?:,(?:>=|<=|>|<|=)?\d+)*)\})?/,
 

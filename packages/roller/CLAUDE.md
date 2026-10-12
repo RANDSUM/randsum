@@ -19,9 +19,9 @@ All notation processing runs through **one cursor-based lexer** in
 separate regex system per surface, and no second parser builds options:
 
 - **`specs.ts`** — the single token inventory. `POOL_SPECS` (die-type heads) and
-  `MODIFIER_SPECS` (category + schema + sticky matcher per modifier). The modifier
-  matchers are compiled from the `notation/definitions/<mod>Schema` patterns in RDN
-  specificity order, so the schemas stay the semantic source of truth.
+  `MODIFIER_SPECS` (category + schema + sticky matcher per modifier), derived from
+  `MODIFIER_SCHEMAS` plus the `S{..}` / `F{..}` / `ms{..}` sugar and sorted by
+  schema priority, so the schemas stay the semantic source of truth.
 - **`scan.ts`** — `scan(input)` is a pure lexical left-to-right pass producing
   positioned `LexToken`s (pool / modifier / annotation / repeat / unknown). No
   structure is enforced here; this is exactly what `tokenize` exposes.
@@ -154,8 +154,12 @@ barrel.
 
 ## Modifier system
 
-`RANDSUM_MODIFIERS` in `src/modifiers/definitions.ts` is the single source of
-truth for which modifiers exist and their execution priority order. `src/modifiers/index.ts`
+`MODIFIER_SCHEMAS` in `src/notation/definitions/index.ts` is the single source of
+truth for which modifiers exist and their execution order: a record keyed by option
+name (so a missing modifier is a type error), sorted by each schema's `priority`.
+The lexer specs, `modifiersToNotation` / `modifiersToDescription` (which render in
+execution order) and `RANDSUM_MODIFIERS` in `src/modifiers/definitions.ts` (each
+schema mapped to its behavior) all derive from it. `src/modifiers/index.ts`
 re-exports it alongside `MODIFIER_ORDER`, `applyAllModifiers`, and
 `validateModifiers` (from `src/modifiers/registry.ts`).
 
@@ -174,8 +178,8 @@ files to keep the tokenize path free of roll-engine code:
   `src/notation/definitions/<mod>.ts` — the canonical, behavior-free source of
   regex pattern, `parse`, `toNotation`, and `toDescription`. This is the only
   copy; the parse/validate/tokenize path imports it directly (via
-  `MODIFIER_SPECS` in `src/notation/lexer/specs.ts` and
-  `src/notation/transformers/modifiersToStrings.ts`).
+  `MODIFIER_SCHEMAS`). Its `toNotation` / `toDescription` are method signatures,
+  so a `NotationSchema<KeepOptions>` is a `NotationSchema` without a cast.
 - **`<mod>Modifier`** (`ModifierDefinition`) lives in `src/modifiers/<mod>.ts` —
   it **imports** `<mod>Schema` from `notation/definitions`, spreads it, and
   attaches only the dice-pool behavior (`apply`, `validate`, `requires*`,
@@ -199,14 +203,16 @@ modifier→docs linkage explicitly.
 
 To add a modifier:
 
-1. Create `src/notation/definitions/<mod>.ts` exporting `<mod>Schema`
+1. Add the option to `ModifierOptions`, and create
+   `src/notation/definitions/<mod>.ts` exporting `<mod>Schema` (with its
+   `priority`, `tokenKey` and `category`); add it to `MODIFIER_SCHEMAS`
 2. Create `src/modifiers/<mod>.ts` importing `<mod>Schema` and exporting
-   `<mod>Modifier` (schema spread + behavior)
-3. Register `<mod>Modifier` in `RANDSUM_MODIFIERS` (`src/modifiers/definitions.ts`)
-4. Add a `<mod>Docs` group to `src/docs/modifierDocData.ts` — one entry per
-   notation surface — and wire it into `MODIFIER_DOCS_BY_NAME` and
-   `MODIFIER_NOTATION_DOCS`
-5. Document the notation at https://notation.randsum.dev (`apps/rdn/`)
+   `<mod>Modifier` (schema spread + behavior); add it to `MODIFIERS_BY_NAME`
+   (`src/modifiers/definitions.ts`). Both records fail to typecheck until you do.
+3. Add a `<mod>Docs` group to `src/docs/modifierDocData.ts` — one entry per
+   notation surface — and add it to `MODIFIER_DOCS_BY_NAME` at its priority
+   position (`modifierDocSync.test.ts` checks the order)
+4. Document the notation at https://notation.randsum.dev (`apps/rdn/`)
 
 ### Tokenize isolation invariant
 
@@ -275,7 +281,7 @@ src/
     parseArguments.ts
     pipeline.ts
   modifiers/        # roll-path behavior; each file imports its schema + attaches apply/validate
-    definitions.ts  # RANDSUM_MODIFIERS — single source of truth (existence + order)
+    definitions.ts  # RANDSUM_MODIFIERS — MODIFIER_SCHEMAS mapped to behaviors
     index.ts        # re-exports RANDSUM_MODIFIERS + registry helpers
     registry.ts     # MODIFIER_ORDER, applyAllModifiers, validateModifiers
     schema.ts       # ModifierContext, ModifierDefinition (= NotationSchema & ModifierBehavior)

@@ -4,6 +4,8 @@ const multiplyPattern = /(?<!\*)\*(?!\*)(\d+)/
 export const multiplySchema: NotationSchema<number> = defineNotationSchema<number>({
   name: 'multiply',
   priority: 85,
+  tokenKey: '*',
+  category: 'Scale',
 
   pattern: multiplyPattern,
 

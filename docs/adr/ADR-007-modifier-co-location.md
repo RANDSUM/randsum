@@ -2,7 +2,13 @@
 
 ## Status
 
-Accepted — tokenize-isolation lint rule enforced in `eslint.config.js` since `2bff333c`.
+Accepted, amended (audit-1011). The schema/behavior split was kept on purpose: schemas stay in
+`src/notation/definitions/` and behaviors in `src/modifiers/`, because the tokenize path parses with
+the schemas and must not pull in behavior code. The split is guarded by the Biome GritQL rule
+`biome-plugins/no-tokenize-modifier-import.grit` and the `dist/tokenize.js` size limit (the
+`eslint.config.js` rule this line used to cite is gone). There is one ordered modifier list,
+`MODIFIER_SCHEMAS` in `src/notation/definitions/index.ts`, sorted by `priority`; the lexer's token
+specs, notation rendering, and `RANDSUM_MODIFIERS` derive from it.
 
 ## Context
 

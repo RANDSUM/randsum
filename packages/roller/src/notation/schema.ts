@@ -1,6 +1,21 @@
 import type { NotationDoc } from '../docs/modifierDocs'
 import type { ModifierOptions } from './types'
 
+/** The RDN faceted category of a modifier token. */
+export type ModifierCategory =
+  | 'Core'
+  | 'Special' // dice types
+  | 'Order'
+  | 'Clamp'
+  | 'Map'
+  | 'Filter'
+  | 'Substitute'
+  | 'Generate'
+  | 'Accumulate'
+  | 'Scale'
+  | 'Reinterpret'
+  | 'Dispatch'
+
 /**
  * Notation-only half of a modifier definition.
  *
@@ -10,6 +25,10 @@ import type { ModifierOptions } from './types'
  * - Converting options back to notation
  * - Human-readable description generation
  *
+ * The option-taking members are method signatures on purpose: methods are
+ * bivariant in their parameters, so a `NotationSchema<KeepOptions>` is a
+ * `NotationSchema` without a cast, and the schema lists hold them directly.
+ *
  * @template TOptions - The type of options this modifier's notation represents
  */
 export interface NotationSchema<TOptions = unknown> {
@@ -17,10 +36,17 @@ export interface NotationSchema<TOptions = unknown> {
   name: keyof ModifierOptions
 
   /**
-   * Execution priority (lower = earlier).
-   * Shared with ModifierDefinition to determine parse ordering.
+   * Execution priority (lower = earlier). MODIFIER_SCHEMAS is sorted by it, and
+   * every ordered modifier list (lexer specs, rendering, RANDSUM_MODIFIERS)
+   * derives from that one list.
    */
   priority: number
+
+  /** Stable key of the lexer token this schema matches (e.g. `'C{..}'`, `'drop'`). */
+  tokenKey: string
+
+  /** RDN faceted category of the token. */
+  category: ModifierCategory
 
   /**
    * Regex pattern to match this modifier in a notation string.
@@ -33,19 +59,19 @@ export interface NotationSchema<TOptions = unknown> {
    * Receives the full notation string to allow finding multiple matches.
    * Returns a partial ModifierOptions with just this modifier's key.
    */
-  parse: (notation: string) => Partial<ModifierOptions>
+  parse(notation: string): Partial<ModifierOptions>
 
   /**
    * Convert options to notation string (e.g., "C{>5}").
    * Returns undefined if options would produce empty notation.
    */
-  toNotation: (options: TOptions) => string | undefined
+  toNotation(options: TOptions): string | undefined
 
   /**
    * Convert options to human-readable description strings.
    * Returns array of descriptions (some modifiers produce multiple lines).
    */
-  toDescription: (options: TOptions) => string[]
+  toDescription(options: TOptions): string[]
 
   /**
    * Static documentation entries for this modifier.
