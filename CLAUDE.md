@@ -91,7 +91,7 @@ Releases are **automated via [changesets](https://github.com/changesets/changese
 2. On merge to `main`, the `Release` workflow (`.github/workflows/publish.yml`) runs after CI succeeds. The `changesets/action` either opens/updates a `chore: version packages` PR (applying `bun changeset version` to bump versions and roll per-package `CHANGELOG.md` entries) or, when that version PR is merged, publishes the changed packages.
 3. Publishing itself runs `bun scripts/publish.ts`, which packs each package with `bun pm pack` (resolving `workspace:~` to a real semver range at pack time) and then publishes the resulting tarball with `npm publish`. In CI, auth is npm Trusted Publishing (OIDC — no `NPM_TOKEN`) and `--provenance` is added to attest the build.
 
-**`workspace:~` warning:** never run a bare `npm publish` from a package directory — `npm` ships the literal `workspace:~` string, which is unresolvable for consumers. The pack step in `scripts/publish.ts` (`bun pm pack`) is what resolves it, so publishing always goes through that script (or `bun publish`), never `npm publish` on the raw source tree.
+**`workspace:~` warning:** never run a bare `npm publish` from a package directory — `npm` ships the literal `workspace:~` string, which is unresolvable for consumers. The pack step in `scripts/publish.ts` (`bun pm pack`) is what resolves it, so publishing always goes through that script, never `npm publish` on the raw source tree.
 
 **Local fallback (rare):** `bun scripts/publish.ts` can publish from a workstation. Pass `--otp=<CODE>` (the npm account has 2FA set to `auth-and-writes`) and optionally `--dry-run`. Local runs omit `--provenance`. Publish order is fixed topologically in the script: `@randsum/roller` → `@randsum/games` → `@randsum/mcp`.
 

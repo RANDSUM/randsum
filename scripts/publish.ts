@@ -25,6 +25,10 @@ import { tmpdir } from 'node:os'
 
 const ROOT = join(import.meta.dir, '..')
 
+// Lets scripts/ensure-bun-publish.ts (each package's prepublishOnly guard) tell this
+// sanctioned path apart from a direct `npm publish` / `bun publish` in a package directory.
+process.env['RANDSUM_PUBLISH_SCRIPT'] = '1'
+
 /**
  * Hardcoded topological publish order.
  * Packages must be published in dependency order so that downstream

@@ -47,7 +47,7 @@ Smoke-test the live server by piping a JSON-RPC `initialize` message to `bun src
 
 ## Publishing
 
-Always `bun publish`. Never `npm publish` (see root `CLAUDE.md` — resolves `workspace:~`).
+Publish only via `bun scripts/publish.ts` (root `CLAUDE.md`). Never `npm publish` or a direct `bun publish`.
 `prepublishOnly` runs `bun run build`. `build` chmods `dist/index.js` so the `randsum-mcp` bin is
 executable.
 
