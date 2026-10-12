@@ -28,6 +28,13 @@ const games = [
     href: '/games/daggerheart/'
   },
   {
+    command: '/fate',
+    name: 'Fate Core',
+    description: '4dF + skill on the Fate ladder, with shifts against opposition.',
+    color: '#3e8fc1',
+    href: '/games/fate/'
+  },
+  {
     command: '/pbta',
     name: 'Powered by the Apocalypse',
     description: '2d6 + stat. Miss, weak hit, or strong hit for any PbtA game.',
@@ -59,6 +66,11 @@ const commands = [
     name: '/dh',
     description: 'Daggerheart hope and fear dice',
     example: '/dh modifier:3 rolling_with:Advantage'
+  },
+  {
+    name: '/fate',
+    description: 'Fate Core 4dF + skill against the ladder',
+    example: '/fate skill:3 opposition:2'
   },
   { name: '/root', description: 'Root RPG 2d6 + modifier', example: '/root modifier:2' },
   {
@@ -185,7 +197,7 @@ const commands = [
     <section class="commands-section">
       <div class="section-inner">
         <h2 class="section-heading">Commands</h2>
-        <p class="section-sub">Nine slash commands covering every rolling scenario.</p>
+        <p class="section-sub">Every slash command the bot registers, with an example.</p>
         <div class="commands-table-wrap">
           <table class="commands-table">
             <thead>
@@ -221,19 +233,11 @@ const commands = [
     <section class="examples-section">
       <div class="section-inner">
         <h2 class="section-heading">Example Results</h2>
-        <p class="section-sub">Rich embeds with full roll breakdowns, color-coded by outcome.</p>
+        <p class="section-sub">Full roll breakdowns, color-coded by outcome.</p>
         <div class="screenshot-grid">
           <figure class="screenshot">
             <img src="/discord-ss-roll-10d20.png" alt="/roll 10d20 — rolled a 100" loading="lazy" />
             <figcaption><code>/roll notation:10d20</code></figcaption>
-          </figure>
-          <figure class="screenshot">
-            <img
-              src="/discord-ss-dh-critical.png"
-              alt="/dh — Daggerheart Critical Hope"
-              loading="lazy"
-            />
-            <figcaption><code>/dh modifier:3</code></figcaption>
           </figure>
           <figure class="screenshot">
             <img src="/discord-ss-roll-2d12.png" alt="/roll 2d12+1 result" loading="lazy" />

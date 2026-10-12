@@ -31,9 +31,9 @@ Salvage Union is handled by the [SURef bot](https://salvageunion.io/discord); `/
 
 - **Full notation support** — Roll any combination using RANDSUM dice notation: drop lowest/highest, reroll, explode, cap, and more. Examples: `4d6L`, `2d20H`, `3d8+5`, `4d6!{>5}`.
 - **Detailed breakdowns** — Every result shows individual die values, which dice were kept or dropped, modifiers applied, and the final total.
-- **Color-coded embeds** — Outcomes are visually distinct. Critical hits, failures, and special results each have their own color and formatting.
+- **Color-coded results** — Outcomes are visually distinct. Critical hits, failures, and special results each have their own color and formatting.
 - **Zero configuration** — Add the bot and start rolling immediately. No setup, no permissions fiddling, no configuration commands.
-- **Ten slash commands** — All commands are registered as Discord slash commands with autocomplete and inline help.
+- **Ten slash commands** — All commands are registered as Discord slash commands, with typed options and inline help.
 
 ### Commands
 
