@@ -48,6 +48,13 @@ jobs:
               - '.github/actions/**'
             roller:
               - 'packages/roller/**'
+              # Roller tests also guard published docs: the site's modifier
+              # application-order table and the Level 4 conformance claim check.
+              - 'apps/site/src/content/docs/**'
+              - 'README.md'
+              - 'llms.txt'
+              - 'apps/*/README.md'
+              - 'packages/*/README.md'
               - '.github/workflows/ci.yml'
             games:
               - 'packages/roller/**'
@@ -61,6 +68,8 @@ jobs:
             site:
               - 'packages/**'
               - 'apps/site/**'
+              # The site build prepends the repo-root llms.txt to dist/llms.txt.
+              - 'llms.txt'
               - '.github/workflows/ci.yml'
             rdn:
               - 'apps/rdn/**'
