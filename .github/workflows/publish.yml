@@ -1,10 +1,9 @@
 name: Release
 
 # SECURITY — workflow_run safe-usage invariant (audit L7 / security F3).
-# `workflow_run` runs in the PRIVILEGED base-repo context with access to
-# GITHUB_TOKEN + the OIDC id-token (used for npm Trusted Publishing) and
-# contents:write + id-token:write. To avoid a
-# "pwn-request" exposure this job MUST:
+# `workflow_run` runs in the PRIVILEGED base-repo context, and the publish job
+# below holds the OIDC id-token used for npm Trusted Publishing. To avoid a
+# "pwn-request" exposure every job here MUST:
 #   - only ever check out trusted DEFAULT-BRANCH code (the bare `actions/checkout`
 #     below resolves to the default branch in workflow_run context — never pass a
 #     PR ref/sha to checkout here), and
@@ -13,6 +12,14 @@ name: Release
 # The trigger is already gated on `branches: [main]` + conclusion == 'success';
 # keep it that way. Any change that consumes PR-controlled input converts this
 # into a credential-leak vector — re-review against this invariant first.
+#
+# Three jobs, so only the one that publishes can mint an npm OIDC token (audit
+# rel-oidc-scope). `select-mode` reads the changesets and the registry with
+# read-only rights. `version` opens the version PR with a GitHub App token, not
+# GITHUB_TOKEN: pushes and PRs made with GITHUB_TOKEN start no workflows, so the
+# version PR never got the required "CI Success" check (audit
+# rel-token-starvation). `publish` alone holds id-token: write, and runs only
+# when select-mode finds a version npm does not have yet.
 on:
   # zizmor: ignore[dangerous-triggers] — workflow_run is used deliberately and
   # safely here per the invariant documented above (default-branch checkout only,
@@ -24,18 +31,78 @@ on:
 
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 
-permissions:
-  contents: write
-  pull-requests: write
-  id-token: write
+permissions: {}
 
 jobs:
-  release:
-    name: Release
+  select-mode:
+    name: Select mode
     runs-on: ubuntu-latest
     if: github.event.workflow_run.conclusion == 'success'
+    permissions:
+      contents: read
+    outputs:
+      mode: ${{ steps.select-mode.outputs.mode }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/bun-setup
+        with:
+          # changesets/action runs the Changesets CLI with `node`; CLI 3 needs node >= 22.11.
+          node-version: '24'
+      # 'version' when changesets are pending, 'publish' when a package's version is
+      # not on npm yet, otherwise 'none'.
+      - name: Select mode
+        id: select-mode
+        uses: changesets/action/select-mode@ae32849d5ba541f9ae29e40e22a623bc13562f51  # v2.1.2
+
+  version:
+    name: Version
+    needs: select-mode
+    if: needs.select-mode.outputs.mode == 'version'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/bun-setup
+        with:
+          node-version: '24'
+      - name: Mint GitHub App token
+        id: app-token
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1  # v3.2.0
+        with:
+          client-id: ${{ secrets.BOT_APP_CLIENT_ID }}
+          private-key: ${{ secrets.BOT_APP_PRIVATE_KEY }}
+          permission-contents: write
+          permission-pull-requests: write
+      - name: Create or update the version PR
+        uses: changesets/action/version@ae32849d5ba541f9ae29e40e22a623bc13562f51  # v2.1.2
+        with:
+          # v2 ignores a GITHUB_TOKEN env; the token goes in this input. The action
+          # also hands it to the script as GITHUB_TOKEN, which changelog-github needs.
+          github-token: ${{ steps.app-token.outputs.token }}
+          script: bun changeset version
+          pr-title: 'chore: version packages'
+          commit-message: 'chore: version packages'
+
+  publish:
+    name: Publish
+    needs: select-mode
+    if: needs.select-mode.outputs.mode == 'publish'
+    runs-on: ubuntu-latest
+    environment: npm
+    permissions:
+      # Tags and GitHub releases for what was published. GITHUB_TOKEN suffices:
+      # nothing needs to run on a tag push.
+      contents: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          persist-credentials: false
       - uses: ./.github/actions/bun-setup
         with:
           # No registry-url: that makes setup-node write an .npmrc _authToken line
@@ -44,17 +111,14 @@ jobs:
           # targets the right registry and authenticates purely via OIDC.
           # Node 24 bundles npm >= 11.5.1 (the Trusted Publishing minimum).
           node-version: '24'
-      - name: Create Release PR or Publish
-        id: changesets
-        uses: changesets/action@a45c4d594aa4e2c509dc14a9f2b3b67ba3780d0d  # v1.9.0
+      - name: Publish
+        uses: changesets/action/publish@ae32849d5ba541f9ae29e40e22a623bc13562f51  # v2.1.2
         with:
-          version: bun changeset version
-          # Build, then publish. No check or size step here: this workflow runs
-          # only after CI passed on this commit, and CI is where those gates live.
-          publish: bun run publish
-          title: 'chore: version packages'
-          commit: 'chore: version packages'
-        env:
           # No NPM_TOKEN/NODE_AUTH_TOKEN: npm authenticates via OIDC Trusted
           # Publishing (id-token: write above). A token here would override OIDC.
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # publish.ts writes each package it publishes to CHANGESETS_OUTPUT, which
+          # is how the action knows which tags and releases to create.
+          # Build, then publish. No check or size step here: this workflow runs
+          # only after CI passed on this commit, and CI is where those gates live,
+          # so the full check chain never reruns with an id-token in reach.
+          script: bun run publish

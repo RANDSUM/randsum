@@ -20,7 +20,7 @@
 
 import { join, resolve } from 'path'
 import { $ } from 'bun'
-import { mkdirSync, mkdtempSync, rmSync } from 'node:fs'
+import { appendFileSync, mkdirSync, mkdtempSync, rmSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 
 const ROOT = join(import.meta.dir, '..')
@@ -36,8 +36,14 @@ process.env['RANDSUM_PUBLISH_SCRIPT'] = '1'
  */
 const PUBLISH_ORDER: readonly string[] = ['packages/roller', 'packages/games', 'packages/mcp']
 
-async function getPublishablePackages(): Promise<{ name: string; dir: string }[]> {
-  const packages: { name: string; dir: string }[] = []
+interface PublishablePackage {
+  readonly name: string
+  readonly version: string
+  readonly dir: string
+}
+
+async function getPublishablePackages(): Promise<PublishablePackage[]> {
+  const packages: PublishablePackage[] = []
 
   for (const relDir of PUBLISH_ORDER) {
     const pkgPath = join(ROOT, relDir, 'package.json')
@@ -47,7 +53,7 @@ async function getPublishablePackages(): Promise<{ name: string; dir: string }[]
     }
     const pkg = (await pkgFile.json()) as { name: string; private?: boolean; version: string }
     if (!pkg.private) {
-      packages.push({ name: pkg.name, dir: join(ROOT, relDir) })
+      packages.push({ name: pkg.name, version: pkg.version, dir: join(ROOT, relDir) })
     }
   }
 
@@ -158,6 +164,22 @@ const packDir = packDirArg
   : mkdtempSync(join(tmpdir(), 'randsum-publish-'))
 mkdirSync(packDir, { recursive: true })
 
+/**
+ * Tell changesets/action which packages this run published, so it pushes a `name@version` tag
+ * and creates a GitHub release for each one. The action (v2) reads NDJSON `git-tag` events from
+ * the file named by CHANGESETS_OUTPUT, the format `changeset publish` itself writes. Without
+ * this the action creates neither, which is why no release exists after 2025-03 (audit
+ * rel-no-tags-releases). Outside the action CHANGESETS_OUTPUT is unset and this does nothing.
+ */
+function recordRelease(name: string, version: string): void {
+  const outputPath = process.env['CHANGESETS_OUTPUT']
+  if (!outputPath) {
+    return
+  }
+  const event = { type: 'git-tag', tag: `${name}@${version}`, packageName: name }
+  appendFileSync(outputPath, `${JSON.stringify(event)}\n`)
+}
+
 const packages = await getPublishablePackages()
 
 console.log(`\nPublishing ${packages.length} packages${dryRun ? ' (dry run)' : ''}:\n`)
@@ -169,7 +191,7 @@ console.log()
 const failed: string[] = []
 
 /* eslint-disable no-await-in-loop, no-console -- CLI script: sequential I/O by design, console output intentional */
-for (const { name, dir } of packages) {
+for (const { name, version, dir } of packages) {
   console.log(`--- ${name} ---`)
   try {
     const tgzPath = FLIP_SIDE_EFFECTS.has(name)
@@ -195,6 +217,9 @@ for (const { name, dir } of packages) {
 
     if (result.exitCode === 0) {
       console.log(`  ${dryRun ? 'would publish' : 'published'} ${name}`)
+      if (!dryRun) {
+        recordRelease(name, version)
+      }
     } else if (output.includes('You cannot publish over the previously published')) {
       console.log(`  skipped ${name} (version already published)`)
     } else {

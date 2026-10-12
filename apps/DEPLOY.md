@@ -490,7 +490,7 @@ application ID, not a secret.
 
 Publishing is **automated via changesets + npm OIDC Trusted Publishing** (`.github/workflows/publish.yml`):
 merging a changeset to `main` opens/updates a `chore: version packages` PR, and merging that PR
-publishes the changed packages. Under the hood `bun scripts/publish.ts` packs each package with
+publishes the changed packages and creates a `name@version` tag and GitHub release for each. Under the hood `bun scripts/publish.ts` packs each package with
 `bun pm pack` (resolving `workspace:~`) and publishes the tarball with `npm publish --provenance`,
 in order `@randsum/roller` → `@randsum/games` → `@randsum/mcp`. A local fallback is
 `bun scripts/publish.ts --otp=<CODE>`. See root `CLAUDE.md` for the full flow and the
