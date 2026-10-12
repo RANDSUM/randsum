@@ -40,8 +40,9 @@ The home page (`src/pages/index.astro`) is a custom landing page composed from
 
 ## Deployment
 
-Deployed automatically to Cloudflare Workers once CI is green on `main` (via
-`@astrojs/cloudflare`, from `.github/workflows/deploy-cloudflare.yml`).
+Deployed automatically to Cloudflare Workers once CI is green on `main` (static
+assets plus the `/api/roll` Worker in `worker/`, from
+`.github/workflows/deploy-cloudflare.yml`).
 
 ## More
 

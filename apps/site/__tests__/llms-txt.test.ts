@@ -7,8 +7,7 @@ import { curatedLlmsTxt, mergeLlmsTxt } from '../src/integrations/curated-llms-t
 
 const testDir = path.dirname(fileURLToPath(import.meta.url))
 const rootLlmsTxt = path.resolve(testDir, '../../../llms.txt')
-// The Cloudflare adapter puts static assets under dist/client/.
-const builtLlmsTxt = path.resolve(testDir, '../dist/client/llms.txt')
+const builtLlmsTxt = path.resolve(testDir, '../dist/llms.txt')
 
 const generated = '# Site Documentation\n\n- https://randsum.dev/roller/introduction/\n'
 

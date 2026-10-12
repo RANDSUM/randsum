@@ -31,7 +31,7 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "deploy": "wrangler deploy -c dist/server/wrangler.json",
+    "deploy": "wrangler deploy -c wrangler.jsonc",
     "astro": "astro",
     "test": "bun test",
     "typecheck": "astro check",
@@ -39,7 +39,6 @@
   },
   "devDependencies": {
     "@astrojs/check": "0.9.9",
-    "@astrojs/cloudflare": "14.2.1",
     "@astrojs/sitemap": "3.7.3",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",

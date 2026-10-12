@@ -23,7 +23,8 @@ route on the apex.
 
 > **Netlify has been removed from the repo entirely** — the adapter, both
 > `netlify.toml` files, and the `@astrojs/netlify` dependency. Nothing here
-> targets it, and the Astro build has exactly one adapter again. Removing it
+> targets it, and neither Astro build uses an adapter now: both sites are
+> `output: 'static'`, and `/api/roll` is a hand-written Worker. Removing Netlify
 > also dropped ~390 transitive packages and closed the `extract-zip` advisory
 > (GHSA-jmr9-qjv8-65gv), which was suppressed only because it was unreachable
 > any other way.
@@ -269,12 +270,10 @@ Sentry needs no decommissioning: it was never enabled in production.
 Both Astro sites are separate Workers, each with a custom domain, deployed from
 `.github/workflows/deploy-cloudflare.yml` once CI is green on `main`.
 
-- **site** — needs a Worker, not just assets: `src/pages/api/roll.ts` sets
-  `prerender = false`, so one route is server-rendered and everything else ships
-  as static assets. Built via `@astrojs/cloudflare` with
-  `prerenderEnvironment: 'node'`; deploy the **adapter-generated**
-  `apps/site/dist/server/wrangler.json`, not the hand-written
-  `apps/site/wrangler.jsonc` (that one is build input).
+- **site** — `output: 'static'`, no adapter, plus one hand-written Worker
+  (`apps/site/worker/index.ts`) for `/api/roll`. `assets.run_worker_first`
+  sends only `/api/*` to it; everything else is served from assets. Legacy
+  301s live in `apps/site/public/_redirects`. Deploy `apps/site/wrangler.jsonc`.
 - **rdn** — `output: 'static'`, no adapter. Deploy `apps/rdn/wrangler.jsonc`.
 - The trigger is `workflow_run` on CI: nothing deploys unless CI concluded
   `success` for a push to `main`, and the jobs check out the commit CI tested.
@@ -303,7 +302,7 @@ Merge to `main` — the deploy runs once CI is green. To deploy by hand:
 ```bash
 bun run --filter '@randsum/roller' build
 bun run --filter '@randsum/games' build
-DEPLOY_TARGET=cloudflare bun run site:build
+bun run site:build
 bun run --filter @randsum/site deploy
 
 bun run --filter @randsum/roller --filter @randsum/rdn build
@@ -372,8 +371,9 @@ reversible — rolling back does not delete newer versions.
   Assets hardcodes it and `html_handling` cannot change it. This is not a
   regression to chase: pages emit `<link rel="canonical">` and the sitemap uses
   the trailing-slash form, so the canonical URL is declared explicitly. The
-  site's own legacy redirects are still 301 — they come from Astro's route
-  manifest, a different mechanism.
+  site's own legacy redirects are still 301 — they come from
+  `apps/site/public/_redirects` (Workers Static Assets `_redirects` rules), a
+  different mechanism from the hardcoded trailing-slash 307.
 
 ---
 
