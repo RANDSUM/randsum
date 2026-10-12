@@ -57,8 +57,6 @@
     "fix:all": "biome check --write .",
     "site:build": "bun --filter @randsum/site build",
     "site:dev": "bun run --filter @randsum/site dev",
-    "rdn:build": "bun run --filter @randsum/rdn build",
-    "rdn:dev": "bun run --filter @randsum/rdn dev",
     "changeset": "bunx changeset",
     "version-packages": "bunx changeset version",
     "publish": "bun run build && bun scripts/publish.ts"

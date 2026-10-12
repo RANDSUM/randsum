@@ -124,11 +124,7 @@ export default defineConfig({
               },
               { label: 'Validation & Parsing', slug: 'notation/validation-and-parsing' },
               { label: 'API Reference', slug: 'notation/api-reference' },
-              {
-                label: 'Formal Specification',
-                link: 'https://notation.randsum.dev',
-                attrs: { target: '_blank' }
-              }
+              { label: 'Formal Specification', link: '/spec/' }
             ]
           },
           {

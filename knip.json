@@ -32,7 +32,6 @@
       "entry": ["src/worker/index.ts", "src/deploy-commands.ts"],
       "project": ["src/**/*.ts"]
     },
-    "apps/rdn": {},
     "apps/site": {}
   },
   "ignoreBinaries": ["skills-ref"],

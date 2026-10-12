@@ -24,8 +24,8 @@ Private app, deploys to Cloudflare Workers once CI is green on `main` via
   `<Font />` tags in `Head.astro`
 
 > **`typescript` is pinned to `6.0.3` here, deliberately — do NOT move it to `catalog:`.**
-> The rest of the workspace is on TypeScript 7.0.2 via the root `catalog`; this app and
-> `apps/rdn` are the only holdouts, and they are blocked upstream rather than overlooked.
+> The rest of the workspace is on TypeScript 7.0.2 via the root `catalog`; this app is the
+> only holdout, and it is blocked upstream rather than overlooked.
 > `@astrojs/check` declares `peerDependencies: { typescript: "^5.0.0 || ^6.0.0" }` as of its
 > latest release (0.9.10), and under TS 7 `astro check` dies before checking anything with
 > `Cannot read properties of undefined (reading 'fileExists')` in `@astrojs/language-server`'s
@@ -34,14 +34,42 @@ Private app, deploys to Cloudflare Workers once CI is green on `main` via
 
 ## Theme
 
-`src/styles/theme.css` is the only file that spells a colour, for this site
-and for `apps/rdn`, which `@import`s it. Each mode-dependent token is written
+`src/styles/theme.css` is the only file that spells a colour, for the
+Starlight pages and for `/spec`, whose `spec.css` `@import`s it. Each mode-dependent token is written
 once as `light-dark(light, dark)`; the page's `color-scheme`, which Starlight
 sets from `data-theme`, picks the arm. `custom.css` maps Starlight's
 `--sl-color-*` onto it, and a game's colour is always `--game-<id>`. Tint with
 `color-mix(in srgb, var(--token) N%, transparent)`. The `no-raw-color` Biome
 plugin fails hex in any other `.css` file, and `__tests__/theme.test.ts` does
 the same for Astro `<style>` blocks.
+
+## Notation Spec (`/spec`)
+
+The RANDSUM Dice Notation spec is served from this app at `/spec` but is
+**not** a Starlight page (ADR-015): `src/pages/spec/` are plain Astro pages
+that render `src/spec/SpecLayout.astro`, which has its own header, sidebar,
+scroll-spy and share actions in vanilla `<script>` blocks (ADR-017), and the
+cyan accent. Never import `StarlightPage` there, and keep `src/spec/spec.css`
+imported only by `SpecLayout`, since its resets are global to the page.
+
+- Versions live in `src/content/specs/` (the `specs` collection). `v0.9.0.md`
+  has ID `0.9.0` and is served at `/spec/v/0.9.0/`; `/spec/` renders the latest
+  inline, not as a redirect (ADR-016). Both name `/spec/v/<latest>/` as
+  canonical, and only that page opts into the Pagefind index.
+- `ModifierReference.astro` builds Appendix H from `@randsum/roller/docs`, so it
+  renders only on the latest version.
+- `/spec/llms.txt` and `/spec/llms-full.txt` are built from the same entry.
+- Code blocks go through Starlight's Expressive Code, which reads a few
+  `--sl-color-*` names; `spec.css` maps them onto the spec's tokens.
+- The theme script shares Starlight's `starlight-theme` key, so one choice
+  holds across the site.
+- Conformance vectors: `src/spec/conformance/vectors.ts` is the source of
+  truth (the roller's conformance test imports it). `bun run conformance:gen`
+  writes `public/conformance/v0.9.0.json`, served at `/conformance/v0.9.0.json`;
+  `conformance:check` (pre-push) fails on any diff.
+- The spec moved here from `notation.randsum.dev`, which now only 301s:
+  `/conformance/*` keeps its path, everything else maps to `/spec/*`. The
+  redirect is a Cloudflare rule, not code (`apps/DEPLOY.md`).
 
 ## Content Structure
 
@@ -118,4 +146,6 @@ bun run build      # Production build
 bun run preview    # Preview production build
 bun run typecheck  # astro check
 bun run check      # build + typecheck + test
+bun run conformance:gen    # Regenerate public/conformance/v0.9.0.json
+bun run conformance:check  # conformance:gen + fail on any diff
 ```

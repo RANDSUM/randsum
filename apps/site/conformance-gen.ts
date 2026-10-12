@@ -1,4 +1,4 @@
-import { CONFORMANCE_FILE } from './src/conformance/vectors'
+import { CONFORMANCE_FILE } from './src/spec/conformance/vectors'
 
 const STABLE_KEY_ORDER = [
   'id',

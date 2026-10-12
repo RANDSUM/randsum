@@ -1,11 +1,11 @@
 ---
 import { getCollection, render } from 'astro:content'
-import { isLatestVersion, getVersions } from '../../utils/versions'
-import SpecLayout from '../../layouts/SpecLayout.astro'
-import SpecContent from '../../components/SpecContent.astro'
-import SidebarNav from '../../components/SidebarNav.astro'
-import OnThisPage from '../../components/OnThisPage.astro'
-import ModifierReference from '../../components/ModifierReference.astro'
+import { isLatestVersion, getVersions } from '../../../spec/versions'
+import SpecLayout from '../../../spec/SpecLayout.astro'
+import SpecContent from '../../../spec/components/SpecContent.astro'
+import SidebarNav from '../../../spec/components/SidebarNav.astro'
+import OnThisPage from '../../../spec/components/OnThisPage.astro'
+import ModifierReference from '../../../spec/components/ModifierReference.astro'
 
 export async function getStaticPaths() {
   const entries = await getCollection('specs')
@@ -20,7 +20,6 @@ const { version } = Astro.params
 const { Content, headings } = await render(entry)
 const latest = await isLatestVersion(version)
 const allVersions = await getVersions()
-const specUrl = `https://notation.randsum.dev/v/${version}`
 ---
 
 <SpecLayout
@@ -29,7 +28,6 @@ const specUrl = `https://notation.randsum.dev/v/${version}`
   versions={allVersions}
   isLatest={latest}
   specMarkdown={entry.body ?? ''}
-  specUrl={specUrl}
   headings={headings}
 >
   <SidebarNav slot="sidebar" headings={headings} version={version} isLatest={latest} />
@@ -37,14 +35,15 @@ const specUrl = `https://notation.randsum.dev/v/${version}`
     {
       !latest && (
         <p style="margin-bottom: 1.5rem;">
-          <a href="/" style="color: var(--accent);">
+          <a href="/spec/" style="color: var(--accent);">
             &larr; Back to latest
           </a>
         </p>
       )
     }
     <Content />
-    <ModifierReference />
+    {/* Generated from today's roller, so it describes only the latest version. */}
+    {latest && <ModifierReference />}
   </SpecContent>
   <OnThisPage slot="aside" headings={headings} />
 </SpecLayout>

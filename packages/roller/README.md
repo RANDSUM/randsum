@@ -15,7 +15,7 @@
 
 A zero-dependency, TypeScript-first dice engine with native notation parsing,
 validation, tokenization, and a 19-modifier roll pipeline. ESM-only.
-Implements the [RANDSUM Dice Notation (RDN) specification](https://notation.randsum.dev).
+Implements the [RANDSUM Dice Notation (RDN) specification](https://randsum.dev/spec/).
 
 ## Installation
 
@@ -131,7 +131,7 @@ import {
 Modifiers run in a fixed priority order regardless of their position in the
 source string, but the tokenizer still requires syntactically valid ordering
 (e.g. `4d6R{<3}!`, not `4d6!R{<3}`). See the
-[RANDSUM Dice Notation Specification](https://notation.randsum.dev) for the
+[RANDSUM Dice Notation Specification](https://randsum.dev/spec/) for the
 complete reference, taxonomy, conformance levels, and modifier pipeline.
 
 All of these functions — `isDiceNotation`, `validateNotation`,

@@ -21,7 +21,6 @@ jobs:
       games: ${{ steps.filter.outputs.games }}
       mcp: ${{ steps.filter.outputs.mcp }}
       site: ${{ steps.filter.outputs.site }}
-      rdn: ${{ steps.filter.outputs.rdn }}
       skill: ${{ steps.filter.outputs.skill }}
       discord-bot: ${{ steps.filter.outputs.discord-bot }}
       changesets: ${{ steps.filter.outputs.changesets }}
@@ -70,12 +69,6 @@ jobs:
               # The site build prepends the repo-root llms.txt to dist/llms.txt.
               - 'llms.txt'
               - '.github/workflows/ci.yml'
-            rdn:
-              - 'apps/rdn/**'
-              # rdn's global.css @imports the site's theme file.
-              - 'apps/site/src/styles/theme.css'
-              - 'packages/roller/**'
-              - '.github/workflows/ci.yml'
             skill:
               - 'skills/**'
               - '.claude-plugin/**'
@@ -105,19 +98,18 @@ jobs:
             {"pkg":"games","coverage":"games","size":true},
             {"pkg":"mcp"},
             {"pkg":"discord-bot"},
-            {"pkg":"site","node":"22"},
-            {"pkg":"rdn","node":"22"}
+            {"pkg":"site","node":"22"}
           ]'
           changed='${{ toJSON(steps.filter.outputs) }}'
           include=$(jq -cn --argjson all "$all" --argjson changed "$changed" \
             '$all | map(select($changed[.pkg] == "true" or $changed.shared == "true"))')
           echo "matrix={\"include\":$include}" >> "$GITHUB_OUTPUT"
 
-  # The seven per-package jobs (roller, games, mcp, discord-bot, site, rdn,
-  # dice-ui) were near-identical, differing only in filter name, node version,
-  # and coverage flags. They are folded into one matrix,
-  # populated dynamically by the `changes` job so only changed packages get a
-  # leg. The `include` entries carry the per-package differences.
+  # The per-package jobs (roller, games, mcp, discord-bot, site) were
+  # near-identical, differing only in filter name, node version, and coverage
+  # flags. They are folded into one matrix, populated dynamically by the
+  # `changes` job so only changed packages get a leg. The `include` entries
+  # carry the per-package differences.
   package:
     name: ${{ matrix.pkg }}
     needs: changes
@@ -134,7 +126,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: ./.github/actions/bun-setup
         with:
-          # site/rdn pin node 22 so CI builds them on a fixed runtime rather
+          # site pins node 22 so CI builds it on a fixed runtime rather
           # than drifting with the runner default; other legs pass '',
           # which bun-setup treats as "skip node setup".
           node-version: ${{ matrix.node || '' }}
@@ -311,9 +303,9 @@ jobs:
     name: CI Success
     if: always()
     # `package` is the consolidated matrix job: its single `result` aggregates
-    # every leg (roller, games, mcp, discord-bot, site, rdn) — if
+    # every leg (roller, games, mcp, discord-bot, site) — if
     # any leg fails, the aggregate is `failure`, so listing it once still covers
-    # all six packages. `repo` runs the repo-wide gates, including the
+    # all five packages. `repo` runs the repo-wide gates, including the
     # `ci-aggregator` step that guards this very list.
     #
     # `changes` is listed even though nothing here reads its outputs: a failure in

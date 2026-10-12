@@ -2,7 +2,7 @@
 
 ## Status
 
-Accepted
+Accepted (amended: `apps/rdn` moved into `apps/site/src/spec/`, ADR-015 addendum. The decision holds for the `/spec` pages, which still ship no framework runtime; the "only `astro` dependency" consequence below no longer applies, since `apps/site` carries React for its own islands)
 
 ## Context
 

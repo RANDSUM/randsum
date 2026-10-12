@@ -3,7 +3,7 @@
 Discord bot for rolling dice using RANDSUM game mechanics. Runs as a Cloudflare Worker on
 Discord's HTTP interactions, at `bot.randsum.dev`.
 
-Powered by `@randsum/roller` — **[RDN v0.9.0 Level 3 (Extended) Conformant](https://notation.randsum.dev)**
+Powered by `@randsum/roller` — **[RDN v0.9.0 Level 3 (Extended) Conformant](https://randsum.dev/spec/)**
 
 ## Features
 

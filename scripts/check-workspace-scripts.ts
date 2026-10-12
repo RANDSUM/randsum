@@ -26,10 +26,7 @@
  * - every published package declares the same `engines` block, and private
  *   workspaces declare none (the root manifest owns the dev toolchain floor);
  * - every LICENSE under packages/ or apps/ is byte-identical to the root LICENSE,
- *   and every published package ships one;
- * - apps/site and apps/rdn pin identical astro, @astrojs/check,
- *   @astrojs/sitemap and typescript specs (a guard rather than a named catalog:
- *   no Dependabot run has ever bumped a catalog entry).
+ *   and every published package ships one.
  */
 
 import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs'
@@ -128,7 +125,7 @@ const compatProblem =
       "\n\nSet them to one date, no newer than the pinned wrangler's workerd supports."
     : undefined
 
-// Config parity: engines, LICENSE, and the hand-copied Astro pins.
+// Config parity: engines and LICENSE.
 const parityProblems: string[] = []
 const rel = (path: string): string => relative(ROOT, path)
 
@@ -171,27 +168,6 @@ if (licenseProblems.length > 0) {
   )
 }
 
-const ASTRO_PINNED = ['astro', '@astrojs/check', '@astrojs/sitemap', 'typescript'] as const
-const ASTRO_APPS = ['apps/site', 'apps/rdn'] as const
-const specsOf = (app: string): Record<string, string> => {
-  const found = manifests.find(({ dir }) => rel(dir) === `${app}/package.json`)
-  return { ...found?.manifest.dependencies, ...found?.manifest.devDependencies }
-}
-const astroDrift = ASTRO_PINNED.filter(
-  dep => new Set(ASTRO_APPS.map(app => specsOf(app)[dep])).size > 1
-)
-if (astroDrift.length > 0) {
-  parityProblems.push(
-    `${ASTRO_APPS.join(' and ')} must pin identical specs for ${ASTRO_PINNED.join(', ')}:\n` +
-      astroDrift
-        .map(
-          dep =>
-            `  ${dep}: ${ASTRO_APPS.map(app => `${app} ${specsOf(app)[dep] ?? 'missing'}`).join(', ')}`
-        )
-        .join('\n')
-  )
-}
-
 if (problems.length > 0) {
   console.error(
     'Workspace script guard failed. Every package must declare the standard set\n' +
@@ -214,5 +190,5 @@ if (parityProblems.length > 0) {
 }
 
 console.log(
-  'Workspace script guard passed: all packages declare the standard set, all Workers share one compatibility_date, and engines, LICENSE and Astro pins are in parity.'
+  'Workspace script guard passed: all packages declare the standard set, all Workers share one compatibility_date, and engines and LICENSE are in parity.'
 )

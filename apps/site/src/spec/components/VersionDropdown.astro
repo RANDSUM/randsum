@@ -41,7 +41,7 @@ const { currentVersion, allVersions, isLatest } = Astro.props
         .reverse()
         .map(v => {
           const isSelected = v === currentVersion
-          const href = v === allVersions[allVersions.length - 1] ? '/' : `/v/${v}/`
+          const href = v === allVersions[allVersions.length - 1] ? '/spec/' : `/spec/v/${v}/`
           return (
             <li>
               <a
