@@ -474,6 +474,37 @@ describe('notationToOptions', () => {
     })
   })
 
+  describe('repeated and overlapping tokens', () => {
+    test('4d6!L! keeps the explode when its tokens are split by another modifier', () => {
+      const [result] = notationToOptions('4d6!L!')
+
+      expect(result?.modifiers).toEqual({ explode: true, drop: { lowest: 1 } })
+    })
+
+    test('4d6!V{1=2}! keeps the explode around a replace', () => {
+      const [result] = notationToOptions('4d6!V{1=2}!')
+
+      expect(result?.modifiers).toEqual({ explode: true, replace: [{ from: 1, to: 2 }] })
+    })
+
+    test('keep-middle and drop-lowest combine in either order', () => {
+      const [kmFirst] = notationToOptions('5d6KmL')
+      const [lFirst] = notationToOptions('5d6LKm')
+
+      expect(kmFirst?.modifiers).toEqual({ drop: { lowest: 2, highest: 1 } })
+      expect(lFirst?.modifiers).toEqual(kmFirst?.modifiers)
+    })
+
+    test('keep-highest and keep-middle both apply', () => {
+      const [result] = notationToOptions('6d6KKm')
+
+      expect(result?.modifiers).toEqual({
+        keep: { highest: 1 },
+        drop: { lowest: 1, highest: 1 }
+      })
+    })
+  })
+
   describe('edge cases', () => {
     test('handles notation with no modifiers', () => {
       const [result] = notationToOptions('1d1')

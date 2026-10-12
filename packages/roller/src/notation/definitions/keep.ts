@@ -1,4 +1,4 @@
-import type { KeepOptions } from '../types'
+import type { KeepOptions, ModifierOptions } from '../types'
 import { type NotationSchema, defineNotationSchema } from '../schema'
 const keepMiddlePattern = /[Kk][Mm](\d+)?/
 const keepHighestPattern = /[Kk](?![LlMm])(\d+)?/
@@ -11,27 +11,24 @@ export const keepSchema: NotationSchema<KeepOptions> = defineNotationSchema<Keep
   pattern: /[Kk]([LlMm])?(\d+)?/,
 
   parse: notation => {
+    // Each form reads its first match, and the forms combine: `KKm` keeps the
+    // highest and the middle, rather than the first form found winning.
+    const result: Pick<ModifierOptions, 'drop' | 'keep'> = {}
+
     const middleMatch = keepMiddlePattern.exec(notation)
     if (middleMatch) {
       const count = middleMatch[1] ? Number(middleMatch[1]) : 1
-      return { drop: { lowest: count, highest: count } }
+      result.drop = { lowest: count, highest: count }
     }
 
     const keep: KeepOptions = {}
-
     const lowestMatch = keepLowestPattern.exec(notation)
-    if (lowestMatch) {
-      keep.lowest = lowestMatch[1] ? Number(lowestMatch[1]) : 1
-      return { keep }
-    }
-
+    if (lowestMatch) keep.lowest = lowestMatch[1] ? Number(lowestMatch[1]) : 1
     const highestMatch = keepHighestPattern.exec(notation)
-    if (highestMatch) {
-      keep.highest = highestMatch[1] ? Number(highestMatch[1]) : 1
-      return { keep }
-    }
+    if (highestMatch) keep.highest = highestMatch[1] ? Number(highestMatch[1]) : 1
+    if (lowestMatch || highestMatch) result.keep = keep
 
-    return {}
+    return result
   },
 
   toNotation: options => {

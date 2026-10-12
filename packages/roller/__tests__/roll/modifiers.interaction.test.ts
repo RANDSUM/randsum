@@ -13,6 +13,21 @@ describe('modifier interactions', () => {
     })
   })
 
+  describe('notation with one modifier split by another', () => {
+    test('4d6!L! explodes the dice and drops the lowest', () => {
+      const result = roll('4d6!L!', { randomFn: () => 0.99 })
+      const record = result.rolls[0]
+      expect(record?.notation).toBe('4d6L!')
+      expect(record?.initialRolls).toHaveLength(4)
+      expect(record?.rolls.length).toBeGreaterThan(4)
+    })
+
+    test('5d6KmL drops the lowest two and the highest one', () => {
+      const result = roll('5d6KmL')
+      expect(result.rolls[0]?.rolls).toHaveLength(2)
+    })
+  })
+
   describe('arithmetic modifier ordering', () => {
     test('multiply (*) applies before plus, multiplyTotal (**) applies last', () => {
       const result = roll({
