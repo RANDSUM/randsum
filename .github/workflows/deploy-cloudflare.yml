@@ -1,11 +1,10 @@
 # Deploy every Cloudflare surface once CI is green on main.
 #
-# Netlify deployed itself from its own git integration, which is why this repo
-# had no deploy job for years. Cloudflare has no equivalent — Workers Builds
-# exists, but its monorepo handling has a known flakiness report for workspace
-# dependency resolution and nothing authoritative for Bun, and this repo has
-# cross-package build ordering (roller -> games -> site) that CI already
-# sequences correctly. So deployment lives here, after the build is known-good.
+# Deploys live here rather than in Workers Builds, whose monorepo handling has
+# a flakiness report for workspace dependency resolution and nothing
+# authoritative for Bun, while this repo needs cross-package build ordering
+# (roller -> games -> site) that CI already sequences. Deployment runs only
+# after the build is known-good.
 #
 # "Known-good" is enforced, not assumed. The trigger is `workflow_run` on CI, as
 # publish.yml does it, and nothing deploys unless that CI run concluded

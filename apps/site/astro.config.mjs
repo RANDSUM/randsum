@@ -30,9 +30,6 @@ export default defineConfig({
       styles: ['normal']
     }
   ],
-  // `URL` and `DEPLOY_PRIME_URL` were Netlify's deploy-context variables, used
-  // so preview deploys emitted their own absolute URLs. Cloudflare sets neither,
-  // so the fallback was the only branch that ever ran after the migration.
   site: 'https://randsum.dev',
   integrations: [
     sitemap(),

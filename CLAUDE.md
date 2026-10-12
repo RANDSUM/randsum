@@ -177,72 +177,25 @@ Key syntax: `NdS` (basic), `+X`/`-X` (arithmetic), `L`/`H` (drop lowest/highest)
 
 ## Cloudflare Skills
 
-`.claude/skills/` carries three of Cloudflare's published agent skills, checked
-in rather than installed. Cloning the repo is the whole setup — there is nothing
-to run and nothing to remember, and every contributor and CI see the same
-guidance.
-
-| Skill | Why it is here |
-| --- | --- |
-| `workers-best-practices` | The site and the Discord bot Worker run on Workers |
-| `wrangler` | Deploys run `wrangler deploy`; three configs are checked in: the site, the bot, and the `notation.randsum.dev` redirect (`apps/site/wrangler.notation.jsonc`) |
-| `web-perf` | randsum.dev is a public docs site |
-
-**Project scope on purpose.** `wrangler --install-skills` writes to the *global*
-agent path, which applies Cloudflare guidance to every repo on the machine
-including ones with no Cloudflare in them.
-
-**A deliberate subset.** Cloudflare publishes thirteen. The big one —
-`cloudflare`, the whole-platform reference — is **1.9 MB across ~285 files**
-against 68 KB for all three above combined, and documents Queues, D1, R2, AI and
-Zero Trust, none of which this repo uses. A skill list is context every session
-pays for whether or not it is used, so each entry earns its place by use.
-`scripts/sync-cloudflare-skills.ts` records the reasoning for every skill kept
-and every one rejected.
+`.claude/skills/` vendors two of Cloudflare's published agent skills,
+`workers-best-practices` and `wrangler`. `scripts/sync-cloudflare-skills.ts`
+records why each is kept and why the others are not.
 
 ```bash
 bun run skills:sync   # re-vendor at the pinned COMMIT; bump it to refresh
 ```
 
-Read the diff when you do. This pulls third-party prose that steers an agent
-directly into the repo, and a silent auto-update of that is not something to
-accept unread.
+Read the diff when you do: it is third-party prose that steers an agent.
 
 ## MCP Servers
 
-`.mcp.json` (project-scoped, committed) declares the official MCP servers for
-this repo's deploy/host stack. Each maps to a real workspace target:
+`.mcp.json` declares these. Run `/mcp` to authorize or check them.
 
-| Server                     | Transport | Backs                                     | Auth                            |
-| -------------------------- | --------- | ----------------------------------------- | ------------------------------- |
-| `cloudflare-bindings`      | http      | Workers, KV, D1 for the site and bot      | OAuth — run `/mcp`              |
-| `cloudflare-observability` | http      | Workers logs and analytics                | OAuth — run `/mcp`              |
-| `github`                   | http      | repo host (issues, PRs, releases)         | 1Password PAT (`headersHelper`) |
+| Server                     | Backs                             | Auth                                       |
+| -------------------------- | --------------------------------- | ------------------------------------------ |
+| `cloudflare-observability` | Workers logs and analytics        | OAuth                                      |
+| `github`                   | repo host (issues, PRs, releases) | PAT via `scripts/mcp-1password-headers.sh` |
 
-**`netlify` and `render` were both removed**, along with the platforms
-themselves. Netlify went first — the adapter, both `netlify.toml` files, and the
-dependency. Render followed once the bot had settled on Cloudflare: `render.yaml`
-and the Node gateway process it started are gone from the repo. Every deploy
-target left is Cloudflare or npm.
-
-Cloudflare's own MCP servers authenticate by OAuth rather than a bearer token,
-so they need no `headersHelper` and no vault item — run `/mcp` once to
-authorize. A third server, `docs.mcp.cloudflare.com`, is deliberately **not**
-declared: the vendored skills in `.claude/skills/` already cover platform
-guidance, and a tool surface every session pays for should earn its place.
-
-Secrets are **never** committed. The `github` (http) server resolves its
-fine-grained PAT at connect time via `scripts/mcp-1password-headers.sh`,
-wired through each server's `headersHelper`. Claude Code runs that script outside
-the bash sandbox, so it can read the token from the 1Password `claude-agent`
-vault (service-account token in the macOS keychain) — the same convention as the
-Spacebase MCP. The script expects these vault items:
-
-```
-op://claude-agent/claude-git-pat/credential   # github
-```
-
-An already-exported env var wins over `op`, so CI / fresh checkouts without
-1Password can still authenticate by exporting `GITHUB_PAT` before launch.
-
-Run `/mcp` in Claude Code to check connection status.
+The `github` helper takes `GITHUB_PAT` if exported, otherwise reads
+`op://claude-agent/claude-git-pat/credential`. With neither it exits 1, and
+`/mcp` shows `github` as failed rather than connected with an empty token.
