@@ -14,6 +14,8 @@ and then crash or return a wrong total now behaves the same as its options form.
   `!p`, `!s{}`, `!i`, `!r`, `W`) is now a parse error on `dF`, `zN` and
   `d{...}`, whose faces are not 1..N. Before, these crashed. Use a condition
   instead, as in `4dF!{>0}`.
+- A reroll value is checked against the die's own faces, so `z6R{0}`,
+  `dF.2R{0}` and `3d{2,4,6}R{6}` roll, and `z6R{9}` throws `ModifierError`.
 - Notation strings now get the same modifier validation as options objects.
   `roll('1d6L')` and `roll('4d6L4')` used to return a total of 0 and
   `roll('3d6K5')` quietly kept all three dice. Each now throws `ModifierError`.

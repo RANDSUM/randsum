@@ -88,6 +88,32 @@ describe('modifiers are validated on the notation path', () => {
   })
 })
 
+describe('reroll values are checked against the die faces', () => {
+  // The first draw lands on the named face; every later draw uses `rest`.
+  test.each([
+    ['z6R{0}', 0, 0.999, 0, 5],
+    ['dF.2R{0}', 0.5, 0.999, 0, 2],
+    ['3d{2,4,6}R{6}', 0.999, 0, 6, 2],
+    ['3d{2,4,6}ro{6}', 0.999, 0, 6, 2]
+  ])('roll("%s") rerolls a face outside [1..N]', (notation, first, rest, face, replacement) => {
+    expect(isDiceNotation(notation)).toBe(true)
+    expect(validateNotation(notation).valid).toBe(true)
+    const values = [first]
+    const result = roll(n(notation), { randomFn: () => values.shift() ?? rest })
+    expect(result.rolls[0]?.initialRolls[0]).toBe(face)
+    expect(result.rolls[0]?.rolls[0]).toBe(replacement)
+  })
+
+  test.each([
+    'z6R{9}',
+    'z6R{6}',
+    'dFR{2}',
+    '3d{2,4,6}R{1}'
+  ])('roll("%s") throws: the value is not a face of the die', notation => {
+    expect(() => roll(n(notation))).toThrow(ModifierError)
+  })
+})
+
 describe('zero divisors', () => {
   test.each(['2d6//0', '2d6%0', '1d6//00'])('"%s" is not notation', notation => {
     expect(isDiceNotation(notation)).toBe(false)

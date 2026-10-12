@@ -54,16 +54,15 @@ export const rerollModifier: ModifierDefinition<RerollOptions> = {
     return { rolls: result, replacements }
   },
 
-  validate: (options, { sides }) => {
-    if (options.exact) {
-      for (const value of options.exact) {
-        if (value < 1 || value > sides) {
-          throw new ModifierError(
-            'reroll',
-            `Reroll value ${value} is outside valid range [1, ${sides}]`,
-            { path: 'modifiers.reroll.exact', value }
-          )
-        }
+  validate: (options, { sides, faces }) => {
+    for (const value of options.exact ?? []) {
+      const onDie = faces ? faces.includes(value) : value >= 1 && value <= sides
+      if (!onDie) {
+        const range = faces ? `{${faces.join(',')}}` : `[1, ${sides}]`
+        throw new ModifierError('reroll', `Reroll value ${value} is outside valid range ${range}`, {
+          path: 'modifiers.reroll.exact',
+          value
+        })
       }
     }
 

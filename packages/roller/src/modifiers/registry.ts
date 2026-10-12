@@ -1,7 +1,8 @@
-import type { ModifierLog, ModifierOptions, RequiredNumericRollParameters } from '../types'
+import type { ModifierLog, ModifierOptions } from '../types'
 import type {
   ModifierContext,
   ModifierDefinition,
+  ModifierValidationContext,
   RegistryProcessResult,
   TotalTransformer
 } from './schema'
@@ -124,7 +125,7 @@ export function applyAllModifiers(
  */
 export function validateModifiers(
   modifiers: ModifierOptions,
-  rollContext: RequiredNumericRollParameters
+  rollContext: ModifierValidationContext
 ): void {
   for (const modifier of RANDSUM_MODIFIERS) {
     const options = modifiers[modifier.name]

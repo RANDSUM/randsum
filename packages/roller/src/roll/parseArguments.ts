@@ -160,15 +160,20 @@ function optionsToParams<T>(
   const suppliedKey = 'key' in options ? options.key : undefined
   const key = suppliedKey ?? keyFor(position, index)
 
-  validateModifiers(options.modifiers ?? {}, {
-    sides: optionsToSidesFaces(options).sides,
-    quantity: options.quantity ?? 1
-  })
-
-  return (
-    specialOptionsToParams<T>(options as ParsedNotationOptions, argument, key) ??
-    genericOptionsToParams<T>(options, argument, key, index)
+  // A special die resolves its faces (dF, zN, d{...}) before validation; a
+  // standard pool must be validated before rendering, which rejects bad values.
+  const special = specialOptionsToParams<T>(options as ParsedNotationOptions, argument, key)
+  validateModifiers(
+    options.modifiers ?? {},
+    special
+      ? {
+          sides: special.sides,
+          quantity: special.quantity,
+          ...(special.numericFaces ? { faces: special.numericFaces } : {})
+        }
+      : { sides: optionsToSidesFaces(options).sides, quantity: options.quantity ?? 1 }
   )
+  return special ?? genericOptionsToParams<T>(options, argument, key, index)
 }
 
 function genericOptionsToParams<T>(
