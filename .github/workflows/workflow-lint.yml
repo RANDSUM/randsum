@@ -4,15 +4,18 @@ name: Workflow Lint
 # Not a required check / not wired into the CI Success gate — it's an advisory
 # hardening pass. actionlint validates workflow syntax + shellcheck's the `run:`
 # scripts; zizmor audits for CI security smells. Both actions are SHA-pinned like
-# every other action in this repo.
+# every other action in this repo. `lefthook validate` checks lefthook.yml against
+# its schema: an invalid key there is silently ignored, not rejected.
 on:
   push:
     branches: [main]
     paths:
       - '.github/workflows/**'
+      - 'lefthook.yml'
   pull_request:
     paths:
       - '.github/workflows/**'
+      - 'lefthook.yml'
 
 permissions:
   contents: read
@@ -45,3 +48,11 @@ jobs:
           # would collide with it.
           advanced-security: false
           annotations: true
+
+  lefthook:
+    name: lefthook validate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+      - uses: ./.github/actions/bun-setup
+      - run: bunx lefthook validate
