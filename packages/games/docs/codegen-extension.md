@@ -659,5 +659,5 @@ a new one in the same style.
 9.  [ ] If shipping a game that uses the feature: add the spec, run
         `bun run --filter @randsum/games gen`, commit the generated file,
         add `__tests__/<shortcode>.test.ts` and `.property.test.ts`.
-10. [ ] Run `bun run check:all` from the repo root. `gen:check` runs
+10. [ ] Run `bun run check` from the repo root. `gen:check` runs
         inside it — stale generated files block the commit.

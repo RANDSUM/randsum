@@ -14,7 +14,7 @@ Thanks for your interest in contributing! This guide covers everything you need 
 git clone https://github.com/RANDSUM/randsum.git
 cd randsum
 bun install
-bun run check:all  # Verify everything works
+bun run check      # Verify everything works
 ```
 
 ## Project Structure
@@ -60,7 +60,7 @@ Run `bun run fix:all` to auto-fix lint and format issues.
 
 1. Branch from `main`
 2. Make focused changes with tests
-3. Run `bun run check:all` before pushing
+3. Run `bun run check` before pushing
 4. Use conventional commit messages (`feat:`, `fix:`, `docs:`, `chore:`, `test:`, `refactor:`)
 5. Open a PR with a clear description of what and why
 

@@ -34,7 +34,6 @@
   },
   "scripts": {
     "prepare": "[ -z \"$CI\" ] && [ -d .git ] && (git config --unset-all --local core.hooksPath 2>/dev/null; lefthook install) || true",
-    "help": "bun scripts/help.ts",
     "check:workspace-scripts": "bun scripts/check-workspace-scripts.ts",
     "skills:sync": "bun scripts/sync-cloudflare-skills.ts",
     "check:ci-aggregator": "bun scripts/check-ci-aggregator.ts",
