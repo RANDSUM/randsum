@@ -7,67 +7,17 @@ import sitemap from '@astrojs/sitemap'
 import starlight from '@astrojs/starlight'
 import starlightPageActions from 'starlight-page-actions'
 import starlightSidebarTopics from 'starlight-sidebar-topics'
-import cloudflare from '@astrojs/cloudflare'
 import react from '@astrojs/react'
 import { curatedLlmsTxt } from './src/integrations/curated-llms-txt'
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url))
 
 // https://astro.build/config
-const isDev = process.argv.includes('dev')
-
-function resolveAdapter() {
-  if (isDev) return undefined
-
-  return cloudflare({
-    // Prerender in Node, not in workerd — which is the adapter's default.
-    //
-    // The workerd sandbox refuses WebAssembly compilation ("Wasm code
-    // generation disallowed by embedder"), and Shiki's default Oniguruma
-    // highlighter is Wasm-backed, so every page carrying a code block fails to
-    // render. That is most of a docs site. The same sandbox also breaks the
-    // markdown pipeline's `require('path')`.
-    //
-    // Shiki can be pointed at a pure-JavaScript regex engine instead, and that
-    // also works — but it changes how code is highlighted, on a live site.
-    // Prerendering in Node changes nothing about the output at all: it is the
-    // same environment the Netlify build used, so the two targets produce
-    // identical pages. That equivalence is what made the cutover verifiable.
-    prerenderEnvironment: 'node'
-  })
-}
-
 export default defineConfig({
   base: '/',
-  // Legacy 301 redirects for old URL shapes.
-  //
-  // Keep these in Astro config rather than in any host-level redirect file.
-  // Astro emits them into `dist/_redirects` AND bakes them into the SSR
-  // function's own route manifest, so they resolve either way — which is what
-  // made them survive the move off Netlify without being touched.
-  //
-  // They also stay 301 under Cloudflare, verified against the live site. Worth
-  // stating because Workers Static Assets issues **307** for its own
-  // trailing-slash handling, and that status is not configurable — so "the site
-  // returns 307 sometimes" is expected and is a different mechanism from these.
-  redirects: {
-    // Old package URLs → new game/tool pages
-    '/packages/fifth/': { status: 301, destination: '/games/fifth/' },
-    '/packages/blades/': { status: 301, destination: '/games/blades/' },
-    '/packages/daggerheart/': { status: 301, destination: '/games/daggerheart/' },
-    '/packages/pbta/': { status: 301, destination: '/games/pbta/' },
-    '/packages/root-rpg/': { status: 301, destination: '/games/root-rpg/' },
-    '/packages/salvageunion/': { status: 301, destination: '/games/salvageunion/' },
-    '/packages/discord-bot/': { status: 301, destination: '/tools/discord-bot/' },
-    // Old docs URLs → new reference pages
-    '/docs/notation/': { status: 301, destination: '/notation/randsum-dice-notation/' },
-    '/docs/errors/': { status: 301, destination: '/roller/modifiers/' },
-    // Old getting-started URLs → new locations
-    '/getting-started/notation/': { status: 301, destination: '/roller/getting-started/' },
-    '/getting-started/game-packages/': { status: 301, destination: '/games/introduction/' },
-    // Retired @randsum/cli docs → its successor
-    '/tools/cli/': { status: 301, destination: '/tools/mcp/' }
-  },
+  // Legacy 301 redirects for old URL shapes live in `public/_redirects`, which
+  // Workers Static Assets serves as real 301s. Astro's own `redirects` option
+  // would only emit meta-refresh pages without an adapter.
   fonts: [
     {
       name: 'Inter',
@@ -246,6 +196,5 @@ export default defineConfig({
       }
     }
   },
-  output: 'static',
-  adapter: resolveAdapter()
+  output: 'static'
 })

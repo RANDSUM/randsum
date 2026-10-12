@@ -269,12 +269,10 @@ Sentry needs no decommissioning: it was never enabled in production.
 Both Astro sites are separate Workers, each with a custom domain, deployed from
 `.github/workflows/deploy-cloudflare.yml` once CI is green on `main`.
 
-- **site** — needs a Worker, not just assets: `src/pages/api/roll.ts` sets
-  `prerender = false`, so one route is server-rendered and everything else ships
-  as static assets. Built via `@astrojs/cloudflare` with
-  `prerenderEnvironment: 'node'`; deploy the **adapter-generated**
-  `apps/site/dist/server/wrangler.json`, not the hand-written
-  `apps/site/wrangler.jsonc` (that one is build input).
+- **site** — `output: 'static'`, no adapter, plus one hand-written Worker
+  (`apps/site/worker/index.ts`) for `/api/roll`. `assets.run_worker_first`
+  sends only `/api/*` to it; everything else is served from assets. Legacy
+  301s live in `apps/site/public/_redirects`. Deploy `apps/site/wrangler.jsonc`.
 - **rdn** — `output: 'static'`, no adapter. Deploy `apps/rdn/wrangler.jsonc`.
 - The trigger is `workflow_run` on CI: nothing deploys unless CI concluded
   `success` for a push to `main`, and the jobs check out the commit CI tested.
@@ -303,7 +301,7 @@ Merge to `main` — the deploy runs once CI is green. To deploy by hand:
 ```bash
 bun run --filter '@randsum/roller' build
 bun run --filter '@randsum/games' build
-DEPLOY_TARGET=cloudflare bun run site:build
+bun run site:build
 bun run --filter @randsum/site deploy
 
 bun run --filter @randsum/roller --filter @randsum/rdn build

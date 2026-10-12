@@ -253,11 +253,9 @@ jobs:
       - name: Build
         run: bun run --filter '@randsum/site...' build
 
-      # The site's `deploy` script targets the adapter-GENERATED config, not
-      # apps/site/wrangler.jsonc. The hand-written one is build input (name,
-      # compat flags, assets policy); the adapter reads it and emits
-      # dist/server/wrangler.json with the resolved entrypoint and asset paths,
-      # which is the deployable artifact.
+      # The site's `deploy` script ships apps/site/wrangler.jsonc: static assets
+      # from dist plus the /api/roll Worker in apps/site/worker, which wrangler
+      # bundles itself, like the bot.
       - name: Deploy
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}

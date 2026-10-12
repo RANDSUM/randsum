@@ -9,7 +9,8 @@
   // No adapter is added on purpose. `@astrojs/cloudflare` exists to run
   // server-rendered routes, and this site has none; adding it would introduce a
   // Worker script, a `wrangler` peer dependency, and an Astro version floor for
-  // no behavioural gain. See apps/site for the case that genuinely needs one.
+  // no behavioural gain. apps/site serves its one dynamic route from a plain
+  // Worker instead of an adapter.
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "randsum-rdn",
   // Only matters once a Worker script exists; set now so adding one later does

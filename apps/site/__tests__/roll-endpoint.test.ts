@@ -5,7 +5,17 @@ import {
   USAGE_PAYLOAD,
   evaluateBody,
   evaluateNotation
-} from '../src/pages/api/roll'
+} from '../worker/roll'
+import worker from '../worker/index'
+
+const assets = {
+  fetch: (request: Request): Promise<Response> =>
+    Promise.resolve(new Response(`asset:${new URL(request.url).pathname}`, { status: 200 }))
+}
+
+function call(path: string, init?: RequestInit): Promise<Response> {
+  return worker.fetch(new Request(`https://randsum.dev${path}`, init), { ASSETS: assets })
+}
 
 describe('evaluateNotation', () => {
   test('rolls valid notation into a 200 result', () => {
@@ -86,14 +96,12 @@ describe('evaluateBody', () => {
   })
 })
 
-describe('POST handler', () => {
-  test('returns JSON with CORS headers for a valid roll', async () => {
-    const { POST } = await import('../src/pages/api/roll')
-    const request = new Request('https://randsum.dev/api/roll', {
+describe('worker', () => {
+  test('POST returns JSON with CORS headers for a valid roll', async () => {
+    const response = await call('/api/roll', {
       method: 'POST',
       body: JSON.stringify({ notation: '1d20' })
     })
-    const response = await POST({ request } as Parameters<typeof POST>[0])
     expect(response.status).toBe(200)
     expect(response.headers.get('Content-Type')).toBe('application/json')
     expect(response.headers.get('Access-Control-Allow-Origin')).toBe('*')
@@ -101,6 +109,27 @@ describe('POST handler', () => {
     expect(json.notation).toBe('1d20')
     expect(json.total).toBeGreaterThanOrEqual(1)
     expect(json.total).toBeLessThanOrEqual(20)
+  })
+
+  test('GET returns the usage payload, with or without a trailing slash', async () => {
+    const response = await call('/api/roll/')
+    expect(response.status).toBe(200)
+    expect(await response.json()).toEqual(JSON.parse(JSON.stringify(USAGE_PAYLOAD)))
+  })
+
+  test('OPTIONS answers the CORS preflight', async () => {
+    const response = await call('/api/roll', { method: 'OPTIONS' })
+    expect(response.status).toBe(204)
+    expect(response.headers.get('Access-Control-Allow-Methods')).toContain('POST')
+  })
+
+  test('unsupported methods get a 405', async () => {
+    const response = await call('/api/roll', { method: 'DELETE' })
+    expect(response.status).toBe(405)
+  })
+
+  test('every other path is served from the assets binding', async () => {
+    expect(await (await call('/api/other')).text()).toBe('asset:/api/other')
   })
 })
 

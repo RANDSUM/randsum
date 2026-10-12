@@ -8,9 +8,12 @@ Private app, deploys to Cloudflare Workers once CI is green on `main` via
 
 ## Tech Stack
 
-- **Astro** — static site framework, built through `@astrojs/cloudflare`.
-  `output` is `static`; only `src/pages/api/roll.ts` opts out with
-  `prerender = false`, which is why this site needs a Worker at all.
+- **Astro** — static site framework, `output: 'static'` with no adapter.
+  `/api/roll` is a plain Worker in `worker/` (`index.ts` routes, `roll.ts`
+  evaluates); `wrangler.jsonc` sends only `/api/*` to it via
+  `run_worker_first`. Legacy 301s live in `public/_redirects`, not Astro's
+  `redirects` option. Run the Worker locally with
+  `bun run build && bunx wrangler@4 dev -c wrangler.jsonc`.
 - **`@astrojs/starlight` 0.40.0** — docs framework (sidebar, search, routing)
   - `starlight-sidebar-topics` — top-level topic grouping in the sidebar
   - `starlight-page-actions` — per-page action links

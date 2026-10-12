@@ -15,3 +15,8 @@
 /schemas/*
   Content-Type: application/json; charset=utf-8
   Access-Control-Allow-Origin: *
+
+# Astro fingerprints every file under /_astro/, so it can be cached forever.
+# @astrojs/cloudflare used to inject this rule at build time.
+/_astro/*
+  Cache-Control: public, max-age=31536000, immutable

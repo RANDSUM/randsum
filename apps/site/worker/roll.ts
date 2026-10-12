@@ -1,8 +1,4 @@
-import type { APIRoute } from 'astro'
 import { isDiceNotation, roll, suggestNotationFix } from '@randsum/roller'
-
-// Deploy as an on-demand Worker route rather than a prerendered page.
-export const prerender = false
 
 // The roller rejects notation longer than 1000 characters, so anything past
 // that can never produce a valid roll — reject it before touching the parser.
@@ -148,11 +144,25 @@ function jsonResponse(body: unknown, status: number): Response {
   })
 }
 
-export const OPTIONS: APIRoute = () => new Response(null, { status: 204, headers: CORS_HEADERS })
-
-export const GET: APIRoute = () => jsonResponse(USAGE_PAYLOAD, 200)
-
-export const POST: APIRoute = async ({ request }) => {
-  const { status, body } = evaluateBody(await request.text())
-  return jsonResponse(body, status)
+/**
+ * The `/api/roll` route: OPTIONS answers the CORS preflight, GET (and HEAD)
+ * return the usage contract, POST evaluates a roll. Anything else is a 405.
+ */
+export async function handleRoll(request: Request): Promise<Response> {
+  switch (request.method) {
+    case 'OPTIONS':
+      return new Response(null, { status: 204, headers: CORS_HEADERS })
+    case 'GET':
+    case 'HEAD':
+      return jsonResponse(USAGE_PAYLOAD, 200)
+    case 'POST': {
+      const { status, body } = evaluateBody(await request.text())
+      return jsonResponse(body, status)
+    }
+    default:
+      return new Response(null, {
+        status: 405,
+        headers: { Allow: 'GET, HEAD, POST, OPTIONS', ...CORS_HEADERS }
+      })
+  }
 }
