@@ -2,8 +2,9 @@
 
 ## Status
 
-Superseded by an interactive Expo app (`apps/expo`), which has since been
-removed from the monorepo. Designed, never built.
+Superseded. The playground was built as `apps/playground/` in #1014 and deleted in
+`793ff71b` when the Expo app (#1021) took over its role; that app was removed in #1121.
+Both were tried and removed: do not resurrect either.
 
 ## Context
 
@@ -21,19 +22,18 @@ Plan the playground as a private Astro workspace package at `apps/playground/`
 `playground.randsum.dev`, excluded from the publish-oriented root build and from
 `check:all`.
 
-**This plan was never implemented.** No `apps/playground/` directory, no
-`@randsum/playground` package, no separate Netlify site, and no
-`playground.randsum.dev` deployment were ever created. The interactive dice app
-effort instead moved to an `apps/expo/` prototype, which has since been removed
-from the monorepo. The detailed `package.json`, `astro.config`,
+`apps/playground/` was built in #1014, served from a Netlify project at
+`playground.randsum.dev`, and deleted in `793ff71b` in favour of an `apps/expo/`
+prototype, which has since been removed from the monorepo. The Netlify project and
+the DNS name were retired in the 2026-08-18 Cloudflare migration. The detailed `package.json`, `astro.config`,
 `netlify.toml`, DNS/CNAME setup, and root-script wiring recorded in earlier drafts
-of this ADR describe infrastructure that does not exist and have been removed; the
+of this ADR describe infrastructure that no longer exists and have been removed; the
 intent above is kept only as a historical record.
 
 ## Consequences
 
-- There is no playground subdomain, Netlify site, or workspace package to operate
-  or maintain — the operational surface this ADR weighed never materialized.
+- There is no playground subdomain, Netlify site, or workspace package left to
+  operate or maintain.
 - The reasoning about deployment isolation and build ordering may inform any
   future interactive app, but the Astro/Netlify specifics did not apply to the
   Expo/EAS target that superseded this plan and has since been removed.

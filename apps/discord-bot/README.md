@@ -182,7 +182,7 @@ bun run --filter @randsum/discord-bot deploy
 > **The deploy job also registers commands** when `src/commands/**` changed, after the Worker
 > deploy. A by-hand `deploy` does not — run `bun run deploy-commands` after it.
 
-Full triage, rollback, and DR procedures: [`apps/DEPLOY.md`](../DEPLOY.md).
+Full triage, rollback, and DR procedures: [`docs/operations.md`](../../docs/operations.md).
 
 ## Environment Variables
 

@@ -1,4 +1,4 @@
-import { CONFORMANCE_FILE } from './src/spec/conformance/vectors'
+import { CONFORMANCE_FILE } from '../../packages/roller/spec/vectors'
 
 const STABLE_KEY_ORDER = [
   'id',

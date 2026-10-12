@@ -104,7 +104,7 @@ there.
 ## Deployment
 
 `.github/workflows/deploy-cloudflare.yml` deploys `apps/discord-bot/wrangler.jsonc` once CI is
-green on `main`. Operational detail — triage, rollback, DR — lives in `apps/DEPLOY.md`.
+green on `main`. Operational detail — triage, rollback, DR — lives in `docs/operations.md`.
 
 - `bot.randsum.dev` is declared in `routes` as a `custom_domain`, so a deploy cannot detach the
   hostname Discord calls. Discord stores an absolute URL and never rediscovers it.

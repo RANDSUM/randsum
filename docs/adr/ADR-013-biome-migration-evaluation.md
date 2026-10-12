@@ -2,7 +2,8 @@
 
 ## Status
 
-Accepted (deferred migration)
+Superseded: Biome adopted in #1165 (`34b3d1ed`), which replaced ESLint and Prettier. The
+evaluation below is kept as the record of why the migration was first deferred.
 
 ## Date
 

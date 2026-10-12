@@ -43,7 +43,7 @@ The implementation contract:
 - Non-latest versions display a banner (`VersionBanner.astro`): "You are viewing an older version of this specification. [View latest]"
 - `src/pages/llms.txt.ts` serves a brief description and a link to the latest spec, and `src/pages/llms-full.txt.ts` serves the latest spec's Markdown body for LLM consumers. Both are static endpoints that read the `specs` collection at build time. They replaced committed copies under `public/`, whose full-text file fell months behind the spec it claimed to be.
 
-The conformance vectors are generated separately from the spec pages. `src/conformance/vectors.ts` defines `CONFORMANCE_FILE` (the canonical vector set), and the `conformance:gen` script (`conformance-gen.ts`) serializes it with a stable key order to `public/conformance/v0.9.0.json`, exercising `@randsum/roller` as a build-time dev dependency. The `conformance:check` script regenerates the JSON and runs `git diff --exit-code` on `public/conformance/v0.9.0.json` as a CI guard, keeping the published vectors in sync with their source.
+The conformance vectors are hand-authored and live with the engine they specify. `packages/roller/spec/vectors.ts` defines `CONFORMANCE_FILE` (the canonical vector set). The site's `conformance:gen` script (`conformance-gen.ts`) serializes it with a stable key order to `public/conformance/v0.9.0.json`; it does not run `@randsum/roller`. `conformance:check` regenerates it and runs `git diff --exit-code`, so the published JSON cannot drift from `vectors.ts`. The engine check is the roller test `packages/roller/__tests__/spec/conformance-vectors.test.ts`, which runs each vector through `roll()`.
 
 ## Consequences
 
@@ -65,5 +65,6 @@ The conformance vectors are generated separately from the spec pages. `src/confo
 - ADR-017: Vanilla TypeScript for Client Interactivity
 - `apps/site/src/content/specs/` — versioned spec storage (currently `v0.9.0.md`)
 - `apps/site/src/content.config.ts` — `specs` content collection and ID generation
-- `apps/site/conformance-gen.ts` — `conformance:gen` / `conformance:check` vector generator
+- `packages/roller/spec/vectors.ts` — the conformance vectors
+- `apps/site/conformance-gen.ts` — `conformance:gen` / `conformance:check` vector serializer
 - ADR-015 addendum — why the spec moved from `apps/rdn` into `apps/site`

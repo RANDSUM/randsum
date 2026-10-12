@@ -144,8 +144,7 @@ randsum.dev is out of scope here** — only the config + script are wired up.
 The documentation site (`@randsum/site`) is deployed to **Cloudflare Workers**, configured via
 `apps/site/wrangler.jsonc` and deployed automatically on push to main. For the full operational
 runbook — every app's host, deploy, restart, token rotation, and per-platform rollback/DR
-steps — see [`apps/DEPLOY.md`](apps/DEPLOY.md). Incident RCAs go in `runbooks/` (template at
-`runbooks/RCA-template.md`).
+steps — see [`docs/operations.md`](docs/operations.md).
 
 ---
 

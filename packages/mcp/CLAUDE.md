@@ -51,7 +51,3 @@ Smoke-test the live server by piping a JSON-RPC `initialize` message to `bun src
 Publish only via `bun scripts/publish.ts` (root `CLAUDE.md`). Never `npm publish` or a direct `bun publish`.
 `prepublishOnly` runs `bun run build`. `build` chmods `dist/index.js` so the `randsum-mcp` bin is
 executable.
-
-**First release note:** npm OIDC trusted publishing cannot create a brand-new scoped package that
-does not yet exist on the registry. The first `@randsum/mcp` publish likely needs one manual
-`bun scripts/publish.ts` run with an npm token / OTP; subsequent releases go through OIDC as usual.

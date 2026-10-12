@@ -63,15 +63,15 @@ imported only by `SpecLayout`, since its resets are global to the page.
   `--sl-color-*` names; `spec.css` maps them onto the spec's tokens.
 - The theme script shares Starlight's `starlight-theme` key, so one choice
   holds across the site.
-- Conformance vectors: `src/spec/conformance/vectors.ts` is the source of
-  truth (the roller's conformance test imports it). `bun run conformance:gen`
+- Conformance vectors: `packages/roller/spec/vectors.ts` is the source of
+  truth (beside the roller test that runs them). `bun run conformance:gen`
   writes `public/conformance/v0.9.0.json`, served at `/conformance/v0.9.0.json`;
   `conformance:check` (pre-push) fails on any diff.
 - The spec moved here from `notation.randsum.dev`, which now only 301s:
   `/conformance/*` keeps its path, everything else maps to `/spec/*`. The
   redirect is `worker/notation-redirect.ts`, deployed from
   `wrangler.notation.jsonc` to the old `randsum-rdn` Worker, which keeps the
-  hostname's Custom Domain (`apps/DEPLOY.md`).
+  hostname's Custom Domain (`docs/operations.md`).
 
 ## Content Structure
 

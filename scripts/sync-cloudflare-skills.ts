@@ -56,8 +56,8 @@ const WANTED: Readonly<Record<string, string>> = {
  *   Queues, D1, R2, AI and Zero Trust, none of which this repo uses. Checking it
  *   in would multiply the vendored payload by thirty for guidance about
  *   products we do not run.
- * - `durable-objects` — evaluated during the migration and explicitly rejected;
- *   see apps/DEPLOY.md on why a gateway-in-a-DO is not viable here.
+ * - `durable-objects` — evaluated during the migration and rejected: the bot
+ *   answers HTTP interactions and holds no gateway connection for a DO to keep.
  * - `agents-sdk`, `cloudflare-one*`, `sandbox-*`, `turnstile-spin`,
  *   `cloudflare-email-service` — no corresponding surface in this repo.
  * - `web-perf` — needs the chrome-devtools MCP server, which is not

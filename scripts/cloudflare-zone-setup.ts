@@ -37,7 +37,7 @@ const ACCOUNT_ID = 'f5f08e7e86ab8c183e381d4504bf8ba5'
  * Names to replicate, per domain. Deliberately explicit rather than discovered:
  * a zone cannot be enumerated without AXFR, so anything not listed here is
  * invisible to this script. Diff against the DNS provider's dashboard before
- * trusting it — see apps/DEPLOY.md.
+ * trusting it: a guessed-name list once missed playground.randsum.dev (#1231).
  */
 const SUBDOMAINS: Readonly<Record<string, readonly string[]>> = {
   'randsum.dev': ['@', 'www', 'notation'],

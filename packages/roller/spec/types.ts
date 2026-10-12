@@ -1,6 +1,7 @@
 /**
  * A single conformance test vector from the RANDSUM Dice Notation Specification.
- * Vectors are defined in vectors.ts and serialized to public/conformance/v<version>.json.
+ * Vectors are defined in vectors.ts; apps/site/conformance-gen.ts serializes them to the
+ * site's public/conformance/v<version>.json.
  *
  * Required fields are present on every vector.
  * Optional fields are present only when relevant to the vector's category.

@@ -26,8 +26,8 @@
 # Old docs URLs -> new reference pages
 /docs/notation/                    /notation/randsum-dice-notation/    301
 /docs/notation                     /notation/randsum-dice-notation/    301
-/docs/errors/                      /roller/modifiers/                  301
-/docs/errors                       /roller/modifiers/                  301
+/docs/errors/                      /roller/error-handling/             301
+/docs/errors                       /roller/error-handling/             301
 
 # Old getting-started URLs -> new locations
 /getting-started/notation/         /roller/getting-started/            301
