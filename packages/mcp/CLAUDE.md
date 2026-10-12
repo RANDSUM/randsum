@@ -15,7 +15,7 @@ Three tools, each backed by a pure, directly-testable handler:
 ## Structure
 
 - `src/index.ts` — Entry: creates the server, connects `StdioServerTransport`, `main()`
-- `src/server.ts` — `createServer()`: registers the three tools; owns the Zod input schemas
+- `src/server.ts` — `createServer()`: registers the three tools; owns the Zod input and output schemas
 - `src/tools/roll.ts` — `rollNotation()` pure handler
 - `src/tools/validate.ts` — `validateNotationInput()` pure handler
 - `src/tools/rollGame.ts` — `rollGame()` pure handler
