@@ -135,6 +135,9 @@ Interactive / shared components:
 - `src/integrations/curated-llms-txt.ts` — prepends the repo-root `llms.txt` to
   the page list `starlight-page-actions` writes to `dist/llms.txt`. Edit the
   root file; there is no `public/` copy. It must stay after `starlight()`.
+- `public/schemas/v1/randsum.json` — checked-in copy of
+  `packages/games/randsum.json`, served at the schema's `$id` by both `astro dev`
+  and the production build. `__tests__/schema-sync.test.ts` fails if it drifts.
 
 ## Package Data
 

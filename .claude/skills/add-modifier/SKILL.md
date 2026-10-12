@@ -131,7 +131,7 @@ Stop on any failure:
 
 ```bash
 bun run --filter @randsum/roller typecheck
-bun run lint
+bun run lint                                # Biome, whole repo
 bun run --filter @randsum/roller test
 bun run --filter @randsum/roller size       # tokenize-isolation gate
 bun run --filter @randsum/games gen:check   # codegen drift sanity
