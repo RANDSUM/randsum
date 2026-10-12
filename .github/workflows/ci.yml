@@ -37,6 +37,17 @@ jobs:
         id: filter
         with:
           filters: |
+            # Root config every package builds, lints or installs against. A PR
+            # touching only these (a catalog or lockfile bump) fans out to every
+            # package leg instead of producing an empty matrix.
+            shared:
+              - 'bun.lock'
+              - 'package.json'
+              - 'tsconfig*.json'
+              - 'biome.json'
+              - 'biome-plugins/**'
+              - 'bunfig.toml'
+              - '.github/actions/**'
             roller:
               - 'packages/roller/**'
               - '.github/workflows/ci.yml'
@@ -81,7 +92,8 @@ jobs:
       - name: Build package matrix
         id: set-matrix
         # Emit one include leg per CHANGED package. The full per-package config
-        # lives here; jq keeps only the legs whose paths-filter output is 'true'.
+        # lives here; jq keeps only the legs whose paths-filter output is 'true',
+        # or every leg when the shared root config changed.
         # An empty include => the `package` job produces zero legs and is skipped.
         run: |
           all='[
@@ -95,7 +107,7 @@ jobs:
           ]'
           changed='${{ toJSON(steps.filter.outputs) }}'
           include=$(jq -cn --argjson all "$all" --argjson changed "$changed" \
-            '$all | map(select($changed[.pkg] == "true"))')
+            '$all | map(select($changed[.pkg] == "true" or $changed.shared == "true"))')
           echo "matrix={\"include\":$include}" >> "$GITHUB_OUTPUT"
 
   # The seven per-package jobs (roller, games, mcp, discord-bot, site, rdn,
