@@ -99,6 +99,35 @@
     },
     { "includes": ["**/package.json"], "json": { "formatter": { "lineWidth": 120 } } },
     {
+      "includes": ["packages/games/src/**"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noRestrictedImports": {
+              "level": "error",
+              "options": {
+                "patterns": [
+                  {
+                    "group": [
+                      "@randsum/*/src",
+                      "@randsum/*/src/**",
+                      "@randsum/*/dist",
+                      "@randsum/*/dist/**"
+                    ],
+                    "message": "Import a published entry point (e.g. @randsum/roller/roll), never a package's src/ or dist/."
+                  },
+                  {
+                    "group": ["@randsum/games/*", "!@randsum/games/schema"],
+                    "message": "Games never depend on each other: import shared code from ./lib, not another game's @randsum/games/<game> subpath."
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
       "includes": [
         "packages/roller/src/notation/**/*.ts",
         "packages/roller/src/tokenize.ts",

@@ -17,7 +17,7 @@ Bun workspace monorepo for a dice rolling ecosystem targeting tabletop RPGs. All
 
 Game packages never depend on each other — only on `@randsum/roller`.
 
-Boundaries are enforced by tools, not review. Bun's isolated linker (`bunfig.toml`) lets a package import only what its own `package.json` declares, which holds the package DAG. Biome's `noImportCycles` rejects import cycles, and its `noRestrictedImports` rejects reach-ins to `@randsum/*/src` or `@randsum/*/dist`.
+Boundaries are enforced by tools, not review. Bun's isolated linker (`bunfig.toml`) lets a package import only what its own `package.json` declares, which holds the package DAG. Biome's `noImportCycles` rejects import cycles, and its `noRestrictedImports` rejects reach-ins to `@randsum/*/src` or `@randsum/*/dist`. Games are subpaths of one package, so the linker cannot keep them apart: a `biome.json` override bans `@randsum/games/<game>` imports (except `/schema`) in the hand-written `packages/games/src/**`, and `packages/games/__tests__/generated-imports.test.ts` holds each `*.generated.ts` entry to `@randsum/roller*`, `./types` and `./lib/**`. Biome excludes `*.generated.ts`, so `noImportCycles` does not see edges through them.
 
 ## Commands
 
