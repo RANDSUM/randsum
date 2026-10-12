@@ -37,7 +37,11 @@ The four surfaces are views of that one pass:
 - `validateNotation` = parse + describe, with `error.position` populated.
 - `notationToOptions` = AST → `ParsedNotationOptions[]` (`parse/poolToOptions.ts`),
   and throws a positioned `NotationParseError` on invalid input. Each modifier
-  token is parsed by the schema whose pattern matched it. Special-die semantics
+  token is parsed by the schema whose pattern matched it; tokens of one schema
+  are parsed together, space-separated so `!` and `!` never fuse into `!!`, and a
+  keep-middle `drop` is summed with an `L`/`H` drop rather than overwriting it.
+  `modifierCombination.property.test.ts` checks that no token's contribution is
+  lost and that order does not matter across schemas. Special-die semantics
   survive via the additive `dieType` / `fateVariant` / `customFaces` fields, and
   multi-pool splitting and the trailing `xN` run come from the AST.
 - `tokenize` = the positioned `scan` stream with descriptions attached (no
