@@ -21,9 +21,8 @@ bun run check:all  # Verify everything works
 
 - `packages/roller/` -- Core dice engine with built-in RDN notation parser (all packages depend on this)
 - `packages/games/` -- Game system packages (subpath exports per game)
-- `packages/dice-ui/` -- Private, web-only React UI components (consumed by `apps/site`)
 - `apps/discord-bot/` -- Private Discord bot, deployed as a Cloudflare Worker
-- `apps/site/` -- Documentation site at randsum.dev (Astro + Starlight)
+- `apps/site/` -- Documentation site at randsum.dev (Astro + Starlight); its web-only React dice UI lives in `src/components/dice-ui/`
 - `apps/rdn/` -- Notation spec site at notation.randsum.dev (Astro)
 
 ## Adding a New Game

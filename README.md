@@ -39,7 +39,6 @@ This repository contains multiple packages and applications for dice rolling and
 - **[@randsum/discord-bot](apps/discord-bot)** - Discord bot for dice rolling
 - **[@randsum/site](apps/site)** - Documentation site built with Astro + Starlight ([randsum.dev](https://randsum.dev))
 - **[@randsum/rdn](apps/rdn)** - RANDSUM Dice Notation specification site ([notation.randsum.dev](https://notation.randsum.dev))
-- **[@randsum/dice-ui](packages/dice-ui)** - Web-only React UI components (notation input, roll visualizer) consumed by the docs site
 
 ## 🚀 Quick Example
 

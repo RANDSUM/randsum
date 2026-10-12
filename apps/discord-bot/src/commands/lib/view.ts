@@ -121,7 +121,7 @@ export function renderFacts(facts: readonly ViewFact[]): string {
  * removed and added, and the final arithmetic.
  *
  * This is `@randsum/roller/trace` reaching Discord for the first time. The
- * engine has always produced this step model — `packages/dice-ui` renders it on
+ * engine has always produced this step model — the site's dice-ui components render it on
  * the website — while the bot hand-rolled `.join(', ')` and showed two parallel
  * plain lists for the reader to diff by eye.
  *

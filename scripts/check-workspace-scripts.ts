@@ -11,7 +11,8 @@
  * linting for months (audit Wave 3). The root aggregate scripts rely on that
  * skip-tolerance for optional scripts (e.g. `size`), so a package that simply
  * omits `test`/`typecheck` would drop out of every gate unnoticed. (Linting has
- * since moved to one root `biome ci .`, which reaches dice-ui by construction.)
+ * since moved to one root `biome ci .`, which reaches every file by construction,
+ * and dice-ui has since folded into apps/site.)
  *
  * Wiring: this guard runs at the head of the root `check` chain and as its own
  * CI job feeding the CI Success gate, so a newly-added package that forgets a
@@ -51,7 +52,7 @@ const REQUIRED_SCRIPTS = ['test', 'typecheck', 'check'] as const
 // itself at deploy time. It had a `build` only while it also shipped a Node
 // gateway process that bunup had to bundle for a host to run; with that gone
 // there is no artifact left to produce.
-const BUILD_EXEMPT = new Set<string>(['@randsum/dice-ui', '@randsum/discord-bot'])
+const BUILD_EXEMPT = new Set<string>(['@randsum/discord-bot'])
 
 const WORKSPACE_DIRS = ['packages', 'apps'] as const
 

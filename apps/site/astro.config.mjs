@@ -1,7 +1,5 @@
 // @ts-check
 import { defineConfig, fontProviders } from 'astro/config'
-import { resolve } from 'path'
-import { fileURLToPath } from 'url'
 
 import sitemap from '@astrojs/sitemap'
 import starlight from '@astrojs/starlight'
@@ -9,8 +7,6 @@ import starlightPageActions from 'starlight-page-actions'
 import starlightSidebarTopics from 'starlight-sidebar-topics'
 import react from '@astrojs/react'
 import { curatedLlmsTxt } from './src/integrations/curated-llms-txt'
-
-const __dirname = fileURLToPath(new URL('.', import.meta.url))
 
 // https://astro.build/config
 export default defineConfig({
@@ -189,12 +185,5 @@ export default defineConfig({
     react()
   ],
   prefetch: false,
-  vite: {
-    resolve: {
-      alias: {
-        '@randsum/dice-ui': resolve(__dirname, '../../packages/dice-ui/src/index.ts')
-      }
-    }
-  },
   output: 'static'
 })

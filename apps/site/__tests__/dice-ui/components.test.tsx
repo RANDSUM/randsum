@@ -2,10 +2,10 @@ import { afterEach, describe, expect, test } from 'bun:test'
 import { cleanup, fireEvent, render, screen } from '@testing-library/react'
 import { roll } from '@randsum/roller/roll'
 import { tokenize } from '@randsum/roller/tokenize'
-import { TokenOverlayInput } from '../src/TokenOverlayInput'
-import { NotationRoller } from '../src/NotationRoller'
-import { DieBadge, RollSteps } from '../src/RollSteps'
-import { getTheme, subscribeTheme, useTheme } from '../src/useTheme'
+import { TokenOverlayInput } from '../../src/components/dice-ui/TokenOverlayInput'
+import { NotationRoller } from '../../src/components/dice-ui/NotationRoller'
+import { DieBadge, RollSteps } from '../../src/components/dice-ui/RollSteps'
+import { getTheme, subscribeTheme, useTheme } from '../../src/components/dice-ui/useTheme'
 
 afterEach(() => {
   cleanup()

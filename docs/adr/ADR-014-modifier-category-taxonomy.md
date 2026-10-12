@@ -68,8 +68,8 @@ Stage 3 — Total Derivation (priority 80-100)
 
 Three separate consumers pattern-match on the current category string values:
 
-- `packages/dice-ui/src/TokenOverlayInput.tsx` — emits `du-token--${token.category}` CSS class names. Renaming any value silently produces an unhandled CSS class.
-- `packages/dice-ui/src/NotationRoller.tsx` — emits `du-nr-desc-chip--${token.category}` CSS class names. Same silent regression risk.
+- `apps/site/src/components/dice-ui/TokenOverlayInput.tsx` — emits `du-token--${token.category}` CSS class names. Renaming any value silently produces an unhandled CSS class.
+- `apps/site/src/components/dice-ui/NotationRoller.tsx` — emits `du-nr-desc-chip--${token.category}` CSS class names. Same silent regression risk.
 - `apps/playground/src/components/notationInputUtils.ts` — exhaustive switch over all seven current `TokenCategory` values. Renaming any value causes the switch's default branch to trigger for affected tokens.
 - `apps/playground/__tests__/NotationInput.test.ts` — hardcodes all current category string values. Renaming breaks tests.
 
