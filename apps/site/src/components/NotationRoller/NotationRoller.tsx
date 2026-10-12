@@ -11,42 +11,6 @@ export { RollResultDisplay as RollResult } from '@randsum/dice-ui'
 function SiteActions(notation: string): React.JSX.Element {
   return (
     <div className="nr-code-actions">
-      <a
-        className={`nr-code-action-btn${notation.length === 0 ? ' nr-code-action-btn--disabled' : ''}`}
-        href={
-          notation.length > 0
-            ? `https://randsum.io?notation=${encodeURIComponent(notation)}`
-            : undefined
-        }
-        target="_blank"
-        rel="noopener noreferrer"
-        title="Open in Playground"
-        aria-label="Open this notation in the RANDSUM Playground"
-        aria-disabled={notation.length === 0}
-        onClick={
-          notation.length === 0
-            ? e => {
-                e.preventDefault()
-              }
-            : undefined
-        }
-      >
-        <svg
-          width="12"
-          height="12"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          aria-hidden="true"
-        >
-          <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
-          <polyline points="15 3 21 3 21 9" />
-          <line x1="10" y1="14" x2="21" y2="3" />
-        </svg>
-      </a>
       <button
         className="nr-code-action-btn"
         title="Edit in StackBlitz"

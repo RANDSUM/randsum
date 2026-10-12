@@ -38,13 +38,12 @@
   text-decoration: none;
 }
 
-.nr-code-action-btn:hover:not(:disabled):not(.nr-code-action-btn--disabled) {
+.nr-code-action-btn:hover:not(:disabled) {
   border-color: rgba(168, 85, 247, 0.5);
   color: #a855f7;
 }
 
-.nr-code-action-btn:disabled,
-.nr-code-action-btn--disabled {
+.nr-code-action-btn:disabled {
   opacity: 0.3;
   cursor: default;
   pointer-events: none;

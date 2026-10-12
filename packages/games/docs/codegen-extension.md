@@ -44,7 +44,7 @@ The **same IR** is consumed by two sinks:
 1.  **Codegen** (`codegen.ts`) turns it into a `.ts` file with a typed
     `roll()` export. This is the production path that ships to consumers.
 2.  **Runtime** (`pipeline.ts`) interprets it directly, used by `loadSpec()`
-    for hot-loading specs in the CLI playground and tests.
+    for hot-loading specs at runtime and in tests.
 
 Both sinks must keep behaviour in sync. Whenever you extend the IR, touch
 both — codegen makes the feature real for published games, and pipeline
@@ -633,7 +633,7 @@ Add the schema branch first.
 
 **Don't forget the runtime pipeline.** `pipeline.ts` is easy to overlook
 because codegen ships generated code. But `loadSpec()` / `loadSpecAsync()`
-interpret the IR directly (for the hot-loading CLI/playground). A feature
+interpret the IR directly (for runtime hot-loading). A feature
 that only works in `.generated.ts` and not in the interpreter will silently
 drop out of `loadSpec()` without a test failure — until someone tries it.
 Always dual-implement.

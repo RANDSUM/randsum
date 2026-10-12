@@ -44,6 +44,5 @@ roll("2d6+3[fire]") // Annotations
 
 - Documentation: https://randsum.dev
 - RDN Specification: https://notation.randsum.dev
-- Playground: https://randsum.io (legacy app deployed outside this monorepo)
 - GitHub: https://github.com/RANDSUM/randsum
 - RDN Spec (full text): https://notation.randsum.dev/llms-full.txt

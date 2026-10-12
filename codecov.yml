@@ -21,8 +21,6 @@ coverage:
         threshold: 5%
         flags:
           - dice-ui
-  ignore:
-    - "apps/cli/src/tui/hooks/useCursorPosition.ts"
 
 # Per-package flags so each library's coverage is tracked independently and
 # carried forward when its files are untouched in a PR.

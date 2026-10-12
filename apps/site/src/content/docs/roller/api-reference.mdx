@@ -208,7 +208,7 @@ All modifier option types are exported from `@randsum/roller`.
 | Import path | Exports | When to use |
 |---|---|---|
 | `@randsum/roller` | Full API — all functions, types, and error classes | Default; use when bundle size is not a concern |
-| `@randsum/roller/roll` | `roll()` only | Game packages and the CLI use this to avoid bundling the full notation toolkit |
+| `@randsum/roller/roll` | `roll()` only | Game packages and the MCP server use this to avoid bundling the full notation toolkit |
 | `@randsum/roller/validate` | `validateNotation()`, `isDiceNotation()`, `notation()`, validation helpers | When you only need input validation without rolling |
 | `@randsum/roller/errors` | `RandsumError`, `ValidationError`, `ModifierError`, `RollError`, `NotationParseError`, `ERROR_CODES` | Error handling only, no roll logic |
 | `@randsum/roller/tokenize` | `tokenize()` | Low-level notation tokenization |
