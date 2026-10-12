@@ -1,9 +1,9 @@
 # osv-scanner configuration (audit item X8 / security R2).
 #
-# Dev/build-time transitive advisories are FORCE-RESOLVED via `overrides` in the
-# root package.json wherever a patched release is usable (yaml, esbuild, nanoid,
-# sharp, svgo, smol-toml, devalue, @opentelemetry/*, …), so they need no
-# suppression here — the scanner sees the patched versions directly. js-yaml is
+# Dev/build-time transitive advisories are cleared by keeping bun.lock fresh, so
+# the scanner sees patched versions directly and they need no suppression here.
+# Only sharp still needs a root `overrides` entry: miniflare pins an older one,
+# and a fresh resolve without the floor reports it at high. js-yaml is
 # the one that cannot be overridden: Bun collapses `overrides` to a single
 # version tree-wide, and changesets' read-yaml-file@1 still calls the 3.x
 # `safeLoad` while Astro takes 4.x, so bun.lock alone holds 3.15.2 and 4.3.2.

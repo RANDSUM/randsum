@@ -194,17 +194,6 @@ Used by `bun run deploy-commands` only — the Worker reads none of them.
 | `DISCORD_CLIENT_ID` | Yes      | Application ID from Discord Developer Portal          |
 | `DISCORD_GUILD_ID`  | No       | Guild ID for development (instant command deployment) |
 
-## Migrating from Robo.js
-
-This bot replaces the Robo.js-based version with vanilla discord.js:
-
-- **File-based routing** → Explicit command registration
-- **Robo CLI** → Standard Bun scripts
-- **Robo.js framework** → Vanilla discord.js
-- **Built-in features** → Manual implementation (more control)
-
-All command functionality has been preserved from the original Robo.js version.
-
 ## License
 
 MIT - See [LICENSE](../../LICENSE) for details
@@ -212,5 +201,4 @@ MIT - See [LICENSE](../../LICENSE) for details
 ## Links
 
 - [RANDSUM Monorepo](https://github.com/RANDSUM/randsum)
-- [Discord.js Documentation](https://discord.js.org)
 - [Discord Developer Portal](https://discord.com/developers/applications)

@@ -228,7 +228,8 @@ What was removed from the repo, all in one change:
 `scripts/check-workspace-scripts.ts` — wrangler compiles the Worker entry itself,
 so there is no artifact left to build. `utils/discord.ts` narrowed from the
 gateway barrel to `REST`/`Routes` plus two interaction types, which is all
-`deploy-commands.ts` still needs.
+`deploy-commands.ts` still needs. It was later deleted with discord.js itself:
+`deploy-commands.ts` now writes the registry with one `fetch` PUT.
 
 **Reverting to a gateway bot is now a git revert plus a new host**, not a
 config change. That is the deliberate trade: the fallback had no host, no
