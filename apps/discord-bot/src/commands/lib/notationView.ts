@@ -77,7 +77,7 @@ function buildCategoryContainer(
     .setAccentColor(parseHex(entries[0]?.color))
     .addTextDisplayComponents(
       new TextDisplayBuilder().setContent(
-        `## ${category}\n[notation.randsum.dev](https://notation.randsum.dev)`
+        `## ${category}\n[randsum.dev/spec](https://randsum.dev/spec/)`
       )
     )
     .addSeparatorComponents(

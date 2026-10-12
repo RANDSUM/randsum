@@ -218,7 +218,7 @@ To add a modifier:
 3. Add a `<mod>Docs` group to `src/docs/modifierDocData.ts` — one entry per
    notation surface — and add it to `MODIFIER_DOCS_BY_NAME` at its priority
    position (`modifierDocSync.test.ts` checks the order)
-4. Document the notation at https://notation.randsum.dev (`apps/rdn/`)
+4. Document the notation at https://randsum.dev/spec/ (`apps/site/src/content/specs/`)
 
 ### Tokenize isolation invariant
 

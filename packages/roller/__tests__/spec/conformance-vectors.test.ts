@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'bun:test'
 import { roll } from '../../src/roll'
 import { createQueueRandom } from '../../test-utils/src/queueRandom'
-import { CONFORMANCE_FILE } from '../../../../apps/rdn/src/conformance/vectors'
+import { CONFORMANCE_FILE } from '../../../../apps/site/src/spec/conformance/vectors'
 import type { DiceNotation } from '../../src/notation/types'
 
 /**

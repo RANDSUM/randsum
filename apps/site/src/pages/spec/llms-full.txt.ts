@@ -1,6 +1,6 @@
 import type { APIRoute } from 'astro'
 import { getCollection } from 'astro:content'
-import { getLatestVersion } from '../utils/versions'
+import { getLatestVersion } from '../../spec/versions'
 
 // The full text of the latest spec, built from the same collection entry the
 // site renders, so it cannot fall behind the spec the way a hand copy did.

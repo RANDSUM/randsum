@@ -217,7 +217,7 @@ describe('dispatchInteraction', () => {
     // so a missing menu would be a reference page with no way to change
     // category — working, but silently missing the entire interaction.
     const payload = JSON.stringify(response.data?.components)
-    expect(payload).toContain('notation.randsum.dev')
+    expect(payload).toContain('randsum.dev/spec/')
     expect(payload).toContain('notation-category')
   })
 
@@ -237,7 +237,7 @@ describe('dispatchInteraction', () => {
     // message carries it, and omitting it makes Discord read the container as a
     // malformed action row.
     expect(response.data?.flags).toBe(32768)
-    expect(JSON.stringify(response.data?.components)).toContain('notation.randsum.dev')
+    expect(JSON.stringify(response.data?.components)).toContain('randsum.dev/spec/')
   })
 
   test('an unrecognised category falls back rather than rendering empty', () => {

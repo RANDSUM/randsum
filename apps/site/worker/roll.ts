@@ -134,7 +134,7 @@ export const USAGE_PAYLOAD = {
   },
   example:
     'curl -X POST https://randsum.dev/api/roll -H "Content-Type: application/json" -d \'{"notation":"4d6L"}\'',
-  notation_reference: 'https://notation.randsum.dev'
+  notation_reference: 'https://randsum.dev/spec/'
 } as const
 
 function jsonResponse(body: unknown, status: number): Response {

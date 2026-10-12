@@ -3,11 +3,11 @@
  *
  * randsum.dev loads it first through Starlight's customCss, and custom.css maps
  * Starlight's --sl-color-* onto it. The dice UI in components/dice-ui/ reads it
- * directly. notation.randsum.dev (apps/rdn) @imports it by relative path and
- * aliases its own --bg/--surface/--text-* names to it.
+ * directly. The /spec pages' spec.css @imports it and aliases its own
+ * --bg/--surface/--text-* names to it.
  *
  * Every mode-dependent colour is written once as light-dark(light, dark). The
- * arm is picked by the element's color-scheme, which both sites set from
+ * arm is picked by the element's color-scheme, which every page sets from
  * <html data-theme>. Tints are color-mix(in srgb, var(--token) N%, transparent)
  * at the use site, never a hand-computed rgba().
  *
@@ -40,7 +40,7 @@
   --rs-accent-high: light-dark(#5b21b6, #d8b4fe);
   --rs-brand-gradient: linear-gradient(135deg, #c084fc, #a855f7, #7c3aed);
 
-  /* Spec-site accent (notation.randsum.dev): cyan */
+  /* Spec accent (/spec): cyan */
   --rs-cyan: light-dark(#0891b2, #06b6d4);
   --rs-cyan-high: light-dark(#06b6d4, #22d3ee);
 

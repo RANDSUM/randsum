@@ -11,7 +11,7 @@ Bun workspace monorepo for a dice rolling ecosystem targeting tabletop RPGs. All
 **Game packages** live in `packages/games/` — each wraps roller with game-specific interpretation, accessed via subpath exports:
 `blades` (Blades in the Dark), `daggerheart`, `fate` (Fate Core), `fifth` (D&D 5e), `root-rpg`, `salvageunion`, `pbta` (Powered by the Apocalypse). A `schema` subpath exports the codegen/validation API.
 
-**Apps**: `@randsum/discord-bot` (private Discord bot, deployed as a Cloudflare Worker at bot.randsum.dev), `@randsum/site` (Astro + Starlight docs site at randsum.dev, private), `@randsum/rdn` (notation spec site at notation.randsum.dev, private)
+**Apps**: `@randsum/discord-bot` (private Discord bot, deployed as a Cloudflare Worker at bot.randsum.dev), `@randsum/site` (Astro + Starlight docs site at randsum.dev, private; also serves the notation spec at `/spec` through its own non-Starlight layout)
 
 **UI**: the web-only React dice components (notation input with token overlay, roll step visualizer, combined roller) live in `apps/site/src/components/dice-ui/`, not in a package; `apps/site` is their only consumer.
 
@@ -97,7 +97,7 @@ Releases are **automated via [changesets](https://github.com/changesets/changese
 
 ## Versioning
 
-`@randsum/roller` and `@randsum/games` are **linked** in `.changeset/config.json`, so changesets bumps them together to a shared version whenever any of them changes. `updateInternalDependencies` is set to `minor`, so a bump to a dependency updates dependents' internal `workspace:~` ranges. In practice: a minor or major bump to core ripples across the linked ecosystem automatically; patch bumps stay local to the changed package. `@randsum/mcp` bundles roller and games as devDependencies, which never trigger a release, so `bun run check:changesets` fails when a pending changeset releases roller or games without also releasing mcp. Every `private: true` workspace (site, rdn, discord-bot) is skipped by `privatePackages: { version: false, tag: false }`, so a new private package needs no config entry.
+`@randsum/roller` and `@randsum/games` are **linked** in `.changeset/config.json`, so changesets bumps them together to a shared version whenever any of them changes. `updateInternalDependencies` is set to `minor`, so a bump to a dependency updates dependents' internal `workspace:~` ranges. In practice: a minor or major bump to core ripples across the linked ecosystem automatically; patch bumps stay local to the changed package. `@randsum/mcp` bundles roller and games as devDependencies, which never trigger a release, so `bun run check:changesets` fails when a pending changeset releases roller or games without also releasing mcp. Every `private: true` workspace (site, discord-bot) is skipped by `privatePackages: { version: false, tag: false }`, so a new private package needs no config entry.
 
 ## Key Patterns
 
@@ -113,7 +113,7 @@ Game packages are generated from `.randsum.json` specs via the codegen pipeline 
 
 `MODIFIER_SCHEMAS` in `packages/roller/src/notation/definitions/index.ts`, sorted by each schema's `priority`, is the single source of truth for which modifiers exist and their execution order; `RANDSUM_MODIFIERS` (`src/modifiers/definitions.ts`) maps it to behaviors. Each modifier is a single co-located file in `packages/roller/src/modifiers/` that exports both a `*Schema` (notation pattern, parse/format logic) and a `*Modifier` (full definition with dice pool behavior).
 
-See https://notation.randsum.dev for the formal specification including faceted classification, conformance levels, and execution pipeline contracts.
+See https://randsum.dev/spec/ for the formal specification including faceted classification, conformance levels, and execution pipeline contracts.
 
 ### `roll()` Argument Types
 
@@ -139,7 +139,7 @@ roll("5d10F{3}") // Count failures <= 3
 `bun install` installs the hooks through the root `prepare` script, except where `$CI` is set: CI runners never install them, so a CI `git push` (the Release workflow's changesets push) does not run the pre-push hook.
 
 **pre-commit**: `bun install --frozen-lockfile` first (nothing else runs if it fails), then in parallel: Biome (`check --write`: lint + format, covering `.astro`), typecheck, and codegen check (`gen:check`)
-**pre-push**: build first (nothing else runs if it fails), then in parallel: codegen check, conformance check (`@randsum/rdn conformance:check`), tests, and knip
+**pre-push**: build first (nothing else runs if it fails), then in parallel: codegen check, conformance check (`@randsum/site conformance:check`), tests, and knip
 
 A failing hook step prints its output and its own fix (`fail_text` in `lefthook.yml`).
 
@@ -167,7 +167,7 @@ Per-package `CLAUDE.md` files exist in each `packages/*/`, `games/*/`, and `apps
 
 ## Dice Notation Reference
 
-Full spec: https://notation.randsum.dev (taxonomy, pipeline, conformance, syntax)
+Full spec: https://randsum.dev/spec/ (taxonomy, pipeline, conformance, syntax)
 
 Key syntax: `NdS` (basic), `+X`/`-X` (arithmetic), `L`/`H` (drop lowest/highest), `R{<3}` (reroll), `!` (explode), `!{condition}` (conditional explode), `U` (unique), `C{<1,>6}` (cap), `d%` (percentile), `dF`/`dF.2` (Fate/Fudge), `W` (wild die), `F{N}` (count failures), `//N` (integer divide), `%N` (modulo), `gN` (geometric die), `DDN` (draw die), `xN` (repeat), `[text]` (annotation)
 
@@ -180,9 +180,9 @@ guidance.
 
 | Skill | Why it is here |
 | --- | --- |
-| `workers-best-practices` | Both sites and the Discord bot Worker run on Workers |
-| `wrangler` | Deploys run `wrangler deploy`; three `wrangler.jsonc` files are checked in |
-| `web-perf` | randsum.dev and notation.randsum.dev are public docs sites |
+| `workers-best-practices` | The site and the Discord bot Worker run on Workers |
+| `wrangler` | Deploys run `wrangler deploy`; three configs are checked in: the site, the bot, and the `notation.randsum.dev` redirect (`apps/site/wrangler.notation.jsonc`) |
+| `web-perf` | randsum.dev is a public docs site |
 
 **Project scope on purpose.** `wrangler --install-skills` writes to the *global*
 agent path, which applies Cloudflare guidance to every repo on the machine
@@ -211,7 +211,7 @@ this repo's deploy/host stack. Each maps to a real workspace target:
 
 | Server                     | Transport | Backs                                     | Auth                            |
 | -------------------------- | --------- | ----------------------------------------- | ------------------------------- |
-| `cloudflare-bindings`      | http      | Workers, KV, D1 for both sites            | OAuth — run `/mcp`              |
+| `cloudflare-bindings`      | http      | Workers, KV, D1 for the site and bot      | OAuth — run `/mcp`              |
 | `cloudflare-observability` | http      | Workers logs and analytics                | OAuth — run `/mcp`              |
 | `github`                   | http      | repo host (issues, PRs, releases)         | 1Password PAT (`headersHelper`) |
 

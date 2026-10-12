@@ -130,7 +130,7 @@ bun run --filter @randsum/games check        # Full check (build + typecheck + t
 - Bundle size budgets come from `.size-limit.ts`, which derives one entry per `src/*.generated.ts`, so a new game needs no entry.
 - Remote data (e.g., Salvage Union tables) is read from the checked-in `__fixtures__/` snapshot at codegen time and baked into generated code. Codegen is hermetic (no network) unless `--refresh-remote` is passed; zero runtime network calls either way.
 
-For the formal modifier taxonomy and classification system, see https://notation.randsum.dev.
+For the formal modifier taxonomy and classification system, see https://randsum.dev/spec/.
 
 ## Publishing
 

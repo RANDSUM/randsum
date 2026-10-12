@@ -25,7 +25,9 @@ bun run preview
 ```text
 src/
   content/docs/   # Starlight docs (.mdx), auto-routed
-  pages/          # Custom landing page (index.astro) + /discord
+  content/specs/  # Notation spec versions, rendered at /spec
+  pages/          # Custom landing page (index.astro) + /discord + /spec
+  spec/           # /spec layout, components and conformance vectors (not Starlight)
   components/     # Starlight overrides + React/Astro components
     landing/      # Landing page sections
   utils/          # packageData.ts (package metadata)
@@ -35,7 +37,8 @@ astro.config.mjs  # Starlight config + sidebar topics
 ```
 
 The home page (`src/pages/index.astro`) is a custom landing page composed from
-`src/components/landing/*`. All other docs are Starlight pages under
+`src/components/landing/*`. The notation spec at `/spec` is a plain Astro page
+with its own layout (`src/spec/`). All other docs are Starlight pages under
 `src/content/docs/`.
 
 ## Deployment

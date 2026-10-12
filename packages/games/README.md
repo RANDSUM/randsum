@@ -2,7 +2,7 @@
 
 TTRPG game packages for the RANDSUM dice ecosystem. Each game subpath wraps [@randsum/roller](https://www.npmjs.com/package/@randsum/roller) with game-specific input validation, roll configuration, and result interpretation.
 
-ESM-only. The only dependency is `@randsum/roller`, which is **[RDN Level 3 (Extended) Conformant](https://notation.randsum.dev)**. Game subpaths never depend on each other.
+ESM-only. The only dependency is `@randsum/roller`, which is **[RDN Level 3 (Extended) Conformant](https://randsum.dev/spec/)**. Game subpaths never depend on each other.
 
 ## Install
 

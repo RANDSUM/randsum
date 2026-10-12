@@ -1,6 +1,7 @@
-/* The shared palette. Every colour below is an alias of it, so the spec site
-   and randsum.dev cannot drift; only the accent differs (cyan here). */
-@import '../../../site/src/styles/theme.css';
+/* Loaded only by SpecLayout, so these globals never reach a Starlight page.
+   Every colour is an alias of the site theme; only the accent differs (cyan
+   here, ADR-015). */
+@import '../styles/theme.css';
 
 /* === Reset === */
 *,
@@ -42,6 +43,18 @@ html {
   --text-primary: var(--rs-fg);
   --text-secondary: var(--rs-gray-2);
   --text-muted: var(--rs-gray-3);
+
+  /* Starlight's Expressive Code renders the spec's code blocks too, and its
+     styles read these Starlight names, which no Starlight CSS sets here. */
+  --sl-color-accent: var(--accent);
+  --sl-color-accent-high: var(--accent-light);
+  --sl-color-black: var(--bg);
+  --sl-color-gray-5: var(--rs-gray-5);
+  --sl-color-gray-6: var(--rs-gray-6);
+  --sl-color-gray-7: var(--rs-gray-7);
+  --sl-color-text: var(--text-secondary);
+  --sl-line-height: 1.5;
+  --sl-text-code: 13px;
 
   /* Layout */
   --sidebar-width: 220px;
@@ -884,11 +897,6 @@ body.mobile-menu-open {
   margin-bottom: 1.5rem;
   overflow-x: auto;
   line-height: 1.5;
-}
-
-/* Shiki emits both themes as variables (defaultColor: false); color-scheme picks one. */
-.spec-content-body pre span {
-  color: light-dark(var(--shiki-light), var(--shiki-dark));
 }
 
 .spec-content-body pre code {

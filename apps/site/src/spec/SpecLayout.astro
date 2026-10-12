@@ -1,12 +1,12 @@
 ---
 import { Font } from 'astro:assets'
-import HeroHeader from '../components/HeroHeader.astro'
-import VersionBanner from '../components/VersionBanner.astro'
-import SkipLink from '../components/SkipLink.astro'
-import ShareActions from '../components/ShareActions.astro'
-import MobileMenu from '../components/MobileMenu.astro'
+import HeroHeader from './components/HeroHeader.astro'
+import VersionBanner from './components/VersionBanner.astro'
+import SkipLink from './components/SkipLink.astro'
+import ShareActions from './components/ShareActions.astro'
+import MobileMenu from './components/MobileMenu.astro'
 import KofiButton from '../components/KofiButton.astro'
-import '../styles/global.css'
+import './spec.css'
 
 interface Heading {
   depth: number
@@ -20,20 +20,17 @@ interface Props {
   versions: string[]
   isLatest: boolean
   specMarkdown?: string
-  specUrl?: string
   headings?: Heading[]
 }
 
-const {
-  title,
-  version,
-  versions,
-  isLatest,
-  specMarkdown = '',
-  specUrl = '',
-  headings = []
-} = Astro.props
+const { title, version, versions, isLatest, specMarkdown = '', headings = [] } = Astro.props
 const pageTitle = isLatest ? `${title}` : `${title} — ${version}`
+// /spec/ and /spec/v/<latest>/ render the same version (ADR-016 keeps both,
+// with no redirect), so both name the versioned URL as canonical.
+const specUrl = new URL(`/spec/v/${version}/`, Astro.site).href
+// Starlight's Pagefind index skips pages without data-pagefind-body. Opt in
+// the canonical page only, so search lists each version once.
+const isCanonical = Astro.url.pathname.replace(/\/?$/, '/') === new URL(specUrl).pathname
 ---
 
 <!doctype html>
@@ -43,6 +40,7 @@ const pageTitle = isLatest ? `${title}` : `${title} — ${version}`
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{pageTitle}</title>
     <link rel="icon" href="/favicon.ico" />
+    <link rel="canonical" href={specUrl} />
     <meta
       name="description"
       content="The formal specification for RANDSUM Dice Notation — a human-readable syntax for dice rolls in tabletop RPGs. Defines modifiers, execution pipeline, conformance levels, and special dice types."
@@ -66,10 +64,11 @@ const pageTitle = isLatest ? `${title}` : `${title} — ${version}`
     <Font cssVariable="--font-jetbrains-mono" />
     <script is:inline>
       // Apply the theme before render to prevent a flash: a saved choice wins,
-      // otherwise follow the OS. data-theme matches the site's theme contract.
+      // otherwise follow the OS. Same key and data-theme as Starlight's picker,
+      // so one choice holds across the whole site.
       const saved = (() => {
         try {
-          return localStorage.getItem('rdn-theme')
+          return localStorage.getItem('starlight-theme')
         } catch {
           return null
         }
@@ -99,7 +98,7 @@ const pageTitle = isLatest ? `${title}` : `${title} — ${version}`
           <p class="label" style="color: var(--text-muted);">Sidebar</p>
         </slot>
       </nav>
-      <main id="main-content" class="spec-content">
+      <main id="main-content" class="spec-content" data-pagefind-body={isCanonical ? '' : undefined}>
         <slot name="content" />
       </main>
       <aside class="spec-aside" aria-label="In this section">
@@ -127,7 +126,7 @@ const pageTitle = isLatest ? `${title}` : `${title} — ${version}`
           const root = document.documentElement
           const next = root.dataset.theme === 'light' ? 'dark' : 'light'
           root.dataset.theme = next
-          localStorage.setItem('rdn-theme', next)
+          localStorage.setItem('starlight-theme', next)
         })
       }
     </script>

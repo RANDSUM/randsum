@@ -1,7 +1,7 @@
 import type { APIRoute } from 'astro'
-import { getLatestVersion } from '../utils/versions'
+import { getLatestVersion } from '../../spec/versions'
 
-const SITE = 'https://notation.randsum.dev'
+const SPEC = 'https://randsum.dev/spec'
 
 export const GET: APIRoute = async () => {
   const latest = await getLatestVersion()
@@ -11,16 +11,17 @@ The RANDSUM Dice Notation Specification defines the syntax and semantics of RAND
 
 ## Latest Version
 
-- **v${latest}**: ${SITE}/v/${latest}
+- **v${latest}**: ${SPEC}/v/${latest}/
 
 ## Full Spec for LLMs
 
 The complete specification text is available at:
-${SITE}/llms-full.txt
+${SPEC}/llms-full.txt
 
 ## Links
 
-- Site: ${SITE}
+- Specification: ${SPEC}/
+- Documentation: https://randsum.dev
 - GitHub: https://github.com/RANDSUM/randsum
 - npm: https://www.npmjs.com/package/@randsum/roller
 `

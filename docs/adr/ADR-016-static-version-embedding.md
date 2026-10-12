@@ -2,7 +2,7 @@
 
 ## Status
 
-Accepted (amended — originally proposed all-in-one-page embedding, revised to per-version pages for LLM friendliness; amended again to generate `llms.txt` and `llms-full.txt` from the specs collection instead of committing them)
+Accepted (amended — originally proposed all-in-one-page embedding, revised to per-version pages for LLM friendliness; amended again to generate `llms.txt` and `llms-full.txt` from the specs collection instead of committing them; amended a third time when the spec moved to `randsum.dev/spec`, so the root and the latest version page both carry `rel=canonical` to `/spec/v/<latest>/`)
 
 ## Context
 
@@ -63,6 +63,7 @@ The conformance vectors are generated separately from the spec pages. `src/confo
 ## References
 
 - ADR-017: Vanilla TypeScript for Client Interactivity
-- `apps/rdn/src/content/specs/` — versioned spec storage (currently `v0.9.0.md`)
-- `apps/rdn/src/content.config.ts` — `specs` content collection and ID generation
-- `apps/rdn/conformance-gen.ts` — `conformance:gen` / `conformance:check` vector generator
+- `apps/site/src/content/specs/` — versioned spec storage (currently `v0.9.0.md`)
+- `apps/site/src/content.config.ts` — `specs` content collection and ID generation
+- `apps/site/conformance-gen.ts` — `conformance:gen` / `conformance:check` vector generator
+- ADR-015 addendum — why the spec moved from `apps/rdn` into `apps/site`

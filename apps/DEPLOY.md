@@ -10,8 +10,8 @@ to file incident RCAs.
 
 | Surface            | App                                             | Host                | Trigger                  | URL                   |
 | ------------------ | ----------------------------------------------- | ------------------- | ------------------------ | --------------------- |
-| Docs site          | `apps/site`                                     | **Cloudflare**      | green CI on `main`       | randsum.dev           |
-| Notation spec site | `apps/rdn`                                      | **Cloudflare**      | green CI on `main`       | notation.randsum.dev  |
+| Docs site + spec   | `apps/site`                                     | **Cloudflare**      | green CI on `main`       | randsum.dev           |
+| Old spec host      | `apps/site` (`wrangler.notation.jsonc`, 301 only) | **Cloudflare**      | green CI on `main`       | notation.randsum.dev  |
 | Discord bot        | `apps/discord-bot`                              | **Cloudflare**      | green CI on `main`       | bot.randsum.dev       |
 | npm packages       | `packages/roller`, `packages/games`, `packages/mcp` | npm registry        | changesets on merge      | npmjs.com/org/randsum |
 
@@ -23,13 +23,14 @@ route on the apex.
 
 > **Netlify has been removed from the repo entirely** — the adapter, both
 > `netlify.toml` files, and the `@astrojs/netlify` dependency. Nothing here
-> targets it, and neither Astro build uses an adapter now: both sites are
+> targets it, and the Astro build uses no adapter now: the site is
 > `output: 'static'`, and `/api/roll` is a hand-written Worker. Removing Netlify
 > also dropped ~390 transitive packages and closed the `extract-zip` advisory
 > (GHSA-jmr9-qjv8-65gv), which was suppressed only because it was unreachable
 > any other way.
 
-> Config sources: `apps/site/wrangler.jsonc`, `apps/rdn/wrangler.jsonc`,
+> Config sources: `apps/site/wrangler.jsonc`, `apps/site/wrangler.notation.jsonc`
+> (the `notation.randsum.dev` 301s, deployed to the `randsum-rdn` Worker) and
 > `apps/discord-bot/wrangler.jsonc`. Deployment runs from
 > `.github/workflows/deploy-cloudflare.yml`. There are no other deploy configs —
 > Netlify and Render were both removed.
@@ -71,8 +72,8 @@ falls back to declining the prompt in any non-interactive shell.
 <https://dash.cloudflare.com/f5f08e7e86ab8c183e381d4504bf8ba5/workers/onboarding>
 
 ```bash
-wrangler deploy -c apps/rdn/wrangler.jsonc   # should now print a *.workers.dev URL
-curl -sSo /dev/null -w '%{http_code}\n' https://randsum-rdn.<subdomain>.workers.dev/
+wrangler deploy -c apps/site/wrangler.jsonc   # should now print a *.workers.dev URL
+curl -sSo /dev/null -w '%{http_code}\n' https://randsum-site.<subdomain>.workers.dev/
 ```
 
 ### 2. Add `CLOUDFLARE_API_TOKEN` · ~2 min
@@ -265,22 +266,23 @@ one means writing it against the Worker's `env` argument and calling it from
 
 Sentry needs no decommissioning: it was never enabled in production.
 
-## Cloudflare (apps/site → randsum.dev, apps/rdn → notation.randsum.dev)
+## Cloudflare (apps/site → randsum.dev)
 
-Both Astro sites are separate Workers, each with a custom domain, deployed from
-`.github/workflows/deploy-cloudflare.yml` once CI is green on `main`.
+The Astro site is a Worker with a custom domain, deployed from
+`.github/workflows/deploy-cloudflare.yml` once CI is green on `main`. It also
+serves the notation spec at `/spec` and its conformance vectors at
+`/conformance/`.
 
 - **site** — `output: 'static'`, no adapter, plus one hand-written Worker
   (`apps/site/worker/index.ts`) for `/api/roll`. `assets.run_worker_first`
   sends only `/api/*` to it; everything else is served from assets. Legacy
   301s live in `apps/site/public/_redirects`. Deploy `apps/site/wrangler.jsonc`.
-- **rdn** — `output: 'static'`, no adapter. Deploy `apps/rdn/wrangler.jsonc`.
 - The trigger is `workflow_run` on CI: nothing deploys unless CI concluded
   `success` for a push to `main`, and the jobs check out the commit CI tested.
   The `plan` job diffs that commit against the commit the last successful
   CI-triggered deploy shipped, so a deploy the concurrency group cancelled has
-  its changes carried by the next one; a change to any of `apps/{rdn,site,discord-bot}/**`, `packages/**` or `bun.lock`
-  runs all three deploy jobs. Each run records its commit in its run name
+  its changes carried by the next one; a change to any of `apps/{site,discord-bot}/**`, `packages/**` or `bun.lock`
+  runs both deploy jobs. Each run records its commit in its run name
   (`Deploy <sha>`), and `plan` reads it back from there. If the commit is
   *older* than the last deployed one — a CI re-run on an earlier `main` commit —
   `plan` deploys nothing and says so in a notice, rather than roll every surface
@@ -304,9 +306,39 @@ bun run --filter '@randsum/roller' build
 bun run --filter '@randsum/games' build
 bun run site:build
 bun run --filter @randsum/site deploy
+bun run --filter @randsum/site deploy:notation   # notation.randsum.dev 301s
+```
 
-bun run --filter @randsum/roller --filter @randsum/rdn build
-bun run --filter @randsum/rdn deploy
+### notation.randsum.dev — redirect only
+
+The spec moved into `apps/site` at `/spec`. `notation.randsum.dev` must keep
+answering with a 301, because the spec (v0.9.0, section "Document
+Information") and every conformance file's `$id` name it. The redirect is code:
+`apps/site/worker/notation-redirect.ts`, deployed by the site job from
+`apps/site/wrangler.notation.jsonc` right after the site itself.
+
+| Path on notation.randsum.dev | 301 to |
+| --- | --- |
+| `/conformance/*` | `https://randsum.dev/conformance/*` (the `$id` path is kept) |
+| `/robots.txt`, `/favicon.ico`, `/sitemap-index.xml`, `/sitemap-0.xml` | the same file on `https://randsum.dev` |
+| anything else | `https://randsum.dev/spec<path>` |
+
+The query string is kept on every redirect, and `apps/site/__tests__/notation-redirect.test.ts`
+pins the table.
+
+The config deploys to the **existing `randsum-rdn` Worker**, the one that
+served the old rdn site. Its `notation.randsum.dev` Custom Domain lives on that
+Worker rather than in any config file, so a new script under the same name
+keeps the hostname and its DNS record. There is no detach, no placeholder
+record and no window where the hostname stops resolving. The first deploy after
+the merge is the whole cutover. Do not delete the `randsum-rdn` Worker and do
+not detach its custom domain: that is what keeps the redirect reachable.
+
+After that first deploy, both of these must print a 301 with the shown `location`:
+
+```bash
+curl -sI https://notation.randsum.dev/v/0.9.0/ | grep -i -E '^(HTTP|location)'                 # 301 → https://randsum.dev/spec/v/0.9.0/
+curl -sI https://notation.randsum.dev/conformance/v0.9.0.json | grep -i -E '^(HTTP|location)'  # 301 → https://randsum.dev/conformance/v0.9.0.json
 ```
 
 ### Deploying when no deploy ran
@@ -326,7 +358,6 @@ main is green first:
 gh workflow run deploy-cloudflare.yml --ref main                    # all surfaces
 gh workflow run deploy-cloudflare.yml --ref main -f surface=bot     # just the bot
 gh workflow run deploy-cloudflare.yml --ref main -f surface=site    # randsum.dev
-gh workflow run deploy-cloudflare.yml --ref main -f surface=rdn     # notation.randsum.dev
 ```
 
 Or use the **Run workflow** button on the workflow's Actions page. It shares the
@@ -352,7 +383,7 @@ bun run --cwd apps/site wrangler deployments list --name randsum-site
 bun run --cwd apps/site wrangler rollback --name randsum-site [<version-id>]
 ```
 
-Same shape for `randsum-rdn` and `randsum-discord-bot`. This is atomic and
+Same shape for `randsum-discord-bot`. This is atomic and
 reversible — rolling back does not delete newer versions.
 
 > **`wrangler rollback` restores code, not configuration.** Custom domains,
@@ -361,12 +392,16 @@ reversible — rolling back does not delete newer versions.
 
 ### DR notes
 
-- Both sites are fully reproducible from git; loss of Cloudflare state is
-  recoverable by re-running the deploy commands above.
+- The site is fully reproducible from source; loss of Cloudflare state is
+  recoverable by re-running the deploy commands above. That includes the
+  `notation.randsum.dev` redirect (`bun run --filter @randsum/site
+  deploy:notation`); if the `randsum-rdn` Worker itself is
+  lost, re-add `notation.randsum.dev` as its Custom Domain after deploying.
 - The non-git state is **DNS and the zone**: `randsum.dev` is on Cloudflare
   nameservers with the registrar still at Hover. Keep the registrar credentials
   and the Cloudflare account documented in the password vault. The zone holds
-  only three proxied records, all pointing at Workers custom domains.
+  only three proxied records, all Workers custom domains: randsum.dev,
+  bot.randsum.dev and notation.randsum.dev (the redirect Worker).
 - **A trailing-slash redirect returns 307, not 301**, because Workers Static
   Assets hardcodes it and `html_handling` cannot change it. This is not a
   regression to chase: pages emit `<link rel="canonical">` and the sitemap uses

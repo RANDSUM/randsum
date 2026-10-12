@@ -2,7 +2,7 @@
 
 ## Status
 
-Accepted
+Accepted (amended — separate layout, same app: the spec moved from `apps/rdn` into `apps/site` at `/spec`; see Addendum)
 
 ## Context
 
@@ -56,8 +56,20 @@ Styling uses plain CSS with custom properties in `src/styles/global.css`. No Tai
 - The layout, sidebar, and scroll spy components are custom code that must be maintained. Starlight upgrades would have kept this code at zero maintenance cost.
 - Future contributors familiar with Starlight from `apps/site/` will encounter a different setup in `apps/rdn/`. The two apps are intentionally distinct and the design spec documents this divergence.
 
+## Addendum: separate layout, same app
+
+The decision above rejects Starlight's **layout**, not a shared Astro project. `apps/rdn` had grown its own CI leg, deploy job, Worker, `CLAUDE.md` and the same Astro, `@astrojs/check`, sitemap and TypeScript pins as `apps/site`, plus a byte-identical `KofiButton`, to serve one Markdown file whose content had not changed since March 2026.
+
+The spec now lives in `apps/site`:
+
+- `src/pages/spec/index.astro` and `src/pages/spec/v/[version].astro` are plain Astro pages. They render `src/spec/SpecLayout.astro` and never import `StarlightPage`, so every reason in the Context section still holds: three columns, two scroll spies, the scroll-away hero, per-version routes and plain CSS.
+- The cyan accent and the sibling identity stay. `src/spec/spec.css` is imported only by `SpecLayout`, so its globals never reach a Starlight page, and Starlight's CSS never reaches the spec.
+- `ShareActions` stays: `starlight-page-actions` only works on Starlight pages.
+- What the spec now shares with the site rather than duplicating: the Astro project, fonts, theme file, sitemap, `KofiButton`, the theme choice (`starlight-theme`), Starlight's Expressive Code for code blocks, and its Pagefind index (the canonical spec page opts in with `data-pagefind-body`, which closes the "no built-in search" cost above).
+- `notation.randsum.dev` 301s to `randsum.dev/spec/*`, keeping `/conformance/*` paths, because the spec names that host. The redirect is a Worker in `apps/site/worker/notation-redirect.ts`, deployed to the old `randsum-rdn` Worker so the hostname keeps its Custom Domain (`apps/DEPLOY.md`).
+
 ## References
 
 - ADR-011: Playground Layout Design — prior decision to use a custom layout for `apps/playground/`, establishing the precedent of non-Starlight apps in this monorepo
 - ADR-012: Playground App Infrastructure — further context on how non-Starlight apps are structured
-- `apps/site/` — the main site that uses Starlight, for contrast
+- `apps/site/` — the main site that uses Starlight, and since the addendum also hosts the spec at `/spec`
