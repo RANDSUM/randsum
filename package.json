@@ -52,7 +52,7 @@
     "@opentelemetry/context-async-hooks": ">=2.8.0"
   },
   "scripts": {
-    "prepare": "[ -d .git ] && (git config --unset-all --local core.hooksPath 2>/dev/null; lefthook install) || true",
+    "prepare": "[ -z \"$CI\" ] && [ -d .git ] && (git config --unset-all --local core.hooksPath 2>/dev/null; lefthook install) || true",
     "help": "bun scripts/help.ts",
     "check:workspace-scripts": "bun scripts/check-workspace-scripts.ts",
     "skills:sync": "bun scripts/sync-cloudflare-skills.ts",
