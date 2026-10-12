@@ -3,7 +3,7 @@ import type { ConformanceFile } from './types'
 export const CONFORMANCE_FILE: ConformanceFile = {
   $id: 'https://notation.randsum.dev/conformance/v0.9.0.json',
   specVersion: '0.9.0',
-  generatedFrom: 'apps/site/src/spec/conformance/vectors.ts',
+  generatedFrom: 'packages/roller/spec/vectors.ts',
   conformanceLevels: {
     level1_core: [1, 2, 3, 10, 11, 14, 15, 16, 19, 20, 26, 27],
     level2_vtt: [
@@ -15,7 +15,7 @@ export const CONFORMANCE_FILE: ConformanceFile = {
     ],
     level4_full: [
       1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 18, 19, 20, 21, 22, 23, 25, 26, 27, 31,
-      32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 43, 44, 45, 49, 50, 51
+      32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 49, 50, 51
     ],
     errorCases: [28, 29, 30, 46, 47, 48, 52, 53, 54]
   },
@@ -436,11 +436,11 @@ export const CONFORMANCE_FILE: ConformanceFile = {
       notation: '4d6C{5}L!+2',
       category: 'extended_coverage',
       seedRolls: [6, 1, 5, 6],
-      expectedPool: null,
-      expectedTotal: null,
+      expectedPool: [5, 5, 5],
+      expectedTotal: 17,
       section: '6.9',
       conformanceLevel: 4,
-      note: 'Complex multi-modifier chain. Exact pool depends on priority resolution; see Section 6.9.'
+      note: 'Cap (10) runs before explode (50), drop (65) and plus (90): [5, 1, 5, 5] leaves no 6 to explode, then drop lowest and add 2.'
     },
     {
       id: 43,

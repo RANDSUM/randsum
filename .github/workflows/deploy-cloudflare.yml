@@ -238,7 +238,7 @@ jobs:
       # notation.randsum.dev answers with a 301 to randsum.dev/spec. It runs
       # after the site deploy so the redirect never points at pages that are
       # not live yet. The script goes to the existing `randsum-rdn` Worker, which
-      # keeps the hostname's Custom Domain (apps/DEPLOY.md).
+      # keeps the hostname's Custom Domain (docs/operations.md).
       - name: Deploy notation.randsum.dev redirect
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}

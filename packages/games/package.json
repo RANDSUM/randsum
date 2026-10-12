@@ -7,7 +7,6 @@
   "private": false,
   "files": [
     "dist",
-    "!dist/bin*",
     "!dist/**/*.map",
     "*.randsum.json",
     "randsum.json",

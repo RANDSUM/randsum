@@ -2,8 +2,9 @@
 
 ## Status
 
-Superseded by an interactive Expo app (`apps/expo`), which has since been
-removed from the monorepo. Designed, never built.
+Superseded. The playground was built as `apps/playground/` in #1014 and deleted in
+`793ff71b` when the Expo app (#1021) took over its role; that app was removed in #1121.
+Both were tried and removed: do not resurrect either.
 
 ## Context
 
@@ -25,11 +26,11 @@ collapsible reference on mobile), driven by a **Type → Understand → Roll →
 interaction model with shareable URL state. Component boundaries, color tokens,
 and responsive behavior were specified in detail.
 
-**This design was never implemented.** No `apps/playground/` directory was ever
-created. The interactive dice app effort instead moved to an `apps/expo/`
-prototype, which has since been removed from the monorepo. The detailed layout
+The design shipped as `apps/playground/` (#1014) and lived for nine days before
+`793ff71b` deleted it in favour of an `apps/expo/` prototype, which has since been
+removed from the monorepo too. The detailed layout
 grids, `--pg-*` design token set, and React component tree recorded in earlier
-drafts of this ADR describe software that does not exist and have been removed;
+drafts of this ADR describe software that no longer exists and have been removed;
 the intent above is kept only as a historical record.
 
 ## Consequences

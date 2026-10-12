@@ -2,12 +2,10 @@
 
 ## Status
 
-Accepted (amended).
-
-> Update (2026-10-11): `@randsum/dice-ui` is no longer a package. Its only consumer was
-> `apps/site`, so its source was folded into `apps/site/src/components/dice-ui/` and the
-> workspace package was deleted. The decision is unchanged: the components are web-only
-> and have no TUI target. Paths below that name `packages/dice-ui/` are historical.
+Superseded: `@randsum/cli` was retired in #1249 (`5db65568`), and `@randsum/dice-ui` is no
+longer a package: its web-only components were folded into `apps/site/src/components/dice-ui/`.
+Nothing below describes a live surface; it stays as the record of why Ink and a TUI target were
+never adopted. Paths below that name `packages/dice-ui/` are historical.
 
 > Update (2026-06-23): the React Native target described below has since been removed
 > along with the `apps/expo` app — `@randsum/dice-ui` is now **web-only**. The core

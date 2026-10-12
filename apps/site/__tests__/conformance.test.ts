@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'bun:test'
-import { CONFORMANCE_FILE } from '../src/spec/conformance/vectors'
+import { CONFORMANCE_FILE } from '../../../packages/roller/spec/vectors'
 
 const { vectors, conformanceLevels } = CONFORMANCE_FILE
 const vectorById = new Map(vectors.map(v => [v.id, v]))

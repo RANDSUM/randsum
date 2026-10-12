@@ -13,7 +13,7 @@ Architecture Decision Records for RANDSUM. Each ADR captures a single decision, 
 | [004](./ADR-004-literal-types-over-branded-types.md)      | Literal types over branded types for public API        | Accepted                 |
 | [005](./ADR-005-merge-notation-into-roller.md)            | Merge @randsum/notation back into @randsum/roller      | Accepted                 |
 | [009](./ADR-009-public-api-surface-reduction.md)          | Public API surface reduction for @randsum/roller       | Accepted                 |
-| [019](./ADR-019-cli-without-ink-and-dice-ui-no-tui-target.md) | CLI shipped without Ink; dice-ui has no TUI target | Accepted (amended)       |
+| [019](./ADR-019-cli-without-ink-and-dice-ui-no-tui-target.md) | CLI shipped without Ink; dice-ui has no TUI target | Superseded (CLI retired, #1249) |
 
 ### Code Generation and Schema
 
@@ -40,7 +40,7 @@ Architecture Decision Records for RANDSUM. Each ADR captures a single decision, 
 
 | #                                                             | Title                                 | Status                          |
 | ------------------------------------------------------------- | ------------------------------------- | ------------------------------- |
-| [013](./ADR-013-biome-migration-evaluation.md)                | Biome migration evaluation            | Accepted (deferred migration)   |
+| [013](./ADR-013-biome-migration-evaluation.md)                | Biome migration evaluation            | Superseded (Biome adopted, #1165) |
 
 ### Documentation Sites
 
@@ -55,8 +55,8 @@ Architecture Decision Records for RANDSUM. Each ADR captures a single decision, 
 
 | #                                                     | Title                           | Status   |
 | ----------------------------------------------------- | ------------------------------- | -------- |
-| [011](./ADR-011-playground-layout-design.md)          | Playground layout design        | Superseded (apps/expo, since removed) |
-| [012](./ADR-012-playground-app-infrastructure.md)     | Playground app infrastructure   | Superseded (apps/expo, since removed) |
+| [011](./ADR-011-playground-layout-design.md)          | Playground layout design        | Superseded (built #1014, removed) |
+| [012](./ADR-012-playground-app-infrastructure.md)     | Playground app infrastructure   | Superseded (built #1014, removed) |
 
 ## For AI Agents
 
@@ -67,12 +67,12 @@ Consult these ADRs before starting the related kind of task.
 - **Changing `roll()` input types** — [ADR-004](./ADR-004-literal-types-over-branded-types.md) established literal-type API. Branded types are rejected.
 - **Modifying the roller public API surface** — [ADR-009](./ADR-009-public-api-surface-reduction.md) limits the public symbols. Consult before adding exports.
 - **Adding CJS support or a `require` conditional export** — rejected by [ADR-008](./ADR-008-esm-only-package-output.md).
-- **Touching `sideEffects` in `@randsum/roller` or `@randsum/games`** — [ADR-018](./ADR-018-roller-sideeffects-src-glob.md): the in-repo value is `true` (required by bunup's self-DCE) and is flipped to `false` in the published tarball by `scripts/publish.ts`. Do not change the in-repo `true` without updating that flip — the `publish (dry run)` CI job asserts it.
+- **Touching `sideEffects` in `@randsum/roller` or `@randsum/games`** — [ADR-018](./ADR-018-roller-sideeffects-src-glob.md): the in-repo value is `true` (required by bunup's self-DCE and `packages/mcp`'s `noExternal` bundling) and is flipped to `false` in the published tarball by `scripts/publish.ts`. Do not change the in-repo `true` without updating that flip — the `publish (dry run)` CI job asserts it.
 - **Looking for `@randsum/notation`** — gone. Merged into roller per [ADR-005](./ADR-005-merge-notation-into-roller.md). Original separation rationale in [ADR-003](./ADR-003-notation-as-separate-package.md) (superseded).
-- **Considering a linter/formatter swap (e.g., Biome)** — [ADR-013](./ADR-013-biome-migration-evaluation.md) deferred the migration. Re-evaluate only with new evidence.
+- **Linting and formatting** — Biome, adopted in #1165. [ADR-013](./ADR-013-biome-migration-evaluation.md) records the earlier deferral and is superseded.
 - **Working on the notation spec (`/spec`, `apps/site/src/spec/`)** — [ADR-015](./ADR-015-custom-astro-layout-over-starlight.md) (no Starlight layout, same app), [ADR-016](./ADR-016-static-version-embedding.md) (per-version static pages), [ADR-017](./ADR-017-vanilla-typescript-client-interactivity.md) (no React islands).
-- **Looking for the playground app** — there is none. There was never an `apps/playground/`; the interactive dice app effort moved to an `apps/expo/` prototype, which has since been removed from the monorepo. [ADR-011](./ADR-011-playground-layout-design.md) and [ADR-012](./ADR-012-playground-app-infrastructure.md) record the original playground design, which was superseded by `apps/expo/` and never built.
+- **Looking for the playground app** — there is none. The playground (built #1014, deleted `793ff71b`) and the Expo app (built #1021, removed #1121) were each tried and removed; do not resurrect either. [ADR-011](./ADR-011-playground-layout-design.md) and [ADR-012](./ADR-012-playground-app-infrastructure.md) record the playground design.
 - **Updating the docs site copy or examples** — [ADR-010](./ADR-010-docs-site-notation-merge-alignment.md) aligned the site with the notation-into-roller merge. Any doc that still references `@randsum/notation` as a separate package is stale.
-- **Working on `apps/cli` or the site's dice-ui components** — [ADR-019](./ADR-019-cli-without-ink-and-dice-ui-no-tui-target.md) records that the CLI is a plain string-formatter (no Ink, no dice-ui dep) and dice-ui, now folded into `apps/site/src/components/dice-ui/`, is web-only (no `ink/` TUI). Do not re-introduce Ink on the assumption it was once intended.
+- **Working on the site's dice-ui components (`apps/site/src/components/dice-ui/`)** — they are web-only. The CLI was retired in #1249; [ADR-019](./ADR-019-cli-without-ink-and-dice-ui-no-tui-target.md) (superseded) records why Ink and a TUI target were never adopted.
 
 When a proposed change conflicts with an ADR, either amend the ADR in the same PR (with explicit superseded/amended status) or reject the change.

@@ -28,9 +28,10 @@ unworkable:
    - Diagnosed in commit `b8c81fde`. Tuning bunup (`ignoreDCEAnnotations: true`,
      `minify: false`, `splitting: false`) does not resolve it — the DCE is independent of
      those flags.
-2. **`apps/cli` bundles roller from source.** The CLI's bunup config uses
-   `noExternal: [/^@randsum\//]` and reads roller's `sideEffects` field while bundling. The
-   in-repo value must keep the CLI's bundled output intact.
+2. **`packages/mcp` bundles roller into its dist.** Its bunup config uses
+   `noExternal: [/^@randsum\//]`, so bunup reads roller's `sideEffects` field while bundling.
+   The in-repo value must keep that bundled output intact. (This reason first cited
+   `apps/cli`, which bundled roller the same way and was retired in #1249.)
 
 ## Decision
 
@@ -45,8 +46,8 @@ field is `true` before flipping and fails loudly if it is not.
 
 Net effect:
 
-- **In-repo / build / CLI**: `sideEffects: true` keeps bunup's self-DCE from corrupting the
-  dist and keeps the CLI's `noExternal` source bundle intact.
+- **In-repo / build / mcp**: `sideEffects: true` keeps bunup's self-DCE from corrupting the
+  dist and keeps mcp's `noExternal` bundle intact.
 - **Published package**: ships `sideEffects: false`, so consumers tree-shake unused surfaces.
 
 ## Consequences
@@ -55,7 +56,7 @@ Net effect:
 
 - Consumers installing `@randsum/roller` receive `sideEffects: false` and full tree-shaking of
   narrow imports (the common case for UI and validation code).
-- The in-repo build and the CLI's source bundling stay correct.
+- The in-repo build and mcp's bundling of roller stay correct.
 - Only the manifest is rewritten; the healthy pre-built dist is what ships.
 
 ### Negative
@@ -74,11 +75,11 @@ Net effect:
 ## Alternatives Considered
 
 - **`sideEffects: false` in-repo** — Broken: bunup self-DCE corrupts the dist (see Context),
-  and the CLI's source bundle reads the field.
+  and mcp's `noExternal` bundle reads the field.
 - **`sideEffects: ["./src/**/*"]` (the prior ADR-018 decision)** — Builds clean and, because the
   published tarball ships only `dist/**/*` (which the `./src/**/*` glob never matches), yields a
   tree-shakeable published manifest. Superseded by the publish-time flip: the in-repo value must
-  stay `true` for the CLI's `noExternal` source bundling, and a single `true` plus an explicit,
+  stay `true` for mcp's `noExternal` bundling, and a single `true` plus an explicit,
   asserted flip is easier to reason about than a glob whose consumer-side behavior depends on
   what the tarball happens to contain.
 - **`sideEffects: ["./dist/**/*"]`** — Broken; self-DCE runs against the in-memory module graph,

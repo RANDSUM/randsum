@@ -66,7 +66,7 @@ The spec now lives in `apps/site`:
 - The cyan accent and the sibling identity stay. `src/spec/spec.css` is imported only by `SpecLayout`, so its globals never reach a Starlight page, and Starlight's CSS never reaches the spec.
 - `ShareActions` stays: `starlight-page-actions` only works on Starlight pages.
 - What the spec now shares with the site rather than duplicating: the Astro project, fonts, theme file, sitemap, `KofiButton`, the theme choice (`starlight-theme`), Starlight's Expressive Code for code blocks, and its Pagefind index (the canonical spec page opts in with `data-pagefind-body`, which closes the "no built-in search" cost above).
-- `notation.randsum.dev` 301s to `randsum.dev/spec/*`, keeping `/conformance/*` paths, because the spec names that host. The redirect is a Worker in `apps/site/worker/notation-redirect.ts`, deployed to the old `randsum-rdn` Worker so the hostname keeps its Custom Domain (`apps/DEPLOY.md`).
+- `notation.randsum.dev` 301s to `randsum.dev/spec/*`, keeping `/conformance/*` paths, because the spec names that host. The redirect is a Worker in `apps/site/worker/notation-redirect.ts`, deployed to the old `randsum-rdn` Worker so the hostname keeps its Custom Domain (`docs/operations.md`, section "notation.randsum.dev — redirect only").
 
 ## References
 

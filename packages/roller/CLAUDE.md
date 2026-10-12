@@ -308,6 +308,8 @@ src/
     tokenize.ts, validateNotation.ts, isDiceNotation.ts, suggestions.ts, ...
   types/            # shared types: core.ts, modifiers.ts, results.ts, index.ts
   lib/              # comparison/, random/, utils/ + constants.ts, optionsValidation.ts (transformers live under notation/)
+spec/               # RDN conformance vectors (hand-authored; not published). apps/site serializes
+                    # them to randsum.dev/conformance/; __tests__/spec/ runs them through roll()
 ```
 
 ## Bundle size limits
