@@ -11,7 +11,7 @@ Never published to npm.
 nothing to reconnect, no session to resume, and no single-instance constraint.
 
 The discord.js **gateway bot is gone** — removed 2026-09-01 along with Render, the only host it
-ever ran on. If you are reading older commentary that describes `src/index.ts`, a login backoff,
+ever ran on. If you are reading older commentary that describes a gateway entry point, a login backoff,
 a shard watchdog or a 5-minute heartbeat, that code no longer exists. There is no second
 transport and no fallback.
 

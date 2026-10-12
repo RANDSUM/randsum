@@ -1,4 +1,4 @@
-# @randsum/test-utils
+# test-utils
 
 Shared test utilities for the RANDSUM monorepo. Part of `@randsum/roller`; not
 published separately.
@@ -16,7 +16,8 @@ published separately.
 ## Usage
 
 ```typescript
-import { createSeededRandom, expectRollInRange, commonNotations } from "@randsum/test-utils"
+// From a test in packages/roller/__tests__/<area>/ — there is no package to import
+import { createSeededRandom, expectRollInRange, commonNotations } from "../../test-utils/src"
 import { roll } from "@randsum/roller"
 
 // Deterministic testing — RollConfig must be the LAST argument to roll()

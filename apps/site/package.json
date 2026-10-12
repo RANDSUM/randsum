@@ -35,9 +35,9 @@
     "astro": "astro",
     "test": "bun test",
     "typecheck": "astro check",
-    "check": "bun run build && bun run typecheck && bun run test",
+    "check": "bun run build && bun run typecheck && bun run test && bun run conformance:check",
     "conformance:gen": "bun conformance-gen.ts",
-    "conformance:check": "bun conformance-gen.ts && git diff --exit-code public/conformance/v0.9.0.json"
+    "conformance:check": "bun conformance-gen.ts --check"
   },
   "devDependencies": {
     "@astrojs/check": "0.9.9",

@@ -66,7 +66,8 @@ imported only by `SpecLayout`, since its resets are global to the page.
 - Conformance vectors: `packages/roller/spec/vectors.ts` is the source of
   truth (beside the roller test that runs them). `bun run conformance:gen`
   writes `public/conformance/v0.9.0.json`, served at `/conformance/v0.9.0.json`;
-  `conformance:check` (pre-push) fails on any diff.
+  `conformance:check` (pre-push and the site's `check`) fails if
+  `public/conformance/` differs from what `conformance:gen` would write.
 - The spec moved here from `notation.randsum.dev`, which now only 301s:
   `/conformance/*` keeps its path, everything else maps to `/spec/*`. The
   redirect is `worker/notation-redirect.ts`, deployed from
@@ -134,6 +135,9 @@ Interactive / shared components:
 - `src/integrations/curated-llms-txt.ts` — prepends the repo-root `llms.txt` to
   the page list `starlight-page-actions` writes to `dist/llms.txt`. Edit the
   root file; there is no `public/` copy. It must stay after `starlight()`.
+- `public/schemas/v1/randsum.json` — checked-in copy of
+  `packages/games/randsum.json`, served at the schema's `$id` by both `astro dev`
+  and the production build. `__tests__/schema-sync.test.ts` fails if it drifts.
 
 ## Package Data
 
@@ -147,7 +151,7 @@ bun run dev        # Dev server (localhost:4321)
 bun run build      # Production build
 bun run preview    # Preview production build
 bun run typecheck  # astro check
-bun run check      # build + typecheck + test
+bun run check      # build + typecheck + test + conformance:check
 bun run conformance:gen    # Regenerate public/conformance/v0.9.0.json
-bun run conformance:check  # conformance:gen + fail on any diff
+bun run conformance:check  # fail if public/conformance/ differs from what conformance:gen writes
 ```
