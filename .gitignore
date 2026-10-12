@@ -68,7 +68,6 @@ typings/
 
 # Benchmark
 benchmark/
-benchmark-results.json
 
 # Profile
 
