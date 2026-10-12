@@ -1,16 +1,23 @@
+# Top-level `output` is the only place lefthook reads it (nested under a hook it
+# fails `lefthook validate` and is ignored). `summary` + `failure` hides a
+# passing step's output and prints a failing step's in full, so no step needs a
+# `> /dev/null` redirect. Each step's `fail_text` is its remedy, printed on the
+# summary line when it fails.
+output:
+  - summary
+  - failure
+
 pre-commit:
   # `install` runs first (priority: 1); the rest run in parallel afterward
   # (priority: 2). Lefthook respects priority ordering and only parallelises
   # within a priority band — without this, install raced lint/typecheck on
   # fresh checkouts and flaked workspace resolution.
   parallel: true
-  output:
-    - summary
-    - failure
   commands:
     install:
       run: bun install --frozen-lockfile
       priority: 1
+      fail_text: bun.lock is out of date. Run `bun install` and stage bun.lock
     # Biome replaces the former ESLint (--fix) + Prettier steps in a single pass:
     # `check --write` runs the linter (applying safe fixes) and the formatter.
     # Unfixable lint errors still exit non-zero and block the commit, matching the
@@ -22,38 +29,45 @@ pre-commit:
       run: bunx biome check --write --no-errors-on-unmatched --files-ignore-unknown=true {staged_files}
       stage_fixed: true
       priority: 2
+      fail_text: Biome could not auto-fix the errors above. Fix them by hand, then re-stage
     typecheck:
       run: bun run typecheck
       priority: 2
+      fail_text: Fix the type errors above (`bun run typecheck`). TS2307 on @randsum/* means dist is missing; run `bun run build`
     codegen-check:
       glob: "packages/games/*.randsum.json"
       run: bun run --filter @randsum/games gen:check
       priority: 2
+      fail_text: Run `bun run --filter @randsum/games gen`, then stage packages/games/src/*.generated.ts
 
 pre-push:
-  output:
-    - summary
-    - failure
-  commands:
-    build:
-      run: bun run build > /dev/null 2>&1
-      priority: 1
-    codegen-check:
-      run: bun run --filter @randsum/games gen:check > /dev/null 2>&1
-      priority: 2
-    conformance-check:
-      run: bun run --filter @randsum/rdn conformance:check > /dev/null 2>&1
-      priority: 2
-    test:
-      run: bun run test
-      priority: 2
-    knip:
-      run: bun run knip > /dev/null 2>&1
-      priority: 2
-    arch-check:
-      # Cycle + boundary invariants (audit X7b / architecture R2+R3): no circular
-      # deps, no game-to-game import, no @randsum/*/src or /dist reach-in. Also runs
-      # in CI feeding the CI Success gate so it cannot be bypassed with
-      # --no-verify.
-      run: bun run arch:check > /dev/null 2>&1
-      priority: 2
+  # `build` runs alone first; if it fails nothing else runs against a stale
+  # dist. The checks then run in parallel.
+  piped: true
+  jobs:
+    - name: build
+      run: bun run build
+      fail_text: Fix the build errors above (`bun run build`)
+    - name: checks
+      group:
+        parallel: true
+        jobs:
+          - name: codegen-check
+            run: bun run --filter @randsum/games gen:check
+            fail_text: Run `bun run --filter @randsum/games gen`, then commit packages/games/src/*.generated.ts
+          - name: conformance-check
+            run: bun run --filter @randsum/rdn conformance:check
+            fail_text: The check regenerated the file; commit apps/rdn/public/conformance/v0.9.0.json
+          - name: test
+            run: bun run test
+            fail_text: Fix the failing tests above (`bun run test`)
+          - name: knip
+            run: bun run knip
+            fail_text: Remove the unused files, exports or dependencies knip lists above (`bun run knip`)
+          # Cycle + boundary invariants (audit X7b / architecture R2+R3): no
+          # circular deps, no game-to-game import, no @randsum/*/src or /dist
+          # reach-in. Also runs in CI feeding the CI Success gate so it cannot be
+          # bypassed with --no-verify.
+          - name: arch-check
+            run: bun run arch:check
+            fail_text: Fix the dependency violations above (`bun run arch:check`)

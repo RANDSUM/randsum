@@ -68,9 +68,9 @@ Run `bun run fix:all` to auto-fix lint and format issues.
 
 ### Git Hooks (Lefthook)
 
-**pre-commit** runs `bun install --frozen-lockfile` first (priority 1), then in parallel: Biome (`check --write` — lint + format, covering `.astro`), `typecheck`, and a codegen check (`gen:check`) when a `.randsum.json` spec changed. If it fails, run `bun run fix:all`.
+**pre-commit** runs `bun install --frozen-lockfile` first (priority 1), then in parallel: Biome (`check --write` — lint + format, covering `.astro`), `typecheck`, and a codegen check (`gen:check`) when a `.randsum.json` spec changed. A failing step prints its own fix.
 
-**pre-push** is a heavier gauntlet — expect it to take a while. It runs `build` first (priority 1), then in parallel: codegen check (`gen:check`), conformance check (`@randsum/rdn conformance:check`), the full test suite, `knip`, and the architecture check (`arch:check`). See `lefthook.yml` for the exact config. Do not `--no-verify` past a real failure.
+**pre-push** is a heavier gauntlet — expect it to take a while. It runs `build` first (nothing else runs if it fails), then in parallel: codegen check (`gen:check`), conformance check (`@randsum/rdn conformance:check`), the full test suite, `knip`, and the architecture check (`arch:check`). A failing step prints its own fix. See `lefthook.yml` for the exact config. Do not `--no-verify` past a real failure.
 
 ## Resources
 
