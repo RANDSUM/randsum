@@ -1,6 +1,7 @@
 ---
 '@randsum/roller': minor
 '@randsum/games': patch
+'@randsum/mcp': patch
 ---
 
 Modifiers on special dice now roll, and notation that used to pass validation
