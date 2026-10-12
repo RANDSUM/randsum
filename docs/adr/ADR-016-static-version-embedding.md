@@ -2,7 +2,7 @@
 
 ## Status
 
-Accepted (amended — originally proposed all-in-one-page embedding, revised to per-version pages for LLM friendliness)
+Accepted (amended — originally proposed all-in-one-page embedding, revised to per-version pages for LLM friendliness; amended again to generate `llms.txt` and `llms-full.txt` from the specs collection instead of committing them)
 
 ## Context
 
@@ -41,7 +41,7 @@ The implementation contract:
 - `src/pages/index.astro` renders the latest version directly (same layout, no redirect). `src/utils/versions.ts` provides `getVersions()` / `getLatestVersion()` / `isLatestVersion()` for version-aware sorting and selection.
 - The version dropdown is a set of `<a>` links between pages — standard navigation, no client-side routing needed.
 - Non-latest versions display a banner (`VersionBanner.astro`): "You are viewing an older version of this specification. [View latest]"
-- `public/llms.txt` provides a brief description and link to the latest spec, and `public/llms-full.txt` holds the full spec text for LLM consumers. Both are committed static files under `public/`.
+- `src/pages/llms.txt.ts` serves a brief description and a link to the latest spec, and `src/pages/llms-full.txt.ts` serves the latest spec's Markdown body for LLM consumers. Both are static endpoints that read the `specs` collection at build time. They replaced committed copies under `public/`, whose full-text file fell months behind the spec it claimed to be.
 
 The conformance vectors are generated separately from the spec pages. `src/conformance/vectors.ts` defines `CONFORMANCE_FILE` (the canonical vector set), and the `conformance:gen` script (`conformance-gen.ts`) serializes it with a stable key order to `public/conformance/v0.9.0.json`, exercising `@randsum/roller` as a build-time dev dependency. The `conformance:check` script regenerates the JSON and runs `git diff --exit-code` on `public/conformance/v0.9.0.json` as a CI guard, keeping the published vectors in sync with their source.
 

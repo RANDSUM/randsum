@@ -178,3 +178,30 @@ describe('Conformance Vectors', () => {
     })
   }
 })
+
+// Spec §11.4: a level may be claimed only when every vector at that level passes.
+// While any Level 4 vector is a known gap, no published page may claim Level 4.
+describe('published conformance claims', () => {
+  const repoRoot = new URL('../../../../', import.meta.url).pathname
+  const claimSources = [
+    'README.md',
+    'llms.txt',
+    'apps/*/README.md',
+    'packages/*/README.md',
+    'apps/site/src/content/docs/**/*.mdx'
+  ]
+  const level4Gaps = CONFORMANCE_FILE.conformanceLevels.level4_full.filter(
+    id => KNOWN_CONFORMANCE_GAPS[id] !== undefined
+  )
+
+  test.skipIf(level4Gaps.length === 0)('no page claims Level 4 (Full) conformance', async () => {
+    const offenders: string[] = []
+    for (const pattern of claimSources) {
+      for await (const file of new Bun.Glob(pattern).scan(repoRoot)) {
+        const text = await Bun.file(`${repoRoot}${file}`).text()
+        if (/Level 4 \(Full\) conforman/i.test(text)) offenders.push(file)
+      }
+    }
+    expect(offenders).toEqual([])
+  })
+})
