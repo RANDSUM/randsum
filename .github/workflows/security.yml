@@ -21,6 +21,6 @@ jobs:
       - uses: ./.github/actions/bun-setup
 
       # A suppression (`--ignore=GHSA-…`) is justified in osv-scanner.toml
-      # first, then mirrored here and in lefthook.yml's pre-push audit.
+      # first, then mirrored here.
       - name: Security audit
         run: bun audit --audit-level=high
