@@ -42,27 +42,15 @@ jobs:
           # (with a placeholder token) which shadows OIDC Trusted Publishing. The
           # committed root .npmrc already sets registry=registry.npmjs.org, so npm
           # targets the right registry and authenticates purely via OIDC.
-          # Pin node 24: publishing needs npm >= 11.5.1 (Trusted Publishing / OIDC
-          # provenance); node 24 ships a new-enough npm and the pinned-line install
-          # below tops it off. Kept ahead of the site/rdn node 22 pins on purpose.
+          # Node 24 bundles npm >= 11.5.1 (the Trusted Publishing minimum).
           node-version: '24'
-      - name: Install npm 11 (latest of the known-good line)
-        # npm@11, NOT npm@latest: npm 12.0.0 (2026-07-08) ships with a broken
-        # provenance path — libnpmpublish requires the `sigstore` module, which is
-        # missing from 12.0.0's bundled node_modules, so every `npm publish
-        # --provenance` dies with MODULE_NOT_FOUND (Release run 29021728991).
-        # Re-evaluate when npm 12.x fixes its packaging.
-        run: npm install -g npm@11
-      - name: Build all packages
-        run: bun run build
-      - name: Check bundle sizes
-        run: bun run --filter '@randsum/roller' size && bun run --filter '@randsum/games' size
-
       - name: Create Release PR or Publish
         id: changesets
         uses: changesets/action@a45c4d594aa4e2c509dc14a9f2b3b67ba3780d0d  # v1.9.0
         with:
           version: bun changeset version
+          # Build, then publish. No check or size step here: this workflow runs
+          # only after CI passed on this commit, and CI is where those gates live.
           publish: bun run publish
           title: 'chore: version packages'
           commit: 'chore: version packages'

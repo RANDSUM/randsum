@@ -315,8 +315,7 @@ path — trace the import graph from `src/tokenize.ts`.
 ## Commands
 
 ```bash
-bun test                              # run tests (bun:test)
-bun run test:coverage                 # tests with lcov coverage
+bun run test                          # tests (bun:test), writes coverage/lcov.info
 bun run build                         # bunup — ESM + DTS
 bun run typecheck                     # tsc --noEmit
 bun run lint                          # biome

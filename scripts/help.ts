@@ -35,7 +35,7 @@ const categories: Record<string, Record<string, string>> = {
   Release: {
     changeset: 'Create a new changeset',
     'version-packages': 'Version packages from changesets',
-    publish: 'Build, check, and publish packages to NPM'
+    publish: 'Build and publish packages to npm'
   }
 }
 
