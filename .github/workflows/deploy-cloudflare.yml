@@ -72,10 +72,10 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: ./.github/actions/bun-setup
 
-      # rdn imports @randsum/roller via a workspace subpath export, so roller
-      # must be built first or the Astro build resolves nothing.
+      # rdn imports @randsum/roller via a workspace subpath export; `rdn...`
+      # builds roller first, then rdn.
       - name: Build
-        run: bun run --filter @randsum/roller --filter @randsum/rdn build
+        run: bun run --filter '@randsum/rdn...' build
 
       - name: Deploy
         env:
@@ -98,13 +98,10 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: ./.github/actions/bun-setup
 
-      # roller and games are workspace subpath imports, so both must be built
-      # before Astro can resolve anything in the docs pages or the playground.
+      # The site imports roller through a workspace subpath export; `site...`
+      # builds roller first, then the site.
       - name: Build
-        run: |
-          bun run --filter '@randsum/roller' build
-          bun run --filter '@randsum/games' build
-          bun run site:build
+        run: bun run --filter '@randsum/site...' build
 
       # Deploy the adapter-GENERATED config, not apps/site/wrangler.jsonc. The
       # hand-written one is build input (name, compat flags, assets policy); the
@@ -136,7 +133,7 @@ jobs:
       # sites there is no separate app build step — wrangler compiles the
       # TypeScript entry itself.
       - name: Build dependencies
-        run: bun run --filter '@randsum/roller' --filter '@randsum/games' build
+        run: bun run --filter '@randsum/discord-bot^...' build
 
       - name: Deploy
         env:

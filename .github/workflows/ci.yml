@@ -27,8 +27,8 @@ jobs:
       discord-bot: ${{ steps.filter.outputs.discord-bot }}
       changesets: ${{ steps.filter.outputs.changesets }}
       # Dynamic matrix for the consolidated `package` job below: one include leg
-      # per CHANGED package, carrying its per-package config (prereq builds, node
-      # version, coverage flag, size gate). Job-level `if` cannot see `matrix`, so
+      # per CHANGED package, carrying its per-package config (node version,
+      # coverage flag, size gate). Job-level `if` cannot see `matrix`, so
       # filtering the legs here is how unchanged packages skip.
       matrix: ${{ steps.set-matrix.outputs.matrix }}
     steps:
@@ -98,12 +98,12 @@ jobs:
         run: |
           all='[
             {"pkg":"roller","coverage":"roller","size":true},
-            {"pkg":"games","build":"@randsum/roller","coverage":"games","size":true},
-            {"pkg":"mcp","build":"@randsum/roller @randsum/games"},
-            {"pkg":"discord-bot","build":"@randsum/roller @randsum/games"},
-            {"pkg":"site","build":"@randsum/roller @randsum/games","node":"22"},
-            {"pkg":"rdn","build":"@randsum/roller","node":"22"},
-            {"pkg":"dice-ui","build":"@randsum/roller","coverage":"dice-ui"}
+            {"pkg":"games","coverage":"games","size":true},
+            {"pkg":"mcp"},
+            {"pkg":"discord-bot"},
+            {"pkg":"site","node":"22"},
+            {"pkg":"rdn","node":"22"},
+            {"pkg":"dice-ui","coverage":"dice-ui"}
           ]'
           changed='${{ toJSON(steps.filter.outputs) }}'
           include=$(jq -cn --argjson all "$all" --argjson changed "$changed" \
@@ -111,8 +111,8 @@ jobs:
           echo "matrix={\"include\":$include}" >> "$GITHUB_OUTPUT"
 
   # The seven per-package jobs (roller, games, mcp, discord-bot, site, rdn,
-  # dice-ui) were near-identical, differing only in filter name, prerequisite
-  # builds, node version, and coverage flags. They are folded into one matrix,
+  # dice-ui) were near-identical, differing only in filter name, node version,
+  # and coverage flags. They are folded into one matrix,
   # populated dynamically by the `changes` job so only changed packages get a
   # leg. The `include` entries carry the per-package differences.
   package:
@@ -136,19 +136,12 @@ jobs:
           # which bun-setup treats as "skip node setup".
           node-version: ${{ matrix.node || '' }}
       - name: Build dependencies
-        if: matrix.build
-        # Build prerequisites one at a time in listed (dependency) order. bun's
-        # --filter runs in parallel without topological ordering, and games'
-        # build needs roller's dist to already exist, so a combined multi-filter
-        # build would race. matrix.build is passed via env (not interpolated
-        # into the script) to avoid template-injection.
+        # `^...` selects the package's workspace dependencies (devDependencies
+        # included) but not the package itself, and bun runs them in dependency
+        # order. roller has none, so bun warns and builds nothing.
         env:
-          BUILD: ${{ matrix.build }}
-        run: |
-          read -ra pkgs <<< "$BUILD"
-          for pkg in "${pkgs[@]}"; do
-            bun run --filter "$pkg" build
-          done
+          PKG: ${{ matrix.pkg }}
+        run: bun run --filter "@randsum/$PKG^..." --if-present build
       - name: Verify generated files are up to date
         if: matrix.pkg == 'games'
         run: bun run --filter '@randsum/games' gen:check
