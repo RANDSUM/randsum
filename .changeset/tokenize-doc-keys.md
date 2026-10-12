@@ -1,5 +1,6 @@
 ---
 '@randsum/roller': patch
+'@randsum/mcp': patch
 ---
 
 `tokenize()` now emits token keys that exist in `NOTATION_DOCS`.
