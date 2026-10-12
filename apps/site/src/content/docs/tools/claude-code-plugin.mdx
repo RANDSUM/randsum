@@ -5,9 +5,9 @@ description: Claude Code plugin with skills for dice rolling, probability analys
 
 import { Tabs, TabItem, Card, CardGrid } from '@astrojs/starlight/components'
 import CodeExample from '../../../components/live-repl/CodeExample.astro'
-import SkillContent from '../../../../../../skills/dice-rolling/SKILL.md'
-import NotationContent from '../../../../../../skills/dice-rolling/references/NOTATION.md'
-import GameSystemsContent from '../../../../../../skills/dice-rolling/references/GAME_SYSTEMS.md'
+import SkillContent from '../../../../../../plugins/randsum/skills/dice-rolling/SKILL.md'
+import NotationContent from '../../../../../../plugins/randsum/skills/dice-rolling/references/NOTATION.md'
+import GameSystemsContent from '../../../../../../plugins/randsum/skills/dice-rolling/references/GAME_SYSTEMS.md'
 
 RANDSUM provides a **Claude Code plugin** with three skills that give AI agents specialized knowledge for tabletop RPG dice mechanics.
 
@@ -37,33 +37,21 @@ What are the odds of rolling 15+ on 3d6?
 Create a .randsum.json spec for Ironsworn
 ```
 
-Or invoke explicitly with `/dice-rolling`, `/dice-probability`, or `/game-spec-creator`.
+Or invoke explicitly with `/randsum:dice-rolling`, `/randsum:dice-probability`, or `/randsum:game-spec-creator` (plugin skills are namespaced by the plugin name).
 
 ## Setup
 
-All skill files live in the [`skills/`](https://github.com/RANDSUM/randsum/tree/main/skills) directory.
+All skill files live in the [`plugins/randsum/skills/`](https://github.com/RANDSUM/randsum/tree/main/plugins/randsum/skills) directory.
 
 <Tabs>
 <TabItem label="Claude Code">
 
-Place skill files in your project's `.claude/skills/` directory:
+Add the RANDSUM marketplace and install the plugin from inside Claude Code:
 
-<CodeExample lang="bash" code={`# Download all three skills
-for skill in dice-rolling dice-probability game-spec-creator; do
-  mkdir -p .claude/skills/$skill/references
-  curl -o .claude/skills/$skill/SKILL.md \\
-    https://raw.githubusercontent.com/RANDSUM/randsum/main/skills/$skill/SKILL.md
-done
+<CodeExample lang="bash" code={`/plugin marketplace add RANDSUM/randsum
+/plugin install randsum@randsum`} />
 
-# Download reference files
-curl -o .claude/skills/dice-rolling/references/NOTATION.md \\
-  https://raw.githubusercontent.com/RANDSUM/randsum/main/skills/dice-rolling/references/NOTATION.md
-curl -o .claude/skills/dice-rolling/references/GAME_SYSTEMS.md \\
-  https://raw.githubusercontent.com/RANDSUM/randsum/main/skills/dice-rolling/references/GAME_SYSTEMS.md
-curl -o .claude/skills/dice-probability/references/PROBABILITY_TABLES.md \\
-  https://raw.githubusercontent.com/RANDSUM/randsum/main/skills/dice-probability/references/PROBABILITY_TABLES.md
-curl -o .claude/skills/game-spec-creator/references/SPEC_EXAMPLES.md \\
-  https://raw.githubusercontent.com/RANDSUM/randsum/main/skills/game-spec-creator/references/SPEC_EXAMPLES.md`} />
+The plugin also starts the [`@randsum/mcp`](/tools/mcp/) server through `npx`, so the skills can roll with the real engine instead of simulating.
 
 </TabItem>
 <TabItem label="Custom Agent">
@@ -73,9 +61,9 @@ Load skill content as part of your agent's system prompt:
 <CodeExample code={`import { readFileSync } from 'fs'
 
 // Load whichever skills your agent needs
-const diceSkill = readFileSync('skills/dice-rolling/SKILL.md', 'utf-8')
-const probSkill = readFileSync('skills/dice-probability/SKILL.md', 'utf-8')
-const specSkill = readFileSync('skills/game-spec-creator/SKILL.md', 'utf-8')
+const diceSkill = readFileSync('plugins/randsum/skills/dice-rolling/SKILL.md', 'utf-8')
+const probSkill = readFileSync('plugins/randsum/skills/dice-probability/SKILL.md', 'utf-8')
+const specSkill = readFileSync('plugins/randsum/skills/game-spec-creator/SKILL.md', 'utf-8')
 
 // Include in your agent's system prompt
 const systemPrompt = \`You are a TTRPG assistant.\\n\\n\${diceSkill}\``} />
@@ -100,9 +88,9 @@ The core skill. Teaches an agent RANDSUM dice notation — a compact syntax for 
 - When to validate input and how to explain results clearly
 
 **Files:**
-- [`skills/dice-rolling/SKILL.md`](https://github.com/RANDSUM/randsum/blob/main/skills/dice-rolling/SKILL.md) — main skill definition
-- [`skills/dice-rolling/references/NOTATION.md`](https://github.com/RANDSUM/randsum/blob/main/skills/dice-rolling/references/NOTATION.md) — full notation reference
-- [`skills/dice-rolling/references/GAME_SYSTEMS.md`](https://github.com/RANDSUM/randsum/blob/main/skills/dice-rolling/references/GAME_SYSTEMS.md) — game system mechanics
+- [`plugins/randsum/skills/dice-rolling/SKILL.md`](https://github.com/RANDSUM/randsum/blob/main/plugins/randsum/skills/dice-rolling/SKILL.md) — main skill definition
+- [`plugins/randsum/skills/dice-rolling/references/NOTATION.md`](https://github.com/RANDSUM/randsum/blob/main/plugins/randsum/skills/dice-rolling/references/NOTATION.md) — full notation reference
+- [`plugins/randsum/skills/dice-rolling/references/GAME_SYSTEMS.md`](https://github.com/RANDSUM/randsum/blob/main/plugins/randsum/skills/dice-rolling/references/GAME_SYSTEMS.md) — game system mechanics
 
 ### Dice Probability
 
@@ -115,8 +103,8 @@ Teaches an agent to analyze probability distributions for dice rolls. Handles ex
 - Game-system outcome probabilities (e.g., "chance of critical success in Blades")
 
 **Files:**
-- [`skills/dice-probability/SKILL.md`](https://github.com/RANDSUM/randsum/blob/main/skills/dice-probability/SKILL.md) — main skill definition
-- [`skills/dice-probability/references/PROBABILITY_TABLES.md`](https://github.com/RANDSUM/randsum/blob/main/skills/dice-probability/references/PROBABILITY_TABLES.md) — precomputed reference tables
+- [`plugins/randsum/skills/dice-probability/SKILL.md`](https://github.com/RANDSUM/randsum/blob/main/plugins/randsum/skills/dice-probability/SKILL.md) — main skill definition
+- [`plugins/randsum/skills/dice-probability/references/PROBABILITY_TABLES.md`](https://github.com/RANDSUM/randsum/blob/main/plugins/randsum/skills/dice-probability/references/PROBABILITY_TABLES.md) — precomputed reference tables
 
 ### Game Spec Creator
 
@@ -129,8 +117,8 @@ Teaches an agent the `.randsum.json` spec format — a declarative JSON Schema f
 - Validation rules and common patterns across game systems
 
 **Files:**
-- [`skills/game-spec-creator/SKILL.md`](https://github.com/RANDSUM/randsum/blob/main/skills/game-spec-creator/SKILL.md) — main skill definition
-- [`skills/game-spec-creator/references/SPEC_EXAMPLES.md`](https://github.com/RANDSUM/randsum/blob/main/skills/game-spec-creator/references/SPEC_EXAMPLES.md) — example specs for existing game systems
+- [`plugins/randsum/skills/game-spec-creator/SKILL.md`](https://github.com/RANDSUM/randsum/blob/main/plugins/randsum/skills/game-spec-creator/SKILL.md) — main skill definition
+- [`plugins/randsum/skills/game-spec-creator/references/SPEC_EXAMPLES.md`](https://github.com/RANDSUM/randsum/blob/main/plugins/randsum/skills/game-spec-creator/references/SPEC_EXAMPLES.md) — example specs for existing game systems
 
 ## Programmatic usage
 
@@ -162,8 +150,8 @@ The full skill file that agents receive:
 
 ## Links
 
-- [All skills on GitHub](https://github.com/RANDSUM/randsum/tree/main/skills)
-- [Dice Rolling skill](https://github.com/RANDSUM/randsum/tree/main/skills/dice-rolling)
-- [Dice Probability skill](https://github.com/RANDSUM/randsum/tree/main/skills/dice-probability)
-- [Game Spec Creator skill](https://github.com/RANDSUM/randsum/tree/main/skills/game-spec-creator)
-- [Claude Code skills documentation](https://docs.anthropic.com/en/docs/claude-code/skills)
+- [All skills on GitHub](https://github.com/RANDSUM/randsum/tree/main/plugins/randsum/skills)
+- [Dice Rolling skill](https://github.com/RANDSUM/randsum/tree/main/plugins/randsum/skills/dice-rolling)
+- [Dice Probability skill](https://github.com/RANDSUM/randsum/tree/main/plugins/randsum/skills/dice-probability)
+- [Game Spec Creator skill](https://github.com/RANDSUM/randsum/tree/main/plugins/randsum/skills/game-spec-creator)
+- [Claude Code skills documentation](https://code.claude.com/docs/en/skills)

@@ -356,21 +356,9 @@ roll({
   quantity: 4,
   modifiers: { explode: true }
 })
-
-roll("3d6!5") // Explode with max depth of 5
-roll({
-  sides: 6,
-  quantity: 3,
-  modifiers: { explode: 5 }
-})
-
-roll("3d6!0") // Explode unlimited (capped at 1000 for safety)
-roll({
-  sides: 6,
-  quantity: 3,
-  modifiers: { explode: 0 }
-})
 ```
+
+Plain explode takes no depth: `3d6!5` and `3d6!0` are rejected. Use compound (`!!N`) or penetrate (`!pN`) when you need a depth.
 
 **How it works:** When a die shows its maximum value, it "explodes" - a new die is rolled and added to the result. This continues for each new maximum value rolled, creating additional dice in the result.
 
@@ -732,8 +720,8 @@ roll("8d6+5**2") // 8d6+5 damage, doubled for area effect
 
 All explosive modifiers (explode, compound, penetrate) have built-in depth limits:
 
-- **Explicit depth**: `!N`, `!!N`, `!pN` - Limited to N depth
-- **Unlimited (0)**: `!0`, `!!0`, `!p0` - Capped at 1000 for safety
+- **Explicit depth**: `!!N`, `!pN` - Limited to N depth
+- **Unlimited (0)**: `!!0`, `!p0` - Capped at 1000 for safety
 - **Default**: `!`, `!!`, `!p` - Limited to 1 explosion per die
 
 ### Best Practices

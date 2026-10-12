@@ -45,7 +45,7 @@ For reproducible simulations, use a seeded random function:
 
 ```typescript
 import { roll } from '@randsum/roller'
-import { createSeededRandom } from '@randsum/test-utils'
+import { createSeededRandom } from '@randsum/roller/random'
 
 const config = { randomFn: createSeededRandom(42) }
 const results = Array.from({ length: 100_000 }, () =>

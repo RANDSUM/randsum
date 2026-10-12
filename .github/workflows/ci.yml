@@ -68,9 +68,10 @@ jobs:
               - 'apps/site/**'
               # The site build prepends the repo-root llms.txt to dist/llms.txt.
               - 'llms.txt'
+              - 'plugins/**'
               - '.github/workflows/ci.yml'
             skill:
-              - 'skills/**'
+              - 'plugins/**'
               - '.claude-plugin/**'
               - '.github/workflows/ci.yml'
             discord-bot:
@@ -208,18 +209,13 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: ./.github/actions/bun-setup
       - name: Verify skills
-        run: npx skills-ref validate skills/dice-rolling/SKILL.md
+        run: for f in plugins/randsum/skills/*/SKILL.md; do npx skills-ref validate "$f"; done
       - name: Install Claude Code
         run: npm install -g @anthropic-ai/claude-code
       - name: Verify plugin
-        run: claude plugin validate .claude-plugin/plugin.json
+        run: claude plugin validate plugins/randsum
       - name: Verify marketplace
-        run: |
-          if [ -f .claude-plugin/marketplace.json ]; then
-            claude plugin validate .claude-plugin/marketplace.json
-          else
-            echo "No marketplace.json found, skipping"
-          fi
+        run: claude plugin validate .claude-plugin/marketplace.json
 
   publish-dry-run:
     name: publish (dry run)

@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "randsum": {
+      "command": "npx",
+      "args": ["-y", "@randsum/mcp"]
+    }
+  }
+}

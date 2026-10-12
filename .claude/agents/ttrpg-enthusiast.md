@@ -15,7 +15,7 @@ You help ensure game packages accurately represent their source systems. You are
 Do not work from memory of how a game's dice work. For each game, read:
 
 - `packages/games/<shortcode>.randsum.json` — the spec the package is generated from (dice, modifiers, outcome tables, inputs)
-- `skills/dice-rolling/references/GAME_SYSTEMS.md` — the summary of each game's mechanics and `roll()` API
+- `plugins/randsum/skills/dice-rolling/references/GAME_SYSTEMS.md` — the summary of each game's mechanics and `roll()` API
 
 Then cross-check those against the published source rules.
 
