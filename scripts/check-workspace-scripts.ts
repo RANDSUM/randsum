@@ -16,6 +16,10 @@
  * Wiring: this guard runs at the head of the root `check` chain and as its own
  * CI job feeding the CI Success gate, so a newly-added package that forgets a
  * standard script fails the build instead of quietly opting out.
+ *
+ * It also asserts that every apps/<app>/wrangler.jsonc declares the same
+ * `compatibility_date`, so the three Workers share one runtime baseline and no
+ * config comment can claim a match that is not there.
  */
 
 import { readFileSync, readdirSync, statSync } from 'node:fs'
@@ -81,6 +85,34 @@ for (const { dir, manifest } of findManifests()) {
   }
 }
 
+// One compatibility_date across every apps/<app>/wrangler.jsonc. A targeted
+// regex rather than a JSONC parse: the files carry comments, and only this one
+// key matters here.
+const COMPAT_DATE = /^\s*"compatibility_date"\s*:\s*"([^"]+)"/m
+
+const appsDir = join(ROOT, 'apps')
+const compatDates = readdirSync(appsDir)
+  .map(entry => join(appsDir, entry, 'wrangler.jsonc'))
+  .filter(path => {
+    try {
+      return statSync(path).isFile()
+    } catch {
+      return false
+    }
+  })
+  .map(path => ({
+    path: path.slice(ROOT.length + 1),
+    date: COMPAT_DATE.exec(readFileSync(path, 'utf8'))?.[1]
+  }))
+
+const distinctDates = new Set(compatDates.map(({ date }) => date))
+const compatProblem =
+  distinctDates.size > 1 || distinctDates.has(undefined)
+    ? 'Every apps/<app>/wrangler.jsonc must declare the same compatibility_date:\n\n' +
+      compatDates.map(({ path, date }) => `  ${path}: ${date ?? 'missing'}`).join('\n') +
+      "\n\nSet them to one date, no newer than the pinned wrangler's workerd supports."
+    : undefined
+
 if (problems.length > 0) {
   console.error(
     'Workspace script guard failed. Every package must declare the standard set\n' +
@@ -92,4 +124,11 @@ if (problems.length > 0) {
   process.exit(1)
 }
 
-console.log('Workspace script guard passed: all packages declare the standard set.')
+if (compatProblem !== undefined) {
+  console.error(`Workspace script guard failed. ${compatProblem}`)
+  process.exit(1)
+}
+
+console.log(
+  'Workspace script guard passed: all packages declare the standard set, and all Workers share one compatibility_date.'
+)

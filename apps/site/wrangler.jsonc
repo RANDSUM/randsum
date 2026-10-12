@@ -20,11 +20,11 @@
   // moves. Cloudflare's own servers would accept a newer date; local ones will
   // not. Raise it deliberately, alongside a wrangler upgrade, never by reflex.
   "compatibility_date": "2026-07-13",
-  // Load-bearing at BUILD time, not just at runtime. The adapter prerenders
-  // pages in a workerd sandbox rather than in Node, and the markdown/rehype
-  // pipeline reaches for `require('path')` while rendering. Without this flag
-  // the build fails before it produces anything, with an error that reads like
-  // a bundler problem rather than a missing runtime capability.
+  // Load-bearing at RUNTIME, not at build. Prerendering runs in Node
+  // (`prerenderEnvironment: 'node'` in astro.config.mjs), so the build succeeds
+  // without this flag. The emitted server bundle for the `/api/roll` route
+  // still imports `node:process` and requires `path`, `fs`, `url` and `util`,
+  // which workerd only provides with nodejs_compat.
   "compatibility_flags": ["nodejs_compat"],
   "assets": {
     "directory": "./dist",

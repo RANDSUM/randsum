@@ -35,6 +35,7 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
+    "deploy": "wrangler deploy -c dist/server/wrangler.json",
     "astro": "astro",
     "test": "bun test",
     "typecheck": "astro check",
@@ -48,6 +49,7 @@
     "@types/react-dom": "catalog:",
     "starlight-page-actions": "0.7.1",
     "starlight-sidebar-topics": "0.8.0",
-    "typescript": "6.0.3"
+    "typescript": "6.0.3",
+    "wrangler": "catalog:"
   }
 }
