@@ -8,37 +8,37 @@ output:
   - failure
 
 pre-commit:
-  # `install` runs first (priority: 1); the rest run in parallel afterward
-  # (priority: 2). Lefthook respects priority ordering and only parallelises
-  # within a priority band — without this, install raced lint/typecheck on
-  # fresh checkouts and flaked workspace resolution.
-  parallel: true
-  commands:
-    install:
+  # `install` runs alone first; if it fails nothing else runs against a stale
+  # node_modules. The checks then run in parallel. (Under `parallel: true`
+  # lefthook ignores `priority`, so install used to race lint/typecheck on
+  # fresh checkouts and flake workspace resolution.)
+  piped: true
+  jobs:
+    - name: install
       run: bun install --frozen-lockfile
-      priority: 1
       fail_text: bun.lock is out of date. Run `bun install` and stage bun.lock
-    # Biome replaces the former ESLint (--fix) + Prettier steps in a single pass:
-    # `check --write` runs the linter (applying safe fixes) and the formatter.
-    # Unfixable lint errors still exit non-zero and block the commit, matching the
-    # old `eslint --fix` gate. Biome is now the sole formatter — including for
-    # .astro files (it formats the frontmatter script and lints it; the template
-    # markup is left as-authored, the deliberate single-formatter trade-off).
-    biome:
-      glob: "*.{ts,tsx,js,mjs,cjs,json,jsonc,css,astro}"
-      run: bunx biome check --write --no-errors-on-unmatched --files-ignore-unknown=true {staged_files}
-      stage_fixed: true
-      priority: 2
-      fail_text: Biome could not auto-fix the errors above. Fix them by hand, then re-stage
-    typecheck:
-      run: bun run typecheck
-      priority: 2
-      fail_text: Fix the type errors above (`bun run typecheck`). TS2307 on @randsum/* means dist is missing; run `bun run build`
-    codegen-check:
-      glob: "packages/games/*.randsum.json"
-      run: bun run --filter @randsum/games gen:check
-      priority: 2
-      fail_text: Run `bun run --filter @randsum/games gen`, then stage packages/games/src/*.generated.ts
+    - name: checks
+      group:
+        parallel: true
+        jobs:
+          # Biome replaces the former ESLint (--fix) + Prettier steps in a single
+          # pass: `check --write` runs the linter (applying safe fixes) and the
+          # formatter. Unfixable lint errors still exit non-zero and block the
+          # commit. Biome is the sole formatter, including for .astro files (it
+          # formats and lints the frontmatter script; the template markup is left
+          # as-authored, the deliberate single-formatter trade-off).
+          - name: biome
+            glob: "*.{ts,tsx,js,mjs,cjs,json,jsonc,css,astro}"
+            run: bunx biome check --write --no-errors-on-unmatched --files-ignore-unknown=true {staged_files}
+            stage_fixed: true
+            fail_text: Biome could not auto-fix the errors above. Fix them by hand, then re-stage
+          - name: typecheck
+            run: bun run typecheck
+            fail_text: Fix the type errors above (`bun run typecheck`). TS2307 on @randsum/* means dist is missing; run `bun run build`
+          - name: codegen-check
+            glob: "packages/games/*.randsum.json"
+            run: bun run --filter @randsum/games gen:check
+            fail_text: Run `bun run --filter @randsum/games gen`, then stage packages/games/src/*.generated.ts
 
 pre-push:
   # `build` runs alone first; if it fails nothing else runs against a stale

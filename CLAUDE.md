@@ -134,7 +134,7 @@ roll("5d10F{3}") // Count failures <= 3
 
 ## Git Hooks (Lefthook)
 
-**pre-commit** (parallel): `bun install --frozen-lockfile` (priority 1), then Biome (`check --write`: lint + format, covering `.astro`), typecheck, and codegen check (`gen:check`)
+**pre-commit**: `bun install --frozen-lockfile` first (nothing else runs if it fails), then in parallel: Biome (`check --write`: lint + format, covering `.astro`), typecheck, and codegen check (`gen:check`)
 **pre-push**: build first (nothing else runs if it fails), then in parallel: codegen check, conformance check (`@randsum/rdn conformance:check`), tests, knip, and arch check (`arch:check`)
 
 A failing hook step prints its output and its own fix (`fail_text` in `lefthook.yml`).
@@ -159,7 +159,7 @@ Per-package `CLAUDE.md` files exist in each `packages/*/`, `games/*/`, and `apps
 
 **Codegen issues**: Game packages are generated from `.randsum.json` specs. Generated files live at `packages/games/src/*.generated.ts`. Regenerate with `bun run --filter @randsum/games gen`. Verify generated output matches specs: `bun run --filter @randsum/games gen:check`.
 
-**Hook failures**: Pre-commit runs install, lint --fix, format, typecheck, and codegen check (`gen:check`) in parallel. Pre-push runs build, then codegen check, conformance check, test, knip, and arch check in parallel. Each failing step prints its fix. See `lefthook.yml` for full config.
+**Hook failures**: Pre-commit runs install first (nothing else runs if it fails), then lint --fix, format, typecheck, and codegen check (`gen:check`) in parallel. Pre-push runs build, then codegen check, conformance check, test, knip, and arch check in parallel. Each failing step prints its fix. See `lefthook.yml` for full config.
 
 ## Dice Notation Reference
 
