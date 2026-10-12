@@ -1,5 +1,8 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
+  // No inputs of its own: every workspace extends this base and lists its own
+  // include, so a bare tsc or an editor at the root does not load the monorepo.
+  "files": [],
   "compilerOptions": {
     "lib": ["ESNext"],
     "target": "ESNext",

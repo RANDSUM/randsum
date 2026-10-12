@@ -606,9 +606,9 @@ if (hasRemote) {
 ```
 
 Only the smallest, inline-able expressions should be emitted as string
-literals. Bundle-size limits (15 KB per game, 35 KB for `salvageunion`)
-are enforced via size-limit; a helper file is amortized across every game
-that uses the feature.
+literals. Each game's bundle-size budget is enforced by size-limit (see
+`packages/games/.size-limit.ts`); a helper file is amortized across every
+game that uses the feature.
 
 **Don't edit generated files.** `src/*.generated.ts` is output, not
 source. The first two lines of every generated file say so. CI's

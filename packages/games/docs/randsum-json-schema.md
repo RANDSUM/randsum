@@ -963,8 +963,11 @@ Read `packages/games/src/blades.generated.ts` (58 lines) as a primer and
    reported paths.
 8. Read the generated module. Does the shape look right? If not, the spec
    is lying; fix it.
-9. Add a subpath export in `packages/games/package.json` and a size-limit
-   entry.
+9. Add a subpath export in `packages/games/package.json`. Do not add a
+   size-limit entry: `packages/games/.size-limit.ts` derives each game's
+   budget from `src/`. size-limit reads a `"size-limit"` array in
+   `package.json` before `.size-limit.ts`, so adding one there would replace
+   the derived config and drop the gate for every other game.
 10. Write `packages/games/__tests__/<shortcode>.test.ts` and
     `.property.test.ts`.
 11. Run `bun run --filter @randsum/games check`.
