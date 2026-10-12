@@ -187,13 +187,13 @@ function genericOptionsToParams<T>(
     arithmetic = 'add',
     modifiers = {},
     label,
+    // Parse-only discriminants and key are pulled out so they never leak onto RollParams.
+    dieType: _dieType,
+    fateVariant: _fateVariant,
+    customFaces: _customFaces,
+    key: _key,
     ...restOptions
-  } = options as RollOptions<T> & Partial<ParsedNotationOptions>
-  // Strip parse-only discriminants and key so they never leak onto RollParams.
-  delete (restOptions as { dieType?: unknown }).dieType
-  delete (restOptions as { fateVariant?: unknown }).fateVariant
-  delete (restOptions as { customFaces?: unknown }).customFaces
-  delete (restOptions as { key?: unknown }).key
+  } = options as RollOptions<T> & Partial<ParsedNotationOptions> & { key?: unknown }
 
   // A leading-signed FIRST pool (e.g. `-4d6`) renders its sign in the notation and
   // description; an additional subtractive pool inside a multi-pool string (e.g.
