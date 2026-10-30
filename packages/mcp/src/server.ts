@@ -135,19 +135,37 @@ const rollGameInput = z
     }
   })
 
+/** Sent to clients on initialize; most hosts put it in the model's context. */
+const SERVER_INSTRUCTIONS =
+  'RANDSUM rolls tabletop RPG dice with a real random number generator. Call a tool for every roll the user asks for; never invent dice results. Use `roll_game` when the user names a supported game (D&D 5e is `fifth`), `roll` for plain notation such as "4d6L" or "2d20L+5", and `validate` to explain or repair notation. Notation reference: https://randsum.dev/spec/'
+
+/**
+ * Every tool only computes: it reads no state, changes nothing, and reaches no
+ * outside system. The rolling tools differ from `validate` only in returning a
+ * new result on each call.
+ */
+const LOCAL_COMPUTATION = {
+  readOnlyHint: true,
+  destructiveHint: false,
+  openWorldHint: false
+} as const
+
 /**
  * Builds the RANDSUM MCP server with the `roll`, `validate`, and `roll_game`
  * tools registered. Callers attach a transport via `server.connect(...)`.
  */
 export function createServer(): McpServer {
-  const server = new McpServer({ name: '@randsum/mcp', version: VERSION })
+  const server = new McpServer(
+    { name: '@randsum/mcp', version: VERSION },
+    { instructions: SERVER_INSTRUCTIONS }
+  )
 
   server.registerTool(
     'roll',
     {
       title: 'Roll dice',
       description:
-        'Roll dice using RANDSUM notation (e.g. "4d6L", "2d20+5"). Optionally pass a seed for a deterministic result. Returns the total, per-pool rolls, and a description.',
+        'Roll dice using RANDSUM notation (e.g. "4d6L", "2d20+5"). Use this whenever a user asks for a dice roll or a random result, instead of inventing one. Optionally pass a seed for a deterministic result. Returns the total, per-pool rolls, and a description.',
       inputSchema: {
         notation: z.string().describe('RANDSUM dice notation, e.g. "4d6L", "2d20+5", "1d20"'),
         seed: z
@@ -156,7 +174,8 @@ export function createServer(): McpServer {
           .optional()
           .describe('Optional integer seed for a deterministic, reproducible roll')
       },
-      outputSchema: rollOutput
+      outputSchema: rollOutput,
+      annotations: { ...LOCAL_COMPUTATION, idempotentHint: false }
     },
     input => toResult(() => ({ ...rollNotation(input) }))
   )
@@ -166,11 +185,12 @@ export function createServer(): McpServer {
     {
       title: 'Validate dice notation',
       description:
-        'Validate RANDSUM dice notation. Returns whether it is valid, a human-readable description, and a suggested fix when invalid.',
+        'Validate RANDSUM dice notation without rolling. Use it to check or explain notation, or to repair notation that `roll` rejected. Returns whether it is valid, a human-readable description, and a suggested fix when invalid.',
       inputSchema: {
         notation: z.string().describe('RANDSUM dice notation to validate, e.g. "4d6L" or "2d20+5"')
       },
-      outputSchema: validateOutput
+      outputSchema: validateOutput,
+      annotations: { ...LOCAL_COMPUTATION, idempotentHint: true }
     },
     input => toResult(() => ({ ...validateNotationInput(input) }))
   )
@@ -180,9 +200,10 @@ export function createServer(): McpServer {
     {
       title: 'Roll for a game system',
       description:
-        'Roll for a specific tabletop game system (blades, daggerheart, fate, fifth, pbta, root-rpg, salvageunion), interpreting the dice per that game. Pass game-specific inputs in `params`.',
+        "Roll for a specific tabletop game system (blades, daggerheart, fate, fifth, pbta, root-rpg, salvageunion), interpreting the dice per that game. Prefer it over `roll` when the user names one of these games: it returns the game's outcome, not just a total. Pass game-specific inputs in `params`.",
       inputSchema: rollGameInput,
-      outputSchema: rollGameOutput
+      outputSchema: rollGameOutput,
+      annotations: { ...LOCAL_COMPUTATION, idempotentHint: false }
     },
     ({ game, params }) => toResult(() => ({ ...rollGame(game, params) }))
   )

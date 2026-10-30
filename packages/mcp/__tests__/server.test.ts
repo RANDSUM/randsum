@@ -117,3 +117,28 @@ describe('output schemas', () => {
     expect(JSON.parse(content[1]?.text ?? '{}')).toEqual({ code: 'MODIFIER_ERROR' })
   })
 })
+
+describe('agent guidance', () => {
+  test('sends server instructions that forbid invented results', async () => {
+    const client = await connect()
+
+    expect(client.getInstructions()).toContain('never invent dice results')
+  })
+
+  test('annotates every tool as a closed, read-only computation', async () => {
+    const client = await connect()
+    const { tools } = await client.listTools()
+    const hints = Object.fromEntries(tools.map(t => [t.name, t.annotations]))
+
+    for (const tool of tools) {
+      expect(tool.annotations).toMatchObject({
+        readOnlyHint: true,
+        destructiveHint: false,
+        openWorldHint: false
+      })
+    }
+    expect(hints['validate']?.idempotentHint).toBe(true)
+    expect(hints['roll']?.idempotentHint).toBe(false)
+    expect(hints['roll_game']?.idempotentHint).toBe(false)
+  })
+})

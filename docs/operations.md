@@ -2,7 +2,7 @@
 
 _Last verified against source: 2026-10-30. Covers all deployable apps in this monorepo._
 
-This is the operational counterpart to each app's `CLAUDE.md` (which covers development).
+This is the operational counterpart to each app's `AGENTS.md` (which covers development).
 It documents how each surface is hosted, deployed, rolled back, and recovered.
 
 ## Surface map
@@ -316,7 +316,7 @@ application ID, not a secret.
 ## npm packages (roller, games, mcp)
 
 Publishing is automated by changesets and npm Trusted Publishing. The flow, the local
-fallback and the `workspace:~` rule are in the Publishing section of the root `CLAUDE.md`.
+fallback and the `workspace:~` rule are in the Releases section of `CONTRIBUTING.md`.
 
 ### Rollback
 

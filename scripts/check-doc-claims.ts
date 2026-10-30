@@ -25,7 +25,7 @@
  *
  * WHAT IS CHECKED
  * ---------------
- * In every CLAUDE.md, README.md, CONTRIBUTING.md and llms.txt, the agent
+ * In every AGENTS.md, CLAUDE.md, README.md, CONTRIBUTING.md and llms.txt, the agent
  * definitions in .claude/agents/, the first-party skills in .claude/skills/ and
  * everything under plugins/:
  *
@@ -38,6 +38,11 @@
  *             cell of a table row, passes `validateNotation`
  *   size      no KB figure on a line about bundle size or size-limit; the limits
  *             live in each package.json and a copy only drifts
+ *
+ * And across the tree, every AGENTS.md has a CLAUDE.md beside it that opens with
+ * `@AGENTS.md`, and every CLAUDE.md is such a shim. AGENTS.md is what Codex,
+ * Cursor and Copilot read; Claude Code reads a nested AGENTS.md only when no
+ * CLAUDE.md exists above it, so without the shim it would silently miss one.
  *
  * The vendored Cloudflare skills are skipped: their prose is Cloudflare's, and
  * scripts/sync-cloudflare-skills.ts overwrites it on every sync.
@@ -147,7 +152,7 @@ const isScanned = (file: string): boolean => {
   if (!file.endsWith('.md') && !file.endsWith('.txt')) return false
   // The changesets README is the tool's boilerplate; the ADR index describes
   // history, and ADRs are superseded rather than rewritten (docs/adr/README.md).
-  if (/(^|\/)(CLAUDE|README|CONTRIBUTING)\.md$/.test(file)) {
+  if (/(^|\/)(AGENTS|CLAUDE|README|CONTRIBUTING)\.md$/.test(file)) {
     return file !== '.changeset/README.md' && !file.startsWith('docs/adr/')
   }
   if (/(^|\/)llms\.txt$/.test(file)) return true
@@ -400,10 +405,41 @@ const problems: readonly Problem[] = scanned.flatMap(file => {
   })
 })
 
-if (problems.length > 0) {
+const SHIM_IMPORT = '@AGENTS.md'
+
+const sibling = (file: string, name: string): string =>
+  dirname(file) === '.' ? name : `${dirname(file)}/${name}`
+
+const opensWithImport = (file: string): boolean =>
+  readFileSync(join(ROOT, file), 'utf8').trimStart().split('\n')[0]?.trim() === SHIM_IMPORT
+
+const shimProblems: readonly Problem[] = tracked.flatMap(file => {
+  if (/(^|\/)AGENTS\.md$/.test(file)) {
+    const shim = sibling(file, 'CLAUDE.md')
+    return trackedFiles.has(shim)
+      ? []
+      : [{ file, line: 1, message: `no ${shim} beside it; add one containing \`${SHIM_IMPORT}\`` }]
+  }
+  if (/(^|\/)CLAUDE\.md$/.test(file)) {
+    const target = sibling(file, 'AGENTS.md')
+    if (!trackedFiles.has(target)) {
+      return [
+        { file, line: 1, message: `no ${target} beside it; agent instructions go in AGENTS.md` }
+      ]
+    }
+    return opensWithImport(file)
+      ? []
+      : [{ file, line: 1, message: `must open with \`${SHIM_IMPORT}\`` }]
+  }
+  return []
+})
+
+const allProblems: readonly Problem[] = [...shimProblems, ...problems]
+
+if (allProblems.length > 0) {
   console.error(
-    `Doc claims guard failed: ${problems.length} claim(s) in prose do not match the code.\n\n` +
-      problems.map(p => `  ${p.file}:${p.line}  ${p.message}`).join('\n') +
+    `Doc claims guard failed: ${allProblems.length} claim(s) in prose do not match the code.\n\n` +
+      allProblems.map(p => `  ${p.file}:${p.line}  ${p.message}`).join('\n') +
       '\n\nFix the doc, or the code if the doc is right. A deliberate mention of something that\n' +
       'does not exist belongs in an allowlist in scripts/check-doc-claims.ts, with a reason.'
   )
@@ -411,6 +447,6 @@ if (problems.length > 0) {
 }
 
 console.log(
-  `Doc claims guard passed: scripts, paths, @randsum imports, notation and size figures ` +
-    `hold across ${scanned.length} docs.`
+  `Doc claims guard passed: scripts, paths, @randsum imports, notation, size figures and ` +
+    `AGENTS.md shims hold across ${scanned.length} docs.`
 )
