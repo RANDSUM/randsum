@@ -1,61 +1,65 @@
 ---
 import KofiButton from '../KofiButton.astro'
+import PipMark from '../PipMark.astro'
+
+const columns = [
+  {
+    title: 'Products',
+    links: [
+      { label: 'Roller', href: '/roller/introduction/' },
+      { label: 'Games', href: '/games/introduction/' },
+      { label: 'API', href: '/api/introduction/' },
+      { label: 'Discord bot', href: '/discord/' },
+      { label: 'Agent plugin', href: '/tools/agents/' }
+    ]
+  },
+  {
+    title: 'Learn',
+    links: [
+      { label: 'Introduction', href: '/welcome/introduction/' },
+      { label: 'Getting started', href: '/roller/getting-started/' },
+      { label: 'Dice notation', href: '/notation/randsum-dice-notation/' },
+      { label: 'Notation spec', href: '/spec/' },
+      { label: 'Ecosystem', href: '/welcome/ecosystem-overview/' }
+    ]
+  },
+  {
+    title: 'Community',
+    links: [
+      { label: 'GitHub', href: 'https://github.com/RANDSUM/randsum' },
+      { label: 'npm', href: 'https://www.npmjs.com/org/randsum' },
+      { label: 'Add a game', href: '/games/schema/contributing-a-game/' }
+    ]
+  }
+] as const
 ---
 
 <footer class="landing-footer not-content">
-  <div class="section-inner">
-    <div class="footer-support">
+  <div class="section-inner footer-grid">
+    <div class="footer-brand">
+      <p class="footer-wordmark"><PipMark variant="knockout" size={22} /> RANDSUM</p>
+      <p class="footer-tagline">Throw Dice, Not Exceptions. MIT licensed.</p>
       <KofiButton />
     </div>
-    <div class="footer-links">
-      <div class="footer-col">
-        <h4>Documentation</h4>
-        <ul>
-          <li><a href="/welcome/introduction/">Introduction</a></li>
-          <li><a href="/roller/getting-started/">Getting Started</a></li>
-          <li><a href="/notation/randsum-dice-notation/">Dice Notation</a></li>
-          <li><a href="/welcome/ecosystem-overview/">Ecosystem</a></li>
-        </ul>
-      </div>
-      <div class="footer-col">
-        <h4>Packages</h4>
-        <ul>
-          <li><a href="/roller/introduction/">@randsum/roller</a></li>
-          <li><a href="/notation/introduction/">Dice Notation</a></li>
-          <li><a href="/games/introduction/">Game Packages</a></li>
-          <li><a href="/tools/claude-code-plugin/">Claude Plugin</a></li>
-          <li><a href="/tools/agents/">AI Agents</a></li>
-        </ul>
-      </div>
-      <div class="footer-col">
-        <h4>Resources</h4>
-        <ul>
-          <li>
-            <a href="/spec/">RDN Spec</a>
-          </li>
-          <li>
-            <a href="https://github.com/RANDSUM/randsum" target="_blank" rel="noopener noreferrer">
-              GitHub
-            </a>
-          </li>
-          <li>
-            <a href="https://www.npmjs.com/org/randsum" target="_blank" rel="noopener noreferrer">
-              npm
-            </a>
-          </li>
-        </ul>
-      </div>
-    </div>
+    <nav class="footer-links" aria-label="Footer">
+      {columns.map(column => (
+        <div class="footer-col">
+          <h2>{column.title}</h2>
+          <ul>
+            {column.links.map(link => (
+              <li>
+                {link.href.startsWith('https://') ? (
+                  <a href={link.href} target="_blank" rel="noopener noreferrer">
+                    {link.label}
+                  </a>
+                ) : (
+                  <a href={link.href}>{link.label}</a>
+                )}
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </nav>
   </div>
 </footer>
-
-<style>
-.footer-support {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 2rem;
-  padding-bottom: 2rem;
-  border-bottom: 1px solid
-    var(--sl-color-hairline, color-mix(in srgb, var(--rs-paper) 10%, transparent));
-}
-</style>

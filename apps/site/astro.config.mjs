@@ -40,7 +40,7 @@ export default defineConfig({
   integrations: [
     sitemap(),
     starlight({
-      title: 'RANDSUM — TypeScript Dice Rolling Library for Tabletop RPGs',
+      title: 'RANDSUM',
       favicon: '/favicon.svg',
       head: [
         {

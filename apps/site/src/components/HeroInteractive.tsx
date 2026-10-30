@@ -134,26 +134,16 @@ export function HeroRollerPlayground(): React.JSX.Element {
 }
 
 export function ClickableTagline(): React.JSX.Element {
+  // A heading first: clicking it rerolls the hero's preset as a small easter egg,
+  // but it stays a plain h1 for search engines and screen readers.
   return (
     <h1
+      id="hero-title"
       className="clickable-tagline"
       onClick={() => window.dispatchEvent(new CustomEvent('die-rolled'))}
-      role="button"
-      tabIndex={0}
-      onKeyDown={e => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault()
-          window.dispatchEvent(new CustomEvent('die-rolled'))
-        }
-      }}
     >
-      <span className="tagline-plain">Throw </span>
-      <span className="tagline-dice">Dice</span>
-      <span className="tagline-plain">,</span>
-      <br />
-      <span className="tagline-plain">Not </span>
-      <span className="tagline-exceptions">Exceptions</span>
-      <span className="tagline-plain">.</span>
+      Throw Dice, <br />
+      Not Exceptions.
     </h1>
   )
 }
