@@ -626,29 +626,29 @@ roll("2d6+3x4") // Roll 2d6+3 four times
 
 Modifiers can be chained together. They are applied in a specific order to ensure consistent results:
 
-**Modifier Application Order:**
+**Modifier Application Order** (the engine's priority, lowest first; the order you write them in does not matter):
 
-1. Cap
-2. Drop / Keep
-3. Replace
-4. Reroll
-5. Explode / Compound / Penetrate
-6. Wild Die
-7. Unique
-8. Pre-Arithmetic Multiply (`*`)
-9. Plus / Minus
-10. Sort
-11. Integer Divide / Modulo
-12. Count Successes / Count Failures
-13. Total Multiply (`**`)
+1. Cap (10)
+2. Replace (30)
+3. Reroll (40)
+4. Explode / Compound / Penetrate / Explode sequence (50–53)
+5. Wild Die (55)
+6. Unique (60)
+7. Drop / Keep (65 / 66)
+8. Count Successes / Count Failures (80)
+9. Pre-Arithmetic Multiply (`*`) (85)
+10. Plus / Minus (90 / 91)
+11. Integer Divide (93) / Modulo (94)
+12. Sort (95)
+13. Total Multiply (`**`) (100)
 
 ```typescript
 roll("4d6L+2") // Drop lowest, add 2
-roll("2d20H!+1") // Drop highest, explode, add 1
+roll("2d20H!+1") // Explode, then drop highest, add 1
 roll("4d6R{<3}L") // Reroll under 3, then drop lowest
 roll("3d6!!*2+3") // Compound explode, multiply by 2, add 3
 roll("2d6*2+3**2") // Multiply dice by 2, add 3, multiply total by 2
-roll("4d6K3!+2") // Keep highest 3, explode, add 2
+roll("4d6K3!+2") // Explode, then keep highest 3, add 2
 roll("3d6!pL+1") // Penetrate explode, drop lowest, add 1
 roll("5d6W+2") // Wild die with modifier
 roll("4d6Lx6") // Six ability score rolls
@@ -659,8 +659,8 @@ roll("4d6Lx6") // Six ability score rolls
 - Pre-arithmetic multiply (`*`) applies before `plus`/`minus`: `2d6*2+3` = (sum × 2) + 3
 - Total multiply (`**`) applies after everything: `2d6+3**2` = (sum + 3) × 2
 - You can use both multipliers together: `2d6*2+3**2` = ((sum × 2) + 3) × 2
-- Keep is processed before explode/compound/penetrate, so explosions only happen on kept dice
-- Drop/Keep happen after reroll but before explode, so you reroll first, then keep/drop
+- Reroll and explode run before drop/keep, so an exploded die can itself be dropped: `4d6!L` explodes first, then drops the lowest of everything rolled
+- Cap runs first of all, so `4d6C{>4}L` caps every die before the lowest is dropped
 
 ## Multiple Dice Sides in a Single Roll
 

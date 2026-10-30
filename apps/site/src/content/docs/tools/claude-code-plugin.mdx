@@ -1,6 +1,6 @@
 ---
 title: Claude Plugin
-description: Claude Code plugin with skills for dice rolling, probability analysis, and game spec authoring for any tabletop RPG system.
+description: Claude Code plugin with skills for dice rolling, coding with RANDSUM, probability analysis, and game spec authoring, plus a /roll command that rolls without a model turn.
 ---
 
 import { Tabs, TabItem, Card, CardGrid } from '@astrojs/starlight/components'
@@ -9,13 +9,16 @@ import SkillContent from '../../../../../../plugins/randsum/skills/dice-rolling/
 import NotationContent from '../../../../../../plugins/randsum/skills/dice-rolling/references/NOTATION.md'
 import GameSystemsContent from '../../../../../../plugins/randsum/skills/dice-rolling/references/GAME_SYSTEMS.md'
 
-RANDSUM provides a **Claude Code plugin** with three skills that give AI agents specialized knowledge for tabletop RPG dice mechanics. It is one of the ways to [give an AI agent RANDSUM](/tools/agents/). In claude.ai, Claude Desktop or mobile, add its MCP server as a [Claude connector](/tools/mcp/#hosted-server-no-install) instead, at `https://api.randsum.dev/mcp`.
+RANDSUM provides a **Claude Code plugin** with four skills that give AI agents specialized knowledge for tabletop RPG dice mechanics, and a `/roll` command for rolling your own dice. It is one of the ways to [give an AI agent RANDSUM](/tools/agents/). In claude.ai, Claude Desktop or mobile, add the [Claude connector](/tools/mcp/) instead, at `https://api.randsum.dev/mcp`.
 
 ## Available skills
 
 <CardGrid>
   <Card title="Dice Rolling" icon="rocket">
-    Roll dice, interpret results, and answer questions about RANDSUM notation and supported game systems. Covers all 19+ modifiers and 7 game systems.
+    Turn a request in plain words ("attack with advantage, +5") into a real roll through the RANDSUM MCP server or HTTP API, and explain the result. Never invents a number.
+  </Card>
+  <Card title="RANDSUM Library" icon="seti:typescript">
+    Write code that rolls dice with `@randsum/roller` and `@randsum/games`: notation, validating user input, seeded tests, game mechanics, and the REST API for other languages.
   </Card>
   <Card title="Dice Probability" icon="bars">
     Analyze probability distributions, expected values, and outcome comparisons. Compare strategies like "advantage vs. flat +2" with exact math or Monte Carlo simulation.
@@ -37,7 +40,20 @@ What are the odds of rolling 15+ on 3d6?
 Create a .randsum.json spec for Ironsworn
 ```
 
-Or invoke explicitly with `/randsum:dice-rolling`, `/randsum:dice-probability`, or `/randsum:game-spec-creator` (plugin skills are namespaced by the plugin name).
+Or invoke explicitly with `/randsum:dice-rolling`, `/randsum:randsum-library`, `/randsum:dice-probability`, or `/randsum:game-spec-creator` (plugin skills are namespaced by the plugin name).
+
+## Roll your own dice: `/roll`
+
+The plugin adds a `/roll` command that rolls on your machine with the RANDSUM engine, with no model turn and no tokens:
+
+```
+/roll 4d6L
+/roll 1d20 + 5, 2d6
+```
+
+The result prints at once and stays on the status line, and Claude is told the number as your roll, so it reacts to it instead of rolling for you. That suits a game where Claude is the GM and you want to throw your own dice. `/roll` with no notation rolls a d20.
+
+`/roll` is a Claude Code mod (a hooks module), an early-access feature of recent Claude Code builds. On a build without it, the command is simply absent and the rest of the plugin works as before. It is not available in claude.ai or Claude Desktop chat; there, ask Claude to roll and the connector does it.
 
 ## Setup
 
@@ -71,6 +87,7 @@ Load skill content as part of your agent's system prompt:
 
 // Load whichever skills your agent needs
 const diceSkill = readFileSync('plugins/randsum/skills/dice-rolling/SKILL.md', 'utf-8')
+const codeSkill = readFileSync('plugins/randsum/skills/randsum-library/SKILL.md', 'utf-8')
 const probSkill = readFileSync('plugins/randsum/skills/dice-probability/SKILL.md', 'utf-8')
 const specSkill = readFileSync('plugins/randsum/skills/game-spec-creator/SKILL.md', 'utf-8')
 
@@ -89,17 +106,32 @@ Paste skill content directly into any LLM conversation. Each skill is self-conta
 
 ### Dice Rolling
 
-The core skill. Teaches an agent RANDSUM dice notation — a compact syntax for any roll — and how to interpret results for seven supported game systems: D&D 5e, Blades in the Dark, Daggerheart, Fate Core, PbtA, Root RPG, and Salvage Union.
+The core skill for an agent rolling dice in conversation. It turns a natural-language request into a call to the RANDSUM MCP tools (`roll`, `roll_game`, `validate`) or the [HTTP API](/api/introduction/), and reports the result for seven supported game systems: D&D 5e, Blades in the Dark, Daggerheart, Fate Core, PbtA, Root RPG, and Salvage Union.
 
 **What the agent learns:**
-- All RANDSUM notation syntax (`4d6L`, `2d20H+5`, `3d6!`, `d%`, `4dF`, etc.)
-- Game-specific result interpretation (critical hits, partial success, desperation rolls)
-- When to validate input and how to explain results clearly
+- Never to invent a roll, and which tool to reach for first (MCP, then the HTTP API, then a local RNG)
+- How common phrasings map to calls ("roll stats" is `4d6Lx6`, "Blades with 3 dice" is `roll_game` with `rating: 3`)
+- RANDSUM notation (`4d6L`, `2d20H+5`, `3d6!`, `d%`, `4dF`, etc.) and each game's inputs and outcomes
+- How to report dice, total and meaning in one compact block
 
 **Files:**
 - [`plugins/randsum/skills/dice-rolling/SKILL.md`](https://github.com/RANDSUM/randsum/blob/main/plugins/randsum/skills/dice-rolling/SKILL.md) — main skill definition
 - [`plugins/randsum/skills/dice-rolling/references/NOTATION.md`](https://github.com/RANDSUM/randsum/blob/main/plugins/randsum/skills/dice-rolling/references/NOTATION.md) — full notation reference
 - [`plugins/randsum/skills/dice-rolling/references/GAME_SYSTEMS.md`](https://github.com/RANDSUM/randsum/blob/main/plugins/randsum/skills/dice-rolling/references/GAME_SYSTEMS.md) — game system mechanics
+
+### RANDSUM Library
+
+For an agent writing code. Teaches which package fits (`@randsum/roller`, a `@randsum/games` subpath, or the REST API from another language) and how to use it well.
+
+**What the agent learns:**
+- `roll()` arguments and the result shape (`total`, `values`, per-group `rolls` with `initialRolls`)
+- Validating user-typed notation with `validateNotation` and `suggestNotationFix`, and catching `RandsumError`
+- Each game's typed `roll()` input and result union
+- Seeded rolls for tests, narrow subpath imports for small bundles, and when to use the REST API
+
+**Files:**
+- [`plugins/randsum/skills/randsum-library/SKILL.md`](https://github.com/RANDSUM/randsum/blob/main/plugins/randsum/skills/randsum-library/SKILL.md) — main skill definition
+- [`plugins/randsum/skills/randsum-library/references/GAMES.md`](https://github.com/RANDSUM/randsum/blob/main/plugins/randsum/skills/randsum-library/references/GAMES.md) — every game's API
 
 ### Dice Probability
 
@@ -161,6 +193,7 @@ The full skill file that agents receive:
 
 - [All skills on GitHub](https://github.com/RANDSUM/randsum/tree/main/plugins/randsum/skills)
 - [Dice Rolling skill](https://github.com/RANDSUM/randsum/tree/main/plugins/randsum/skills/dice-rolling)
+- [RANDSUM Library skill](https://github.com/RANDSUM/randsum/tree/main/plugins/randsum/skills/randsum-library)
 - [Dice Probability skill](https://github.com/RANDSUM/randsum/tree/main/plugins/randsum/skills/dice-probability)
 - [Game Spec Creator skill](https://github.com/RANDSUM/randsum/tree/main/plugins/randsum/skills/game-spec-creator)
 - [Claude Code skills documentation](https://code.claude.com/docs/en/skills)

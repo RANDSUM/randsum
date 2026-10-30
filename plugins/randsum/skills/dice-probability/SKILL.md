@@ -1,10 +1,9 @@
 ---
 name: dice-probability
-description: Analyze probability distributions for RANDSUM dice notation. Use when users ask about odds, expected values, probability of specific outcomes, or want to compare different roll strategies. Handles standard dice, drop/keep, advantage/disadvantage, rerolls, exploding dice, and game-system outcomes.
+description: Analyzes probability distributions for RANDSUM dice notation. Use when the user asks about odds, expected values, the chance of a specific outcome, or which of two roll strategies is better. Handles standard dice, drop/keep, advantage/disadvantage, rerolls, exploding dice, and game-system outcomes. To actually roll, use dice-rolling.
 license: MIT
 metadata:
   author: RANDSUM
-  version: "1.0"
   repository: https://github.com/RANDSUM/randsum
 ---
 
@@ -31,7 +30,7 @@ For rolls with manageable outcome spaces (up to ~6 dice, up to 20 sides, no comp
 
 ### Complex Modifiers (simulation)
 
-For rerolls, exploding dice, large pools, or combined modifiers, use Monte Carlo simulation. Run 100,000+ iterations for stable results:
+For rerolls, exploding dice, large pools, or combined modifiers, use Monte Carlo simulation. Run 100,000+ iterations for stable results, in a scratch folder after `npm install @randsum/roller` (or `bun add`). Don't simulate through the RANDSUM MCP tools or the HTTP API: they roll once per call and are rate-limited.
 
 ```typescript
 import { roll } from '@randsum/roller'
@@ -115,7 +114,7 @@ See [references/PROBABILITY_TABLES.md](references/PROBABILITY_TABLES.md) for ful
 | Cap (`C{>N}`) | Decreases (truncates top) | Decreases |
 | Cap (`C{<N}`) | Increases (truncates bottom) | Decreases |
 
-**Modifier execution order matters.** Cap applies before drop/keep (priority 10 vs 20/21), so `4d6C{>4}L` caps first, then drops -- the dropped die is from the capped pool.
+**Modifier execution order matters.** Cap applies before drop/keep (priority 10 vs 65/66), so `4d6C{>4}L` caps first, then drops -- the dropped die is from the capped pool.
 
 ## Comparison Framework
 

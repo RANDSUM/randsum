@@ -24,8 +24,8 @@ roll("2d6+3[fire]") // Annotation
 ## AI Agents
 
 - [Agent integrations](https://randsum.dev/tools/agents/): overview of every way an agent can roll with RANDSUM
-- [MCP server](https://randsum.dev/tools/mcp/): tools `roll`, `validate`, `roll_game`. Hosted at `https://api.randsum.dev/mcp` (add it as a Claude connector, or `claude mcp add --transport http randsum https://api.randsum.dev/mcp`); local stdio: `claude mcp add randsum -- bunx -y @randsum/mcp`
-- [Claude Code plugin](https://randsum.dev/tools/claude-code-plugin/): skills plus the hosted MCP server. `/plugin marketplace add RANDSUM/randsum`, then `/plugin install randsum@randsum`
+- [Claude connector](https://randsum.dev/tools/mcp/): tools `roll`, `validate`, `roll_game` at `https://api.randsum.dev/mcp`. Add it as a custom connector in Claude; any other MCP client takes the same URL (`claude mcp add --transport http randsum https://api.randsum.dev/mcp`). Local stdio fallback: `claude mcp add randsum -- bunx -y @randsum/mcp`
+- [Claude Code plugin](https://randsum.dev/tools/claude-code-plugin/): skills, a `/roll` command and the hosted connector's tools. `/plugin marketplace add RANDSUM/randsum`, then `/plugin install randsum@randsum`
 
 ## HTTP API
 

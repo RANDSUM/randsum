@@ -4,7 +4,7 @@
     ".": {
       "entry": [],
       "project": ["scripts/*.ts"],
-      "ignoreDependencies": ["mitata"]
+      "ignoreDependencies": ["mitata", "claude-code"]
     },
     "packages/roller": {
       "entry": [

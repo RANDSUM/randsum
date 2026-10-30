@@ -1,48 +1,47 @@
 ---
-title: MCP Server & Claude Connector
-description: Expose RANDSUM dice rolling to any MCP client. The @randsum/mcp server, hosted at api.randsum.dev/mcp or run locally over stdio, gives AI agents roll, validate, and roll_game tools with seeded reproducibility.
+title: Claude Connector & MCP Server
+description: Add RANDSUM to Claude as a connector, or to any MCP client by URL. The hosted server at api.randsum.dev/mcp gives AI agents roll, validate, and roll_game tools with seeded reproducibility.
 ---
 
 import CodeExample from '../../../components/live-repl/CodeExample.astro'
 
-The **RANDSUM MCP server** (`@randsum/mcp`) is the part of the
-[RANDSUM plugin](/tools/agents/) that does the rolling: a
-[Model Context Protocol](https://modelcontextprotocol.io) server that exposes
-the RANDSUM dice-rolling ecosystem to AI agents. It wraps
-`@randsum/roller` and `@randsum/games`, so an assistant can roll dice, validate
-notation, and roll for specific tabletop game systems.
+The **RANDSUM connector** gives Claude real dice in any chat: `roll`,
+`validate` and `roll_game` as tools, backed by `@randsum/roller` and
+`@randsum/games`. A Claude connector is a remote
+[Model Context Protocol](https://modelcontextprotocol.io) server, so the same
+URL works in every other MCP client too:
 
-It is hosted at `https://api.randsum.dev/mcp`, which is the URL to give a
-Claude connector or any MCP client that takes a URL. It also ships as a CLI
-binary (`randsum-mcp`) that speaks MCP over stdio, so a client can launch it
-locally with `bunx` or `npx`, with no global install.
+**`https://api.randsum.dev/mcp`**
 
-In Claude Code, the [RANDSUM plugin](/tools/claude-code-plugin/) connects this
-server for you and adds skills on top. See [RANDSUM for AI agents](/tools/agents/)
-for every option.
+It is public, keyless and stateless, served over Streamable HTTP. In Claude
+Code, the [RANDSUM plugin](/tools/claude-code-plugin/) connects it for you and
+adds skills on top. See [RANDSUM for AI agents](/tools/agents/) for every
+option.
 
-## Configuration
+## Add the connector to Claude
 
-### Hosted server (no install)
+In claude.ai, Claude Desktop or mobile: open **Settings → Connectors → Add
+custom connector**, name it RANDSUM, and paste the URL above. The tools are
+then available in any chat; ask Claude to roll and it calls them.
 
-The same server runs at **`https://api.randsum.dev/mcp`** over Streamable
-HTTP. It is public, keyless and stateless, and it is the URL to use anywhere
-an MCP client takes a URL instead of a command.
+## Any other MCP client
 
-**Claude (claude.ai, Desktop and mobile):** open Settings → Connectors → Add
-custom connector, name it RANDSUM, and paste the URL. The `roll`, `validate`
-and `roll_game` tools are then available in any chat.
+Point any client that takes a server URL at `https://api.randsum.dev/mcp`.
 
-**Claude Code:**
+**Claude Code** (without the plugin):
 
 <CodeExample lang="bash" code={`claude mcp add --transport http randsum https://api.randsum.dev/mcp`} />
 
-The [Claude Code plugin](/tools/claude-code-plugin/) connects this hosted
-server for you. For plain HTTP without MCP, see the
-[HTTP API](/api/introduction/).
+**Cursor, VS Code, ChatGPT, Codex and others:** add a remote (HTTP) MCP server
+with that URL in the client's MCP settings. No key or header is needed.
 
-### Local stdio server
+For plain HTTP without MCP, see the [HTTP API](/api/introduction/).
 
+## Local stdio server
+
+For offline use or a client that can only start a command, the same server
+ships on npm as `@randsum/mcp`, a CLI (`randsum-mcp`) that speaks MCP over
+stdio. A client can launch it with `bunx` or `npx`, with no global install.
 The snippets below mirror
 [`packages/mcp/README.md`](https://github.com/RANDSUM/randsum/blob/main/packages/mcp/README.md),
 which is the source of truth for install and config.

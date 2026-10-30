@@ -1,10 +1,11 @@
 # RANDSUM Claude Code Plugin
 
-The `randsum` plugin, published through this repo's marketplace (`.claude-plugin/marketplace.json` at the repo root). It ships three [skills](https://code.claude.com/docs/en/skills) and connects one MCP server, the hosted [`@randsum/mcp`](../../packages/mcp) at `https://api.randsum.dev/mcp`, so the skills can roll with the real engine without installing anything. Where no MCP server is connected, the `dice-rolling` skill calls the [HTTP API](https://randsum.dev/api/introduction/) at `https://api.randsum.dev/v1` instead.
+The `randsum` plugin, published through this repo's marketplace (`.claude-plugin/marketplace.json` at the repo root). It ships four [skills](https://code.claude.com/docs/en/skills), a `/roll` command, and connects one MCP server, the hosted [`@randsum/mcp`](../../packages/mcp) at `https://api.randsum.dev/mcp`, so the skills can roll with the real engine without installing anything. Where no MCP server is connected, the `dice-rolling` skill calls the [HTTP API](https://randsum.dev/api/introduction/) at `https://api.randsum.dev/v1` instead.
 
 | Skill | Description |
 |---|---|
-| [`dice-rolling`](./skills/dice-rolling/SKILL.md) | Roll dice, interpret results, and answer questions about RANDSUM notation and supported game systems |
+| [`dice-rolling`](./skills/dice-rolling/SKILL.md) | Turn a natural-language roll request into an MCP or HTTP API call and explain the result; never invent a number |
+| [`randsum-library`](./skills/randsum-library/SKILL.md) | Write code with `@randsum/roller` and `@randsum/games`, or call the REST API from other languages |
 | [`dice-probability`](./skills/dice-probability/SKILL.md) | Analyze probability distributions, expected values, and outcome comparisons for dice notation and game systems |
 | [`game-spec-creator`](./skills/game-spec-creator/SKILL.md) | Create `.randsum.json` specs for custom TTRPG dice mechanics, translate game rules into declarative specs |
 
@@ -38,6 +39,14 @@ Roll with advantage and a +5 modifier
 ```
 
 Plugin skills are namespaced, so the explicit form is `/randsum:dice-rolling`.
+
+## The `/roll` mod
+
+[`hooks/`](./hooks) is a Claude Code mod: `hooks.json` names one hooks module, [`register.ts`](./hooks/register.ts), which registers `/roll <notation>`. It rolls in Claude Code's hooks sandbox with no model turn, prints the result, pins it as the plugin's status line, and hands Claude a hidden note saying the user rolled it. Game interpretation stays with the skills and MCP.
+
+- The sandbox imports only files inside the plugin, so [`roller.generated.js`](./hooks/roller.generated.js) is `roll()` from `@randsum/roller`, bundled by `bun run plugin:roller`. `bun run check:plugin-roller` (in `bun run check` and CI) fails when it is stale; re-run the bundle after any roller change. [`roller.generated.d.ts`](./hooks/roller.generated.d.ts) is hand-written.
+- `hooks.json` keeps an empty `hooks` object beside `modules` so Claude Code builds from before mods still read the file as valid.
+- Hooks modules are early access and the API may change between releases. `claude plugin validate plugins/randsum` reports what the module hooks and calls; `claude plugin test plugins/randsum` runs [`roll.test.ts`](./hooks/roll.test.ts) (set `CLAUDE_CODE_ENABLE_FUNCTION_HOOKS=1` on builds where modules are off by default).
 
 ## Discovery
 

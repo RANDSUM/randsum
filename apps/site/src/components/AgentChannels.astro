@@ -21,6 +21,7 @@ import { AGENT_CHANNELS } from '../utils/agents'
       <h3>{channel.name}</h3>
       <p class="agent-channel-summary">{channel.summary}</p>
       <CodePanel code={channel.install.code} lang={channel.install.lang} />
+      {channel.alsoFor && <p class="agent-channel-also">{channel.alsoFor}</p>}
       <div>
         <Button href={channel.href} variant="product" product={channel.product} size="sm">
           {channel.name} docs
@@ -71,6 +72,13 @@ import { AGENT_CHANNELS } from '../utils/agents'
   font-weight: var(--rs-weight-bold);
   letter-spacing: var(--rs-tracking-tight);
   color: var(--rs-fg);
+}
+
+.agent-channel-also {
+  margin: 0;
+  font-size: var(--rs-text-xs);
+  line-height: var(--rs-leading-body);
+  color: var(--rs-gray-2);
 }
 
 .agent-channel-summary {

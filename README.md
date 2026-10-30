@@ -43,7 +43,7 @@ This repository contains multiple packages and applications for dice rolling and
 
 Give Claude or any other agent the real engine instead of made-up numbers. Every option is on [randsum.dev/tools/agents](https://randsum.dev/tools/agents/).
 
-- **[Claude Code plugin](plugins/randsum)** - Skills for rolling, probability and game specs, with the MCP server bundled:
+- **[Claude Code plugin](plugins/randsum)** - Skills for rolling, coding with RANDSUM, probability and game specs, a `/roll` command, and the MCP server bundled:
   ```
   /plugin marketplace add RANDSUM/randsum
   /plugin install randsum@randsum
