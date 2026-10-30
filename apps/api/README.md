@@ -11,6 +11,6 @@ curl "https://api.randsum.dev/v1/random?min=1&max=6&count=3"
 
 To use it from Claude, add a custom connector with the URL `https://api.randsum.dev/mcp`.
 
-Docs: [HTTP API](https://randsum.dev/tools/http-api/) · [MCP Server](https://randsum.dev/tools/mcp/)
+Docs: [HTTP API](https://randsum.dev/api/introduction/) · [MCP Server](https://randsum.dev/tools/mcp/)
 
 Private and never published; see [`CLAUDE.md`](./CLAUDE.md) for development.

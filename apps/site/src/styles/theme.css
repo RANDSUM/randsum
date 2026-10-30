@@ -44,8 +44,8 @@
   --product-games-fill: #ce8900;
   --product-spec: light-dark(#1f68bc, #7dbaff);
   --product-spec-fill: #4699fe;
-  --product-mcp: light-dark(#007f35, #76cf8a);
-  --product-mcp-fill: #2eb45c;
+  --product-api: light-dark(#007f35, #76cf8a);
+  --product-api-fill: #2eb45c;
   --product-discord: light-dark(#007f91, #1acfdf);
   --product-discord-fill: #00b4ca;
   --product-plugin: light-dark(#a8501a, #f2a066);
@@ -175,10 +175,10 @@ html[data-product='spec'] {
   --rs-accent-low: color-mix(in srgb, var(--product-spec-fill) 14%, var(--rs-bg));
 }
 
-html[data-product='mcp'] {
-  --rs-accent: var(--product-mcp);
-  --rs-accent-high: var(--product-mcp);
-  --rs-accent-low: color-mix(in srgb, var(--product-mcp-fill) 14%, var(--rs-bg));
+html[data-product='api'] {
+  --rs-accent: var(--product-api);
+  --rs-accent-high: var(--product-api);
+  --rs-accent-low: color-mix(in srgb, var(--product-api-fill) 14%, var(--rs-bg));
 }
 
 html[data-product='discord'] {

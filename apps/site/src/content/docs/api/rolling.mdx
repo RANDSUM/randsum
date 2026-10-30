@@ -1,0 +1,150 @@
+---
+title: Rolling Dice
+description: Roll RANDSUM dice notation over HTTP with /v1/roll, in short form or as a long-form options object, with optional seeds for reproducible results, and check rolls with /v1/validate.
+---
+
+`/v1/roll` rolls dice. It accepts any [RANDSUM Dice Notation](/spec/), from
+`1d20` to `4d6R{1}L+2`, and every modifier the
+[roller](/roller/modifiers/) supports.
+
+## Roll notation
+
+```bash
+curl "https://api.randsum.dev/v1/roll?notation=2d20H%2B5"
+```
+
+```json
+{
+  "notation": "2d20H+5",
+  "total": 21,
+  "pools": [
+    {
+      "notation": "2d20H+5",
+      "rolls": [16],
+      "total": 21,
+      "description": "Roll 2 20-sided dice, Drop highest, Add 5"
+    }
+  ],
+  "description": "Roll 2 20-sided dice, Drop highest, Add 5"
+}
+```
+
+In a query string, URL-encode the notation: `+` is `%2B`, `{` is `%7B` and `}`
+is `%7D`. `curl --data-urlencode` does it for you:
+
+```bash
+curl -G https://api.randsum.dev/v1/roll --data-urlencode "notation=4d6R{1}L+2"
+```
+
+Or send it as JSON, which needs no encoding:
+
+```bash
+curl -X POST https://api.randsum.dev/v1/roll \
+  -H "Content-Type: application/json" \
+  -d '{"notation":"4d6R{1}L+2"}'
+```
+
+### The response
+
+| Field         | Type     | Description                                                      |
+| ------------- | -------- | ---------------------------------------------------------------- |
+| `notation`    | string   | The roll that was made, in short form                            |
+| `total`       | number   | The combined total across every pool                             |
+| `pools`       | array    | One entry per dice pool (see below)                              |
+| `description` | string   | A human-readable description of the whole roll                   |
+
+Each entry in `pools` has its own `notation`, `rolls` (the die values left
+after modifiers, so dropped dice are gone), `total` and `description`.
+Notation with several pools, such as `1d20+1d4`, returns one entry for each.
+
+## Short form and long form
+
+Every roll can be sent two ways, and they are the same roll.
+
+- **Short form** is notation: `notation=4d6L+3`.
+- **Long form** is the options object `roll()` takes in TypeScript:
+  `sides`, `quantity`, `arithmetic` and `modifiers`, with each modifier under
+  the name the [roll options](/roller/roll-options/) give it: `drop`, `keep`,
+  `reroll`, `explode`, `compound`, `penetrate`, `cap`, `unique`, `replace`,
+  `count`, `plus`, `minus`, `multiply`, `multiplyTotal`, `integerDivide`,
+  `modulo`, `sort`, `wildDie`.
+
+As JSON, the long form is exactly the TypeScript object:
+
+```bash
+curl -X POST https://api.randsum.dev/v1/roll \
+  -H "Content-Type: application/json" \
+  -d '{"sides":6,"quantity":4,"modifiers":{"drop":{"lowest":1},"plus":3}}'
+```
+
+In a query string, flatten the object with dotted or bracketed keys. Each value
+is read as JSON when it parses (`6`, `true`, `[1,2]`) and as text otherwise:
+
+```bash
+curl "https://api.randsum.dev/v1/roll?sides=6&quantity=4&modifiers.drop.lowest=1&modifiers.plus=3"
+curl -g "https://api.randsum.dev/v1/roll?sides=6&quantity=3&modifiers[reroll][exact]=[1,2]"
+```
+
+A long-form roll is converted to short form before it is rolled, so the
+response is identical to the notation request: `notation` comes back as
+`4d6L+3`, and with the same `seed` so do the dice. Send one form per request;
+sending `notation` together with long-form fields is a `400`. A modifier name
+the roller does not know is also a `400`, rather than being silently ignored.
+
+| Short form  | Long form (query)                                        |
+| ----------- | -------------------------------------------------------- |
+| `1d20`      | `sides=20`                                               |
+| `4d6L`      | `sides=6&quantity=4&modifiers.drop.lowest=1`             |
+| `2d20H`     | `sides=20&quantity=2&modifiers.drop.highest=1`           |
+| `3d6!`      | `sides=6&quantity=3&modifiers.explode=true`              |
+| `4d6R{1}`   | `sides=6&quantity=4&modifiers.reroll.exact=[1]`          |
+| `1d20+5`    | `sides=20&modifiers.plus=5`                              |
+
+## Reproducible rolls
+
+Add an integer `seed` and the roll becomes deterministic: the same roll and
+seed always produce the same dice, in either form.
+
+```bash
+curl "https://api.randsum.dev/v1/roll?notation=10d6&seed=42"
+```
+
+Use seeds for tests, for replaying a roll, or for showing a result someone else
+can check. Without a seed, every roll is fresh.
+
+## Validate a roll
+
+`/v1/validate` takes the same input as `/v1/roll` and checks it without rolling.
+For notation it answers `200` whether the roll is valid or not; read `valid`.
+A long-form roll that cannot be converted at all is a `400`, as on `/v1/roll`.
+
+```bash
+curl "https://api.randsum.dev/v1/validate?notation=4d6L"
+```
+
+```json
+{
+  "notation": "4d6L",
+  "valid": true,
+  "options": [
+    { "quantity": 4, "arithmetic": "add", "sides": 6, "modifiers": { "drop": { "lowest": 1 } } }
+  ],
+  "description": "Roll 4 6-sided dice, Drop lowest"
+}
+```
+
+A valid roll comes back in both forms: `notation` (short) and `options` (long,
+one entry per pool). That makes `/v1/validate` a converter too: send either
+form and read the other.
+
+An invalid roll returns `valid: false`, an `error`, and a `suggestion` when the
+roller can guess the fix:
+
+```json
+{
+  "notation": "2d6x",
+  "valid": false,
+  "suggestion": "2d6",
+  "error": "Invalid dice notation: \"2d6x\""
+}
+```

@@ -1,15 +1,18 @@
 // The product a page belongs to. Each product wears the pip R die in its own
 // colour; theme.css turns <html data-product> into that page's accent.
-export type Product = 'roller' | 'games' | 'spec' | 'mcp' | 'discord' | 'plugin'
+export type Product = 'roller' | 'games' | 'spec' | 'api' | 'discord' | 'plugin'
 
 const PREFIXES: readonly (readonly [string, Product])[] = [
   ['/roller/', 'roller'],
   ['/games/', 'games'],
   ['/notation/', 'spec'],
   ['/spec', 'spec'],
-  ['/tools/mcp', 'mcp'],
+  ['/api/', 'api'],
   ['/tools/discord-bot', 'discord'],
   ['/discord', 'discord'],
+  // The plugin product is every agent surface: skills, the MCP server, the connector
+  ['/tools/agents', 'plugin'],
+  ['/tools/mcp', 'plugin'],
   ['/tools/claude-code-plugin', 'plugin']
 ]
 
@@ -17,7 +20,7 @@ export const PRODUCT_LABELS: Readonly<Record<Product, string>> = {
   roller: 'roller',
   games: 'games',
   spec: 'spec',
-  mcp: 'mcp',
+  api: 'api',
   discord: 'discord bot',
   plugin: 'plugin'
 }
@@ -115,19 +118,23 @@ export const PRODUCTS: readonly ProductInfo[] = [
     ]
   },
   {
-    id: 'mcp',
-    tagline: 'Real dice for AI agents',
+    id: 'api',
+    tagline: 'Dice over HTTP, no key needed',
     summary:
-      'An MCP server that gives Claude and other agents roll, validate and roll_game tools, so the dice are never made up.',
-    href: '/tools/mcp/',
-    snippet: { lang: 'bash', code: 'claude mcp add randsum -- bunx -y @randsum/mcp' },
+      'A public REST API at api.randsum.dev: roll notation in short or long form, roll for any supported game, or draw random integers. JSON in, JSON out, from any language.',
+    href: '/api/introduction/',
+    snippet: {
+      lang: 'bash',
+      code: 'curl "https://api.randsum.dev/v1/roll?notation=4d6L"\ncurl "https://api.randsum.dev/v1/games/blades/roll?rating=3"'
+    },
     facts: [
-      { value: '3', label: 'tools' },
-      { value: 'stdio', label: 'works with any MCP client' }
+      { value: '5', label: 'endpoints under /v1' },
+      { value: '0', label: 'keys or sign-ups' },
+      { value: 'CORS', label: 'callable from a browser' }
     ],
     actions: [
-      { label: 'Configure a client', href: '/tools/mcp/#configuration' },
-      { label: 'npm', href: 'https://www.npmjs.com/package/@randsum/mcp' }
+      { label: 'Get started', href: '/api/introduction/#quick-start' },
+      { label: 'Endpoint reference', href: '/api/reference/' }
     ]
   },
   {
@@ -148,9 +155,9 @@ export const PRODUCTS: readonly ProductInfo[] = [
   },
   {
     id: 'plugin',
-    tagline: 'Dice skills for Claude Code',
+    tagline: 'Real dice for Claude and other agents',
     summary:
-      'Three skills and the MCP server, packaged for Claude Code: rolling, probability and writing your own game specs.',
+      'Everything an AI agent needs to roll for real: skills for notation, odds and game specs, and the RANDSUM MCP server, as a Claude Code plugin or a Claude connector.',
     href: '/tools/claude-code-plugin/',
     snippet: {
       lang: 'bash',
@@ -158,11 +165,12 @@ export const PRODUCTS: readonly ProductInfo[] = [
     },
     facts: [
       { value: '3', label: 'skills' },
-      { value: '1', label: 'MCP server, bundled' }
+      { value: '3', label: 'MCP tools' },
+      { value: '1', label: 'connector URL for Claude' }
     ],
     actions: [
       { label: 'Set it up', href: '/tools/claude-code-plugin/#setup' },
-      { label: 'GitHub', href: 'https://github.com/RANDSUM/randsum/tree/main/plugins/randsum' }
+      { label: 'Every agent option', href: '/tools/agents/' }
     ]
   }
 ]
@@ -178,7 +186,7 @@ const HERO_PAGES: Readonly<Record<string, Product>> = {
   '/roller/introduction/': 'roller',
   '/games/introduction/': 'games',
   '/notation/introduction/': 'spec',
-  '/tools/mcp/': 'mcp',
+  '/api/introduction/': 'api',
   '/tools/discord-bot/': 'discord',
   '/tools/claude-code-plugin/': 'plugin',
   '/discord/': 'discord'
