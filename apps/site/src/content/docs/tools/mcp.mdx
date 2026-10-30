@@ -77,13 +77,15 @@ The server registers three tools:
 | ----------- | ----------------------------------------- | ------------------------------------------------------------------- |
 | `roll`      | `{ notation: string, seed?: number }`     | `total`, per-pool `pools`, and a human-readable `description`        |
 | `validate`  | `{ notation: string }`                    | `valid`, `description` (when valid), `suggestion`/`error` (when not) |
-| `roll_game` | `{ game: GameShortcode, params: object }` | game-interpreted `total`, `result`, `details`, and raw `rolls`      |
+| `roll_game` | `{ game: GameShortcode, params: object }` | game-interpreted `total`, `result`, `details`, and the kept `rolls` |
+
+Every tool is annotated read-only and closed-world (`readOnlyHint: true`, `openWorldHint: false`), which clients may use to skip confirmation prompts, and the server sends `instructions` telling the model to call a tool for every roll instead of inventing one.
 
 ### `roll`
 
 Rolls [RANDSUM dice notation](/spec/) (e.g. `4d6L`,
 `2d20+5`, `1d100`). Pass an integer `seed` for a deterministic, reproducible
-roll. Invalid notation throws with a suggested fix.
+roll. Invalid notation returns a tool error (`isError: true`) with the reason and an error `code`; call `validate` for a suggested fix.
 
 ```json
 { "notation": "4d6L", "seed": 42 }
@@ -96,7 +98,7 @@ pool, each with its own `rolls`, `total`, and `description`), and a top-level
 ### `validate`
 
 Checks whether a notation string is valid, returning a description when it is
-and a suggested fix when it is not (e.g. `d20` → `1d20`).
+and a suggested fix when it is not (e.g. `2d6 + 3` → `2d6+3`).
 
 ```json
 { "notation": "4d6L" }
@@ -107,7 +109,7 @@ and a suggested fix when it is not (e.g. `d20` → `1d20`).
 Rolls for one game system and interprets the dice per that game. `game` is one
 of `blades`, `daggerheart`, `fate`, `fifth`, `pbta`, `root-rpg`, or
 `salvageunion`. Only the `params` fields relevant to the chosen game are read;
-a required field missing for its game throws.
+a required field missing for its game returns a tool error.
 
 | Game           | Relevant `params`                                       |
 | -------------- | ------------------------------------------------------- |

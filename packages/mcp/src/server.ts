@@ -79,7 +79,9 @@ const rollGameOutput = {
   total: z.number(),
   result: z.unknown().describe("The game's interpreted outcome"),
   details: z.unknown().describe('Game-specific extra detail, when the game provides it'),
-  rolls: z.array(z.number()).describe('Every die value rolled')
+  rolls: z
+    .array(z.number())
+    .describe("Die values after the game's modifiers: only the dice that count")
 }
 
 /** One spec input declaration as a Zod field: type, bounds, enum, description. */

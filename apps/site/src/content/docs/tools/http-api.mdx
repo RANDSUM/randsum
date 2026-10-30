@@ -85,12 +85,12 @@ when a likely fix can be inferred (the same hint powered by `suggestNotationFix`
 ```bash
 curl -X POST https://randsum.dev/api/roll \
   -H "Content-Type: application/json" \
-  -d '{"notation":"d6"}'
+  -d '{"notation":"1d6+"}'
 ```
 
 ```json
 {
-  "error": "Invalid dice notation: \"d6\"",
+  "error": "Invalid dice notation: \"1d6+\"",
   "suggestion": "1d6"
 }
 ```

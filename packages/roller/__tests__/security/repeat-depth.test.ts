@@ -1,6 +1,7 @@
 import { describe, expect, test } from 'bun:test'
 
 import { roll } from '../../src/roll'
+import { validateNotation } from '../../src/validate'
 import { NotationParseError } from '../../src/errors'
 import { MAX_REPEAT_COUNT, MAX_REPEAT_DEPTH } from '../../src/notation/parse/notationToOptions'
 import type { DiceNotation } from '../../src/notation/types'
@@ -45,5 +46,26 @@ describe('security: repeat operator bounds', () => {
     expect(() => roll('1d6x100x100x100x100x100x100x100x100x100x100x100')).toThrow(
       NotationParseError
     )
+  })
+})
+
+describe('validateNotation: repeat operator bounds', () => {
+  test('reports an over-cap repeat count as invalid instead of throwing', () => {
+    const result = validateNotation(`1d6x${MAX_REPEAT_COUNT + 1}`)
+
+    expect(result.valid).toBe(false)
+    expect(result.error?.message).toContain(String(MAX_REPEAT_COUNT))
+    expect(result.error?.position).toBe(3)
+  })
+
+  test('reports over-deep repeat nesting as invalid instead of throwing', () => {
+    const result = validateNotation(`1d6${'x2'.repeat(MAX_REPEAT_DEPTH + 1)}`)
+
+    expect(result.valid).toBe(false)
+    expect(result.error?.message).toContain(String(MAX_REPEAT_DEPTH))
+  })
+
+  test('accepts a repeat count at the cap', () => {
+    expect(validateNotation(`1d6x${MAX_REPEAT_COUNT}`).valid).toBe(true)
   })
 })
