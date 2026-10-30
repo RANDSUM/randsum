@@ -1,5 +1,5 @@
 {
-  "$schema": "https://biomejs.dev/schemas/2.5.3/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.6.4/schema.json",
   "vcs": { "enabled": true, "clientKind": "git", "useIgnoreFile": true },
   "files": {
     "ignoreUnknown": true,
@@ -14,7 +14,9 @@
       "!**/.ladle",
       "!**/*.tsbuildinfo",
       "!**/.bunup-dts-*",
-      "!**/__tests__/fixtures"
+      "!**/__tests__/fixtures",
+      "!.claude/skills/workers-best-practices",
+      "!.claude/skills/wrangler"
     ]
   },
   "formatter": {
@@ -38,13 +40,16 @@
   },
   "json": { "formatter": { "enabled": true, "trailingCommas": "none" } },
   "css": { "formatter": { "enabled": true, "quoteStyle": "single" } },
+  "yaml": { "formatter": { "quoteStyle": "single" } },
+  "html": { "experimentalFullSupportEnabled": true, "formatter": { "enabled": true } },
+  "markdown": { "formatter": { "enabled": false } },
   "assist": { "enabled": false },
   "plugins": ["./biome-plugins/no-let.grit", "./biome-plugins/no-double-assertion.grit"],
   "linter": {
     "enabled": true,
     "rules": {
-      "recommended": true,
-      "a11y": { "recommended": false },
+      "preset": "recommended",
+      "a11y": { "preset": "none" },
       "style": {
         "useConst": "error",
         "useImportType": "error",
@@ -128,8 +133,14 @@
       }
     },
     {
-      "includes": ["**/*.css", "!apps/site/src/styles/theme.css"],
-      "plugins": ["./biome-plugins/no-raw-color.grit"]
+      "includes": ["**/*.css", "**/*.astro", "!apps/site/src/styles/theme.css"],
+      "plugins": [
+        "./biome-plugins/no-raw-color.grit",
+        "./biome-plugins/no-raw-type.grit",
+        "./biome-plugins/no-raw-shape.grit",
+        "./biome-plugins/no-uppercase-labels.grit",
+        "./biome-plugins/no-decorative-gradient.grit"
+      ]
     },
     {
       "includes": [

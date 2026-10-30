@@ -1,0 +1,13 @@
+---
+// Lays Cards out in even columns that wrap down to one on a phone.
+---
+
+<div class="rs-card-grid"><slot /></div>
+
+<style>
+.rs-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+  gap: 1rem;
+}
+</style>

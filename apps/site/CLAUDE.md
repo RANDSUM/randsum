@@ -20,17 +20,19 @@ Private app, deploys to Cloudflare Workers once CI is green on `main` via
 - **`@astrojs/react` 5.0.7** — interactive React islands (playground, REPL)
 - **`astro-expressive-code`** — code block rendering
 - **`@randsum/roller`** — workspace-linked, powers the live notation components
-- Fonts (Inter, JetBrains Mono) via Astro's Google font provider, loaded by the
-  `<Font />` tags in `Head.astro`
+- Fonts (Gabarito for text and headings, JetBrains Mono for code)
+  via Astro's Google font provider, loaded by the `<Font />` tags in `Head.astro`
+- Brand: the pip R mark (`src/components/PipMark.astro`, outline and knockout) and a
+  product family. Chrome is neutral; `src/utils/product.ts` maps a path to its product
+  (roller, games, spec, mcp, discord, plugin), `Head.astro` stamps `<html data-product>`,
+  and `theme.css` turns that into the page's accent (`--product-*`)
 
-> **`typescript` is pinned to `6.0.3` here, deliberately — do NOT move it to `catalog:`.**
-> The rest of the workspace is on TypeScript 7.0.2 via the root `catalog`; this app is the
-> only holdout, and it is blocked upstream rather than overlooked.
-> `@astrojs/check` declares `peerDependencies: { typescript: "^5.0.0 || ^6.0.0" }` as of its
-> latest release (0.9.10), and under TS 7 `astro check` dies before checking anything with
-> `Cannot read properties of undefined (reading 'fileExists')` in `@astrojs/language-server`'s
-> `getTsconfig`. Revisit when `@astrojs/check` ships a release whose peer range admits
-> TypeScript 7.
+> **`typescript` is `7.1.0-beta` here, not the root `catalog:` (7.0.2).** `astro check` refuses
+> TypeScript 7, so `typecheck` runs `tsc --noEmit --runExternalCode` with
+> `@astrojs/ts-content-mapper` registered under `contentMappers` in `tsconfig.json`; that
+> mapper needs TypeScript 7.1+. `src/virtual-modules.d.ts` declares the `virtual:` modules that
+> Starlight's and Expressive Code's shipped `.astro` files import. Move to `catalog:` once the
+> catalog reaches 7.1. Astro 7.4 needs Node >= 22.23.4.
 
 ## Theme
 
@@ -39,9 +41,28 @@ Starlight pages and for `/spec`, whose `spec.css` `@import`s it. Each mode-depen
 once as `light-dark(light, dark)`; the page's `color-scheme`, which Starlight
 sets from `data-theme`, picks the arm. `custom.css` maps Starlight's
 `--sl-color-*` onto it, and a game's colour is always `--game-<id>`. Tint with
-`color-mix(in srgb, var(--token) N%, transparent)`. The `no-raw-color` Biome
-plugin fails hex in any other `.css` file, and `__tests__/theme.test.ts` does
-the same for Astro `<style>` blocks.
+`color-mix(in srgb, var(--token) N%, transparent)`.
+
+## Design system
+
+Every page is built from tokens and shared components, and tools hold them there:
+
+- **Tokens** (`src/styles/theme.css`, the only file that spells a raw value):
+  colours, `--rs-text-*` sizes, `--rs-weight-*`, `--rs-tracking-*`,
+  `--rs-leading-*`, `--rs-radius-*`, `--rs-border`, `--rs-shadow-overlay` (only
+  for things that float), `--rs-focus-ring`, `--rs-code-*` and motion.
+- **Components** (`src/components/ui/`): `Button` (primary, secondary, or a
+  product's colour), `Section` (heading, lede, actions slot), `Card` and
+  `CardGrid`, `CodePanel` (Expressive Code with wrapping) and `DiscordGlyph`.
+  `ProductHero` and `ProductStack` render from `PRODUCTS` in `src/utils/product.ts`.
+- **Enforcement**: Biome's `no-raw-color`, `no-raw-type`, `no-raw-shape`,
+  `no-uppercase-labels` and `no-decorative-gradient` plugins (`biome-plugins/`)
+  fail raw values in every `.css` file and Astro `<style>` block except
+  `theme.css`. `__tests__/theme.test.ts` fails hex in markup and scripts, and
+  the old ad-hoc `btn`, `pkg-card` and `section-divider` classes.
+- **Avoided on purpose**: two-tone or gradient headlines, glow and lift on
+  hover, hard shadows, uppercase letter-spaced labels and divider rules
+  between sections.
 
 ## Notation Spec (`/spec`)
 
@@ -49,7 +70,7 @@ The RANDSUM Dice Notation spec is served from this app at `/spec` but is
 **not** a Starlight page (ADR-015): `src/pages/spec/` are plain Astro pages
 that render `src/spec/SpecLayout.astro`, which has its own header, sidebar,
 scroll-spy and share actions in vanilla `<script>` blocks (ADR-017), and the
-cyan accent. Never import `StarlightPage` there, and keep `src/spec/spec.css`
+spec's product colour as its accent. Never import `StarlightPage` there, and keep `src/spec/spec.css`
 imported only by `SpecLayout`, since its resets are global to the page.
 
 - Versions live in `src/content/specs/` (the `specs` collection). `v0.9.0.md`
@@ -84,9 +105,11 @@ Top-level topics: `welcome/`, `roller/`, `notation/`, `games/` (incl.
 
 The home page is **not** a Starlight doc — it's a custom `src/pages/index.astro`
 that renders a `StarlightPage` shell wrapping landing sections from
-`src/components/landing/` (`LandingHero`, `FeaturesGrid`, `FeaturesPlayground`,
-`GamesGrid`, `PackagesGrid`, `ToolsGrid`, `IntegrationsSection`,
-`GameSchemaSection`, `LandingFooter`, `LandingScripts`). There is also a
+`src/components/landing/` (`LandingHero`, `ProductStack`, `FeaturesPlayground`,
+`GameSchemaSection`, `IntegrationsSection`, `GamesGrid`, `LandingFooter`,
+`LandingScripts`). `ProductStack` renders one section per product from
+`PRODUCTS` in `src/utils/product.ts`, which also feeds `ProductHero`, the
+hero at the top of each product's introduction page. There is also a
 `src/pages/discord.astro` route.
 
 ## Adding Content
@@ -127,7 +150,8 @@ Interactive / shared components:
 - `HeroInteractive.tsx` — hero dice playground
 - `GameSchemaViewer.tsx` — schema viewer
 - `IntegrationViewer.tsx` — integration viewer
-- `LabeledSection.astro` — labeled content block
+- `PipMark.astro` — the pip R mark, outline or knockout
+- `ProductHero.astro` — a product's hero: lockup, name in its colour, pitch, install, facts
 - `ErrorBoundary/` — React error boundary
 
 ## Build Pipeline
@@ -150,7 +174,7 @@ Interactive / shared components:
 bun run dev        # Dev server (localhost:4321)
 bun run build      # Production build
 bun run preview    # Preview production build
-bun run typecheck  # astro check
+bun run typecheck  # astro sync, then tsc with the .astro content mapper
 bun run check      # build + typecheck + test + conformance:check
 bun run conformance:gen    # Regenerate public/conformance/v0.9.0.json
 bun run conformance:check  # fail if public/conformance/ differs from what conformance:gen writes

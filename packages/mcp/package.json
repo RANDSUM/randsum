@@ -41,8 +41,8 @@
     "dice-roller"
   ],
   "dependencies": {
-    "@modelcontextprotocol/sdk": "1.32.0",
-    "zod": "4.6.6"
+    "@modelcontextprotocol/sdk": "1.32.2",
+    "zod": "4.6.7"
   },
   "devDependencies": {
     "@randsum/games": "workspace:~",

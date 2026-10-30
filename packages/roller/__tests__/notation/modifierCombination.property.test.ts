@@ -102,12 +102,13 @@ describe('modifier token combinations', () => {
     }
   })
 
-  test.each(
-    PAIRS.filter(([a, b]) => schemaOf(a) !== schemaOf(b))
-  )('tokens of different schemas give the same options in either order: %s %s', (a, b) => {
-    if (!lexesApart([b, a])) return
-    expect(modifiersOf(`4d6${a}${b}`)).toEqual(modifiersOf(`4d6${b}${a}`))
-  })
+  test.each(PAIRS.filter(([a, b]) => schemaOf(a) !== schemaOf(b)))(
+    'tokens of different schemas give the same options in either order: %s %s',
+    (a, b) => {
+      if (!lexesApart([b, a])) return
+      expect(modifiersOf(`4d6${a}${b}`)).toEqual(modifiersOf(`4d6${b}${a}`))
+    }
+  )
 
   test('a sequence of tokens from distinct schemas is order-independent', () => {
     const distinct = SAMPLES.filter(

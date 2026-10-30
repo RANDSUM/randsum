@@ -1,5 +1,6 @@
 ---
 import { IntegrationViewer } from '../IntegrationViewer'
+import Button from '../ui/Button.astro'
 ---
 
 <section class="integrations-section">
@@ -9,48 +10,18 @@ import { IntegrationViewer } from '../IntegrationViewer'
         <IntegrationViewer client:only="react" />
       </div>
       <div class="integrations-pitch">
-        <h2 class="pitch-heading">
-          <span class="pitch-plain">You can </span>
-          <span class="pitch-accent">Roll</span>
-          <br />
-          <span class="pitch-sky">your</span>
-          <span class="pitch-plain"> own way.</span>
-        </h2>
+        <h2 class="pitch-heading">Roll wherever you play.</h2>
         <p class="pitch-body">
           In your Discord, in your AI assistant, or in your dev workspace &mdash; wherever you need
           numbers, RANDSUM is there. A Discord bot for game night, an MCP server and a Claude plugin
           for AI-assisted rolling, and an npm package for everything else.
         </p>
         <div class="pitch-actions">
-          <a href="/tools/discord-bot/" class="btn btn-outline btn-sm">
-            <svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"
-              ><path
-                fill="currentColor"
-                d="M13.55 3.15A13.3 13.3 0 0010.25 2a9.8 9.8 0 00-.42.87 12.3 12.3 0 00-3.66 0A9.8 9.8 0 005.75 2 13.4 13.4 0 002.45 3.15 14.2 14.2 0 00.21 11.97a13.5 13.5 0 004.07 2.06 10 10 0 00.87-1.41 8.7 8.7 0 01-1.37-.66c.12-.08.23-.17.33-.27a9.6 9.6 0 008.18 0c.11.1.22.19.33.27-.44.26-.89.48-1.37.66.25.5.54.97.87 1.41a13.4 13.4 0 004.07-2.06A14.1 14.1 0 0013.55 3.15z"
-              ></path></svg
-            >
-            Discord Bot
-          </a>
-          <a href="/tools/claude-code-plugin/" class="btn btn-outline btn-sm">
-            <svg
-              width="14"
-              height="14"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              aria-hidden="true"
-              ><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2z"></path><path
-                d="M8 14s1.5 2 4 2 4-2 4-2"></path><line x1="9" y1="9" x2="9.01" y2="9"></line><line
-                x1="15"
-                y1="9"
-                x2="15.01"
-                y2="9"></line></svg
-            >
-            Claude Plugin
-          </a>
+          <Button href="/tools/discord-bot/" variant="secondary" size="sm">Discord bot</Button>
+          <Button href="/tools/mcp/" variant="secondary" size="sm">MCP server</Button>
+          <Button href="/tools/claude-code-plugin/" variant="secondary" size="sm"
+            >Claude Code plugin</Button
+          >
         </div>
       </div>
     </div>

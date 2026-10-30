@@ -7,5 +7,5 @@
   --dui-space-md: 1rem;
 
   /* Radii */
-  --dui-radius-sm: 5px;
+  --dui-radius-sm: var(--rs-radius-sm);
 }

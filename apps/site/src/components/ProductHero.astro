@@ -1,0 +1,173 @@
+---
+// The top of a product's front page: the RANDSUM lockup with the product's name
+// set large in its colour, its pitch, its buttons, a real snippet and a few facts.
+import PipMark from './PipMark.astro'
+import Button from './ui/Button.astro'
+import CodePanel from './ui/CodePanel.astro'
+import { PRODUCT_LABELS, productInfo } from '../utils/product'
+import type { Product } from '../utils/product'
+
+interface Props {
+  product: Product
+}
+
+const info = productInfo(Astro.props.product)
+const id = info.id
+---
+
+<header
+  class="product-hero not-content"
+  style={`--p: var(--product-${id}-fill); --p-text: var(--product-${id})`}
+>
+  <h1 id="_top">
+    <span class="product-hero-brand">
+      <PipMark variant="knockout" size={22} />
+      RANDSUM
+    </span>
+    <span class="product-hero-name">{PRODUCT_LABELS[id]}</span>
+  </h1>
+  <p class="product-hero-tagline">{info.tagline}</p>
+  <p class="product-hero-summary">{info.summary}</p>
+  <div class="product-hero-actions">
+    {info.actions.map((action, i) => (
+      <Button href={action.href} variant={i === 0 ? 'product' : 'secondary'} product={id}>
+        {action.label}
+      </Button>
+    ))}
+  </div>
+  <div class="product-hero-snippet">
+    <CodePanel code={info.snippet.code} lang={info.snippet.lang} />
+  </div>
+  <dl class="product-hero-facts">
+    {info.facts.map(fact => (
+      <div>
+        <dt>{fact.label}</dt>
+        <dd>{fact.value}</dd>
+      </div>
+    ))}
+  </dl>
+</header>
+
+<style>
+.product-hero {
+  position: relative;
+  isolation: isolate;
+  margin-top: 1rem;
+  padding: 2rem 0 0.5rem;
+}
+
+/* A soft glow of the product's colour behind the name */
+.product-hero::before {
+  content: '';
+  position: absolute;
+  inset: -1rem auto auto -2rem;
+  z-index: -1;
+  width: 20rem;
+  height: 9rem;
+  border-radius: var(--rs-radius-pill);
+  background: var(--p);
+  opacity: 0.18;
+  filter: blur(64px);
+  pointer-events: none;
+}
+
+h1 {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin: 0;
+}
+
+.product-hero-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: var(--rs-text-base);
+  font-weight: var(--rs-weight-bold);
+  color: var(--sl-color-white);
+  letter-spacing: var(--rs-tracking-wordmark);
+}
+
+.product-hero-brand :global(.pip-mark) {
+  color: var(--p);
+}
+
+.product-hero-name {
+  font-family: var(--rs-font-heading);
+  font-size: var(--rs-text-display);
+  font-weight: var(--rs-weight-heavy);
+  line-height: var(--rs-leading-tight);
+  letter-spacing: var(--rs-tracking-display);
+  color: var(--p-text);
+}
+
+.product-hero-tagline {
+  margin: 1.25rem 0 0.5rem;
+  font-family: var(--rs-font-heading);
+  font-size: var(--rs-text-lg);
+  font-weight: var(--rs-weight-bold);
+  letter-spacing: var(--rs-tracking-tight);
+  line-height: 1.25;
+  color: var(--sl-color-white);
+}
+
+.product-hero-summary {
+  max-width: 38rem;
+  margin: 0;
+  font-size: var(--rs-text-base);
+  color: var(--sl-color-gray-2);
+}
+
+.product-hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+}
+
+.product-hero-snippet {
+  margin-top: 1.5rem;
+}
+
+.product-hero-facts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+  margin: 1.5rem 0 0;
+  border: 1px solid var(--sl-color-gray-5);
+  border-radius: var(--rs-radius-md);
+}
+
+.product-hero-facts div {
+  display: flex;
+  flex-direction: column-reverse;
+  justify-content: flex-end;
+  gap: 0.15rem;
+  padding: 0.9rem 1.1rem;
+}
+
+.product-hero-facts div + div {
+  border-left: 1px solid var(--sl-color-gray-5);
+}
+
+.product-hero-facts dd {
+  margin: 0;
+  font-family: var(--rs-font-heading);
+  font-size: var(--rs-text-xl);
+  font-weight: var(--rs-weight-heavy);
+  letter-spacing: var(--rs-tracking-heading);
+  line-height: 1.1;
+  color: var(--sl-color-white);
+}
+
+.product-hero-facts dt {
+  font-size: var(--rs-text-sm);
+  color: var(--sl-color-gray-3);
+}
+
+@media (max-width: 40rem) {
+  .product-hero-facts div + div {
+    border-left: none;
+    border-top: 1px solid var(--sl-color-gray-5);
+  }
+}
+</style>
