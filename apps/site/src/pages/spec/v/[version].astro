@@ -32,15 +32,13 @@ const allVersions = await getVersions()
 >
   <SidebarNav slot="sidebar" headings={headings} version={version} isLatest={latest} />
   <SpecContent slot="content">
-    {
-      !latest && (
-        <p style="margin-bottom: 1.5rem;">
-          <a href="/spec/" style="color: var(--accent);">
-            &larr; Back to latest
-          </a>
-        </p>
-      )
-    }
+    {!latest && (
+      <p style="margin-bottom: 1.5rem;">
+        <a href="/spec/" style="color: var(--accent);">
+          &larr; Back to latest
+        </a>
+      </p>
+    )}
     <Content />
     {/* Generated from today's roller, so it describes only the latest version. */}
     {latest && <ModifierReference />}

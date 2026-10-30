@@ -27,14 +27,12 @@ Private app, deploys to Cloudflare Workers once CI is green on `main` via
   (roller, games, spec, mcp, discord, plugin), `Head.astro` stamps `<html data-product>`,
   and `theme.css` turns that into the page's accent (`--product-*`)
 
-> **`typescript` is pinned to `6.0.3` here, deliberately — do NOT move it to `catalog:`.**
-> The rest of the workspace is on TypeScript 7.0.2 via the root `catalog`; this app is the
-> only holdout, and it is blocked upstream rather than overlooked.
-> `@astrojs/check` declares `peerDependencies: { typescript: "^5.0.0 || ^6.0.0" }` as of its
-> latest release (0.9.10), and under TS 7 `astro check` dies before checking anything with
-> `Cannot read properties of undefined (reading 'fileExists')` in `@astrojs/language-server`'s
-> `getTsconfig`. Revisit when `@astrojs/check` ships a release whose peer range admits
-> TypeScript 7.
+> **`typescript` is `7.1.0-beta` here, not the root `catalog:` (7.0.2).** `astro check` refuses
+> TypeScript 7, so `typecheck` runs `tsc --noEmit --runExternalCode` with
+> `@astrojs/ts-content-mapper` registered under `contentMappers` in `tsconfig.json`; that
+> mapper needs TypeScript 7.1+. `src/virtual-modules.d.ts` declares the `virtual:` modules that
+> Starlight's and Expressive Code's shipped `.astro` files import. Move to `catalog:` once the
+> catalog reaches 7.1. Astro 7.4 needs Node >= 22.23.4.
 
 ## Theme
 
@@ -157,7 +155,7 @@ Interactive / shared components:
 bun run dev        # Dev server (localhost:4321)
 bun run build      # Production build
 bun run preview    # Preview production build
-bun run typecheck  # astro check
+bun run typecheck  # astro sync, then tsc with the .astro content mapper
 bun run check      # build + typecheck + test + conformance:check
 bun run conformance:gen    # Regenerate public/conformance/v0.9.0.json
 bun run conformance:check  # fail if public/conformance/ differs from what conformance:gen writes

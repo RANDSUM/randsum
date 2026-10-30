@@ -36,43 +36,43 @@ const {
 </span>
 
 <script>
-  const WIDGET_SRC = 'https://storage.ko-fi.com/cdn/widget/Widget_2.js'
+const WIDGET_SRC = 'https://storage.ko-fi.com/cdn/widget/Widget_2.js'
 
-  declare global {
-    interface Window {
-      kofiwidget2?: {
-        init: (text: string, color: string, id: string) => void
-        getHTML: () => string
-      }
+declare global {
+  interface Window {
+    kofiwidget2?: {
+      init: (text: string, color: string, id: string) => void
+      getHTML: () => string
     }
   }
+}
 
-  function renderAll(): void {
-    const widget = window.kofiwidget2
-    if (!widget) return
-    const placeholders = document.querySelectorAll<HTMLElement>('.kofi-button[data-kofi-code]')
-    placeholders.forEach((el) => {
-      const code = el.dataset.kofiCode
-      if (!code) return
-      const label = el.dataset.kofiLabel ?? 'Support me on Ko-fi'
-      const color = el.dataset.kofiColor ?? '#72a4f2'
-      widget.init(label, color, code)
-      el.innerHTML = widget.getHTML()
-      // Mark as upgraded so a second render pass skips it.
-      delete el.dataset.kofiCode
-    })
-  }
+function renderAll(): void {
+  const widget = window.kofiwidget2
+  if (!widget) return
+  const placeholders = document.querySelectorAll<HTMLElement>('.kofi-button[data-kofi-code]')
+  placeholders.forEach(el => {
+    const code = el.dataset.kofiCode
+    if (!code) return
+    const label = el.dataset.kofiLabel ?? 'Support me on Ko-fi'
+    const color = el.dataset.kofiColor ?? '#72a4f2'
+    widget.init(label, color, code)
+    el.innerHTML = widget.getHTML()
+    // Mark as upgraded so a second render pass skips it.
+    delete el.dataset.kofiCode
+  })
+}
 
-  if (window.kofiwidget2) {
-    renderAll()
-  } else {
-    const existing = document.querySelector<HTMLScriptElement>(`script[src="${WIDGET_SRC}"]`)
-    const script = existing ?? document.createElement('script')
-    if (!existing) {
-      script.src = WIDGET_SRC
-      script.async = true
-      document.head.appendChild(script)
-    }
-    script.addEventListener('load', renderAll)
+if (window.kofiwidget2) {
+  renderAll()
+} else {
+  const existing = document.querySelector<HTMLScriptElement>(`script[src="${WIDGET_SRC}"]`)
+  const script = existing ?? document.createElement('script')
+  if (!existing) {
+    script.src = WIDGET_SRC
+    script.async = true
+    document.head.appendChild(script)
   }
+  script.addEventListener('load', renderAll)
+}
 </script>

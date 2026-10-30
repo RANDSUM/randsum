@@ -31,131 +31,129 @@ const id = info.id
     <Code code={info.snippet.code} lang={info.snippet.lang} wrap />
   </div>
   <dl class="product-hero-facts">
-    {
-      info.facts.map(fact => (
-        <div>
-          <dt>{fact.label}</dt>
-          <dd>{fact.value}</dd>
-        </div>
-      ))
-    }
+    {info.facts.map(fact => (
+      <div>
+        <dt>{fact.label}</dt>
+        <dd>{fact.value}</dd>
+      </div>
+    ))}
   </dl>
 </header>
 
 <style>
-  .product-hero {
-    position: relative;
-    isolation: isolate;
-    margin-top: 1rem;
-    padding: 2rem 0 0.5rem;
-  }
+.product-hero {
+  position: relative;
+  isolation: isolate;
+  margin-top: 1rem;
+  padding: 2rem 0 0.5rem;
+}
 
-  /* A soft glow of the product's colour behind the name */
-  .product-hero::before {
-    content: '';
-    position: absolute;
-    inset: -3rem auto auto -4rem;
-    z-index: -1;
-    width: 26rem;
-    height: 16rem;
-    background: radial-gradient(
-      closest-side,
-      color-mix(in srgb, var(--p) 22%, transparent),
-      transparent
-    );
-    pointer-events: none;
-  }
+/* A soft glow of the product's colour behind the name */
+.product-hero::before {
+  content: '';
+  position: absolute;
+  inset: -3rem auto auto -4rem;
+  z-index: -1;
+  width: 26rem;
+  height: 16rem;
+  background: radial-gradient(
+    closest-side,
+    color-mix(in srgb, var(--p) 22%, transparent),
+    transparent
+  );
+  pointer-events: none;
+}
 
-  h1 {
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
-    margin: 0;
-  }
+h1 {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin: 0;
+}
 
-  .product-hero-brand {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-size: 0.95rem;
-    font-weight: 700;
-    letter-spacing: 0.04em;
-    color: var(--sl-color-white);
-  }
+.product-hero-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--sl-color-white);
+}
 
-  .product-hero-brand :global(.pip-mark) {
-    color: var(--p);
-  }
+.product-hero-brand :global(.pip-mark) {
+  color: var(--p);
+}
 
-  .product-hero-name {
-    font-family: var(--rs-font-heading);
-    font-size: clamp(3.5rem, 9vw, 6rem);
-    font-weight: 800;
-    line-height: 0.95;
-    letter-spacing: -0.045em;
-    color: var(--p-text);
-  }
+.product-hero-name {
+  font-family: var(--rs-font-heading);
+  font-size: clamp(3.5rem, 9vw, 6rem);
+  font-weight: 800;
+  line-height: 0.95;
+  letter-spacing: -0.045em;
+  color: var(--p-text);
+}
 
-  .product-hero-tagline {
-    margin: 1.25rem 0 0.5rem;
-    font-family: var(--rs-font-heading);
-    font-size: 1.4rem;
-    font-weight: 700;
-    letter-spacing: -0.015em;
-    line-height: 1.25;
-    color: var(--sl-color-white);
-  }
+.product-hero-tagline {
+  margin: 1.25rem 0 0.5rem;
+  font-family: var(--rs-font-heading);
+  font-size: 1.4rem;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  line-height: 1.25;
+  color: var(--sl-color-white);
+}
 
-  .product-hero-summary {
-    max-width: 38rem;
-    margin: 0;
-    font-size: 1.05rem;
-    color: var(--sl-color-gray-2);
-  }
+.product-hero-summary {
+  max-width: 38rem;
+  margin: 0;
+  font-size: 1.05rem;
+  color: var(--sl-color-gray-2);
+}
 
-  .product-hero-snippet {
-    margin-top: 1.5rem;
-  }
+.product-hero-snippet {
+  margin-top: 1.5rem;
+}
 
-  .product-hero-facts {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
-    margin: 1.5rem 0 0;
-    border: 1px solid var(--sl-color-gray-5);
-    border-radius: 10px;
-  }
+.product-hero-facts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+  margin: 1.5rem 0 0;
+  border: 1px solid var(--sl-color-gray-5);
+  border-radius: 10px;
+}
 
-  .product-hero-facts div {
-    display: flex;
-    flex-direction: column-reverse;
-    justify-content: flex-end;
-    gap: 0.15rem;
-    padding: 0.9rem 1.1rem;
-  }
+.product-hero-facts div {
+  display: flex;
+  flex-direction: column-reverse;
+  justify-content: flex-end;
+  gap: 0.15rem;
+  padding: 0.9rem 1.1rem;
+}
 
+.product-hero-facts div + div {
+  border-left: 1px solid var(--sl-color-gray-5);
+}
+
+.product-hero-facts dd {
+  margin: 0;
+  font-family: var(--rs-font-heading);
+  font-size: 1.6rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  color: var(--sl-color-white);
+}
+
+.product-hero-facts dt {
+  font-size: 0.85rem;
+  color: var(--sl-color-gray-3);
+}
+
+@media (max-width: 40rem) {
   .product-hero-facts div + div {
-    border-left: 1px solid var(--sl-color-gray-5);
+    border-left: none;
+    border-top: 1px solid var(--sl-color-gray-5);
   }
-
-  .product-hero-facts dd {
-    margin: 0;
-    font-family: var(--rs-font-heading);
-    font-size: 1.6rem;
-    font-weight: 800;
-    letter-spacing: -0.02em;
-    line-height: 1.1;
-    color: var(--sl-color-white);
-  }
-
-  .product-hero-facts dt {
-    font-size: 0.85rem;
-    color: var(--sl-color-gray-3);
-  }
-
-  @media (max-width: 40rem) {
-    .product-hero-facts div + div {
-      border-left: none;
-      border-top: 1px solid var(--sl-color-gray-5);
-    }
-  }
+}
 </style>

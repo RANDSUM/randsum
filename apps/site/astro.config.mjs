@@ -31,6 +31,12 @@ export default defineConfig({
     }
   ],
   site: 'https://randsum.dev',
+  vite: {
+    // satteri (Starlight's Markdown renderer) loads a native binding relative to
+    // its own files, which breaks once Vite bundles it into the prerender chunks.
+    ssr: { external: ['satteri'] },
+    environments: { prerender: { resolve: { external: ['satteri'] } } }
+  },
   integrations: [
     sitemap(),
     starlight({

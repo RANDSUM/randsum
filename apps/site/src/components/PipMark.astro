@@ -29,16 +29,23 @@ const body =
   aria-hidden="true"
   focusable="false"
 >
-  {
-    variant === 'knockout' ? (
-      <path d={body + holes} fill="currentColor" fill-rule="evenodd" />
-    ) : (
-      <>
-        <rect x="4" y="4" width="92" height="92" rx="22" fill="none" stroke="currentColor" stroke-width="8" />
-        {pips.map(([cx, cy]) => (
-          <circle cx={cx} cy={cy} r="8" fill="currentColor" />
-        ))}
-      </>
-    )
-  }
+  {variant === 'knockout' ? (
+    <path d={body + holes} fill="currentColor" fill-rule="evenodd" />
+  ) : (
+    <>
+      <rect
+        x="4"
+        y="4"
+        width="92"
+        height="92"
+        rx="22"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="8"
+      />
+      {pips.map(([cx, cy]) => (
+        <circle cx={cx} cy={cy} r="8" fill="currentColor" />
+      ))}
+    </>
+  )}
 </svg>

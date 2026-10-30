@@ -6,16 +6,14 @@ import { getCardStyle } from './cardHelpers'
 <section class="games-section not-content" aria-labelledby="games-title">
   <h2 id="games-title" class="section-heading">Ready for your table</h2>
   <div class="pkg-grid">
-    {
-      gamePackages.map(pkg => (
-        <a class="pkg-card" style={getCardStyle(pkg)} href={`/games/${pkg.id}/`}>
-          <div class="pkg-card-header">
-            <h3 class="pkg-card-name">{pkg.displayName}</h3>
-          </div>
-          <p class="pkg-card-desc">{pkg.description}</p>
-          <span class="pkg-card-link">View docs &rarr;</span>
-        </a>
-      ))
-    }
+    {gamePackages.map(pkg => (
+      <a class="pkg-card" style={getCardStyle(pkg)} href={`/games/${pkg.id}/`}>
+        <div class="pkg-card-header">
+          <h3 class="pkg-card-name">{pkg.displayName}</h3>
+        </div>
+        <p class="pkg-card-desc">{pkg.description}</p>
+        <span class="pkg-card-link">View docs &rarr;</span>
+      </a>
+    ))}
   </div>
 </section>

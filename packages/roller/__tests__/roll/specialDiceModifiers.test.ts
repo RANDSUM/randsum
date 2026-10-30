@@ -52,19 +52,14 @@ describe('modifiers on special dice', () => {
     expect(result.rolls[0]?.rolls).toEqual([1, -1])
   })
 
-  test.each([
-    '4dF+1',
-    'd%+5',
-    'g6+1',
-    'z6+1',
-    '3DD6L',
-    '2d{1,2,3}+1',
-    '3d{a,b,c}L'
-  ])('validateNotation("%s") is valid and does not throw', notation => {
-    const result = validateNotation(notation)
-    if (!result.valid) throw new Error(`expected "${notation}" to be valid`)
-    expect(result.description[0]?.length).toBeGreaterThan(1)
-  })
+  test.each(['4dF+1', 'd%+5', 'g6+1', 'z6+1', '3DD6L', '2d{1,2,3}+1', '3d{a,b,c}L'])(
+    'validateNotation("%s") is valid and does not throw',
+    notation => {
+      const result = validateNotation(notation)
+      if (!result.valid) throw new Error(`expected "${notation}" to be valid`)
+      expect(result.description[0]?.length).toBeGreaterThan(1)
+    }
+  )
 
   test('validateNotation describes the special core and its modifiers', () => {
     const result = validateNotation('4dF+1')
@@ -104,14 +99,12 @@ describe('reroll values are checked against the die faces', () => {
     expect(result.rolls[0]?.rolls[0]).toBe(replacement)
   })
 
-  test.each([
-    'z6R{9}',
-    'z6R{6}',
-    'dFR{2}',
-    '3d{2,4,6}R{1}'
-  ])('roll("%s") throws: the value is not a face of the die', notation => {
-    expect(() => roll(n(notation))).toThrow(ModifierError)
-  })
+  test.each(['z6R{9}', 'z6R{6}', 'dFR{2}', '3d{2,4,6}R{1}'])(
+    'roll("%s") throws: the value is not a face of the die',
+    notation => {
+      expect(() => roll(n(notation))).toThrow(ModifierError)
+    }
+  )
 })
 
 describe('zero divisors', () => {
@@ -120,10 +113,10 @@ describe('zero divisors', () => {
     expect(() => roll(n(notation))).toThrow()
   })
 
-  test.each([
-    ['integerDivide'],
-    ['modulo']
-  ] as const)('options { %s: 0 } throws ModifierError instead of returning NaN', name => {
-    expect(() => roll({ sides: 6, quantity: 2, modifiers: { [name]: 0 } })).toThrow(ModifierError)
-  })
+  test.each([['integerDivide'], ['modulo']] as const)(
+    'options { %s: 0 } throws ModifierError instead of returning NaN',
+    name => {
+      expect(() => roll({ sides: 6, quantity: 2, modifiers: { [name]: 0 } })).toThrow(ModifierError)
+    }
+  )
 })

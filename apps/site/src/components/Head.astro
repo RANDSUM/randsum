@@ -9,17 +9,15 @@ const description =
 ---
 
 <Default {...Astro.props}><slot /></Default>
-{
-  productForPath(Astro.url.pathname) && (
-    <script is:inline define:vars={{ product: productForPath(Astro.url.pathname) }}>
-      document.documentElement.dataset.product = product
-    </script>
-  )
-}
-<link rel="icon" href="/favicon.ico" sizes="32x32" />
+{productForPath(Astro.url.pathname) && (
+  <script is:inline define:vars={{ product: productForPath(Astro.url.pathname) }}>
+    document.documentElement.dataset.product = product
+  </script>
+)}
+<link rel="icon" href="/favicon.ico" sizes="32x32">
 <Font cssVariable="--font-gabarito" preload />
 <Font cssVariable="--font-jetbrains-mono" />
-<meta property="og:title" content={title} />
-<meta property="og:description" content={description} />
-<meta name="twitter:title" content={title} />
-<meta name="twitter:description" content={description} />
+<meta property="og:title" content={title}>
+<meta property="og:description" content={description}>
+<meta name="twitter:title" content={title}>
+<meta name="twitter:description" content={description}>

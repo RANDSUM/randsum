@@ -67,7 +67,7 @@ on:
   # safely here per the security note above: push-to-main commits only, and no
   # PR-controlled input or artifacts consumed.
   workflow_run:
-    workflows: ["CI"]
+    workflows: ['CI']
     types: [completed]
     branches: [main]
   workflow_dispatch:
