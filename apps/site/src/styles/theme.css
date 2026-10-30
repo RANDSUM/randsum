@@ -34,6 +34,7 @@
   /* Text on a filled background: every accent is dark in light mode and light in dark mode */
   --rs-on-accent: light-dark(#fff, #0f0f11);
   --rs-ink: #0f0f11;
+  --rs-paper: #fff;
 
   /* Products: each wears the pip R die in its own colour. The bare token is a
      text shade (AA on --rs-bg in both modes); -fill is the die and badge colour. */
@@ -92,6 +93,68 @@
   --rs-font-sans: var(--font-gabarito), ui-sans-serif, system-ui, sans-serif;
   --rs-font-heading: var(--font-gabarito), ui-sans-serif, system-ui, sans-serif;
   --rs-font-mono: var(--font-jetbrains-mono), ui-monospace, SFMono-Regular, monospace;
+
+  /* Code: plain code reuses the notation inks, so a snippet and a notation
+     string read in the same colours */
+  --rs-code-comment: var(--rs-gray-3);
+  --rs-code-punct: var(--rs-gray-2);
+  --rs-code-keyword: var(--rs-syntax-count);
+  --rs-code-string: var(--rs-syntax-plus);
+  --rs-code-number: var(--rs-syntax-explode);
+  --rs-code-property: var(--rs-syntax-reroll);
+  --rs-code-function: var(--rs-syntax-cap);
+
+  /*
+   * Everything below is the only way to spell a size, weight, radius, shadow or
+   * tracking: biome-plugins/design-tokens.grit fails any other stylesheet or
+   * Astro <style> block that writes a raw one.
+   */
+
+  /* Type scale */
+  --rs-text-2xs: 0.75rem;
+  --rs-text-xs: 0.8125rem;
+  --rs-text-sm: 0.875rem;
+  --rs-text-base: 1rem;
+  --rs-text-md: 1.125rem;
+  --rs-text-lg: 1.375rem;
+  --rs-text-xl: 1.75rem;
+  --rs-text-2xl: 2.25rem;
+  --rs-text-3xl: 3rem;
+  --rs-text-display: clamp(3.25rem, 8vw, 5.5rem);
+
+  --rs-weight-regular: 400;
+  --rs-weight-medium: 500;
+  --rs-weight-semibold: 600;
+  --rs-weight-bold: 700;
+  --rs-weight-heavy: 800;
+
+  --rs-leading-tight: 1.05;
+  --rs-leading-snug: 1.25;
+  --rs-leading-body: 1.6;
+
+  /* Headings tighten as they grow; body text is never tracked */
+  --rs-tracking-tight: -0.015em;
+  --rs-tracking-heading: -0.025em;
+  --rs-tracking-display: -0.045em;
+  /* The RANDSUM wordmark, and only it, is set open */
+  --rs-tracking-wordmark: 0.04em;
+
+  /* Shape: one die-like rounding, in four sizes */
+  --rs-radius-xs: 4px;
+  --rs-radius-sm: 6px;
+  --rs-radius-md: 8px;
+  --rs-radius-lg: 12px;
+  --rs-radius-pill: 999px;
+
+  /* Depth: borders do the work; the one shadow is for things that float over
+     the page (menus, popovers, toasts) */
+  --rs-border: 1px solid var(--rs-gray-5);
+  --rs-shadow-overlay: 0 12px 32px color-mix(in srgb, var(--rs-ink) 16%, transparent);
+  --rs-focus-ring: 0 0 0 3px color-mix(in srgb, var(--rs-accent) 35%, transparent);
+  --rs-scrim: color-mix(in srgb, var(--rs-ink) 60%, transparent);
+
+  --rs-duration: 150ms;
+  --rs-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 html[data-product='roller'] {
@@ -128,107 +191,4 @@ html[data-product='plugin'] {
   --rs-accent: var(--product-plugin);
   --rs-accent-high: var(--product-plugin);
   --rs-accent-low: color-mix(in srgb, var(--product-plugin-fill) 14%, var(--rs-bg));
-}
-
-/*
- * The landing page animates through the game and syntax colours. An animation
- * keeps the keyframe values it resolved, and a theme toggle changes only
- * color-scheme, not the token text, so an unregistered token would hold the old
- * mode's colour until a reload. Registered as <color>, each token resolves its
- * light-dark() into a real colour, and the toggle then refreshes the frames.
- */
-@property --game-blades {
-  syntax: '<color>';
-  inherits: true;
-  initial-value: transparent;
-}
-
-@property --game-daggerheart {
-  syntax: '<color>';
-  inherits: true;
-  initial-value: transparent;
-}
-
-@property --game-fate {
-  syntax: '<color>';
-  inherits: true;
-  initial-value: transparent;
-}
-
-@property --game-fifth {
-  syntax: '<color>';
-  inherits: true;
-  initial-value: transparent;
-}
-
-@property --game-pbta {
-  syntax: '<color>';
-  inherits: true;
-  initial-value: transparent;
-}
-
-@property --game-root-rpg {
-  syntax: '<color>';
-  inherits: true;
-  initial-value: transparent;
-}
-
-@property --game-salvageunion {
-  syntax: '<color>';
-  inherits: true;
-  initial-value: transparent;
-}
-
-@property --rs-syntax-core {
-  syntax: '<color>';
-  inherits: true;
-  initial-value: transparent;
-}
-
-@property --rs-syntax-drop {
-  syntax: '<color>';
-  inherits: true;
-  initial-value: transparent;
-}
-
-@property --rs-syntax-keep {
-  syntax: '<color>';
-  inherits: true;
-  initial-value: transparent;
-}
-
-@property --rs-syntax-explode {
-  syntax: '<color>';
-  inherits: true;
-  initial-value: transparent;
-}
-
-@property --rs-syntax-reroll {
-  syntax: '<color>';
-  inherits: true;
-  initial-value: transparent;
-}
-
-@property --rs-syntax-cap {
-  syntax: '<color>';
-  inherits: true;
-  initial-value: transparent;
-}
-
-@property --rs-syntax-unique {
-  syntax: '<color>';
-  inherits: true;
-  initial-value: transparent;
-}
-
-@property --rs-syntax-plus {
-  syntax: '<color>';
-  inherits: true;
-  initial-value: transparent;
-}
-
-@property --rs-syntax-count {
-  syntax: '<color>';
-  inherits: true;
-  initial-value: transparent;
 }

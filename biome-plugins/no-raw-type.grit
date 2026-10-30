@@ -1,0 +1,16 @@
+// Only theme type. A font size, weight, family or letter-spacing outside
+// apps/site/src/styles/theme.css is var(--rs-text-*), var(--rs-weight-*),
+// var(--rs-font-*) or var(--rs-tracking-*). Sizes in em stay legal: they scale
+// with the token their parent already uses. biome.json applies this to the
+// site's stylesheets and Astro <style> blocks, minus the theme file.
+language css
+
+CssDeclaration() as $decl where {
+  $decl <: or {
+    r"^font-size\s*:\s*(?:[0-9.]+(?:px|rem)|clamp|calc|min\(|max\()[\s\S]*",
+    r"^font-weight\s*:\s*(?:[0-9]|bold|bolder|lighter)[\s\S]*",
+    r"^font-family\s*:\s*(?:['\"]|[a-hj-uw-zA-Z])[\s\S]*",
+    r"^letter-spacing\s*:\s*-?[0-9.]*[1-9][\s\S]*"
+  },
+  register_diagnostic(span=$decl, message="Raw type value. Use the theme's --rs-text-*, --rs-weight-*, --rs-font-* or --rs-tracking-* token (apps/site/src/styles/theme.css).")
+}

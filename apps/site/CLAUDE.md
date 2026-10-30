@@ -41,9 +41,28 @@ Starlight pages and for `/spec`, whose `spec.css` `@import`s it. Each mode-depen
 once as `light-dark(light, dark)`; the page's `color-scheme`, which Starlight
 sets from `data-theme`, picks the arm. `custom.css` maps Starlight's
 `--sl-color-*` onto it, and a game's colour is always `--game-<id>`. Tint with
-`color-mix(in srgb, var(--token) N%, transparent)`. The `no-raw-color` Biome
-plugin fails hex in any other `.css` file, and `__tests__/theme.test.ts` does
-the same for Astro `<style>` blocks.
+`color-mix(in srgb, var(--token) N%, transparent)`.
+
+## Design system
+
+Every page is built from tokens and shared components, and tools hold them there:
+
+- **Tokens** (`src/styles/theme.css`, the only file that spells a raw value):
+  colours, `--rs-text-*` sizes, `--rs-weight-*`, `--rs-tracking-*`,
+  `--rs-leading-*`, `--rs-radius-*`, `--rs-border`, `--rs-shadow-overlay` (only
+  for things that float), `--rs-focus-ring`, `--rs-code-*` and motion.
+- **Components** (`src/components/ui/`): `Button` (primary, secondary, or a
+  product's colour), `Section` (heading, lede, actions slot), `Card` and
+  `CardGrid`, `CodePanel` (Expressive Code with wrapping) and `DiscordGlyph`.
+  `ProductHero` and `ProductStack` render from `PRODUCTS` in `src/utils/product.ts`.
+- **Enforcement**: Biome's `no-raw-color`, `no-raw-type`, `no-raw-shape`,
+  `no-uppercase-labels` and `no-decorative-gradient` plugins (`biome-plugins/`)
+  fail raw values in every `.css` file and Astro `<style>` block except
+  `theme.css`. `__tests__/theme.test.ts` fails hex in markup and scripts, and
+  the old ad-hoc `btn`, `pkg-card` and `section-divider` classes.
+- **Avoided on purpose**: two-tone or gradient headlines, glow and lift on
+  hover, hard shadows, uppercase letter-spaced labels and divider rules
+  between sections.
 
 ## Notation Spec (`/spec`)
 

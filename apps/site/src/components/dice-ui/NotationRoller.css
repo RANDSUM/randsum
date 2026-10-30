@@ -54,7 +54,7 @@
   min-width: 0;
   overflow: hidden;
   font-family: var(--rs-font-mono);
-  font-size: 1.25rem;
+  font-size: var(--rs-text-md);
   line-height: 1;
   letter-spacing: 0;
   font-kerning: none;
@@ -64,7 +64,7 @@
 .du-notation-roller-input {
   padding: 0;
   font-family: var(--rs-font-mono);
-  font-size: 1.25rem;
+  font-size: var(--rs-text-md);
   line-height: 1;
   letter-spacing: 0;
   font-kerning: none;
@@ -107,9 +107,8 @@
   border-radius: var(--dui-radius-sm);
   color: var(--rs-on-accent);
   font-family: var(--rs-font-mono);
-  font-size: 0.65rem;
-  font-weight: 700;
-  letter-spacing: 0.1em;
+  font-size: var(--rs-text-2xs);
+  font-weight: var(--rs-weight-bold);
   cursor: pointer;
   transition:
     background 0.15s ease,
@@ -144,7 +143,7 @@
   padding: 0.35rem 0.5rem 0.5rem;
   min-height: 0;
   font-family: var(--rs-font-mono);
-  font-size: 0.7rem;
+  font-size: var(--rs-text-2xs);
   line-height: 1.4;
   display: flex;
   align-items: flex-start;
@@ -172,7 +171,7 @@
 
 /* ===== Description chips ===== */
 .du-nr-desc-chip {
-  font-size: 0.7rem;
+  font-size: var(--rs-text-2xs);
   padding: 0.05em 0.25em;
   border-radius: var(--dui-radius-sm);
   cursor: default;
@@ -189,7 +188,7 @@
 }
 
 .du-nr-desc-sep {
-  font-size: 0.7rem;
+  font-size: var(--rs-text-2xs);
   opacity: 0.5;
   user-select: none;
   transition: opacity 0.12s ease;
@@ -213,9 +212,9 @@
   background: var(--rs-gray-6);
   border-radius: var(--dui-radius-sm);
   border: 1.5px solid var(--rs-accent);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  box-shadow: var(--rs-shadow-overlay);
   font-family: var(--rs-font-mono);
-  font-size: 0.75rem;
+  font-size: var(--rs-text-2xs);
   pointer-events: auto;
   overflow-x: hidden;
   overflow-y: auto;
@@ -262,7 +261,7 @@
   background: none;
   border: none;
   color: var(--rs-gray-2);
-  font-size: 1rem;
+  font-size: var(--rs-text-base);
   line-height: 1;
   padding: 0.1rem 0.25rem;
   cursor: pointer;
@@ -327,8 +326,8 @@
 
 .du-nr-tooltip-total-value {
   font-family: var(--rs-font-mono);
-  font-size: 1.75rem;
-  font-weight: 700;
+  font-size: var(--rs-text-xl);
+  font-weight: var(--rs-weight-bold);
   color: var(--rs-fg);
   line-height: 1;
 }
@@ -344,7 +343,7 @@
   justify-content: space-between;
   gap: var(--dui-space-sm);
   padding: var(--dui-space-xs) var(--dui-space-md);
-  font-size: 0.75rem;
+  font-size: var(--rs-text-2xs);
 }
 
 .du-nr-tooltip-rows > :not(.du-nr-tooltip-header-line):nth-child(odd) {
@@ -363,12 +362,12 @@
   border-bottom: 1px solid color-mix(in srgb, var(--rs-fg) 10%, transparent);
   margin-bottom: 0.15rem;
   padding-bottom: 0.35rem;
-  font-size: 0.8rem;
+  font-size: var(--rs-text-xs);
   gap: 0.35rem;
 }
 
 .du-nr-tooltip-notation {
-  font-weight: 700;
+  font-weight: var(--rs-weight-bold);
   color: var(--rs-accent);
   white-space: nowrap;
 }
@@ -389,18 +388,14 @@
   margin-top: 0.15rem;
   padding: 0.35rem var(--dui-space-md) var(--dui-space-xs);
   background: color-mix(in srgb, var(--rs-fg) 4%, transparent);
-  font-size: 0.85rem;
+  font-size: var(--rs-text-sm);
 }
 
 .du-nr-result-label--total {
-  font-weight: 700;
+  font-weight: var(--rs-weight-bold);
   color: var(--rs-fg);
 }
 
 .du-nr-result-dice--total {
-  font-weight: 700;
-}
-
-[data-theme='light'] .du-notation-roller-result-overlay {
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+  font-weight: var(--rs-weight-bold);
 }

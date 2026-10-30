@@ -216,6 +216,9 @@ jobs:
           ref: ${{ needs.plan.outputs.sha }}
           persist-credentials: false
       - uses: ./.github/actions/bun-setup
+        with:
+          # Astro 7.4 needs Node >= 22.23.4; the runner's default can lag behind
+          node-version: '22'
 
       # The site imports roller through a workspace subpath export; `site...`
       # builds roller first, then the site.

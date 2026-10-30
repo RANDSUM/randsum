@@ -133,8 +133,14 @@
       }
     },
     {
-      "includes": ["**/*.css", "!apps/site/src/styles/theme.css"],
-      "plugins": ["./biome-plugins/no-raw-color.grit"]
+      "includes": ["**/*.css", "**/*.astro", "!apps/site/src/styles/theme.css"],
+      "plugins": [
+        "./biome-plugins/no-raw-color.grit",
+        "./biome-plugins/no-raw-type.grit",
+        "./biome-plugins/no-raw-shape.grit",
+        "./biome-plugins/no-uppercase-labels.grit",
+        "./biome-plugins/no-decorative-gradient.grit"
+      ]
     },
     {
       "includes": [

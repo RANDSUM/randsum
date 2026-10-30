@@ -2,6 +2,6 @@
   color: var(--rs-error);
   padding: 1rem;
   border: 1px solid var(--rs-error);
-  border-radius: var(--radius, 5px);
-  font-family: monospace;
+  border-radius: var(--rs-radius-md);
+  font-family: var(--rs-font-mono);
 }

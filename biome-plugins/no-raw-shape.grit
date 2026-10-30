@@ -1,0 +1,15 @@
+// Only theme shape. A corner radius is var(--rs-radius-*) (or 0 / 50%), and a
+// shadow is var(--rs-shadow-overlay) or var(--rs-focus-ring): borders carry
+// depth everywhere else, so cards and buttons have no shadow at all. Colours
+// written as rgb()/hsl() are banned for the same reason as hex
+// (no-raw-color.grit). biome.json applies this beside no-raw-type.grit.
+language css
+
+CssDeclaration() as $decl where {
+  $decl <: or {
+    r"^border-(?:[a-z]+-)*radius\s*:[^;]*?[0-9.]*[1-9][0-9.]*(?:px|rem|em)[\s\S]*",
+    r"^box-shadow\s*:\s*(?:[0-9-]|inset|rgb|hsl|color-mix)[\s\S]*",
+    r"^[a-z-]+\s*:[^;]*\b(?:rgba?|hsla?)\([\s\S]*"
+  },
+  register_diagnostic(span=$decl, message="Raw shape or colour value. Use --rs-radius-*, --rs-shadow-overlay, --rs-focus-ring or a colour token (apps/site/src/styles/theme.css).")
+}

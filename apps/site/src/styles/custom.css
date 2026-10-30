@@ -5,10 +5,23 @@
   --sl-color-accent-low: var(--rs-accent-low);
   --sl-color-accent: var(--rs-accent);
   --sl-color-accent-high: var(--rs-accent-high);
-  /* Starlight paints :::tip in purple; it takes the page's product colour instead */
+  /* Starlight's hues (asides, badges, cards) map onto the theme: a tip takes
+     the page's product colour, and the rest take the semantic tokens */
   --sl-color-purple-low: var(--rs-accent-low);
   --sl-color-purple: var(--rs-accent);
   --sl-color-purple-high: var(--rs-accent-high);
+  --sl-color-blue-low: color-mix(in srgb, var(--rs-info) 12%, var(--rs-bg));
+  --sl-color-blue: var(--rs-info);
+  --sl-color-blue-high: var(--rs-info);
+  --sl-color-orange-low: color-mix(in srgb, var(--rs-warn) 12%, var(--rs-bg));
+  --sl-color-orange: var(--rs-warn);
+  --sl-color-orange-high: var(--rs-warn);
+  --sl-color-red-low: color-mix(in srgb, var(--rs-error) 12%, var(--rs-bg));
+  --sl-color-red: var(--rs-error);
+  --sl-color-red-high: var(--rs-error);
+  --sl-color-green-low: color-mix(in srgb, var(--rs-success) 12%, var(--rs-bg));
+  --sl-color-green: var(--rs-success);
+  --sl-color-green-high: var(--rs-success);
 
   --sl-color-white: var(--rs-fg);
   --sl-color-gray-1: var(--rs-gray-1);
@@ -19,9 +32,6 @@
   --sl-color-gray-6: var(--rs-gray-6);
   --sl-color-gray-7: var(--rs-gray-7);
   --sl-color-black: var(--rs-bg);
-
-  /* Border radius */
-  --radius: 8px;
 
   /* Fonts */
   --sl-font: var(--rs-font-sans);
@@ -40,7 +50,7 @@ h4,
 h5,
 h6 {
   font-family: var(--sl-font-heading);
-  letter-spacing: -0.02em;
+  letter-spacing: var(--rs-tracking-heading);
 }
 
 /* The default accent is ink, so content links carry an underline to stand apart */

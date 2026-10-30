@@ -1,8 +1,9 @@
 ---
 // The top of a product's front page: the RANDSUM lockup with the product's name
-// set large in its colour, its pitch, a real snippet and a few facts.
-import { Code } from 'astro-expressive-code/components'
+// set large in its colour, its pitch, its buttons, a real snippet and a few facts.
 import PipMark from './PipMark.astro'
+import Button from './ui/Button.astro'
+import CodePanel from './ui/CodePanel.astro'
 import { PRODUCT_LABELS, productInfo } from '../utils/product'
 import type { Product } from '../utils/product'
 
@@ -27,8 +28,15 @@ const id = info.id
   </h1>
   <p class="product-hero-tagline">{info.tagline}</p>
   <p class="product-hero-summary">{info.summary}</p>
+  <div class="product-hero-actions">
+    {info.actions.map((action, i) => (
+      <Button href={action.href} variant={i === 0 ? 'product' : 'secondary'} product={id}>
+        {action.label}
+      </Button>
+    ))}
+  </div>
   <div class="product-hero-snippet">
-    <Code code={info.snippet.code} lang={info.snippet.lang} wrap />
+    <CodePanel code={info.snippet.code} lang={info.snippet.lang} />
   </div>
   <dl class="product-hero-facts">
     {info.facts.map(fact => (
@@ -52,15 +60,14 @@ const id = info.id
 .product-hero::before {
   content: '';
   position: absolute;
-  inset: -3rem auto auto -4rem;
+  inset: -1rem auto auto -2rem;
   z-index: -1;
-  width: 26rem;
-  height: 16rem;
-  background: radial-gradient(
-    closest-side,
-    color-mix(in srgb, var(--p) 22%, transparent),
-    transparent
-  );
+  width: 20rem;
+  height: 9rem;
+  border-radius: var(--rs-radius-pill);
+  background: var(--p);
+  opacity: 0.18;
+  filter: blur(64px);
   pointer-events: none;
 }
 
@@ -75,10 +82,10 @@ h1 {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  font-size: 0.95rem;
-  font-weight: 700;
-  letter-spacing: 0.04em;
+  font-size: var(--rs-text-base);
+  font-weight: var(--rs-weight-bold);
   color: var(--sl-color-white);
+  letter-spacing: var(--rs-tracking-wordmark);
 }
 
 .product-hero-brand :global(.pip-mark) {
@@ -87,19 +94,19 @@ h1 {
 
 .product-hero-name {
   font-family: var(--rs-font-heading);
-  font-size: clamp(3.5rem, 9vw, 6rem);
-  font-weight: 800;
-  line-height: 0.95;
-  letter-spacing: -0.045em;
+  font-size: var(--rs-text-display);
+  font-weight: var(--rs-weight-heavy);
+  line-height: var(--rs-leading-tight);
+  letter-spacing: var(--rs-tracking-display);
   color: var(--p-text);
 }
 
 .product-hero-tagline {
   margin: 1.25rem 0 0.5rem;
   font-family: var(--rs-font-heading);
-  font-size: 1.4rem;
-  font-weight: 700;
-  letter-spacing: -0.015em;
+  font-size: var(--rs-text-lg);
+  font-weight: var(--rs-weight-bold);
+  letter-spacing: var(--rs-tracking-tight);
   line-height: 1.25;
   color: var(--sl-color-white);
 }
@@ -107,8 +114,15 @@ h1 {
 .product-hero-summary {
   max-width: 38rem;
   margin: 0;
-  font-size: 1.05rem;
+  font-size: var(--rs-text-base);
   color: var(--sl-color-gray-2);
+}
+
+.product-hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
 }
 
 .product-hero-snippet {
@@ -120,7 +134,7 @@ h1 {
   grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
   margin: 1.5rem 0 0;
   border: 1px solid var(--sl-color-gray-5);
-  border-radius: 10px;
+  border-radius: var(--rs-radius-md);
 }
 
 .product-hero-facts div {
@@ -138,15 +152,15 @@ h1 {
 .product-hero-facts dd {
   margin: 0;
   font-family: var(--rs-font-heading);
-  font-size: 1.6rem;
-  font-weight: 800;
-  letter-spacing: -0.02em;
+  font-size: var(--rs-text-xl);
+  font-weight: var(--rs-weight-heavy);
+  letter-spacing: var(--rs-tracking-heading);
   line-height: 1.1;
   color: var(--sl-color-white);
 }
 
 .product-hero-facts dt {
-  font-size: 0.85rem;
+  font-size: var(--rs-text-sm);
   color: var(--sl-color-gray-3);
 }
 

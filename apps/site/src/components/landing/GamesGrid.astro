@@ -1,19 +1,25 @@
 ---
 import { gamePackages } from '../../utils/packageData'
-import { getCardStyle } from './cardHelpers'
+import Button from '../ui/Button.astro'
+import Card from '../ui/Card.astro'
+import CardGrid from '../ui/CardGrid.astro'
+import Section from '../ui/Section.astro'
 ---
 
-<section class="games-section not-content" aria-labelledby="games-title">
-  <h2 id="games-title" class="section-heading">Ready for your table</h2>
-  <div class="pkg-grid">
+<Section id="games" title="Ready for your table">
+  <Button slot="actions" href="/games/introduction/" variant="secondary" size="sm">
+    All games
+  </Button>
+  <CardGrid>
     {gamePackages.map(pkg => (
-      <a class="pkg-card" style={getCardStyle(pkg)} href={`/games/${pkg.id}/`}>
-        <div class="pkg-card-header">
-          <h3 class="pkg-card-name">{pkg.displayName}</h3>
-        </div>
-        <p class="pkg-card-desc">{pkg.description}</p>
-        <span class="pkg-card-link">View docs &rarr;</span>
-      </a>
+      <Card
+        href={`/games/${pkg.id}/`}
+        title={pkg.displayName}
+        eyebrow={pkg.npmPackage}
+        accent={`var(--game-${pkg.id})`}
+      >
+        {pkg.description}
+      </Card>
     ))}
-  </div>
-</section>
+  </CardGrid>
+</Section>

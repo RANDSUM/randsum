@@ -26,6 +26,15 @@ export function productForPath(pathname: string): Product | undefined {
   return PREFIXES.find(([prefix]) => pathname.startsWith(prefix))?.[1]
 }
 
+// The bot's install link, shared by every page that offers it
+export const DISCORD_INSTALL_URL =
+  'https://discord.com/oauth2/authorize?client_id=1290434147159904276&permissions=274877906944&scope=bot%20applications.commands'
+
+interface ProductAction {
+  readonly label: string
+  readonly href: string
+}
+
 interface ProductFact {
   readonly value: string
   readonly label: string
@@ -39,6 +48,8 @@ export interface ProductInfo {
   readonly href: string
   readonly snippet: { readonly lang: string; readonly code: string }
   readonly facts: readonly ProductFact[]
+  // The hero's buttons: the first is the main one
+  readonly actions: readonly [ProductAction, ...ProductAction[]]
 }
 
 // Every product, in the order the landing page stacks them
@@ -57,6 +68,10 @@ export const PRODUCTS: readonly ProductInfo[] = [
       { value: '0', label: 'runtime dependencies' },
       { value: '26', label: 'modifiers in the spec' },
       { value: 'ESM', label: 'with full type declarations' }
+    ],
+    actions: [
+      { label: 'Get started', href: '/roller/getting-started/' },
+      { label: 'npm', href: 'https://www.npmjs.com/package/@randsum/roller' }
     ]
   },
   {
@@ -73,6 +88,10 @@ export const PRODUCTS: readonly ProductInfo[] = [
       { value: '7', label: 'game systems' },
       { value: '1', label: 'package, one subpath each' },
       { value: 'JSON', label: 'specs you can write yourself' }
+    ],
+    actions: [
+      { label: 'Get started', href: '/games/getting-started/' },
+      { label: 'Add your own game', href: '/games/schema/contributing-a-game/' }
     ]
   },
   {
@@ -89,6 +108,10 @@ export const PRODUCTS: readonly ProductInfo[] = [
       { value: '26', label: 'modifiers' },
       { value: '4', label: 'conformance levels' },
       { value: '3', label: 'pipeline stages' }
+    ],
+    actions: [
+      { label: 'Read the spec', href: '/spec/' },
+      { label: 'Getting started', href: '/notation/getting-started/' }
     ]
   },
   {
@@ -101,6 +124,10 @@ export const PRODUCTS: readonly ProductInfo[] = [
     facts: [
       { value: '3', label: 'tools' },
       { value: 'stdio', label: 'works with any MCP client' }
+    ],
+    actions: [
+      { label: 'Configure a client', href: '/tools/mcp/#configuration' },
+      { label: 'npm', href: 'https://www.npmjs.com/package/@randsum/mcp' }
     ]
   },
   {
@@ -113,6 +140,10 @@ export const PRODUCTS: readonly ProductInfo[] = [
     facts: [
       { value: '0', label: 'setup after adding it' },
       { value: '7', label: 'games with their own command' }
+    ],
+    actions: [
+      { label: 'Add to Discord', href: DISCORD_INSTALL_URL },
+      { label: 'All commands', href: '/tools/discord-bot/#commands' }
     ]
   },
   {
@@ -128,6 +159,10 @@ export const PRODUCTS: readonly ProductInfo[] = [
     facts: [
       { value: '3', label: 'skills' },
       { value: '1', label: 'MCP server, bundled' }
+    ],
+    actions: [
+      { label: 'Set it up', href: '/tools/claude-code-plugin/#setup' },
+      { label: 'GitHub', href: 'https://github.com/RANDSUM/randsum/tree/main/plugins/randsum' }
     ]
   }
 ]
@@ -145,7 +180,8 @@ const HERO_PAGES: Readonly<Record<string, Product>> = {
   '/notation/introduction/': 'spec',
   '/tools/mcp/': 'mcp',
   '/tools/discord-bot/': 'discord',
-  '/tools/claude-code-plugin/': 'plugin'
+  '/tools/claude-code-plugin/': 'plugin',
+  '/discord/': 'discord'
 }
 
 export function heroProductForPath(pathname: string): Product | undefined {
