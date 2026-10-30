@@ -197,6 +197,13 @@ describe('explode followed by reroll (! then R{..}) is not reduction', () => {
     expect(modifiers?.explode).toBeUndefined()
   })
 
+  test.each(['1d20!RR{<3}', '1d20!rr{<3}'])('%s is reduction followed by reroll', notation => {
+    const modifiers = notationToOptions(notation)[0]?.modifiers
+    expect(modifiers?.explodeSequence).toEqual([12, 10, 8, 6, 4])
+    expect(modifiers?.reroll).toEqual({ lessThan: 3 })
+    expect(modifiers?.explode).toBeUndefined()
+  })
+
   test('isDiceNotation accepts !R{<3}', () => {
     expect(isDiceNotation('4d6!R{<3}')).toBe(true)
   })

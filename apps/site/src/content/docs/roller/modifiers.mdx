@@ -364,7 +364,7 @@ Roll additional dice using a custom die-size sequence when the current die shows
 | `!i` | Sugar: inflate through standard die set (d4 &rarr; d6 &rarr; d8 &rarr; d10 &rarr; d12 &rarr; d20) |
 | `!r` | Sugar: reduce through standard die set (d20 &rarr; d12 &rarr; d10 &rarr; d8 &rarr; d6 &rarr; d4) |
 
-`!r` takes no condition block. `!` followed by `R{...}` or `ro{...}` is Explode then Reroll: `4d6!R{<3}` explodes sixes and rerolls anything under 3.
+`!r` takes no condition block. `!` followed by `R{...}` or `ro{...}` is Explode then Reroll: `4d6!R{<3}` explodes sixes and rerolls anything under 3, and `1d20!RR{<3}` is Reduction followed by that reroll.
 
 <CodeExample code={`import { roll } from '@randsum/roller'
 
