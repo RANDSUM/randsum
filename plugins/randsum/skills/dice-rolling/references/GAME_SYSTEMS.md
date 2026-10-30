@@ -1,131 +1,111 @@
 # RANDSUM Game Systems
 
-## Supported Game Packages
+Each supported game has a shortcode. Pass it as `game` to the `roll_game` MCP tool, or put it in the HTTP path `/v1/games/<shortcode>/roll`. The inputs below are the tool's `params` and the HTTP query (or JSON body) fields. `GET https://api.randsum.dev/v1/games` lists them live.
 
-### @randsum/games/blades - Blades in the Dark
+Every game roll returns `total`, `result` (the game's outcome), `rolls` (only the dice that count) and, for some games, `details`.
 
-- **Mechanics**: d6 dice pools, keep highest result
-- **Outcomes**: 6 = success, 4-5 = partial, 1-3 = failure; multiple 6s = critical
-- **0 dice pool**: rolls 2d6, drops highest (desperate position)
-- **Result type**: `'critical' | 'success' | 'partial' | 'failure'`
-- **Usage**: `roll(rating?: number)` — 0 = desperate (2d6, keep lowest), 1-4 = roll that many d6, keep highest
+## Contents
 
-```typescript
-const result = roll(3)
-result.result // 'critical' | 'success' | 'partial' | 'failure'
-result.total  // highest die value
-```
+- [D&D 5th Edition (`fifth`)](#dd-5th-edition-fifth)
+- [Blades in the Dark (`blades`)](#blades-in-the-dark-blades)
+- [Daggerheart (`daggerheart`)](#daggerheart-daggerheart)
+- [Fate Core (`fate`)](#fate-core-fate)
+- [Powered by the Apocalypse (`pbta`)](#powered-by-the-apocalypse-pbta)
+- [Root RPG (`root-rpg`)](#root-rpg-root-rpg)
+- [Salvage Union (`salvageunion`)](#salvage-union-salvageunion)
 
-### @randsum/games/daggerheart - Daggerheart RPG
+## D&D 5th Edition (`fifth`)
 
-- **Mechanics**: Hope/Fear d12 system
-- **Roll**: 2d12 (one Hope die, one Fear die) + optional advantage/disadvantage d6
-- **Outcome**: Higher die determines narrative (Hope/Fear/Critical Hope); sum determines mechanical success
-- **Result type**: `'hope' | 'fear' | 'critical hope'`
-- **Usage**: `roll(arg?: DaggerheartRollArgument)`
+1d20 + modifier. Advantage rolls 2d20 and keeps the highest; disadvantage keeps the lowest.
 
-```typescript
-interface DaggerheartRollArgument {
-  modifier?: number                               // added to total
-  rollingWith?: 'Advantage' | 'Disadvantage'      // adds/subtracts a d6
-  amplifyHope?: boolean                           // use d20 instead of d12 for Hope
-  amplifyFear?: boolean                           // use d20 instead of d12 for Fear
-}
+| Input | Type | Notes |
+|---|---|---|
+| `modifier` | integer, -30 to 30 | Default 0 |
+| `rollingWith` | `"Advantage"` or `"Disadvantage"` | Optional |
+| `crit` | boolean | When true, `details.criticals` reports `isNatural1` / `isNatural20` |
 
-const result = roll({ modifier: 3, rollingWith: 'Advantage' })
-result.result         // 'hope' | 'fear' | 'critical hope'
-result.details        // { hope, fear, advantage, modifier }
-```
+`result` is the number (d20 + modifier). Pass `crit: true` for attack rolls and saving throws where a natural 1 or 20 matters.
 
-### @randsum/games/fifth - D&D 5th Edition
+Plain notation equivalents: `1d20+5`, advantage `2d20L+5` (drop lowest), disadvantage `2d20H+5` (drop highest). Ability scores are `4d6L`, or `4d6Lx6` for all six. Critical damage doubles the dice, not the modifier: `2d6+3` becomes `4d6+3`.
 
-- **Mechanics**: d20 with advantage/disadvantage
-- **Advantage**: Roll 2d20, keep highest (`2d20L` — drop lowest)
-- **Disadvantage**: Roll 2d20, keep lowest (`2d20H` — drop highest)
-- **Ability Scores**: use `roll("4d6L")` from `@randsum/roller` directly
-- **Result type**: `number` (d20 + modifier)
-- **Usage**: `roll(arg?: FifthRollArgument)`
+## Blades in the Dark (`blades`)
 
-```typescript
-interface FifthRollArgument {
-  modifier?: number                              // range -30 to +30
-  rollingWith?: 'Advantage' | 'Disadvantage'
-}
+Roll a pool of d6s and read the highest die.
 
-roll({ modifier: 5 })
-roll({ modifier: 3, rollingWith: 'Advantage' })
-roll({ modifier: -2, rollingWith: 'Disadvantage' })
-```
+| Input | Type | Notes |
+|---|---|---|
+| `rating` | integer, 0 to 10 | Pool size: action rating plus assists, push, and bonus dice. Default 1 |
 
-### @randsum/games/root-rpg - Root RPG
+| Highest die | `result` |
+|---|---|
+| Two or more 6s | `critical` |
+| 6 | `success` |
+| 4–5 | `partial` |
+| 1–3 | `failure` |
 
-- **Mechanics**: 2d6 + stat modifier
-- **Outcomes**: 10+ = strong hit, 7-9 = weak hit, 6- = miss
-- **Result type**: `'Strong Hit' | 'Weak Hit' | 'Miss'`
-- **Usage**: `roll(bonus: number)` — range -20 to +20
+A rating of 0 rolls 2d6 and keeps the lowest; it can never be a critical.
 
-```typescript
-const result = roll(2)
-result.result // 'Strong Hit' | 'Weak Hit' | 'Miss'
-result.total  // 2d6 + bonus
-```
+## Daggerheart (`daggerheart`)
 
-### @randsum/games/pbta - Powered by the Apocalypse
+Two d12s, a Hope die and a Fear die. Their sum plus the modifier is the total; whichever die is higher decides who gains narrative control.
 
-- **Mechanics**: 2d6 + stat modifier (generic PbtA)
-- **Outcomes**: 10+ = strong hit, 7-9 = weak hit, 6- = miss
-- **Advantage**: roll 3d6, keep 2 highest; **Disadvantage**: roll 3d6, keep 2 lowest
-- **Result type**: `'strong_hit' | 'weak_hit' | 'miss'`
-- **Usage**: `roll(arg: PbtARollArgument)` — `stat` is required
+| Input | Type | Notes |
+|---|---|---|
+| `modifier` | integer, -30 to 30 | Default 0 |
+| `rollingWith` | `"Advantage"` or `"Disadvantage"` | Adds or subtracts a d6 |
+| `amplifyHope` | boolean | Hope die becomes a d20 |
+| `amplifyFear` | boolean | Fear die becomes a d20 |
 
-```typescript
-interface PbtARollArgument {
-  stat: number                                   // required; range -3 to +5
-  forward?: number                               // one-time bonus; range -5 to +5
-  ongoing?: number                               // persistent bonus; range -5 to +5
-  rollingWith?: 'Advantage' | 'Disadvantage'     // 3d6 keep highest/lowest 2
-}
+`result` is `hope`, `fear`, or `critical_hope` (the two dice tie, which is a critical success). `details` holds `hope.roll`, `fear.roll`, `modifier` and `extraDie` (the advantage or disadvantage d6).
 
-const result = roll({ stat: 2, forward: 1 })
-result.result // 'strong_hit' | 'weak_hit' | 'miss'
-```
+## Fate Core (`fate`)
 
-**Games**: Dungeon World, Monster of the Week, Apocalypse World, Masks, and more.
+Four Fate dice (`4dF`, each -1, 0 or +1) plus a skill rating, read on the Fate ladder.
 
-### @randsum/games/salvageunion - Salvage Union
+| Input | Type | Notes |
+|---|---|---|
+| `modifier` | integer, -2 to 5 | Skill rating. Default 0 |
 
-- **Mechanics**: d20 roll-under system; lower is better
-- **Outcome**: 1 = critical success, 20 = critical failure; results looked up in reference tables
-- **Result type**: `SalvageUnionRollRecord` (label, description, table metadata)
-- **Usage**: `roll(tableName?: SalvageUnionTableName)` — defaults to `'Core Mechanic'`
+`result` is the ladder rung: `terrible` (-2 or less), `poor` (-1), `mediocre` (0), `average` (1), `fair` (2), `good` (3), `great` (4), `superb` (5), `fantastic` (6), `epic` (7), `legendary` (8+).
 
-```typescript
-const result = roll()           // defaults to Core Mechanic table
-const result = roll('Morale')   // specific table
+## Powered by the Apocalypse (`pbta`)
 
-result.result.label       // human-readable result name
-result.result.description // result description
-result.result.roll        // d20 value (1-20)
-result.result.tableName   // table used
-```
+2d6 + stat, the generic engine behind Apocalypse World, Dungeon World, Monster of the Week, Masks and others.
 
-## Common Patterns
+| Input | Type | Notes |
+|---|---|---|
+| `stat` | integer, -3 to 5 | **Required** |
+| `forward` | integer, -5 to 5 | One-time bonus. Default 0 |
+| `ongoing` | integer, -5 to 5 | Persistent bonus. Default 0 |
+| `rollingWith` | `"Advantage"` or `"Disadvantage"` | Roll 3d6, keep the highest or lowest 2 |
 
-All game packages:
+`result` is `strong_hit` (10+), `weak_hit` (7–9) or `miss` (6 or less). `details` holds the inputs and `diceTotal`.
 
-- Depend on `@randsum/roller` core package
-- Return a result object with `result`, `total`, and `rolls` fields
-- Export roll function and result types
+## Root RPG (`root-rpg`)
 
-## Quick Reference by System
+2d6 + bonus with PbtA outcomes.
 
-| Game          | Notation / Pattern        | Outcome                                       |
-| ------------- | ------------------------- | --------------------------------------------- |
-| D&D 5E        | `roll({ modifier: 5 })`   | d20 + modifier                                |
-| D&D 5E adv    | `2d20L+5` (roller)        | Higher of 2d20 + modifier                     |
-| D&D 5E dis    | `2d20H+5` (roller)        | Lower of 2d20 + modifier                      |
-| D&D 5E scores | `4d6L` (roller)           | Ability score (drop lowest)                   |
-| Blades        | `roll(N)`                 | Highest die: 6 success, 4-5 partial, 1-3 fail |
-| Daggerheart   | `roll({ modifier: N })`   | Hope/Fear interpretation                      |
-| PbtA / Root   | `roll({ stat: N })`       | 10+ strong, 7-9 weak, 6- miss                 |
-| Salvage Union | `roll('Core Mechanic')`   | Roll under; lower is better                   |
+| Input | Type | Notes |
+|---|---|---|
+| `bonus` | integer, -3 to 5 | **Required** |
+| `rollingWith` | `"Advantage"` or `"Disadvantage"` | Roll 3d6, keep the highest or lowest 2 |
+
+`result` is `strong_hit` (10+), `weak_hit` (7–9) or `miss` (6 or less).
+
+## Salvage Union (`salvageunion`)
+
+A d20 looked up on one of the game's roll tables. Higher is better on the Core Mechanic table.
+
+| Input | Type | Notes |
+|---|---|---|
+| `tableName` | string | **Required**, exact table name |
+
+Common tables: `Core Mechanic`, `Group Initiative`, `Critical Injury`, `Critical Damage`, `Reactor Overload`, `Area Salvage`, `Mech Salvage`, `Reaction Roll`, `NPC Action`, `Morale`, `Retreat`. There are many more (crawler, chimerium, character-creation tables); an unknown name returns an error.
+
+Core Mechanic: 20 Nailed It, 11–19 Success, 6–10 Tough Choice, 2–5 Failure, 1 Cascade Failure.
+
+`result` holds `label`, `description` (the table text to read out), `tableName` and `roll`.
+
+## Games without a shortcode
+
+Any other system can still be rolled with plain notation and interpreted by hand, for example Shadowrun-style pools `12d6S{5}`, World of Darkness `8d10S{8,1}`, Savage Worlds trait dice `1d8!`, or a D6 System wild die `5d6W`.

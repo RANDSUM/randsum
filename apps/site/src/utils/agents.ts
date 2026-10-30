@@ -24,7 +24,7 @@ export const AGENT_CHANNELS: readonly AgentChannel[] = [
     name: 'Claude Code plugin',
     worksWith: 'Claude Code',
     summary:
-      'The fullest setup. Three skills teach Claude the notation, the odds and the spec format, and the hosted MCP server does the rolling.',
+      'The fullest setup. Four skills teach Claude to roll, code with RANDSUM, work out odds and write specs, the hosted MCP server does the rolling, and /roll lets you throw your own dice.',
     install: {
       lang: 'bash',
       code: '/plugin marketplace add RANDSUM/randsum\n/plugin install randsum@randsum'
