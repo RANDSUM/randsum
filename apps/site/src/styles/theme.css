@@ -120,6 +120,7 @@
   --rs-text-xl: 1.75rem;
   --rs-text-2xl: 2.25rem;
   --rs-text-3xl: 3rem;
+  --rs-text-4xl: clamp(2.75rem, 5vw, 4.25rem);
   --rs-text-display: clamp(3.25rem, 8vw, 5.5rem);
 
   --rs-weight-regular: 400;

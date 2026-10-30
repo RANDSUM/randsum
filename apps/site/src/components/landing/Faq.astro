@@ -1,0 +1,75 @@
+---
+// Common questions, answered on the page and marked up as FAQPage data in index.astro.
+import Section from '../ui/Section.astro'
+import { LANDING_FAQ } from '../../utils/faq'
+---
+
+<Section id="faq" title="Questions">
+  <div class="faq">
+    {LANDING_FAQ.map((entry, i) => (
+      <details class="faq-item" open={i === 0}>
+        <summary>{entry.question}</summary>
+        <p>
+          {entry.answer}
+          {entry.link && (
+            <>
+              {' '}
+              <a href={entry.link.href}>{entry.link.label}</a>
+            </>
+          )}
+        </p>
+      </details>
+    ))}
+  </div>
+</Section>
+
+<style>
+.faq {
+  max-width: 48rem;
+  border-top: var(--rs-border);
+}
+
+.faq-item {
+  border-bottom: var(--rs-border);
+}
+
+.faq-item summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.1rem 0;
+  font-family: var(--rs-font-heading);
+  font-size: var(--rs-text-md);
+  font-weight: var(--rs-weight-bold);
+  color: var(--sl-color-white);
+  cursor: pointer;
+  list-style: none;
+}
+
+.faq-item summary::-webkit-details-marker {
+  display: none;
+}
+
+.faq-item summary::after {
+  content: '+';
+  flex: none;
+  color: var(--sl-color-gray-3);
+  transition: transform var(--rs-duration) var(--rs-ease);
+}
+
+.faq-item[open] summary::after {
+  transform: rotate(45deg);
+}
+
+.faq-item summary:focus-visible {
+  outline: none;
+  box-shadow: var(--rs-focus-ring);
+  border-radius: var(--rs-radius-sm);
+}
+
+.faq-item p {
+  margin: 0 0 1.25rem;
+  color: var(--sl-color-gray-2);
+}
+</style>

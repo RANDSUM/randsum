@@ -1,0 +1,58 @@
+---
+// The last ask before the footer: roll something.
+import PipMark from '../PipMark.astro'
+import Button from '../ui/Button.astro'
+---
+
+<section class="closing not-content" aria-labelledby="closing-title">
+  <PipMark variant="knockout" size={40} />
+  <h2 id="closing-title">Roll your first die in a minute.</h2>
+  <p>Install the roller, or skip the install and call the API from anywhere.</p>
+  <div class="closing-actions">
+    <Button href="/roller/getting-started/">Get started</Button>
+    <Button href="/api/introduction/" variant="secondary">Try the API</Button>
+    <Button href="/discord/" variant="secondary">Add the Discord bot</Button>
+  </div>
+</section>
+
+<style>
+.closing {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  max-width: 72rem;
+  margin: 4.5rem auto 0;
+  padding: 3.5rem 1.5rem;
+  border: var(--rs-border);
+  border-radius: var(--rs-radius-lg);
+  text-align: center;
+}
+
+.closing :global(.pip-mark) {
+  color: var(--product-roller-fill);
+}
+
+.closing h2 {
+  margin: 0.25rem 0 0;
+  font-family: var(--rs-font-heading);
+  font-size: var(--rs-text-2xl);
+  font-weight: var(--rs-weight-heavy);
+  letter-spacing: var(--rs-tracking-heading);
+  line-height: var(--rs-leading-snug);
+  color: var(--sl-color-white);
+}
+
+.closing p {
+  margin: 0;
+  color: var(--sl-color-gray-2);
+}
+
+.closing-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+}
+</style>

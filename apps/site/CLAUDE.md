@@ -54,7 +54,7 @@ Every page is built from tokens and shared components, and tools hold them there
 - **Components** (`src/components/ui/`): `Button` (primary, secondary, or a
   product's colour), `Section` (heading, lede, actions slot), `Card` and
   `CardGrid`, `CodePanel` (Expressive Code with wrapping) and `DiscordGlyph`.
-  `ProductHero` and `ProductStack` render from `PRODUCTS` in `src/utils/product.ts`.
+  `ProductHero` and `ProductCarousel` render from `PRODUCTS` in `src/utils/product.ts`.
 - **Enforcement**: Biome's `no-raw-color`, `no-raw-type`, `no-raw-shape`,
   `no-uppercase-labels` and `no-decorative-gradient` plugins (`biome-plugins/`)
   fail raw values in every `.css` file and Astro `<style>` block except
@@ -105,11 +105,14 @@ Top-level topics: `welcome/`, `roller/`, `notation/`, `games/` (incl.
 
 The home page is **not** a Starlight doc — it's a custom `src/pages/index.astro`
 that renders a `StarlightPage` shell wrapping landing sections from
-`src/components/landing/` (`LandingHero`, `ProductStack`, `FeaturesPlayground`,
-`GameSchemaSection`, `IntegrationsSection`, `GamesGrid`, `LandingFooter`,
-`LandingScripts`). `ProductStack` renders one section per product from
-`PRODUCTS` in `src/utils/product.ts`, which also feeds `ProductHero`, the
-hero at the top of each product's introduction page. There is also a
+`src/components/landing/` (`LandingHero`, `ProductCarousel`, `QuickStart`,
+`GameSchemaSection`, `GamesGrid`, `Faq`, `ClosingCta`, `LandingFooter`,
+`LandingScripts`). `LandingHero` puts the live roller beside the tagline.
+`ProductCarousel` is a vertical carousel with one pane per product from
+`PRODUCTS` in `src/utils/product.ts`; every pane is in the HTML, and the script
+only slides between them. `PRODUCTS` also feeds `ProductHero`, the
+hero at the top of each product's introduction page. `Faq` and the page's
+FAQPage structured data share `LANDING_FAQ` in `src/utils/faq.ts`. There is also a
 `src/pages/discord.astro` route.
 
 ## Adding Content
@@ -149,7 +152,6 @@ Interactive / shared components:
   the floating result overlay
 - `HeroInteractive.tsx` — hero dice playground
 - `GameSchemaViewer.tsx` — schema viewer
-- `IntegrationViewer.tsx` — integration viewer
 - `PipMark.astro` — the pip R mark, outline or knockout
 - `ProductHero.astro` — a product's hero: lockup, name in its colour, pitch, install, facts
 - `ErrorBoundary/` — React error boundary

@@ -1,0 +1,393 @@
+---
+// "Everything that rolls": a vertical carousel through the product family. The
+// list on the left names every product; the window on the right slides up to the
+// one that is chosen, and moves on by itself until a visitor takes over.
+// Every pane is in the HTML, so search engines and no-JS readers get them all.
+import PipMark from '../PipMark.astro'
+import Button from '../ui/Button.astro'
+import CodePanel from '../ui/CodePanel.astro'
+import Section from '../ui/Section.astro'
+import { PRODUCT_LABELS, PRODUCTS } from '../../utils/product'
+---
+
+<Section
+  id="products"
+  title="Everything that rolls"
+  lede="One engine, many ways in: a library, ready-made games, an open spec, a public API, a Discord bot and an agent plugin."
+>
+  <div class="carousel" data-carousel>
+    <div class="carousel-tabs" role="tablist" aria-orientation="vertical" aria-label="Products">
+      {PRODUCTS.map((product, i) => (
+        <button
+          type="button"
+          role="tab"
+          id={`product-tab-${product.id}`}
+          aria-controls={`product-${product.id}`}
+          aria-selected={i === 0 ? 'true' : 'false'}
+          tabindex={i === 0 ? 0 : -1}
+          class="carousel-tab"
+          style={`--p: var(--product-${product.id}-fill); --p-text: var(--product-${product.id})`}
+        >
+          <PipMark variant="knockout" size={20} />
+          <span class="carousel-tab-text">
+            <span class="carousel-tab-name">{PRODUCT_LABELS[product.id]}</span>
+            <span class="carousel-tab-line">{product.tagline}</span>
+          </span>
+          <span class="carousel-tab-progress" aria-hidden="true"></span>
+        </button>
+      ))}
+    </div>
+    <div class="carousel-window">
+      <div class="carousel-track">
+        {PRODUCTS.map(product => (
+          <article
+            id={`product-${product.id}`}
+            class="carousel-pane"
+            role="tabpanel"
+            aria-labelledby={`product-tab-${product.id}`}
+            style={`--p: var(--product-${product.id}-fill); --p-text: var(--product-${product.id})`}
+          >
+            <div class="carousel-copy">
+              <p class="carousel-name">
+                <PipMark variant="knockout" size={22} />
+                {PRODUCT_LABELS[product.id]}
+              </p>
+              <h3>{product.tagline}</h3>
+              <p class="carousel-summary">{product.summary}</p>
+              <dl class="carousel-facts">
+                {product.facts.map(fact => (
+                  <div>
+                    <dt>{fact.label}</dt>
+                    <dd>{fact.value}</dd>
+                  </div>
+                ))}
+              </dl>
+              <Button href={product.href} variant="product" product={product.id}>
+                Explore {PRODUCT_LABELS[product.id]}
+              </Button>
+            </div>
+            <CodePanel code={product.snippet.code} lang={product.snippet.lang} />
+          </article>
+        ))}
+      </div>
+    </div>
+  </div>
+</Section>
+
+<script>
+// Seconds each product stays up before the carousel moves on
+const DWELL_MS = 7000
+
+for (const root of document.querySelectorAll<HTMLElement>('[data-carousel]')) {
+  const tabs = Array.from(root.querySelectorAll<HTMLButtonElement>('[role="tab"]'))
+  const panes = Array.from(root.querySelectorAll<HTMLElement>('[role="tabpanel"]'))
+  const track = root.querySelector<HTMLElement>('.carousel-track')
+  const list = root.querySelector<HTMLElement>('[role="tablist"]')
+  const still = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  const state = { index: 0, timer: 0, paused: false, visible: false, stopped: still }
+
+  // The window is as tall as the tallest pane, so nothing jumps as it slides
+  const fit = (): void => {
+    const tallest = Math.max(...panes.map(pane => pane.scrollHeight))
+    root.style.setProperty('--pane-height', `${tallest}px`)
+  }
+
+  const show = (next: number, focus: boolean): void => {
+    state.index = (next + tabs.length) % tabs.length
+    tabs.forEach((tab, i) => {
+      const active = i === state.index
+      tab.setAttribute('aria-selected', String(active))
+      tab.tabIndex = active ? 0 : -1
+    })
+    panes.forEach((pane, i) => {
+      pane.inert = i !== state.index
+    })
+    track?.style.setProperty('--index', String(state.index))
+    // On a phone the tabs are a sideways strip: keep the chosen one in view
+    const tab = tabs[state.index]
+    if (list && tab && list.scrollWidth > list.clientWidth) {
+      list.scrollTo({
+        left: tab.offsetLeft - list.offsetLeft - 12,
+        behavior: still ? 'auto' : 'smooth'
+      })
+    }
+    if (focus) tab?.focus()
+    schedule()
+  }
+
+  const schedule = (): void => {
+    window.clearTimeout(state.timer)
+    const running = !state.stopped && !state.paused && state.visible
+    root.dataset['playing'] = String(running)
+    if (running) state.timer = window.setTimeout(() => show(state.index + 1, false), DWELL_MS)
+  }
+
+  // A visitor who picks a product has taken over: stop moving on by ourselves
+  const takeOver = (next: number, focus: boolean): void => {
+    state.stopped = true
+    show(next, focus)
+  }
+
+  tabs.forEach((tab, i) => {
+    tab.addEventListener('click', () => takeOver(i, false))
+    tab.addEventListener('keydown', event => {
+      const moves: Record<string, number> = {
+        ArrowDown: i + 1,
+        ArrowRight: i + 1,
+        ArrowUp: i - 1,
+        ArrowLeft: i - 1,
+        Home: 0,
+        End: tabs.length - 1
+      }
+      const next = moves[event.key]
+      if (next === undefined) return
+      event.preventDefault()
+      takeOver(next, true)
+    })
+  })
+
+  const pause = (paused: boolean) => (): void => {
+    state.paused = paused
+    schedule()
+  }
+  root.addEventListener('pointerenter', pause(true))
+  root.addEventListener('pointerleave', pause(false))
+  root.addEventListener('focusin', pause(true))
+  root.addEventListener('focusout', pause(false))
+
+  new IntersectionObserver(([entry]) => {
+    state.visible = entry?.isIntersecting ?? false
+    schedule()
+  }).observe(root)
+
+  // A link to #product-<id> opens the carousel on that product
+  const fromHash = panes.findIndex(pane => `#${pane.id}` === window.location.hash)
+
+  fit()
+  window.addEventListener('resize', fit)
+  root.classList.add('is-ready')
+  show(Math.max(fromHash, 0), false)
+}
+</script>
+
+<style>
+.carousel {
+  display: grid;
+  grid-template-columns: minmax(14rem, 18rem) minmax(0, 1fr);
+  border: var(--rs-border);
+  border-radius: var(--rs-radius-lg);
+  background: var(--sl-color-bg);
+  overflow: hidden;
+}
+
+.carousel-tabs {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 1rem;
+  border-right: var(--rs-border);
+}
+
+.carousel-tab {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 0.7rem 0.8rem;
+  border: 0;
+  border-radius: var(--rs-radius-md);
+  background: transparent;
+  color: var(--sl-color-gray-2);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  overflow: hidden;
+  transition: background var(--rs-duration) var(--rs-ease);
+}
+
+.carousel-tab:hover {
+  background: var(--sl-color-gray-6);
+}
+
+.carousel-tab:focus-visible {
+  outline: none;
+  box-shadow: var(--rs-focus-ring);
+}
+
+.carousel-tab :global(.pip-mark) {
+  flex: none;
+  margin-top: 0.1rem;
+  color: var(--p);
+}
+
+.carousel-tab-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  min-width: 0;
+}
+
+.carousel-tab-name {
+  font-weight: var(--rs-weight-bold);
+  color: var(--sl-color-white);
+}
+
+.carousel-tab-line {
+  font-size: var(--rs-text-xs);
+  line-height: var(--rs-leading-snug);
+  color: var(--sl-color-gray-3);
+}
+
+.carousel-tab[aria-selected='true'] {
+  background: color-mix(in srgb, var(--p) 12%, transparent);
+}
+
+.carousel-tab[aria-selected='true'] .carousel-tab-name {
+  color: var(--p-text);
+}
+
+/* How long until the carousel moves on: a thin bar that fills along the tab's foot */
+.carousel-tab-progress {
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 2px;
+  background: var(--p);
+  transform: scaleX(0);
+  transform-origin: left;
+}
+
+.carousel[data-playing='true'] .carousel-tab[aria-selected='true'] .carousel-tab-progress {
+  animation: carousel-progress 7s linear forwards;
+}
+
+@keyframes carousel-progress {
+  to {
+    transform: scaleX(1);
+  }
+}
+
+.carousel-window {
+  min-width: 0;
+}
+
+.carousel.is-ready .carousel-window {
+  height: var(--pane-height);
+  overflow: hidden;
+}
+
+.carousel.is-ready .carousel-track {
+  transform: translateY(calc(var(--index, 0) * -1 * var(--pane-height)));
+  transition: transform 600ms var(--rs-ease);
+}
+
+.carousel-pane {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+  gap: 2rem;
+  align-items: center;
+  padding: 2.25rem 2rem;
+  scroll-margin-top: calc(var(--sl-nav-height, 4rem) + 1rem);
+}
+
+.carousel:not(.is-ready) .carousel-pane + .carousel-pane {
+  border-top: var(--rs-border);
+}
+
+.carousel.is-ready .carousel-pane {
+  height: var(--pane-height);
+  box-sizing: border-box;
+}
+
+.carousel-name {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0;
+  color: var(--p-text);
+  font-weight: var(--rs-weight-bold);
+}
+
+.carousel-name :global(.pip-mark) {
+  color: var(--p);
+}
+
+.carousel-copy h3 {
+  margin: 0.6rem 0 0.5rem;
+  font-family: var(--rs-font-heading);
+  font-size: var(--rs-text-xl);
+  font-weight: var(--rs-weight-bold);
+  letter-spacing: var(--rs-tracking-heading);
+  line-height: var(--rs-leading-snug);
+  color: var(--sl-color-white);
+}
+
+.carousel-summary {
+  margin: 0;
+  color: var(--sl-color-gray-2);
+}
+
+.carousel-facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  margin: 1.25rem 0 1.5rem;
+}
+
+.carousel-facts div {
+  display: flex;
+  flex-direction: column-reverse;
+}
+
+.carousel-facts dd {
+  margin: 0;
+  font-family: var(--rs-font-heading);
+  font-size: var(--rs-text-lg);
+  font-weight: var(--rs-weight-heavy);
+  line-height: var(--rs-leading-tight);
+  color: var(--sl-color-white);
+}
+
+.carousel-facts dt {
+  font-size: var(--rs-text-xs);
+  color: var(--sl-color-gray-3);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .carousel.is-ready .carousel-track {
+    transition: none;
+  }
+}
+
+@media (max-width: 900px) {
+  .carousel {
+    grid-template-columns: 1fr;
+  }
+
+  .carousel-tabs {
+    flex-direction: row;
+    overflow-x: auto;
+    padding: 0.75rem;
+    border-right: 0;
+    border-bottom: var(--rs-border);
+    scrollbar-width: none;
+  }
+
+  .carousel-tab {
+    flex: none;
+    width: auto;
+    align-items: center;
+  }
+
+  .carousel-tab-line {
+    display: none;
+  }
+
+  .carousel-pane {
+    grid-template-columns: 1fr;
+    align-content: start;
+    gap: 1.25rem;
+    padding: 1.5rem 1.25rem;
+  }
+}
+</style>

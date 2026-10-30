@@ -1,0 +1,60 @@
+---
+// Three lines from install to a typed result, beside why the notation can be trusted.
+import { Code } from 'astro-expressive-code/components'
+import Button from '../ui/Button.astro'
+import Section from '../ui/Section.astro'
+
+const codeExample = [
+  "import { roll } from '@randsum/roller'",
+  '',
+  "const { total, rolls } = roll('4d6L')",
+  '',
+  'console.log(total)',
+  '// 15',
+  'console.log(rolls[0].initialRolls)',
+  '// [1, 5, 4, 6]',
+  'console.log(rolls[0].rolls)',
+  '// [4, 5, 6]',
+  'console.log(rolls[0].description)',
+  '// ["Roll 4 6-sided dice", "Drop lowest"]'
+].join('\n')
+---
+
+<Section id="quick-start" title="A typed roll in three lines">
+  <div class="quick-start">
+    <div class="code-example">
+      <div class="code-example-chrome">
+        <span class="code-chrome-filename">index.ts</span>
+        <button
+          class="code-example-stackblitz"
+          data-notation="4d6L"
+          aria-label="Open this example in StackBlitz"
+          title="Open in StackBlitz"
+        >
+          Open in StackBlitz
+        </button>
+      </div>
+      <Code code={codeExample} lang="typescript" />
+    </div>
+    <div class="quick-start-pitch">
+      <h3>Every modifier, parsed and validated.</h3>
+      <p>
+        <code>roll()</code>
+        takes a number, a notation string or an options object, and returns the total with every die
+        and every modifier step. Bad notation throws a typed error before any dice are rolled, so
+        you catch it where you wrote it.
+      </p>
+      <ul>
+        <li>Drop, keep, reroll, explode, cap, unique, count successes and more</li>
+        <li>Fate, percentile, wild, geometric and draw dice</li>
+        <li>Runs in Bun, Node.js, Deno and the browser as plain ES modules</li>
+      </ul>
+      <div class="quick-start-actions">
+        <Button href="/roller/getting-started/" size="sm">Install the roller</Button>
+        <Button href="/notation/randsum-dice-notation/" variant="secondary" size="sm">
+          Notation reference
+        </Button>
+      </div>
+    </div>
+  </div>
+</Section>

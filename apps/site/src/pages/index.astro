@@ -1,21 +1,25 @@
 ---
 import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro'
 import LandingHero from '../components/landing/LandingHero.astro'
-import FeaturesPlayground from '../components/landing/FeaturesPlayground.astro'
+import ProductCarousel from '../components/landing/ProductCarousel.astro'
+import QuickStart from '../components/landing/QuickStart.astro'
 import GameSchemaSection from '../components/landing/GameSchemaSection.astro'
-import IntegrationsSection from '../components/landing/IntegrationsSection.astro'
-import ProductStack from '../components/landing/ProductStack.astro'
 import GamesGrid from '../components/landing/GamesGrid.astro'
+import Faq from '../components/landing/Faq.astro'
+import ClosingCta from '../components/landing/ClosingCta.astro'
 import LandingFooter from '../components/landing/LandingFooter.astro'
 import LandingScripts from '../components/landing/LandingScripts.astro'
+import { LANDING_FAQ } from '../utils/faq'
 import '../styles/landing.css'
+
+const description =
+  'Open-source TypeScript dice roller and notation engine. Roll 4d6L, 2d20H and exploding dice with zero dependencies, plus rules for D&D 5e, Blades and more.'
 ---
 
 <StarlightPage
   frontmatter={{
-    title: 'RANDSUM',
-    description:
-      'Zero-dependency TypeScript dice engine. Parse and roll 4d6L, 2d20H, exploding dice, and more. Pre-built for D&D 5e, Blades, and 4 more systems.',
+    title: 'TypeScript Dice Roller and Notation Engine',
+    description,
     template: 'splash',
     head: [
       {
@@ -29,8 +33,7 @@ import '../styles/landing.css'
               '@id': 'https://randsum.dev/#website',
               name: 'RANDSUM',
               url: 'https://randsum.dev/',
-              description:
-                'TypeScript-first dice notation ecosystem for tabletop RPGs. Zero-dependency dice engine with full notation support and game-specific packages.',
+              description,
               publisher: { '@id': 'https://randsum.dev/#organization' }
             },
             {
@@ -38,7 +41,29 @@ import '../styles/landing.css'
               '@id': 'https://randsum.dev/#organization',
               name: 'RANDSUM',
               url: 'https://randsum.dev/',
+              logo: 'https://randsum.dev/favicon.svg',
               sameAs: ['https://github.com/RANDSUM/randsum', 'https://www.npmjs.com/org/randsum']
+            },
+            {
+              '@type': 'SoftwareSourceCode',
+              '@id': 'https://randsum.dev/#roller',
+              name: '@randsum/roller',
+              description:
+                'Zero-dependency TypeScript dice notation parser and rolling engine for tabletop RPGs.',
+              codeRepository: 'https://github.com/RANDSUM/randsum',
+              programmingLanguage: 'TypeScript',
+              runtimePlatform: ['Bun', 'Node.js', 'Deno', 'Browser'],
+              license: 'https://opensource.org/licenses/MIT',
+              publisher: { '@id': 'https://randsum.dev/#organization' }
+            },
+            {
+              '@type': 'FAQPage',
+              '@id': 'https://randsum.dev/#faq',
+              mainEntity: LANDING_FAQ.map(entry => ({
+                '@type': 'Question',
+                name: entry.question,
+                acceptedAnswer: { '@type': 'Answer', text: entry.answer }
+              }))
             }
           ]
         })
@@ -49,17 +74,12 @@ import '../styles/landing.css'
 >
   <div class="landing">
     <LandingHero />
-
-    <ProductStack />
-
-    <FeaturesPlayground />
-
+    <ProductCarousel />
+    <QuickStart />
     <GameSchemaSection />
-
-    <IntegrationsSection />
-
     <GamesGrid />
-
+    <Faq />
+    <ClosingCta />
     <LandingFooter />
   </div>
 </StarlightPage>
