@@ -48,7 +48,8 @@ Give Claude or any other agent the real engine instead of made-up numbers. Every
   /plugin marketplace add RANDSUM/randsum
   /plugin install randsum@randsum
   ```
-- **[@randsum/mcp](packages/mcp)** - MCP stdio server with `roll`, `validate` and `roll_game` tools, for any MCP client: `claude mcp add randsum -- bunx -y @randsum/mcp`
+- **[@randsum/mcp](packages/mcp)** - MCP server with `roll`, `validate` and `roll_game` tools, hosted at `https://api.randsum.dev/mcp` (add it as a Claude connector, or `claude mcp add --transport http randsum https://api.randsum.dev/mcp`) or run locally: `bunx -y @randsum/mcp`
+- **[RANDSUM API](https://randsum.dev/tools/http-api/)** - public REST API at `https://api.randsum.dev/v1`: roll notation, roll for game systems, draw random integers
 
 ## 🚀 Quick Example
 

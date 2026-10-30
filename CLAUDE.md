@@ -11,11 +11,11 @@ Bun workspace monorepo for a dice rolling ecosystem targeting tabletop RPGs. All
 **Game packages** live in `packages/games/` — each wraps roller with game-specific interpretation, accessed via subpath exports:
 `blades` (Blades in the Dark), `daggerheart`, `fate` (Fate Core), `fifth` (D&D 5e), `root-rpg`, `salvageunion`, `pbta` (Powered by the Apocalypse). A `schema` subpath exports the codegen/validation API.
 
-**Apps**: `@randsum/discord-bot` (private Discord bot, deployed as a Cloudflare Worker at bot.randsum.dev), `@randsum/site` (Astro + Starlight docs site at randsum.dev, private; also serves the notation spec at `/spec` through its own non-Starlight layout)
+**Apps**: `@randsum/api` (private Cloudflare Worker at api.randsum.dev: the `/v1` REST API and `/mcp`, the hosted `@randsum/mcp` server behind the Claude connector), `@randsum/discord-bot` (private Discord bot, deployed as a Cloudflare Worker at bot.randsum.dev), `@randsum/site` (Astro + Starlight docs site at randsum.dev, private; also serves the notation spec at `/spec` through its own non-Starlight layout)
 
 **UI**: the web-only React dice components (notation input with token overlay, roll step visualizer, combined roller) live in `apps/site/src/components/dice-ui/`, not in a package; `apps/site` is their only consumer.
 
-**Claude Code plugin**: `plugins/randsum/` — the `randsum` plugin the root `.claude-plugin/marketplace.json` publishes: three skills plus its own `.mcp.json`, which starts only `@randsum/mcp`. The root `.mcp.json` holds the maintainers' ops servers and never ships. Its skills do not load in this repo's sessions; use `claude --plugin-dir plugins/randsum`.
+**Claude Code plugin**: `plugins/randsum/` — the `randsum` plugin the root `.claude-plugin/marketplace.json` publishes: three skills plus its own `.mcp.json`, which connects only the hosted `@randsum/mcp` at `https://api.randsum.dev/mcp`. The root `.mcp.json` holds the maintainers' ops servers and never ships. Its skills do not load in this repo's sessions; use `claude --plugin-dir plugins/randsum`.
 
 Game packages never depend on each other — only on `@randsum/roller`.
 
@@ -103,7 +103,7 @@ Releases are **automated via [changesets](https://github.com/changesets/changese
 
 ## Versioning
 
-`@randsum/roller` and `@randsum/games` are **linked** in `.changeset/config.json`, so changesets bumps them together to a shared version whenever any of them changes. `updateInternalDependencies` is set to `minor`, so a bump to a dependency updates dependents' internal `workspace:~` ranges. In practice: a minor or major bump to core ripples across the linked ecosystem automatically; patch bumps stay local to the changed package. `@randsum/mcp` bundles roller and games as devDependencies, which never trigger a release, so `bun run check:changesets` fails when a pending changeset releases roller or games without also releasing mcp. Every `private: true` workspace (site, discord-bot) is skipped by `privatePackages: { version: false, tag: false }`, so a new private package needs no config entry.
+`@randsum/roller` and `@randsum/games` are **linked** in `.changeset/config.json`, so changesets bumps them together to a shared version whenever any of them changes. `updateInternalDependencies` is set to `minor`, so a bump to a dependency updates dependents' internal `workspace:~` ranges. In practice: a minor or major bump to core ripples across the linked ecosystem automatically; patch bumps stay local to the changed package. `@randsum/mcp` bundles roller and games as devDependencies, which never trigger a release, so `bun run check:changesets` fails when a pending changeset releases roller or games without also releasing mcp. Every `private: true` workspace (site, discord-bot, api) is skipped by `privatePackages: { version: false, tag: false }`, so a new private package needs no config entry.
 
 ## Key Patterns
 

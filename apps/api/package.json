@@ -1,0 +1,33 @@
+{
+  "name": "@randsum/api",
+  "version": "0.0.0",
+  "description": "api.randsum.dev: the RANDSUM dice and random-number HTTP API, plus the remote MCP server behind the Claude connector",
+  "private": true,
+  "author": {
+    "name": "Alex Jarvis",
+    "url": "https://github.com/alxjrvs"
+  },
+  "license": "MIT",
+  "homepage": "https://randsum.dev/tools/http-api/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RANDSUM/randsum.git",
+    "directory": "apps/api"
+  },
+  "type": "module",
+  "dependencies": {
+    "@randsum/games": "workspace:~",
+    "@randsum/mcp": "workspace:~",
+    "@randsum/roller": "workspace:~"
+  },
+  "scripts": {
+    "dev": "wrangler dev -c wrangler.jsonc",
+    "deploy": "wrangler deploy -c wrangler.jsonc",
+    "test": "bun test",
+    "typecheck": "tsc --noEmit",
+    "check": "bun run typecheck && bun run test"
+  },
+  "devDependencies": {
+    "wrangler": "catalog:"
+  }
+}

@@ -5,7 +5,7 @@
 ## Packages
 
 - @randsum/roller - Core dice engine with built-in RDN notation parser
-- @randsum/mcp - Model Context Protocol stdio server exposing roll, validate, and roll_game tools to AI agents (bunx/npx @randsum/mcp)
+- @randsum/mcp - Model Context Protocol server exposing roll, validate, and roll_game tools to AI agents; hosted at https://api.randsum.dev/mcp, or run locally over stdio (bunx/npx @randsum/mcp)
 - @randsum/games - TTRPG game packages with subpath exports:
   - @randsum/games/fifth - D&D 5th Edition
   - @randsum/games/blades - Blades in the Dark
@@ -21,7 +21,7 @@
 Use these rather than inventing dice results. Overview: https://randsum.dev/tools/agents/
 
 - Claude Code plugin (skills + bundled MCP server): /plugin marketplace add RANDSUM/randsum, then /plugin install randsum@randsum. Docs: https://randsum.dev/tools/claude-code-plugin/
-- MCP server for any MCP client: claude mcp add randsum -- bunx -y @randsum/mcp. Tools: roll, validate, roll_game. Docs: https://randsum.dev/tools/mcp/
+- MCP server for any MCP client: add https://api.randsum.dev/mcp as a Claude connector, or claude mcp add --transport http randsum https://api.randsum.dev/mcp (local: claude mcp add randsum -- bunx -y @randsum/mcp). Tools: roll, validate, roll_game. Docs: https://randsum.dev/tools/mcp/
 
 ## Quick Start
 
@@ -44,7 +44,8 @@ roll("2d6+3[fire]") // Annotations
 
 ## Web Surfaces
 
-- HTTP roll endpoint: POST https://randsum.dev/api/roll with JSON { "notation": "4d6L" }; returns { notation, total, rolls, description }. Runs the same roll() engine as @randsum/roller. CORS-enabled; GET returns the contract.
+- RANDSUM API: https://api.randsum.dev/v1 (public, keyless, CORS). GET /v1/roll?notation=4d6L[&seed=N], /v1/validate?notation=, /v1/games, /v1/games/{game}/roll?<inputs>, /v1/random?min=&max=&count=. Docs: https://randsum.dev/tools/http-api/
+- Legacy HTTP roll endpoint: POST https://randsum.dev/api/roll with JSON { "notation": "4d6L" }; returns { notation, total, rolls, description }. Runs the same roll() engine as @randsum/roller. CORS-enabled; GET returns the contract.
 - Hosted games meta-schema: https://randsum.dev/schemas/v1/randsum.json (JSON Schema for *.randsum.json game specs; reference it via a "$schema" key for editor autocompletion).
 
 ## Links

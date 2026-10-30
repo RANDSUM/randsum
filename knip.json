@@ -24,9 +24,13 @@
       "includeEntryExports": true
     },
     "packages/mcp": {
-      "entry": ["src/index.ts", "__tests__/**/*.test.ts"],
+      "entry": ["src/index.ts", "src/remote.ts", "__tests__/**/*.test.ts"],
       "project": ["src/**/*.ts", "__tests__/**/*.ts"],
       "includeEntryExports": true
+    },
+    "apps/api": {
+      "entry": ["src/index.ts"],
+      "project": ["src/**/*.ts"]
     },
     "apps/discord-bot": {
       "entry": ["src/worker/index.ts", "src/deploy-commands.ts"],

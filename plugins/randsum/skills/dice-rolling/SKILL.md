@@ -14,11 +14,17 @@ metadata:
 
 When a user asks you to roll dice, **produce an actual result** — don't just show notation or code.
 
-If the `@randsum/mcp` server is connected, use its tools: `roll` for plain notation, `validate` to check notation, and `roll_game` for a game's own mechanics. That is the only path that runs the real engine, so prefer it whenever it is available.
+Get the result from the real engine whenever you can, in this order:
 
-Otherwise **simulate the roll yourself** — generate random numbers as you would genuinely roll dice, and present them clearly. Don't just describe how the roll would work without giving a result.
+1. **MCP tools.** If the RANDSUM MCP server is connected (this plugin connects it, and claude.ai users can add it as a connector at `https://api.randsum.dev/mcp`), use its tools: `roll` for plain notation, `validate` to check notation, and `roll_game` for a game's own mechanics.
+2. **The HTTP API.** Otherwise, if you can make a web request (a shell with `curl`, or a fetch tool), call `https://api.randsum.dev/v1`. It is public, keyless and returns JSON:
+   - `GET /v1/roll?notation=4d6L` rolls notation. Add `&seed=42` for a reproducible roll. URL-encode the notation (`+` is `%2B`).
+   - `GET /v1/validate?notation=2d20H%2B5` checks notation without rolling.
+   - `GET /v1/games/<game>/roll?<inputs>` rolls for a game, e.g. `/v1/games/blades/roll?rating=3` or `/v1/games/fifth/roll?modifier=5&rollingWith=Advantage`. `GET /v1/games` lists each game's inputs.
+   - `GET /v1/random?min=1&max=100&count=5` draws plain random integers.
 
-> There used to be a one-shot CLI here (`bunx @randsum/cli <notation>`). It was retired, and with it the option of getting a real roll out of a plain shell. The MCP server is the supported way for an agent to reach the engine now.
+   A 400 response carries an `error` and, for bad notation, often a `suggestion` to retry with.
+3. **Simulate.** With neither available, **simulate the roll yourself**: generate random numbers as you would genuinely roll dice, present them clearly, and say the roll was simulated. Don't just describe how the roll would work without giving a result.
 
 ## Response Format
 

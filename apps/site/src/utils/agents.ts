@@ -22,7 +22,7 @@ export const AGENT_CHANNELS: readonly AgentChannel[] = [
     name: 'Claude Code plugin',
     worksWith: 'Claude Code',
     summary:
-      'The fullest setup. Three skills teach Claude the notation, the odds and the spec format, and the bundled MCP server does the rolling.',
+      'The fullest setup. Three skills teach Claude the notation, the odds and the spec format, and the hosted MCP server does the rolling.',
     install: {
       lang: 'bash',
       code: '/plugin marketplace add RANDSUM/randsum\n/plugin install randsum@randsum'
@@ -35,8 +35,11 @@ export const AGENT_CHANNELS: readonly AgentChannel[] = [
     name: 'MCP server',
     worksWith: 'Any MCP client',
     summary:
-      'roll, validate and roll_game as tools, for Claude Desktop, Cursor, VS Code or anything else that can start a stdio server.',
-    install: { lang: 'bash', code: 'claude mcp add randsum -- bunx -y @randsum/mcp' },
+      'roll, validate and roll_game as tools. Hosted at api.randsum.dev/mcp for a Claude connector or any MCP client that takes a URL; also runs locally over stdio.',
+    install: {
+      lang: 'bash',
+      code: 'claude mcp add --transport http randsum https://api.randsum.dev/mcp'
+    },
     href: '/tools/mcp/'
   }
 ]

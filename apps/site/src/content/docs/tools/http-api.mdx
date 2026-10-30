@@ -1,11 +1,113 @@
 ---
 title: HTTP API & Hosted Schema
-description: Roll dice over HTTP with POST /api/roll, and reference the games meta-schema hosted at its canonical $id.
+description: Roll dice, roll for game systems and draw random integers over HTTP at api.randsum.dev/v1, and reference the games meta-schema hosted at its canonical $id.
 ---
 
-RANDSUM exposes two zero-install web surfaces at `randsum.dev`: an HTTP roll
-endpoint and the hosted games meta-schema. Both are public and CORS-enabled, so
-you can call them from any browser, editor, or server.
+RANDSUM's zero-install web surfaces are the **RANDSUM API** at
+`https://api.randsum.dev/v1` and the hosted games meta-schema. Both are public,
+keyless and CORS-enabled, so you can call them from any browser, editor, agent
+or server.
+
+## RANDSUM API (`api.randsum.dev/v1`)
+
+Every endpoint takes query parameters on `GET`, or the same fields as a JSON
+object on `POST`, and answers with JSON. `GET https://api.randsum.dev/v1` lists
+them all.
+
+| Endpoint                     | Methods     | Does                                                           |
+| ---------------------------- | ----------- | -------------------------------------------------------------- |
+| `/v1/roll`                   | GET, POST   | Roll [RANDSUM notation](/spec/); optional integer `seed`        |
+| `/v1/validate`               | GET, POST   | Check notation without rolling                                 |
+| `/v1/random`                 | GET         | Uniform random integers from `min` to `max` (cryptographic)     |
+| `/v1/games`                  | GET         | List supported game systems and the inputs each takes          |
+| `/v1/games/{game}/roll`      | GET, POST   | Roll for a game system, interpreted by its rules               |
+
+The same engine is also served as an MCP server at
+`https://api.randsum.dev/mcp`, for AI agents and Claude connectors. See
+[MCP Server](/tools/mcp/).
+
+### Roll notation
+
+```bash
+curl "https://api.randsum.dev/v1/roll?notation=4d6L"
+```
+
+```json
+{
+  "notation": "4d6L",
+  "total": 14,
+  "pools": [
+    {
+      "notation": "4d6L",
+      "rolls": [3, 5, 6],
+      "total": 14,
+      "description": "Roll 4 6-sided dice, Drop lowest"
+    }
+  ],
+  "description": "Roll 4 6-sided dice, Drop lowest"
+}
+```
+
+URL-encode the notation in a query string (`2d20H+5` is `2d20H%2B5`), or `POST`
+it instead:
+
+```bash
+curl -X POST https://api.randsum.dev/v1/roll \
+  -H "Content-Type: application/json" \
+  -d '{"notation":"2d20H+5","seed":42}'
+```
+
+A `seed` makes the roll reproducible: the same notation and seed always give the
+same dice.
+
+### Validate notation
+
+```bash
+curl "https://api.randsum.dev/v1/validate?notation=4d6L"
+```
+
+Returns `valid`, plus a `description` when valid, or an `error` and often a
+`suggestion` when not. Validation itself always answers `200`.
+
+### Random integers
+
+```bash
+curl "https://api.randsum.dev/v1/random?min=1&max=6&count=3"
+```
+
+```json
+{ "min": 1, "max": 6, "count": 3, "values": [4, 1, 6] }
+```
+
+`min` defaults to 1, `max` to 100 and `count` to 1. Values come from
+`crypto.getRandomValues` with rejection sampling, so every integer in the range
+is equally likely. A request may ask for up to 1000 values over a range of up
+to 2³² integers.
+
+### Game systems
+
+```bash
+curl "https://api.randsum.dev/v1/games/blades/roll?rating=3"
+curl -X POST https://api.randsum.dev/v1/games/fifth/roll \
+  -H "Content-Type: application/json" \
+  -d '{"modifier":5,"rollingWith":"Advantage"}'
+```
+
+```json
+{ "game": "blades", "total": 6, "result": "success", "rolls": [6] }
+```
+
+`{game}` is one of `blades`, `daggerheart`, `fate`, `fifth`, `pbta`,
+`root-rpg` or `salvageunion`. `GET /v1/games` lists each game's inputs, with
+their types, bounds and defaults, straight from its spec.
+
+### Errors and limits
+
+Bad input answers `400` with an `error` naming the problem, plus a `suggestion`
+for notation the roller can guess a fix for. An unknown game or route is a
+`404`; a body over 4 KB is a `413`. Each client IP may make about 120 requests a
+minute; past that the API answers `429` with `Retry-After: 60`. Responses that
+roll or draw are sent with `Cache-Control: no-store`.
 
 ## Hosted meta-schema
 
@@ -41,10 +143,12 @@ validation while authoring a game spec:
 }
 ```
 
-## `POST /api/roll`
+## `POST randsum.dev/api/roll`
 
-Evaluate any [RANDSUM dice notation](/spec/) over HTTP. The
-endpoint runs the same `roll()` engine as `@randsum/roller`.
+The original single endpoint, still served by the site. New integrations should
+use [`/v1/roll`](#roll-notation) above, which adds seeds, per-pool results and
+`GET`. This one evaluates [RANDSUM dice notation](/spec/) with the same
+`roll()` engine as `@randsum/roller`.
 
 ### Request
 

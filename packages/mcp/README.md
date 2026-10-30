@@ -6,7 +6,9 @@ that exposes the RANDSUM dice-rolling ecosystem to AI agents. It wraps
 can roll dice, validate notation, and roll for specific tabletop game systems.
 
 The server speaks MCP over stdio and is published as a CLI binary
-(`randsum-mcp`), so any MCP client can launch it with `bunx`/`npx`.
+(`randsum-mcp`), so any MCP client can launch it with `bunx`/`npx`. The same
+server is also hosted at `https://api.randsum.dev/mcp` for clients that take a
+URL instead, such as a Claude connector.
 
 ## Tools
 
@@ -57,6 +59,16 @@ the chosen game before it rolls.
 ```
 
 ## Configuration
+
+### Hosted (no install)
+
+The same server runs at `https://api.randsum.dev/mcp` over Streamable HTTP,
+served by the [`apps/api`](../../apps/api) Worker from this package's
+`./remote` export. It is public and needs no key.
+
+- **Claude (claude.ai, Desktop, mobile):** Settings → Connectors → Add custom
+  connector, with the URL `https://api.randsum.dev/mcp`.
+- **Claude Code:** `claude mcp add --transport http randsum https://api.randsum.dev/mcp`
 
 ### Claude Code
 

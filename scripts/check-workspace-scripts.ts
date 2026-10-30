@@ -19,7 +19,7 @@
  * standard script fails the build instead of quietly opting out.
  *
  * It also asserts that every apps/<app>/wrangler*.jsonc declares the same
- * `compatibility_date`, so the three Workers share one runtime baseline and no
+ * `compatibility_date`, so every Worker shares one runtime baseline and no
  * config comment can claim a match that is not there.
  *
  * Config parity it also holds:
@@ -48,8 +48,9 @@ const REQUIRED_SCRIPTS = ['test', 'typecheck', 'check'] as const
 // `@randsum/discord-bot` is exempt because wrangler compiles `src/worker/index.ts`
 // itself at deploy time. It had a `build` only while it also shipped a Node
 // gateway process that bunup had to bundle for a host to run; with that gone
-// there is no artifact left to produce.
-const BUILD_EXEMPT = new Set<string>(['@randsum/discord-bot'])
+// there is no artifact left to produce. `@randsum/api` is the same case: wrangler
+// compiles `src/index.ts` at deploy time.
+const BUILD_EXEMPT = new Set<string>(['@randsum/api', '@randsum/discord-bot'])
 
 const WORKSPACE_DIRS = ['packages', 'apps'] as const
 

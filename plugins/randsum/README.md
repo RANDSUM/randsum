@@ -1,6 +1,6 @@
 # RANDSUM Claude Code Plugin
 
-The `randsum` plugin, published through this repo's marketplace (`.claude-plugin/marketplace.json` at the repo root). It ships three [skills](https://code.claude.com/docs/en/skills) and one MCP server, [`@randsum/mcp`](../../packages/mcp), so the skills can roll with the real engine.
+The `randsum` plugin, published through this repo's marketplace (`.claude-plugin/marketplace.json` at the repo root). It ships three [skills](https://code.claude.com/docs/en/skills) and connects one MCP server, the hosted [`@randsum/mcp`](../../packages/mcp) at `https://api.randsum.dev/mcp`, so the skills can roll with the real engine without installing anything. Where no MCP server is connected, the `dice-rolling` skill calls the [HTTP API](https://randsum.dev/tools/http-api/) at `https://api.randsum.dev/v1` instead.
 
 | Skill | Description |
 |---|---|
