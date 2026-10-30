@@ -8,7 +8,9 @@ import {
   rollNotation,
   validateNotationInput
 } from '@randsum/mcp/remote'
+import { notationToOptions } from '@randsum/roller'
 import { RandsumError } from '@randsum/roller/errors'
+import { isLongform, longformToNotation } from './longform'
 import { MAX_COUNT, randomIntProblem, randomInts } from './random'
 import type { WordSource } from './random'
 
@@ -67,10 +69,25 @@ export function handleV1(request: V1Request, fill?: WordSource): V1Result {
   return fail(404, `No route for ${method} ${path}.`, { see: `${origin}/v1` })
 }
 
+/**
+ * The roll a request asks for, as short-form notation: the `notation` field, or
+ * the long-form options (`sides`, `quantity`, `modifiers`...) converted to it.
+ */
 function notationOf(input: Readonly<Record<string, unknown>>): string | V1Result {
+  const longform = isLongform(input)
+  if (longform && input['notation'] !== undefined) {
+    return fail(400, 'Send "notation" (short form) or "sides"/"modifiers" (long form), not both.')
+  }
+  if (longform) {
+    const converted = longformToNotation(input)
+    return 'error' in converted ? fail(400, converted.error) : converted.notation
+  }
   const notation = input['notation']
   if (typeof notation !== 'string' || notation.trim().length === 0) {
-    return fail(400, 'Request must include a non-empty "notation" string.')
+    return fail(
+      400,
+      'Request must include a non-empty "notation" string, or a long-form roll with "sides".'
+    )
   }
   if (notation.length > MAX_NOTATION_LENGTH) {
     return fail(400, `Notation exceeds the maximum length of ${MAX_NOTATION_LENGTH} characters.`)
@@ -107,6 +124,7 @@ function validate(input: Readonly<Record<string, unknown>>): V1Result {
   return ok({
     notation,
     valid,
+    ...(valid ? { options: notationToOptions(notation) } : {}),
     ...(description === undefined ? {} : { description }),
     ...(suggestion === undefined ? {} : { suggestion }),
     ...(error === undefined ? {} : { error })
@@ -224,15 +242,24 @@ function index(origin: string): unknown {
       {
         path: '/v1/roll',
         methods: ['GET', 'POST'],
-        description: 'Roll RANDSUM dice notation. Optional integer seed for a reproducible roll.',
-        params: { notation: 'string, required', seed: 'integer, optional' },
-        example: `${origin}/v1/roll?notation=4d6L`
+        description:
+          'Roll RANDSUM dice, in short form (notation) or long form (the roll() options object: sides, quantity, modifiers). Optional integer seed for a reproducible roll.',
+        params: {
+          notation: 'string: short form, e.g. 4d6L',
+          sides: 'long form: integer',
+          quantity: 'long form: integer, default 1',
+          'modifiers.<name>[.<option>]': 'long form, e.g. modifiers.drop.lowest=1',
+          seed: 'integer, optional'
+        },
+        example: `${origin}/v1/roll?notation=4d6L`,
+        longformExample: `${origin}/v1/roll?sides=6&quantity=4&modifiers.drop.lowest=1`
       },
       {
         path: '/v1/validate',
         methods: ['GET', 'POST'],
-        description: 'Check notation without rolling: a description when valid, a fix when not.',
-        params: { notation: 'string, required' },
+        description:
+          'Check a roll without rolling, in short or long form. Valid rolls come back in both forms with a description; invalid ones with a fix.',
+        params: { notation: 'string, or the long-form fields /v1/roll takes' },
         example: `${origin}/v1/validate?notation=2d20H%2B5`
       },
       {

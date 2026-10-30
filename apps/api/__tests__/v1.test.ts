@@ -56,6 +56,62 @@ describe('/v1/roll', () => {
   })
 })
 
+describe('long form', () => {
+  test('matches the short form: same notation, same seeded dice', () => {
+    const short = get('/v1/roll', { notation: '4d6L+3', seed: '9' })
+    const dotted = get('/v1/roll', {
+      sides: '6',
+      quantity: '4',
+      'modifiers.drop.lowest': '1',
+      'modifiers.plus': '3',
+      seed: '9'
+    })
+    const bracketed = get('/v1/roll', {
+      sides: '6',
+      quantity: '4',
+      'modifiers[drop][lowest]': '1',
+      'modifiers[plus]': '3',
+      seed: '9'
+    })
+    const nested = post('/v1/roll', {
+      sides: 6,
+      quantity: 4,
+      modifiers: { drop: { lowest: 1 }, plus: 3 },
+      seed: 9
+    })
+    expect(short.status).toBe(200)
+    expect(dotted.body).toEqual(short.body)
+    expect(bracketed.body).toEqual(short.body)
+    expect(nested.body).toEqual(short.body)
+  })
+
+  test('reads JSON values out of query strings', () => {
+    expect(
+      get('/v1/roll', { sides: '6', quantity: '3', 'modifiers.reroll.exact': '[1,2]' })
+    ).toMatchObject({ status: 200, body: { notation: '3d6R{1,2}' } })
+  })
+
+  test('validate answers in both forms', () => {
+    expect(get('/v1/validate', { notation: '4d6L' }).body).toMatchObject({
+      valid: true,
+      options: [{ sides: 6, quantity: 4, modifiers: { drop: { lowest: 1 } } }]
+    })
+    expect(
+      get('/v1/validate', { sides: '6', quantity: '4', 'modifiers.drop.lowest': '1' }).body
+    ).toMatchObject({ notation: '4d6L', valid: true })
+  })
+
+  test('refuses unknown modifiers, missing sides, and mixing forms', () => {
+    expect(get('/v1/roll', { sides: '6', 'modifiers.bogus': '1' })).toMatchObject({
+      status: 400,
+      body: { error: 'Unknown or unusable modifier "bogus".' }
+    })
+    expect(get('/v1/roll', { quantity: '4' }).status).toBe(400)
+    expect(get('/v1/roll', { sides: 'banana' }).status).toBe(400)
+    expect(get('/v1/roll', { notation: '1d6', sides: '6' }).status).toBe(400)
+  })
+})
+
 describe('/v1/validate', () => {
   test('describes valid notation and explains invalid notation', () => {
     expect(get('/v1/validate', { notation: '4d6L' }).body).toMatchObject({ valid: true })

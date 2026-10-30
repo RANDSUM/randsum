@@ -53,7 +53,7 @@ Add the RANDSUM marketplace and install the plugin from inside Claude Code:
 
 On Claude Code 2.1.275 or later, one command does both: `/plugin install randsum --marketplace RANDSUM/randsum`.
 
-The plugin also starts the [`@randsum/mcp`](/tools/mcp/) server through `npx`, so the skills can roll with the real engine instead of simulating. You do not need a separate `claude mcp add`.
+The plugin also connects the hosted [`@randsum/mcp`](/tools/mcp/) server at `https://api.randsum.dev/mcp`, so the skills can roll with the real engine instead of simulating, with nothing to install. You do not need a separate `claude mcp add`.
 
 **Staying current.** The plugin tracks the marketplace's commits rather than a version number. Run `/plugin marketplace update randsum` to pick up changes, or turn on **Enable auto-update** for the `randsum` marketplace under **Marketplaces** in `/plugin`.
 
