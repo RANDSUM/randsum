@@ -1,0 +1,10 @@
+// No gradient fills. Gradient text, gradient rules and gradient washes are
+// "AI tells" the RANDSUM design avoids: surfaces are flat colour tokens, and
+// a product's glow is its flat fill blurred (see ProductHero.astro). A gradient
+// used as a mask to fade content out (mask-image) is still allowed.
+language css
+
+CssDeclaration() as $decl where {
+  $decl <: r"^(?:background|background-image|border-image)\s*:[^;]*gradient\([\s\S]*",
+  register_diagnostic(span=$decl, message="No gradient fills: use a flat colour token (RANDSUM design system).")
+}

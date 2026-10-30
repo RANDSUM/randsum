@@ -1,6 +1,6 @@
 /* Loaded only by SpecLayout, so these globals never reach a Starlight page.
-   Every colour is an alias of the site theme; only the accent differs (cyan
-   here, ADR-015). */
+   Every colour is an alias of the site theme; the accent is the spec's
+   product colour (ADR-015). */
 @import '../styles/theme.css';
 
 /* === Reset === */
@@ -29,8 +29,8 @@ html {
   color-scheme: dark;
 
   /* Accent */
-  --accent: var(--rs-cyan);
-  --accent-light: var(--rs-cyan-high);
+  --accent: var(--product-spec);
+  --accent-light: var(--product-spec);
   --accent-tint: color-mix(in srgb, var(--accent) 8%, transparent);
   --accent-border: color-mix(in srgb, var(--accent) 20%, transparent);
 
@@ -54,7 +54,7 @@ html {
   --sl-color-gray-7: var(--rs-gray-7);
   --sl-color-text: var(--text-secondary);
   --sl-line-height: 1.5;
-  --sl-text-code: 13px;
+  --sl-text-code: var(--rs-text-xs);
 
   /* Layout */
   --sidebar-width: 220px;
@@ -70,8 +70,8 @@ html {
 body {
   background: var(--bg);
   color: var(--text-primary);
-  font-family: var(--font-inter), system-ui, sans-serif;
-  font-size: 15px;
+  font-family: var(--font-gabarito), system-ui, sans-serif;
+  font-size: var(--rs-text-sm);
   line-height: 1.7;
 }
 
@@ -90,11 +90,11 @@ body {
   padding: 0.5rem 1rem;
   background: var(--accent);
   color: var(--bg);
-  font-family: var(--font-inter), system-ui, sans-serif;
-  font-size: 13px;
-  font-weight: 600;
+  font-family: var(--font-gabarito), system-ui, sans-serif;
+  font-size: var(--rs-text-xs);
+  font-weight: var(--rs-weight-semibold);
   text-decoration: none;
-  border-radius: 0 0 4px 4px;
+  border-radius: 0 0 var(--rs-radius-xs) var(--rs-radius-xs);
 }
 
 .skip-link:focus-visible {
@@ -157,10 +157,8 @@ body {
 
 /* === Typography helpers === */
 .label {
-  font-family: var(--font-inter), system-ui, sans-serif;
-  font-size: 10px;
-  text-transform: uppercase;
-  letter-spacing: 1.5px;
+  font-family: var(--font-gabarito), system-ui, sans-serif;
+  font-size: var(--rs-text-2xs);
 }
 
 /* === SidebarNav === */
@@ -180,21 +178,19 @@ body {
   display: flex;
   align-items: center;
   gap: 0.4rem;
-  font-size: 13px;
+  font-size: var(--rs-text-xs);
   color: var(--text-secondary);
 }
 
 .sidebar-latest-badge {
   display: inline-block;
   padding: 0.1rem 0.4rem;
-  font-size: 10px;
-  font-family: var(--font-inter), system-ui, sans-serif;
-  text-transform: uppercase;
-  letter-spacing: 1px;
+  font-size: var(--rs-text-2xs);
+  font-family: var(--font-gabarito), system-ui, sans-serif;
   background: var(--accent-tint);
   color: var(--accent);
   border: 1px solid var(--accent-border);
-  border-radius: 3px;
+  border-radius: var(--rs-radius-xs);
 }
 
 .sidebar-group {
@@ -221,11 +217,11 @@ body {
 .sidebar-link {
   display: block;
   padding: 0.3rem 0.5rem;
-  font-family: var(--font-inter), system-ui, sans-serif;
-  font-size: 13px;
+  font-family: var(--font-gabarito), system-ui, sans-serif;
+  font-size: var(--rs-text-xs);
   color: var(--text-secondary);
   text-decoration: none;
-  border-radius: 4px;
+  border-radius: var(--rs-radius-xs);
   transition:
     color 0.15s ease,
     background 0.15s ease;
@@ -250,7 +246,7 @@ body {
 /* === HeroHeader === */
 .spec-hero {
   position: relative;
-  background: linear-gradient(180deg, var(--accent-tint), transparent);
+  border-bottom: var(--rs-border);
   padding: 2.5rem 2rem 2rem;
 }
 
@@ -262,40 +258,45 @@ body {
   max-width: calc(var(--sidebar-width) + var(--content-max-width) + var(--aside-width));
 }
 
-.spec-hero-label {
+.spec-hero-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+  color: var(--text-primary);
+  text-decoration: none;
+  font-family: var(--rs-font-heading);
+  font-size: var(--rs-text-base);
+}
+
+.spec-hero-mark {
+  color: var(--product-spec-fill);
+}
+
+.spec-hero-brand-name {
+  font-weight: var(--rs-weight-heavy);
+  letter-spacing: var(--rs-tracking-wordmark);
+}
+
+.spec-hero-brand-product {
+  font-weight: var(--rs-weight-bold);
   color: var(--accent);
-  margin-bottom: 0.5rem;
 }
 
 .spec-hero-title {
-  font-family: var(--font-jetbrains-mono), monospace;
-  font-size: clamp(1.5rem, 4vw, 2.25rem);
-  font-weight: 700;
+  font-family: var(--rs-font-heading);
+  font-size: var(--rs-text-2xl);
+  font-weight: var(--rs-weight-bold);
   color: var(--text-primary);
   line-height: 1.2;
   margin-bottom: 0.75rem;
 }
 
 .spec-hero-subtitle {
-  font-size: 15px;
+  font-size: var(--rs-text-sm);
   color: var(--text-secondary);
   max-width: 480px;
   margin-bottom: 0.5rem;
-}
-
-.spec-hero-package {
-  font-size: 13px;
-  color: var(--text-muted);
-}
-
-.spec-hero-package a {
-  color: var(--accent);
-  text-decoration: none;
-  font-family: var(--font-jetbrains-mono), monospace;
-}
-
-.spec-hero-package a:hover {
-  text-decoration: underline;
 }
 
 .spec-hero-actions {
@@ -328,7 +329,7 @@ body {
   height: 2rem;
   background: transparent;
   border: 1px solid var(--border);
-  border-radius: 6px;
+  border-radius: var(--rs-radius-sm);
   color: var(--text-muted);
   cursor: pointer;
   transition:
@@ -374,10 +375,10 @@ body {
   padding: 0.4rem 0.75rem;
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 6px;
+  border-radius: var(--rs-radius-sm);
   color: var(--text-primary);
-  font-family: var(--font-inter), system-ui, sans-serif;
-  font-size: 13px;
+  font-family: var(--font-gabarito), system-ui, sans-serif;
+  font-size: var(--rs-text-xs);
   cursor: pointer;
   white-space: nowrap;
   transition:
@@ -418,11 +419,11 @@ body {
   min-width: 160px;
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 6px;
+  border-radius: var(--rs-radius-sm);
   padding: 0.25rem;
   list-style: none;
   margin: 0;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+  box-shadow: var(--rs-shadow-overlay);
 }
 
 .version-option {
@@ -431,9 +432,9 @@ body {
   justify-content: space-between;
   gap: 0.5rem;
   padding: 0.4rem 0.6rem;
-  border-radius: 4px;
-  font-family: var(--font-inter), system-ui, sans-serif;
-  font-size: 13px;
+  border-radius: var(--rs-radius-xs);
+  font-family: var(--font-gabarito), system-ui, sans-serif;
+  font-size: var(--rs-text-xs);
   color: var(--text-secondary);
   text-decoration: none;
   transition:
@@ -459,14 +460,12 @@ body {
 .version-latest-badge {
   display: inline-block;
   padding: 0.1rem 0.4rem;
-  font-size: 10px;
-  font-family: var(--font-inter), system-ui, sans-serif;
-  text-transform: uppercase;
-  letter-spacing: 1px;
+  font-size: var(--rs-text-2xs);
+  font-family: var(--font-gabarito), system-ui, sans-serif;
   background: var(--accent-tint);
   color: var(--accent);
   border: 1px solid var(--accent-border);
-  border-radius: 3px;
+  border-radius: var(--rs-radius-xs);
 }
 
 /* === VersionBanner === */
@@ -477,15 +476,15 @@ body {
   padding: 0.6rem 2rem;
   background: color-mix(in srgb, var(--rs-warn) 8%, transparent);
   border-bottom: 1px solid color-mix(in srgb, var(--rs-warn) 20%, transparent);
-  font-family: var(--font-inter), system-ui, sans-serif;
-  font-size: 13px;
+  font-family: var(--font-gabarito), system-ui, sans-serif;
+  font-size: var(--rs-text-xs);
   color: var(--rs-warn);
 }
 
 .version-banner-link {
   color: var(--rs-warn);
   text-decoration: none;
-  font-weight: 600;
+  font-weight: var(--rs-weight-semibold);
   transition: color 0.15s ease;
 }
 
@@ -515,7 +514,7 @@ body {
   gap: 5px;
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 6px;
+  border-radius: var(--rs-radius-sm);
   cursor: pointer;
   padding: 0;
   transition:
@@ -538,7 +537,7 @@ body {
   width: 18px;
   height: 2px;
   background: var(--text-primary);
-  border-radius: 1px;
+  border-radius: var(--rs-radius-xs);
   transition: background 0.15s ease;
 }
 
@@ -548,7 +547,7 @@ body {
   position: fixed;
   inset: 0;
   z-index: 210;
-  background: rgba(0, 0, 0, 0.6);
+  background: color-mix(in srgb, var(--rs-ink) 60%, transparent);
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.25s ease;
@@ -616,21 +615,19 @@ body {
   display: flex;
   align-items: center;
   gap: 0.4rem;
-  font-size: 13px;
+  font-size: var(--rs-text-xs);
   color: var(--text-secondary);
 }
 
 .mobile-latest-badge {
   display: inline-block;
   padding: 0.1rem 0.4rem;
-  font-size: 10px;
-  font-family: var(--font-inter), system-ui, sans-serif;
-  text-transform: uppercase;
-  letter-spacing: 1px;
+  font-size: var(--rs-text-2xs);
+  font-family: var(--font-gabarito), system-ui, sans-serif;
   background: var(--accent-tint);
   color: var(--accent);
   border: 1px solid var(--accent-border);
-  border-radius: 3px;
+  border-radius: var(--rs-radius-xs);
 }
 
 .mobile-menu-close {
@@ -641,7 +638,7 @@ body {
   height: 2rem;
   background: transparent;
   border: 1px solid var(--border);
-  border-radius: 4px;
+  border-radius: var(--rs-radius-xs);
   color: var(--text-muted);
   cursor: pointer;
   flex-shrink: 0;
@@ -685,11 +682,11 @@ body {
 .mobile-sidebar-link {
   display: block;
   padding: 0.4rem 0.5rem;
-  font-family: var(--font-inter), system-ui, sans-serif;
-  font-size: 13px;
+  font-family: var(--font-gabarito), system-ui, sans-serif;
+  font-size: var(--rs-text-xs);
   color: var(--text-secondary);
   text-decoration: none;
-  border-radius: 4px;
+  border-radius: var(--rs-radius-xs);
   transition:
     color 0.15s ease,
     background 0.15s ease;
@@ -749,17 +746,14 @@ body.mobile-menu-open {
 
 /* --- Headings --- */
 .spec-content-body h2 {
-  font-family: var(--font-jetbrains-mono), monospace;
-  font-size: 1.5rem;
-  font-weight: 700;
+  font-family: var(--rs-font-heading);
+  font-size: var(--rs-text-lg);
+  font-weight: var(--rs-weight-bold);
   color: var(--text-primary);
   margin-top: 3rem;
   margin-bottom: 1.25rem;
   padding-bottom: 0.75rem;
-  background-image: linear-gradient(90deg, var(--accent) 40%, transparent);
-  background-size: 100% 2px;
-  background-position: bottom;
-  background-repeat: no-repeat;
+  border-bottom: var(--rs-border);
 }
 
 .spec-content-body h2:first-child {
@@ -767,18 +761,18 @@ body.mobile-menu-open {
 }
 
 .spec-content-body h3 {
-  font-family: var(--font-jetbrains-mono), monospace;
-  font-size: 1.15rem;
-  font-weight: 600;
+  font-family: var(--rs-font-heading);
+  font-size: var(--rs-text-md);
+  font-weight: var(--rs-weight-semibold);
   color: var(--text-primary);
   margin-top: 2rem;
   margin-bottom: 0.75rem;
 }
 
 .spec-content-body h4 {
-  font-family: var(--font-jetbrains-mono), monospace;
-  font-size: 1rem;
-  font-weight: 600;
+  font-family: var(--rs-font-heading);
+  font-size: var(--rs-text-base);
+  font-weight: var(--rs-weight-semibold);
   color: var(--text-primary);
   margin-top: 1.5rem;
   margin-bottom: 0.5rem;
@@ -804,7 +798,7 @@ body.mobile-menu-open {
 .spec-content-body hr {
   border: none;
   height: 1px;
-  background: linear-gradient(90deg, var(--accent) 40%, transparent);
+  background: var(--rs-gray-5);
   margin: 2.5rem 0;
 }
 
@@ -814,14 +808,14 @@ body.mobile-menu-open {
   -webkit-overflow-scrolling: touch;
   margin-bottom: 1.5rem;
   border: 1px solid var(--border);
-  border-radius: 6px;
+  border-radius: var(--rs-radius-sm);
 }
 
 .spec-content-body table {
   width: 100%;
   border-collapse: separate;
   border-spacing: 0;
-  font-size: 14px;
+  font-size: var(--rs-text-sm);
   line-height: 1.6;
   border: none;
   border-radius: 0;
@@ -832,15 +826,15 @@ body.mobile-menu-open {
 .spec-content-body > table {
   margin-bottom: 1.5rem;
   border: 1px solid var(--border);
-  border-radius: 6px;
+  border-radius: var(--rs-radius-sm);
 }
 
 .spec-content-body thead th {
   background: var(--accent);
   color: var(--rs-on-accent);
   font-family: var(--font-jetbrains-mono), monospace;
-  font-size: 13px;
-  font-weight: 600;
+  font-size: var(--rs-text-xs);
+  font-weight: var(--rs-weight-semibold);
   text-align: left;
   padding: 0.6rem 0.75rem;
   white-space: nowrap;
@@ -866,7 +860,7 @@ body.mobile-menu-open {
   background: var(--accent-tint);
   padding: 0.75rem 1rem;
   margin-bottom: 1.25rem;
-  border-radius: 0 6px 6px 0;
+  border-radius: 0 var(--rs-radius-sm) var(--rs-radius-sm) 0;
   color: var(--text-secondary);
 }
 
@@ -881,18 +875,18 @@ body.mobile-menu-open {
 /* --- Inline Code --- */
 .spec-content-body code {
   font-family: var(--font-jetbrains-mono), monospace;
-  font-size: 13px;
+  font-size: var(--rs-text-xs);
   background: var(--surface);
   border: 1px solid var(--border);
   padding: 0.15rem 0.35rem;
-  border-radius: 3px;
+  border-radius: var(--rs-radius-xs);
 }
 
 /* --- Code Blocks --- */
 .spec-content-body pre {
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 6px;
+  border-radius: var(--rs-radius-sm);
   padding: 1rem 1.25rem;
   margin-bottom: 1.5rem;
   overflow-x: auto;
@@ -904,7 +898,7 @@ body.mobile-menu-open {
   border: none;
   padding: 0;
   border-radius: 0;
-  font-size: 13px;
+  font-size: var(--rs-text-xs);
 }
 
 /* --- Lists --- */
@@ -924,7 +918,7 @@ body.mobile-menu-open {
 
 .spec-content-body ol li::marker {
   color: var(--accent);
-  font-weight: 600;
+  font-weight: var(--rs-weight-semibold);
 }
 
 .spec-content-body li {
@@ -943,7 +937,7 @@ body.mobile-menu-open {
 }
 
 .spec-content-body dt {
-  font-weight: 700;
+  font-weight: var(--rs-weight-bold);
   color: var(--text-primary);
   margin-top: 0.75rem;
 }
@@ -956,7 +950,7 @@ body.mobile-menu-open {
 
 /* --- Strong and Emphasis --- */
 .spec-content-body strong {
-  font-weight: 700;
+  font-weight: var(--rs-weight-bold);
   color: var(--text-primary);
 }
 
@@ -964,7 +958,7 @@ body.mobile-menu-open {
 .prop-card {
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 6px;
+  border-radius: var(--rs-radius-sm);
   padding: 0.75rem 1rem;
   margin-bottom: 1.25rem;
 }
@@ -973,7 +967,7 @@ body.mobile-menu-open {
   margin-bottom: 0.5rem;
   padding-bottom: 0.5rem;
   border-bottom: 1px solid var(--border);
-  font-size: 14px;
+  font-size: var(--rs-text-sm);
   line-height: 1.6;
 }
 
@@ -985,10 +979,8 @@ body.mobile-menu-open {
 
 .prop-card p > strong:first-child {
   color: var(--accent);
-  font-weight: 600;
-  font-size: 12px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+  font-weight: var(--rs-weight-semibold);
+  font-size: var(--rs-text-2xs);
   margin-right: 0.5rem;
 }
 
@@ -1032,8 +1024,8 @@ body.mobile-menu-open {
 .toc-link {
   display: block;
   padding: 0.2rem 0.5rem;
-  font-family: var(--font-inter), system-ui, sans-serif;
-  font-size: 12px;
+  font-family: var(--font-gabarito), system-ui, sans-serif;
+  font-size: var(--rs-text-2xs);
   color: var(--text-secondary);
   text-decoration: none;
   line-height: 1.4;

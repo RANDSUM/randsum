@@ -9,20 +9,18 @@ const isSplash = Astro.locals.starlightRoute.entry.data.template === 'splash'
 
 <Default />
 
-{
-  !isSplash && (
-    <div class="kofi-footer not-content">
-      <KofiButton />
-    </div>
-  )
-}
+{!isSplash && (
+  <div class="kofi-footer not-content">
+    <KofiButton />
+  </div>
+)}
 
 <style>
-  .kofi-footer {
-    display: flex;
-    justify-content: center;
-    margin-top: 2rem;
-    padding-top: 1.5rem;
-    border-top: 1px solid var(--sl-color-hairline);
-  }
+.kofi-footer {
+  display: flex;
+  justify-content: center;
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--sl-color-hairline);
+}
 </style>

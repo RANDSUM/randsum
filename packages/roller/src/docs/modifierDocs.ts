@@ -44,8 +44,8 @@ const syntaxDocs: readonly NotationDoc[] = [
   {
     key: 'xN',
     category: 'Special',
-    color: '#a5b4fc',
-    colorLight: '#4338ca',
+    color: '#a3a3aa',
+    colorLight: '#63636a',
     title: 'Repeat',
     description:
       'Evaluate the whole expression N times, each with its own pool and total. Resolved at parse time.',
@@ -56,8 +56,8 @@ const syntaxDocs: readonly NotationDoc[] = [
   {
     key: 'label',
     category: 'Special',
-    color: '#a1a1aa',
-    colorLight: '#52525b',
+    color: '#a3a3aa',
+    colorLight: '#63636a',
     title: 'Annotation',
     description: 'Attach a label to an expression. Annotations never change the roll.',
     displayBase: '[text]',

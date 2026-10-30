@@ -1,0 +1,147 @@
+---
+// The landing page's product family: a list of every product beside one
+// section each, with the product's die, pitch, a real snippet and its link.
+import PipMark from '../PipMark.astro'
+import Button from '../ui/Button.astro'
+import CodePanel from '../ui/CodePanel.astro'
+import Section from '../ui/Section.astro'
+import { PRODUCT_LABELS, PRODUCTS } from '../../utils/product'
+---
+
+<Section id="products" title="Everything that rolls">
+  <div class="stack">
+    <nav class="stack-nav" aria-label="Products">
+      {PRODUCTS.map(product => (
+        <a href={`#product-${product.id}`} style={`--p: var(--product-${product.id}-fill)`}>
+          <PipMark variant="knockout" size={18} />
+          {PRODUCT_LABELS[product.id]}
+        </a>
+      ))}
+    </nav>
+    <div class="stack-body">
+      {PRODUCTS.map(product => (
+        <article
+          id={`product-${product.id}`}
+          class="stack-pane"
+          style={`--p: var(--product-${product.id}-fill); --p-text: var(--product-${product.id})`}
+        >
+          <div class="stack-copy">
+            <p class="stack-name">
+              <PipMark variant="knockout" size={20} />
+              {PRODUCT_LABELS[product.id]}
+            </p>
+            <h3>{product.tagline}</h3>
+            <p class="stack-summary">{product.summary}</p>
+            <Button href={product.href} variant="product" product={product.id}>
+              Explore {PRODUCT_LABELS[product.id]}
+            </Button>
+          </div>
+          <CodePanel code={product.snippet.code} lang={product.snippet.lang} />
+        </article>
+      ))}
+    </div>
+  </div>
+</Section>
+
+<style>
+.stack {
+  display: grid;
+  grid-template-columns: 12rem 1fr;
+  border: 1px solid var(--sl-color-gray-5);
+  border-radius: var(--rs-radius-lg);
+  background: var(--sl-color-bg);
+}
+
+.stack-nav {
+  position: sticky;
+  top: calc(var(--sl-nav-height, 4rem) + 1rem);
+  align-self: start;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 1.25rem 1rem;
+}
+
+.stack-nav a {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.4rem 0.6rem;
+  border-radius: var(--rs-radius-sm);
+  color: var(--sl-color-gray-2);
+  font-weight: var(--rs-weight-medium);
+  text-decoration: none;
+}
+
+.stack-nav a:hover {
+  background: var(--sl-color-gray-6);
+  color: var(--sl-color-white);
+}
+
+.stack-nav :global(.pip-mark),
+.stack-name :global(.pip-mark) {
+  color: var(--p);
+  flex: none;
+}
+
+.stack-body {
+  border-left: 1px solid var(--sl-color-gray-5);
+}
+
+.stack-pane {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+  gap: 2rem;
+  align-items: center;
+  padding: 2rem;
+  scroll-margin-top: calc(var(--sl-nav-height, 4rem) + 1rem);
+}
+
+.stack-pane + .stack-pane {
+  border-top: 1px solid var(--sl-color-gray-5);
+}
+
+.stack-name {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0;
+  color: var(--p-text);
+  font-weight: var(--rs-weight-bold);
+}
+
+.stack-copy h3 {
+  margin: 0.5rem 0;
+  font-family: var(--rs-font-heading);
+  font-size: var(--rs-text-lg);
+  font-weight: var(--rs-weight-bold);
+  letter-spacing: var(--rs-tracking-heading);
+  line-height: 1.2;
+  color: var(--sl-color-white);
+}
+
+.stack-summary {
+  margin: 0 0 1.25rem;
+  color: var(--sl-color-gray-2);
+}
+
+@media (max-width: 900px) {
+  .stack {
+    grid-template-columns: 1fr;
+  }
+
+  .stack-nav {
+    display: none;
+  }
+
+  .stack-body {
+    border-left: none;
+  }
+
+  .stack-pane {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+    padding: 1.5rem;
+  }
+}
+</style>

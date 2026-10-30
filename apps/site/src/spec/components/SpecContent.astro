@@ -1,5 +1,4 @@
 ---
-
 ---
 
 <article class="spec-content-body" aria-label="Specification content">
@@ -7,47 +6,43 @@
 </article>
 
 <script>
-  // Wrap tables in scrollable containers for mobile
-  const specBody = document.querySelector('.spec-content-body')
-  if (specBody) {
-    for (const table of Array.from(specBody.querySelectorAll(':scope > table'))) {
-      const wrapper = document.createElement('div')
-      wrapper.className = 'table-wrap'
-      table.parentNode!.insertBefore(wrapper, table)
-      wrapper.appendChild(table)
+// Wrap tables in scrollable containers for mobile
+const specBody = document.querySelector('.spec-content-body')
+if (specBody) {
+  for (const table of Array.from(specBody.querySelectorAll(':scope > table'))) {
+    const wrapper = document.createElement('div')
+    wrapper.className = 'table-wrap'
+    table.parentNode!.insertBefore(wrapper, table)
+    wrapper.appendChild(table)
+  }
+}
+
+// Group consecutive "**Label:** value" paragraphs into styled property cards.
+// These are <p> elements whose first child is a <strong> ending with ":"
+const body = document.querySelector('.spec-content-body')
+if (body) {
+  const paragraphs = Array.from(body.querySelectorAll('p'))
+  const isProp = (p: HTMLParagraphElement): boolean =>
+    p.querySelector(':scope > strong:first-child')?.textContent?.endsWith(':') === true
+
+  // Split the paragraphs into runs of consecutive property paragraphs
+  const runs = paragraphs.reduce<HTMLParagraphElement[][]>((acc, p, i) => {
+    if (!isProp(p)) return acc
+    const prev = paragraphs[i - 1]
+    const last = acc.at(-1)
+    if (last && prev !== undefined && isProp(prev)) last.push(p)
+    else acc.push([p])
+    return acc
+  }, [])
+
+  for (const run of runs.filter(r => r.length >= 2)) {
+    const wrapper = document.createElement('div')
+    wrapper.className = 'prop-card'
+    const firstEl = run[0]!
+    firstEl.parentNode!.insertBefore(wrapper, firstEl)
+    for (const p of run) {
+      wrapper.appendChild(p)
     }
   }
-
-  // Group consecutive "**Label:** value" paragraphs into styled property cards.
-  // These are <p> elements whose first child is a <strong> ending with ":"
-  const body = document.querySelector('.spec-content-body')
-  if (body) {
-    const paragraphs = Array.from(body.querySelectorAll('p'))
-    let group: HTMLElement[] = []
-
-    function flushGroup() {
-      if (group.length < 2) {
-        group = []
-        return
-      }
-      const wrapper = document.createElement('div')
-      wrapper.className = 'prop-card'
-      const firstEl = group[0]!
-      firstEl.parentNode!.insertBefore(wrapper, firstEl)
-      for (const p of group) {
-        wrapper.appendChild(p)
-      }
-      group = []
-    }
-
-    for (const p of paragraphs) {
-      const strong = p.querySelector(':scope > strong:first-child')
-      if (strong && strong.textContent?.endsWith(':')) {
-        group.push(p)
-      } else {
-        flushGroup()
-      }
-    }
-    flushGroup()
-  }
+}
 </script>

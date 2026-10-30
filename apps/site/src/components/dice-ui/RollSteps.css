@@ -6,7 +6,7 @@
 
 .du-pool-heading {
   font-family: var(--rs-font-mono);
-  font-size: 0.875rem;
+  font-size: var(--rs-text-sm);
   color: var(--rs-gray-2);
   margin: 0;
   padding-bottom: var(--dui-space-xs);
@@ -35,7 +35,7 @@
 .du-step-arithmetic {
   font-family: var(--rs-font-mono);
   color: var(--rs-fg);
-  font-weight: 600;
+  font-weight: var(--rs-weight-semibold);
 }
 
 .du-step-final-math {
@@ -64,7 +64,7 @@
   padding: 0.125rem 0.25rem;
   border-radius: var(--dui-radius-sm);
   font-family: var(--rs-font-mono);
-  font-weight: 500;
+  font-weight: var(--rs-weight-medium);
   background: transparent;
   color: var(--rs-fg);
 }

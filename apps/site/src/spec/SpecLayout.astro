@@ -34,51 +34,52 @@ const isCanonical = Astro.url.pathname.replace(/\/?$/, '/') === new URL(specUrl)
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="en" data-product="spec">
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{pageTitle}</title>
-    <link rel="icon" href="/favicon.ico" />
-    <link rel="canonical" href={specUrl} />
+    <link rel="icon" href="/favicon.ico" sizes="32x32">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <link rel="canonical" href={specUrl}>
     <meta
       name="description"
       content="The formal specification for RANDSUM Dice Notation — a human-readable syntax for dice rolls in tabletop RPGs. Defines modifiers, execution pipeline, conformance levels, and special dice types."
-    />
-    <meta property="og:title" content={pageTitle} />
+    >
+    <meta property="og:title" content={pageTitle}>
     <meta
       property="og:description"
       content="The formal specification for RANDSUM Dice Notation — a human-readable syntax for dice rolls in tabletop RPGs. Defines modifiers, execution pipeline, conformance levels, and special dice types."
-    />
-    <meta property="og:image" content="https://randsum.dev/og-image.svg" />
-    <meta property="og:url" content={specUrl} />
-    <meta property="og:type" content="article" />
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content={pageTitle} />
+    >
+    <meta property="og:image" content="https://randsum.dev/og-image.png">
+    <meta property="og:url" content={specUrl}>
+    <meta property="og:type" content="article">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content={pageTitle}>
     <meta
       name="twitter:description"
       content="The formal specification for RANDSUM Dice Notation — a human-readable syntax for dice rolls in tabletop RPGs. Defines modifiers, execution pipeline, conformance levels, and special dice types."
-    />
-    <meta name="twitter:image" content="https://randsum.dev/og-image.svg" />
-    <Font cssVariable="--font-inter" preload />
+    >
+    <meta name="twitter:image" content="https://randsum.dev/og-image.png">
+    <Font cssVariable="--font-gabarito" preload />
     <Font cssVariable="--font-jetbrains-mono" />
     <script is:inline>
-      // Apply the theme before render to prevent a flash: a saved choice wins,
-      // otherwise follow the OS. Same key and data-theme as Starlight's picker,
-      // so one choice holds across the whole site.
-      const saved = (() => {
-        try {
-          return localStorage.getItem('starlight-theme')
-        } catch {
-          return null
-        }
-      })()
-      document.documentElement.dataset.theme =
-        saved === 'light' || saved === 'dark'
-          ? saved
-          : matchMedia('(prefers-color-scheme: light)').matches
-            ? 'light'
-            : 'dark'
+    // Apply the theme before render to prevent a flash: a saved choice wins,
+    // otherwise follow the OS. Same key and data-theme as Starlight's picker,
+    // so one choice holds across the whole site.
+    const saved = (() => {
+      try {
+        return localStorage.getItem('starlight-theme')
+      } catch {
+        return null
+      }
+    })()
+    document.documentElement.dataset.theme =
+      saved === 'light' || saved === 'dark'
+        ? saved
+        : matchMedia('(prefers-color-scheme: light)').matches
+          ? 'light'
+          : 'dark'
     </script>
   </head>
   <body>
@@ -98,7 +99,11 @@ const isCanonical = Astro.url.pathname.replace(/\/?$/, '/') === new URL(specUrl)
           <p class="label" style="color: var(--text-muted);">Sidebar</p>
         </slot>
       </nav>
-      <main id="main-content" class="spec-content" data-pagefind-body={isCanonical ? '' : undefined}>
+      <main
+        id="main-content"
+        class="spec-content"
+        data-pagefind-body={isCanonical ? '' : undefined}
+      >
         <slot name="content" />
       </main>
       <aside class="spec-aside" aria-label="In this section">
@@ -112,23 +117,23 @@ const isCanonical = Astro.url.pathname.replace(/\/?$/, '/') === new URL(specUrl)
       <KofiButton />
     </footer>
     <style>
-      .spec-footer {
-        display: flex;
-        justify-content: center;
-        padding: 2rem 1rem 3rem;
-        border-top: 1px solid var(--border);
-      }
+    .spec-footer {
+      display: flex;
+      justify-content: center;
+      padding: 2rem 1rem 3rem;
+      border-top: 1px solid var(--border);
+    }
     </style>
     <script>
-      const toggle = document.querySelector('[data-theme-toggle]')
-      if (toggle) {
-        toggle.addEventListener('click', () => {
-          const root = document.documentElement
-          const next = root.dataset.theme === 'light' ? 'dark' : 'light'
-          root.dataset.theme = next
-          localStorage.setItem('starlight-theme', next)
-        })
-      }
+    const toggle = document.querySelector('[data-theme-toggle]')
+    if (toggle) {
+      toggle.addEventListener('click', () => {
+        const root = document.documentElement
+        const next = root.dataset.theme === 'light' ? 'dark' : 'light'
+        root.dataset.theme = next
+        localStorage.setItem('starlight-theme', next)
+      })
+    }
     </script>
   </body>
 </html>

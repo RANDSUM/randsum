@@ -76,25 +76,25 @@ function highlightCode(code: string, filename: string): React.JSX.Element {
           if (!part) return null
           if (part.startsWith('//'))
             return (
-              <span key={i} style={{ color: '#5c6370', fontStyle: 'italic' }}>
+              <span key={i} style={{ color: 'var(--rs-code-comment)', fontStyle: 'italic' }}>
                 {part}
               </span>
             )
           if (part.startsWith("'") || part.startsWith('"') || part.startsWith('`'))
             return (
-              <span key={i} style={{ color: '#98c379' }}>
+              <span key={i} style={{ color: 'var(--rs-code-string)' }}>
                 {part}
               </span>
             )
           if (/^(?:import|from|export|const|function|return|if|throw|new)$/.test(part))
             return (
-              <span key={i} style={{ color: '#c678dd' }}>
+              <span key={i} style={{ color: 'var(--rs-code-keyword)' }}>
                 {part}
               </span>
             )
           if (/^(?:Error|string|map)$/.test(part))
             return (
-              <span key={i} style={{ color: '#e5c07b' }}>
+              <span key={i} style={{ color: 'var(--rs-code-function)' }}>
                 {part}
               </span>
             )
@@ -118,7 +118,7 @@ function highlightCode(code: string, filename: string): React.JSX.Element {
             return (
               <span key={i}>
                 {i > 0 && '\n'}
-                <span style={{ color: '#5c6370' }}>{line}</span>
+                <span style={{ color: 'var(--rs-code-comment)' }}>{line}</span>
               </span>
             )
           }
@@ -128,16 +128,18 @@ function highlightCode(code: string, filename: string): React.JSX.Element {
               return (
                 <span key={i}>
                   {i > 0 && '\n'}
-                  <span style={{ color: '#e5c07b' }}>{line.slice(0, colonIdx)}</span>
-                  <span style={{ color: '#abb2bf' }}>:</span>
-                  <span style={{ color: '#98c379' }}>{line.slice(colonIdx + 1)}</span>
+                  <span style={{ color: 'var(--rs-code-function)' }}>
+                    {line.slice(0, colonIdx)}
+                  </span>
+                  <span style={{ color: 'var(--rs-code-punct)' }}>:</span>
+                  <span style={{ color: 'var(--rs-code-string)' }}>{line.slice(colonIdx + 1)}</span>
                 </span>
               )
             }
             return (
               <span key={i}>
                 {i > 0 && '\n'}
-                <span style={{ color: '#98c379' }}>{line}</span>
+                <span style={{ color: 'var(--rs-code-string)' }}>{line}</span>
               </span>
             )
           }
@@ -145,14 +147,14 @@ function highlightCode(code: string, filename: string): React.JSX.Element {
             return (
               <span key={i}>
                 {i > 0 && '\n'}
-                <span style={{ color: '#61afef' }}>{line}</span>
+                <span style={{ color: 'var(--rs-code-property)' }}>{line}</span>
               </span>
             )
           if (line.startsWith('```'))
             return (
               <span key={i}>
                 {i > 0 && '\n'}
-                <span style={{ color: '#5c6370' }}>{line}</span>
+                <span style={{ color: 'var(--rs-code-comment)' }}>{line}</span>
               </span>
             )
           if (line.includes('**')) {
@@ -162,7 +164,13 @@ function highlightCode(code: string, filename: string): React.JSX.Element {
                 {i > 0 && '\n'}
                 {boldParts.map((p, j) =>
                   p.startsWith('**') ? (
-                    <span key={j} style={{ color: '#e5c07b', fontWeight: 700 }}>
+                    <span
+                      key={j}
+                      style={{
+                        color: 'var(--rs-code-function)',
+                        fontWeight: 'var(--rs-weight-bold)'
+                      }}
+                    >
                       {p}
                     </span>
                   ) : (

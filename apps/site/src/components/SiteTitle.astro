@@ -1,39 +1,87 @@
 ---
-import Default from '@astrojs/starlight/components/SiteTitle.astro'
+import PipMark from './PipMark.astro'
+import { PRODUCT_LABELS, productForPath } from '../utils/product'
+const { siteTitleHref } = Astro.locals.starlightRoute
+const product = productForPath(Astro.url.pathname)
 ---
 
-<div class="site-title-wrap">
-  <Default><slot /></Default>
-  <a href="/" class="site-title-link"><span class="site-title-text" translate="no">RANDSUM</span></a
-  >
-</div>
+<a href={siteTitleHref} class="site-title-link" data-pip-roll>
+  <PipMark size={30} class="site-title-mark" />
+  <span class="site-title-text" translate="no">RANDSUM</span>
+  {product && <span class="site-title-product">{PRODUCT_LABELS[product]}</span>}
+</a>
+
+<script>
+// Hover the mark: the pips tumble through two random faces, then land back on R
+const SLOTS = [28, 50, 72]
+for (const link of document.querySelectorAll<HTMLAnchorElement>('[data-pip-roll]')) {
+  const circles = [...link.querySelectorAll<SVGCircleElement>('circle')]
+  const home = circles.map(c => [c.getAttribute('cx') ?? '', c.getAttribute('cy') ?? ''] as const)
+  const busy = { now: false }
+  link.addEventListener('mouseenter', () => {
+    if (busy.now || matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    busy.now = true
+    const shuffle = (): void => {
+      const cells = SLOTS.flatMap(x => SLOTS.map(y => [x, y] as const)).sort(
+        () => Math.random() - 0.5
+      )
+      circles.forEach((c, i) => {
+        const cell = cells[i]
+        if (!cell) return
+        c.setAttribute('cx', String(cell[0]))
+        c.setAttribute('cy', String(cell[1]))
+      })
+    }
+    shuffle()
+    setTimeout(shuffle, 200)
+    setTimeout(() => {
+      circles.forEach((c, i) => {
+        const [cx, cy] = home[i] ?? ['', '']
+        c.setAttribute('cx', cx)
+        c.setAttribute('cy', cy)
+      })
+      busy.now = false
+    }, 420)
+  })
+}
+</script>
 
 <style>
-  .site-title-wrap {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    min-width: 0;
-  }
+.site-title-link {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  min-width: 0;
+  color: var(--sl-color-white);
+  text-decoration: none;
+}
 
-  .site-title-link {
-    text-decoration: none;
-  }
+.site-title-link :global(.site-title-mark circle) {
+  transition:
+    cx 0.2s cubic-bezier(0.3, 1.3, 0.5, 1),
+    cy 0.2s cubic-bezier(0.3, 1.3, 0.5, 1);
+}
 
-  .site-title-text {
-    font-family: var(--sl-font-heading, var(--sl-font));
-    font-size: var(--sl-text-h4);
-    font-weight: 700;
-    letter-spacing: -0.03em;
-    background: linear-gradient(
-      135deg,
-      var(--sl-color-accent-high),
-      var(--sl-color-accent),
-      var(--sl-color-accent-high)
-    );
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    white-space: nowrap;
+.site-title-text {
+  font-family: var(--sl-font-heading, var(--sl-font));
+  font-size: var(--sl-text-h4);
+  font-weight: var(--rs-weight-heavy);
+  letter-spacing: var(--rs-tracking-wordmark);
+  white-space: nowrap;
+}
+
+.site-title-product {
+  font-family: var(--sl-font-heading, var(--sl-font));
+  font-size: var(--sl-text-h4);
+  font-weight: var(--rs-weight-bold);
+  letter-spacing: var(--rs-tracking-heading);
+  color: var(--sl-color-accent);
+  white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .site-title-link :global(.site-title-mark circle) {
+    transition: none;
   }
+}
 </style>

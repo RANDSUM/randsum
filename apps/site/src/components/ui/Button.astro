@@ -1,0 +1,92 @@
+---
+// The one button. `primary` is ink (or the page's product colour inside a
+// product), `secondary` is a quiet outline, and `product` fills with a given
+// product's die colour. Every call-to-action on the site renders through here.
+import type { HTMLAttributes } from 'astro/types'
+import type { Product } from '../../utils/product'
+
+interface Props extends Omit<HTMLAttributes<'a'>, 'class'> {
+  href: string
+  variant?: 'primary' | 'secondary' | 'product'
+  product?: Product
+  size?: 'md' | 'sm'
+  class?: string
+}
+
+const { href, variant = 'primary', product, size = 'md', class: className, ...rest } = Astro.props
+const external = /^https?:\/\//.test(href)
+const style = product ? `--button-fill: var(--product-${product}-fill)` : undefined
+---
+
+<a
+  href={href}
+  class:list={['rs-button', `rs-button--${variant}`, `rs-button--${size}`, className]}
+  style={style}
+  target={external ? '_blank' : undefined}
+  rel={external ? 'noopener noreferrer' : undefined}
+  {...rest}
+>
+  <slot />
+</a>
+
+<style>
+.rs-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: 1px solid transparent;
+  border-radius: var(--rs-radius-md);
+  font-family: var(--rs-font-sans);
+  font-weight: var(--rs-weight-semibold);
+  line-height: 1;
+  text-decoration: none;
+  white-space: nowrap;
+  transition:
+    background-color var(--rs-duration) var(--rs-ease),
+    border-color var(--rs-duration) var(--rs-ease);
+}
+
+.rs-button:focus-visible {
+  outline: none;
+  box-shadow: var(--rs-focus-ring);
+}
+
+.rs-button--md {
+  padding: 0.75rem 1.25rem;
+  font-size: var(--rs-text-base);
+}
+
+.rs-button--sm {
+  padding: 0.5rem 0.875rem;
+  font-size: var(--rs-text-sm);
+}
+
+.rs-button--primary {
+  background: var(--rs-accent);
+  color: var(--rs-on-accent);
+}
+
+.rs-button--primary:hover {
+  background: color-mix(in srgb, var(--rs-accent) 85%, var(--rs-bg));
+}
+
+.rs-button--secondary {
+  border-color: var(--rs-gray-5);
+  background: var(--rs-bg);
+  color: var(--rs-fg);
+}
+
+.rs-button--secondary:hover {
+  border-color: var(--rs-gray-4);
+  background: var(--rs-gray-7);
+}
+
+.rs-button--product {
+  background: var(--button-fill, var(--rs-accent));
+  color: var(--rs-ink);
+}
+
+.rs-button--product:hover {
+  background: color-mix(in srgb, var(--button-fill, var(--rs-accent)) 85%, var(--rs-ink));
+}
+</style>
