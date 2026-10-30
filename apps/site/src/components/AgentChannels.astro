@@ -1,0 +1,82 @@
+---
+// Every agent channel from AGENT_CHANNELS, each wearing its product's die: who
+// it works with, what it gives the agent, the install snippet and its docs.
+import PipMark from './PipMark.astro'
+import Button from './ui/Button.astro'
+import CodePanel from './ui/CodePanel.astro'
+import { AGENT_CHANNELS } from '../utils/agents'
+---
+
+<div class="agent-channels not-content">
+  {AGENT_CHANNELS.map(channel => (
+    <article
+      id={channel.id}
+      class="agent-channel"
+      style={`--p: var(--product-${channel.product}-fill); --p-text: var(--product-${channel.product})`}
+    >
+      <p class="agent-channel-for">
+        <PipMark variant="knockout" size={18} />
+        {channel.worksWith}
+      </p>
+      <h3>{channel.name}</h3>
+      <p class="agent-channel-summary">{channel.summary}</p>
+      <CodePanel code={channel.install.code} lang={channel.install.lang} />
+      <div>
+        <Button href={channel.href} variant="product" product={channel.product} size="sm">
+          {channel.name} docs
+        </Button>
+      </div>
+    </article>
+  ))}
+</div>
+
+<style>
+.agent-channels {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(20rem, 1fr));
+  gap: 1rem;
+  margin-block: 1.5rem;
+}
+
+.agent-channel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1.25rem;
+  border: var(--rs-border);
+  border-top: 3px solid var(--p);
+  border-radius: var(--rs-radius-lg);
+  background: var(--rs-bg);
+}
+
+.agent-channel-for {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0;
+  font-family: var(--rs-font-mono);
+  font-size: var(--rs-text-xs);
+  color: var(--p-text);
+}
+
+.agent-channel-for :global(.pip-mark) {
+  flex: none;
+  color: var(--p);
+}
+
+.agent-channel h3 {
+  margin: 0;
+  font-family: var(--rs-font-heading);
+  font-size: var(--rs-text-lg);
+  font-weight: var(--rs-weight-bold);
+  letter-spacing: var(--rs-tracking-tight);
+  color: var(--rs-fg);
+}
+
+.agent-channel-summary {
+  margin: 0;
+  font-size: var(--rs-text-sm);
+  line-height: var(--rs-leading-body);
+  color: var(--rs-gray-2);
+}
+</style>

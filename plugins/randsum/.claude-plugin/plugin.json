@@ -1,5 +1,6 @@
 {
   "name": "randsum",
+  "displayName": "RANDSUM",
   "description": "RDN-conformant dice notation skills for Claude Code — roll dice, analyze probability, and create game specs for tabletop RPGs",
   "author": {
     "name": "RANDSUM",
