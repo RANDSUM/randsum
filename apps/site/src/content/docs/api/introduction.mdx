@@ -1,0 +1,82 @@
+---
+title: RANDSUM API
+description: A public, keyless REST API for dice at api.randsum.dev. Roll RANDSUM notation in short or long form, roll for seven tabletop game systems, and draw uniform random integers, as JSON from any language.
+---
+
+import CodeExample from '../../../components/live-repl/CodeExample.astro'
+
+The **RANDSUM API** puts the dice engine on the web at
+**`https://api.randsum.dev/v1`**. It runs the same `@randsum/roller` and
+`@randsum/games` code as the npm packages, so a roll over HTTP follows exactly
+the rules a roll in TypeScript does.
+
+It is public and needs no key or sign-up. Every response is JSON and
+CORS-enabled, so you can call it from a browser, a shell script, a spreadsheet,
+another language's HTTP client, or an AI agent with a fetch tool.
+
+## Quick start
+
+<CodeExample lang="bash" code={`curl "https://api.randsum.dev/v1/roll?notation=4d6L"`} />
+
+```json
+{
+  "notation": "4d6L",
+  "total": 14,
+  "pools": [
+    {
+      "notation": "4d6L",
+      "rolls": [3, 5, 6],
+      "total": 14,
+      "description": "Roll 4 6-sided dice, Drop lowest"
+    }
+  ],
+  "description": "Roll 4 6-sided dice, Drop lowest"
+}
+```
+
+`GET https://api.randsum.dev/v1` returns a JSON index of every endpoint with a
+working example of each, which is a good first call for a script or an agent
+exploring the API.
+
+## What it does
+
+| Endpoint                                    | Does                                                                      | Guide                         |
+| ------------------------------------------- | ------------------------------------------------------------------------- | ----------------------------- |
+| `GET` `POST` `/v1/roll`                     | Roll dice, in short form (notation) or long form (an options object)      | [Rolling dice](/api/rolling/) |
+| `GET` `POST` `/v1/validate`                 | Check a roll without rolling it, and get it back in both forms            | [Rolling dice](/api/rolling/#validate-a-roll) |
+| `GET` `/v1/games`                           | List the supported game systems and the inputs each one takes             | [Game systems](/api/games/)   |
+| `GET` `POST` `/v1/games/{game}/roll`        | Roll for a game, interpreted by its rules                                 | [Game systems](/api/games/)   |
+| `GET` `/v1/random`                          | Uniform random integers in a range, from a cryptographic source           | [Random numbers](/api/random/) |
+
+Every parameter, response field, status code and limit is in the
+[endpoint reference](/api/reference/).
+
+## How requests work
+
+- **`GET` or `POST`, same fields.** A `GET` takes its fields as query
+  parameters; a `POST` takes the same fields as a JSON object body. Use `GET`
+  for quick calls and links, `POST` when the input is nested or long.
+- **One roll, two spellings.** A roll can be notation (`4d6L+3`, the short
+  form) or the options object `roll()` takes (`sides`, `quantity`,
+  `modifiers`, the long form). Both give identical results. See
+  [Short form and long form](/api/rolling/#short-form-and-long-form).
+- **Reproducible on request.** Add an integer `seed` to a roll and the same
+  request always gives the same dice.
+- **Errors you can act on.** Bad input is a `400` whose `error` names the
+  problem, plus a `suggestion` when the notation has a likely fix.
+- **Nothing is cached that shouldn't be.** Rolls and random draws are sent
+  with `Cache-Control: no-store`.
+
+## For AI agents
+
+The API is one of the ways an agent can roll real dice. The same engine is also
+served as an MCP server at `https://api.randsum.dev/mcp`, which is the URL for a
+Claude connector, and the [Claude Code plugin](/tools/claude-code-plugin/)
+connects it for you. Its `dice-rolling` skill falls back to this API when no MCP
+server is connected. [AI Agents](/tools/agents/) compares every option.
+
+## Versioning
+
+Everything lives under `/v1`. Within `v1`, fields and endpoints may be added
+but are not removed or renamed, and existing fields keep their meaning. A
+change that would break a client goes to `/v2`.

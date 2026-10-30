@@ -161,6 +161,18 @@ export default defineConfig({
             ]
           },
           {
+            label: 'API',
+            link: '/api/introduction/',
+            icon: 'rocket',
+            items: [
+              { label: 'Introduction', slug: 'api/introduction' },
+              { label: 'Rolling Dice', slug: 'api/rolling' },
+              { label: 'Game Systems', slug: 'api/games' },
+              { label: 'Random Numbers', slug: 'api/random' },
+              { label: 'Endpoint Reference', slug: 'api/reference' }
+            ]
+          },
+          {
             label: 'Tools',
             link: '/tools/discord-bot/',
             icon: 'setting',
@@ -170,11 +182,11 @@ export default defineConfig({
                 items: [
                   { label: 'Overview', slug: 'tools/agents' },
                   { label: 'Claude Code Plugin', slug: 'tools/claude-code-plugin' },
-                  { label: 'MCP Server', slug: 'tools/mcp' }
+                  { label: 'MCP Server & Connector', slug: 'tools/mcp' }
                 ]
               },
               { label: 'Discord Bot', slug: 'tools/discord-bot' },
-              { label: 'HTTP API & Schema', slug: 'tools/http-api' }
+              { label: 'Hosted Schema', slug: 'tools/http-api' }
             ]
           }
         ])

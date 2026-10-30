@@ -53,5 +53,5 @@ first: the root `bun run build` builds exactly those three.
 - **Dice randomness** is the roller's default (`Math.random`); `/v1/random` uses
   `crypto.getRandomValues`.
 - Adding a route: extend `handleV1` and the `index()` listing in `v1.ts`, test it in
-  `__tests__/v1.test.ts`, and document it in `apps/site/src/content/docs/tools/http-api.mdx` and
+  `__tests__/v1.test.ts`, and document it under `apps/site/src/content/docs/api/` and
   the `dice-rolling` skill.

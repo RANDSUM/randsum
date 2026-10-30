@@ -1,0 +1,109 @@
+---
+title: Endpoint Reference
+description: Complete reference for the RANDSUM API at api.randsum.dev/v1, covering every endpoint, parameter, response field, status code, limit and header.
+---
+
+Base URL: **`https://api.randsum.dev`**. All endpoints are public and need no
+authentication.
+
+## Conventions
+
+- **Methods.** Endpoints that take input accept `GET` with query parameters
+  and `POST` with a JSON object body carrying the same fields. `OPTIONS`
+  answers CORS preflights. Other methods are a `404`.
+- **Bodies.** A `POST` body must be a JSON object of at most 4 KB. An empty
+  body counts as `{}`.
+- **Responses.** Always JSON (`application/json; charset=utf-8`).
+- **Errors.** Every error is a JSON object with an `error` string, sometimes
+  with extra fields that help fix the request.
+
+## `GET /v1`
+
+The index: the API's name, version, docs links, the MCP URL, and every endpoint
+with its parameters and a working example. Cacheable for 5 minutes.
+
+## `/v1/roll`
+
+`GET`, `POST`. Rolls dice. Guide: [Rolling dice](/api/rolling/).
+
+| Parameter                     | Type    | Notes                                                                   |
+| ----------------------------- | ------- | ----------------------------------------------------------------------- |
+| `notation`                    | string  | Short form. 1 to 1000 characters.                                       |
+| `sides`                       | integer or array | Long form: faces per die. Required in long form.               |
+| `quantity`                    | integer | Long form: number of dice, default 1                                    |
+| `arithmetic`                  | string  | Long form: `add` (default) or `subtract`                                |
+| `modifiers` / `modifiers.<name>[.<option>]` | object / any | Long form: modifiers as in `roll()`'s options       |
+| `seed`                        | integer | Optional. Makes the roll reproducible.                                  |
+
+Send `notation` or the long-form fields, not both. Response: `notation`,
+`total`, `pools[]` (`notation`, `rolls`, `total`, `description`),
+`description`.
+
+## `/v1/validate`
+
+`GET`, `POST`. Checks a roll without rolling. Takes `notation` or the long-form
+fields. Notation is always a `200`, valid or not; a long-form roll that cannot
+be converted is a `400`.
+
+Response: `notation`, `valid`, and either `options` (long form, one entry per
+pool) and `description` when valid, or `error` and an optional `suggestion`
+when not.
+
+## `GET /v1/games`
+
+Lists every game system: `games[]` of `game`, `roll` (its endpoint path) and
+`inputs` (each input's `type`, and when set, `minimum`, `maximum`, `enum`,
+`default`, `optional`, `description`). Cacheable for 5 minutes. Guide:
+[Game systems](/api/games/).
+
+## `/v1/games/{game}/roll`
+
+`GET`, `POST`. Rolls for one game. Parameters are that game's `inputs`.
+Response: `game`, `total`, `result`, `details` (when present), `rolls`.
+
+## `GET /v1/random`
+
+Uniform random integers. Parameters `min` (default 1), `max` (default 100),
+`count` (default 1, at most 1000); `max - min + 1` at most 2³². Response:
+`min`, `max`, `count`, `values[]`. Guide: [Random numbers](/api/random/).
+
+## `POST /mcp`
+
+The RANDSUM MCP server over Streamable HTTP, stateless, answering with JSON.
+Not part of `/v1`; see [MCP Server](/tools/mcp/). `GET` and `DELETE` are `405`,
+since there is no session or stream to open or end.
+
+## Status codes
+
+| Status | When                                                                                       |
+| ------ | ------------------------------------------------------------------------------------------ |
+| `200`  | Success                                                                                    |
+| `204`  | A CORS preflight (`OPTIONS`)                                                               |
+| `302`  | `GET /` redirects to `/v1`                                                                 |
+| `400`  | Invalid input: bad notation, a long-form problem, a game input out of range, a non-integer |
+| `404`  | Unknown path or method, or an unknown game (the body lists the real ones)                 |
+| `405`  | `GET` or `DELETE` on `/mcp`                                                               |
+| `413`  | A request body over 4 KB                                                                  |
+| `429`  | Rate limit exceeded                                                                        |
+| `500`  | A fault on our side; the body is `{ "error": "Internal error." }`                          |
+
+A `400` for notation the roller can guess a fix for includes `suggestion`. A
+`400` from a game includes that game's `inputs`. A `400` that the engine itself
+raises includes its error `code`.
+
+## Limits
+
+- **Rate.** About 120 requests a minute per client IP, across all endpoints.
+  Past that the API answers `429` with `Retry-After: 60`. The count is kept per
+  Cloudflare location, so treat it as a ceiling, not an exact quota.
+- **Notation.** At most 1000 characters.
+- **Body.** At most 4 KB.
+- **Random.** At most 1000 values per request.
+
+## Headers
+
+| Header                         | Value                                                                 |
+| ------------------------------ | --------------------------------------------------------------------- |
+| `Access-Control-Allow-Origin`  | `*` on every response                                                 |
+| `Cache-Control`                | `no-store` on rolls, draws and errors; `public, max-age=300` on `/v1` and `/v1/games` |
+| `Retry-After`                  | `60`, on a `429`                                                      |

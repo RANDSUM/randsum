@@ -147,6 +147,6 @@ export const toolPackages: PackageInfo[] = [
     npmPackage: '@randsum/mcp',
     sourceUrl: 'https://github.com/RANDSUM/randsum/tree/main/packages/mcp',
     category: 'tool',
-    color: 'var(--product-mcp)'
+    color: 'var(--product-plugin)'
   }
 ]
