@@ -24,7 +24,7 @@ Private app, deploys to Cloudflare Workers once CI is green on `main` via
   via Astro's Google font provider, loaded by the `<Font />` tags in `Head.astro`
 - Brand: the pip R mark (`src/components/PipMark.astro`, outline and knockout) and a
   product family. Chrome is neutral; `src/utils/product.ts` maps a path to its product
-  (roller, games, spec, api, app, discord, plugin), `Head.astro` stamps `<html data-product>`,
+  (roller, games, spec, api, discord, plugin, app), `Head.astro` stamps `<html data-product>`,
   and `theme.css` turns that into the page's accent (`--product-*`)
 
 > **`typescript` is `7.1.0-beta` here, not the root `catalog:` (7.0.2).** `astro check` refuses

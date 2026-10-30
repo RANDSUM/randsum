@@ -11,7 +11,7 @@ Bun workspace monorepo for a dice rolling ecosystem targeting tabletop RPGs. All
 - **`@randsum/mcp`** (`packages/mcp/`): MCP server exposing `roll`, `validate` and `roll_game`.
 - **`@randsum/api`** (`apps/api/`, private): Cloudflare Worker at api.randsum.dev serving the `/v1` REST API and `/mcp`, the hosted `@randsum/mcp` behind the Claude connector.
 - **`@randsum/discord-bot`** (`apps/discord-bot/`, private): Discord bot, a Cloudflare Worker at bot.randsum.dev.
-- **`@randsum/site`** (`apps/site/`, private): Astro + Starlight docs site at randsum.dev. It also serves the notation spec at `/spec` and owns the web-only React dice components in `src/components/dice-ui/`.
+- **`@randsum/site`** (`apps/site/`, private): Astro + Starlight docs site at randsum.dev. It also serves the notation spec at `/spec` and the installable Roller app at `/app`, and owns the web-only React dice components in `src/components/dice-ui/`.
 - **Claude Code plugin** (`plugins/randsum/`): the `randsum` plugin that the root `.claude-plugin/marketplace.json` publishes. Three skills plus its own `.mcp.json`, which connects only the hosted MCP at `https://api.randsum.dev/mcp`. The root `.mcp.json` holds the maintainers' ops servers and never ships.
 
 Game packages never depend on each other, only on `@randsum/roller`.

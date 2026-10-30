@@ -38,6 +38,11 @@ roll("2d6+3[fire]") // Annotation
 - [@randsum/games](https://randsum.dev/games/introduction/): game interpretations as subpath exports: `/fifth` (D&D 5e), `/blades` (Blades in the Dark), `/pbta`, `/daggerheart`, `/fate` (Fate Core), `/root-rpg`, `/salvageunion`, and `/schema` (codegen and validation for game specs)
 - [@randsum/mcp](https://randsum.dev/tools/mcp/): the MCP server above, also runnable over stdio with `bunx @randsum/mcp`
 
+## Apps
+
+- [Roller app](https://randsum.dev/app/): installable, offline-capable dice roller in the browser, for people rather than agents
+- [Discord bot](https://randsum.dev/tools/discord-bot/): slash commands for every supported game
+
 ## Specification
 
 - [RDN specification](https://randsum.dev/spec/): taxonomy, execution pipeline, conformance levels, syntax
