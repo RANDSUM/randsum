@@ -14,7 +14,11 @@ Three tools, each backed by a pure, directly-testable handler:
 
 ## Structure
 
-- `src/index.ts` — Entry: creates the server, connects `StdioServerTransport`, `main()`
+- `src/index.ts` — Bin entry: creates the server, connects `StdioServerTransport`, `main()`
+- `src/remote.ts` — The `./remote` export (the package's only importable entry): `handleMcpRequest()`
+  serves the same server statelessly over Streamable HTTP, and re-exports the tool handlers. Used by
+  `apps/api` (api.randsum.dev `/mcp` and `/v1`). There is no `.` export: importing the bin would
+  start a stdio server.
 - `src/server.ts` — `createServer()`: registers the three tools; owns the Zod input and output schemas
 - `src/tools/roll.ts` — `rollNotation()` pure handler
 - `src/tools/validate.ts` — `validateNotationInput()` pure handler
@@ -30,7 +34,7 @@ game's generated `inputs` export (`GAME_INPUTS` in `tools/rollGame.ts`); never h
 
 ```bash
 bun run dev                    # Run the server from source over stdio
-bun run build                  # bunup → dist/index.js (ESM), then chmod +x
+bun run build                  # bunup → dist/index.js + dist/remote.js (ESM), then chmod +x
 bun run test                   # bun test (calls tool handlers directly)
 bun run typecheck              # tsc --noEmit
 bun run check                  # build + typecheck + test

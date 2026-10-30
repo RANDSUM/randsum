@@ -1,9 +1,13 @@
 import { defineConfig } from 'bunup'
 
 export default defineConfig({
-  entry: ['src/index.ts'],
+  // `index.ts` is the stdio bin. `remote.ts` is the `./remote` subpath, which
+  // the api.randsum.dev Worker imports, and the only importable entry: the
+  // package exports no `.`, because importing the bin would start a stdio
+  // server. Only `remote.ts` gets declarations.
+  entry: ['src/index.ts', 'src/remote.ts'],
   format: ['esm'],
-  dts: false,
+  dts: { entry: ['src/remote.ts'] },
   minify: false,
   sourcemap: 'external',
   target: 'node',

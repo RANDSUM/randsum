@@ -76,7 +76,7 @@ on:
         description: 'Which surface to deploy'
         type: choice
         default: all
-        options: [all, site, bot]
+        options: [all, site, bot, api]
 
 permissions:
   contents: read
@@ -103,6 +103,7 @@ jobs:
       sha: ${{ steps.select.outputs.sha }}
       site: ${{ steps.select.outputs.site }}
       bot: ${{ steps.select.outputs.bot }}
+      api: ${{ steps.select.outputs.api }}
       commands: ${{ steps.select.outputs.commands }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -125,7 +126,7 @@ jobs:
           # A manual run deploys what it is asked to. A manual bot deploy always
           # rewrites the command registry: that is how drift gets repaired.
           if [ "$EVENT" = workflow_dispatch ]; then
-            for s in site bot; do
+            for s in site bot api; do
               if [ "$SURFACE" = all ] || [ "$SURFACE" = "$s" ]; then v=true; else v=false; fi
               echo "$s=$v" >> "$GITHUB_OUTPUT"
             done
@@ -180,6 +181,7 @@ jobs:
             {
               echo "site=false"
               echo "bot=false"
+              echo "api=false"
               echo "commands=false"
             } >> "$GITHUB_OUTPUT"
             exit 0
@@ -190,7 +192,7 @@ jobs:
 
           deploy=false
           commands=false
-          if [ "$changed" = ALL ] || grep -qE '^(apps/(site|discord-bot)/|packages/|bun\.lock$|\.github/workflows/deploy-cloudflare\.yml$)' <<< "$changed"; then
+          if [ "$changed" = ALL ] || grep -qE '^(apps/(site|discord-bot|api)/|packages/|bun\.lock$|\.github/workflows/deploy-cloudflare\.yml$)' <<< "$changed"; then
             deploy=true
           fi
           # Only the command sources trigger registration. A command schema that
@@ -202,6 +204,7 @@ jobs:
           {
             echo "site=$deploy"
             echo "bot=$deploy"
+            echo "api=$deploy"
             echo "commands=$commands"
           } >> "$GITHUB_OUTPUT"
 
@@ -296,3 +299,33 @@ jobs:
             exit 1
           fi
           bun run --filter @randsum/discord-bot deploy-commands
+
+  api:
+    name: api.randsum.dev
+    needs: plan
+    if: needs.plan.outputs.api == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ needs.plan.outputs.sha }}
+          persist-credentials: false
+      - uses: ./.github/actions/bun-setup
+
+      # Like the bot: wrangler compiles the Worker itself, but the workspace
+      # packages it imports (roller, games, and mcp's `./remote` subpath) resolve
+      # to dist, so they build first.
+      - name: Build dependencies
+        run: bun run --filter '@randsum/api^...' build
+
+      # The first deploy also creates api.randsum.dev's DNS record and
+      # certificate, from the custom domain route in apps/api/wrangler.jsonc.
+      - name: Deploy
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: |
+          if [ -z "$CLOUDFLARE_API_TOKEN" ]; then
+            echo "::error::CLOUDFLARE_API_TOKEN is not set — cannot deploy."
+            exit 1
+          fi
+          bun run --filter @randsum/api deploy

@@ -23,6 +23,7 @@ jobs:
       site: ${{ steps.filter.outputs.site }}
       skill: ${{ steps.filter.outputs.skill }}
       discord-bot: ${{ steps.filter.outputs.discord-bot }}
+      api: ${{ steps.filter.outputs.api }}
       changesets: ${{ steps.filter.outputs.changesets }}
       # Dynamic matrix for the consolidated `package` job below: one include leg
       # per CHANGED package, carrying its per-package config (node version,
@@ -81,6 +82,12 @@ jobs:
               - 'packages/roller/**'
               - 'packages/games/**'
               - '.github/workflows/ci.yml'
+            api:
+              - 'apps/api/**'
+              - 'packages/roller/**'
+              - 'packages/games/**'
+              - 'packages/mcp/**'
+              - '.github/workflows/ci.yml'
             changesets:
               - '.changeset/**'
               - '!.changeset/README.md'
@@ -101,6 +108,7 @@ jobs:
             {"pkg":"games","coverage":"games","size":true},
             {"pkg":"mcp"},
             {"pkg":"discord-bot"},
+            {"pkg":"api"},
             {"pkg":"site","node":"22"}
           ]'
           changed='${{ toJSON(steps.filter.outputs) }}'
@@ -108,7 +116,7 @@ jobs:
             '$all | map(select($changed[.pkg] == "true" or $changed.shared == "true"))')
           echo "matrix={\"include\":$include}" >> "$GITHUB_OUTPUT"
 
-  # The per-package jobs (roller, games, mcp, discord-bot, site) were
+  # The per-package jobs (roller, games, mcp, discord-bot, api, site) were
   # near-identical, differing only in filter name, node version, and coverage
   # flags. They are folded into one matrix, populated dynamically by the
   # `changes` job so only changed packages get a leg. The `include` entries
@@ -313,9 +321,9 @@ jobs:
     name: CI Success
     if: always()
     # `package` is the consolidated matrix job: its single `result` aggregates
-    # every leg (roller, games, mcp, discord-bot, site) — if
+    # every leg (roller, games, mcp, discord-bot, api, site) — if
     # any leg fails, the aggregate is `failure`, so listing it once still covers
-    # all five packages. `repo` runs the repo-wide gates, including the
+    # all six packages. `repo` runs the repo-wide gates, including the
     # `ci-aggregator` step that guards this very list.
     #
     # `changes` is listed even though nothing here reads its outputs: a failure in

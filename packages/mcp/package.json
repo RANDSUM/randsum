@@ -1,6 +1,6 @@
 {
   "name": "@randsum/mcp",
-  "description": "Model Context Protocol stdio server exposing the RANDSUM dice rolling ecosystem to AI agents",
+  "description": "Model Context Protocol server exposing the RANDSUM dice rolling ecosystem to AI agents, over stdio or Streamable HTTP",
   "version": "2.0.0",
   "private": false,
   "author": {
@@ -16,7 +16,15 @@
     "directory": "packages/mcp"
   },
   "type": "module",
-  "main": "./dist/index.js",
+  "exports": {
+    "./remote": {
+      "import": {
+        "types": "./dist/remote.d.ts",
+        "default": "./dist/remote.js"
+      }
+    },
+    "./package.json": "./package.json"
+  },
   "bin": {
     "randsum-mcp": "dist/index.js"
   },

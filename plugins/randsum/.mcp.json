@@ -1,8 +1,8 @@
 {
   "mcpServers": {
     "randsum": {
-      "command": "npx",
-      "args": ["-y", "@randsum/mcp"]
+      "type": "http",
+      "url": "https://api.randsum.dev/mcp"
     }
   }
 }
