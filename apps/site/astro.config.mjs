@@ -182,7 +182,7 @@ export default defineConfig({
                 items: [
                   { label: 'Overview', slug: 'tools/agents' },
                   { label: 'Claude Code Plugin', slug: 'tools/claude-code-plugin' },
-                  { label: 'MCP Server & Connector', slug: 'tools/mcp' }
+                  { label: 'Claude Connector & MCP', slug: 'tools/mcp' }
                 ]
               },
               { label: 'Discord Bot', slug: 'tools/discord-bot' },
