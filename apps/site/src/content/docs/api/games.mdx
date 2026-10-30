@@ -60,7 +60,7 @@ curl -X POST https://api.randsum.dev/v1/games/fifth/roll \
 | `total`   | The numeric total                                                   |
 | `result`  | The game's interpreted outcome, such as `"success"` or a tier name   |
 | `details` | Extra game-specific detail, when the game provides any              |
-| `rolls`   | Every die value rolled                                              |
+| `rolls`   | The die values that count, after the game's modifiers (Blades keeps only its highest die) |
 
 ## Inputs by game
 

@@ -1,56 +1,55 @@
-# RANDSUM - Dice Notation and Rolling Engine
+# RANDSUM
 
-> TypeScript dice engine implementing the RANDSUM Dice Notation (RDN) specification. RDN v0.9.0 Level 3 (Extended) Conformant. Works with D&D 5e, Blades in the Dark, PbtA, Daggerheart, Root RPG, Salvage Union, and more.
+> TypeScript dice engine implementing the RANDSUM Dice Notation (RDN) specification, at RDN v0.9.0 Level 3 (Extended) conformance. Works with D&D 5e, Blades in the Dark, PbtA, Daggerheart, Fate Core, Root RPG, Salvage Union, and more. AI agents should roll through the MCP server or the HTTP API rather than inventing dice results.
 
-## Packages
+`roll()` accepts a number, a notation string, an options object, or several of these combined. It throws on invalid input.
 
-- @randsum/roller - Core dice engine with built-in RDN notation parser
-- @randsum/mcp - Model Context Protocol server exposing roll, validate, and roll_game tools to AI agents; hosted at https://api.randsum.dev/mcp, or run locally over stdio (bunx/npx @randsum/mcp)
-- @randsum/games - TTRPG game packages with subpath exports:
-  - @randsum/games/fifth - D&D 5th Edition
-  - @randsum/games/blades - Blades in the Dark
-  - @randsum/games/pbta - Powered by the Apocalypse
-  - @randsum/games/daggerheart - Daggerheart RPG
-  - @randsum/games/fate - Fate Core
-  - @randsum/games/root-rpg - Root RPG
-  - @randsum/games/salvageunion - Salvage Union
-  - @randsum/games/schema - Codegen/validation API for game specs
+```
+npm install @randsum/roller
+
+roll(20)            // 1d20
+roll("4d6L")        // D&D ability score: 4d6, drop lowest
+roll({ sides: 6, quantity: 4, modifiers: { drop: { lowest: 1 } } })
+roll("2d20L+5")     // Advantage attack roll
+roll("2d6+3")       // PbtA: 2d6 + stat
+roll("d%")          // Percentile: 1d100
+roll("4dF")         // Fate Core: 4 Fate dice (-4 to +4)
+roll("5d6W")        // D6 System wild die
+roll("g6")          // Geometric die
+roll("3DD6")        // Draw die
+roll("4d6Lx6")      // Repeat operator
+roll("2d6+3[fire]") // Annotation
+```
 
 ## AI Agents
 
-Use these rather than inventing dice results. Overview: https://randsum.dev/tools/agents/
+- [Agent integrations](https://randsum.dev/tools/agents/): overview of every way an agent can roll with RANDSUM
+- [MCP server](https://randsum.dev/tools/mcp/): tools `roll`, `validate`, `roll_game`. Hosted at `https://api.randsum.dev/mcp` (add it as a Claude connector, or `claude mcp add --transport http randsum https://api.randsum.dev/mcp`); local stdio: `claude mcp add randsum -- bunx -y @randsum/mcp`
+- [Claude Code plugin](https://randsum.dev/tools/claude-code-plugin/): skills plus the hosted MCP server. `/plugin marketplace add RANDSUM/randsum`, then `/plugin install randsum@randsum`
 
-- Claude Code plugin (skills + bundled MCP server): /plugin marketplace add RANDSUM/randsum, then /plugin install randsum@randsum. Docs: https://randsum.dev/tools/claude-code-plugin/
-- MCP server for any MCP client: add https://api.randsum.dev/mcp as a Claude connector, or claude mcp add --transport http randsum https://api.randsum.dev/mcp (local: claude mcp add randsum -- bunx -y @randsum/mcp). Tools: roll, validate, roll_game. Docs: https://randsum.dev/tools/mcp/
+## HTTP API
 
-## Quick Start
+- [API introduction](https://randsum.dev/api/introduction/): `https://api.randsum.dev/v1`, public, keyless, CORS. `GET /v1/roll?notation=4d6L[&seed=N]`, `/v1/validate?notation=`, `/v1/games`, `/v1/games/{game}/roll?<inputs>`, `/v1/random?min=&max=&count=`; POST takes the same fields as JSON
+- [API reference](https://randsum.dev/api/reference/): every route, parameter and response shape
 
-npm install @randsum/roller
+## Packages
 
-roll() accepts number, notation string, options object, or multiple arguments:
+- [@randsum/roller](https://randsum.dev/roller/introduction/): core dice engine with the built-in RDN notation parser
+- [@randsum/games](https://randsum.dev/games/introduction/): game interpretations as subpath exports: `/fifth` (D&D 5e), `/blades` (Blades in the Dark), `/pbta`, `/daggerheart`, `/fate` (Fate Core), `/root-rpg`, `/salvageunion`, and `/schema` (codegen and validation for game specs)
+- [@randsum/mcp](https://randsum.dev/tools/mcp/): the MCP server above, also runnable over stdio with `bunx @randsum/mcp`
 
-roll(20)       // Number: 1d20
-roll("4d6L")   // Notation: D&D ability score (4d6, drop lowest)
-roll({ sides: 6, quantity: 4, modifiers: { drop: { lowest: 1 } } })
-roll("2d20L+5") // Advantage attack roll
-roll("2d6+3")   // PbtA / 2d6 + stat
-roll("d%")      // Percentile: 1d100
-roll("4dF")     // Fate Core: 4 Fate dice (-4 to +4)
-roll("5d6W")   // D6 System wild die
-roll("g6")     // Geometric die
-roll("3DD6")   // Draw die
-roll("4d6Lx6") // Repeat operator
-roll("2d6+3[fire]") // Annotations
+## Apps
 
-## Web Surfaces
+- [Roller app](https://randsum.dev/app/): installable, offline-capable dice roller in the browser, for people rather than agents
+- [Discord bot](https://randsum.dev/tools/discord-bot/): slash commands for every supported game
 
-- RANDSUM API: https://api.randsum.dev/v1 (public, keyless, CORS). GET /v1/roll?notation=4d6L[&seed=N], /v1/validate?notation=, /v1/games, /v1/games/{game}/roll?<inputs>, /v1/random?min=&max=&count=. Docs: https://randsum.dev/api/introduction/
-- Legacy HTTP roll endpoint: POST https://randsum.dev/api/roll with JSON { "notation": "4d6L" }; returns { notation, total, rolls, description }. Runs the same roll() engine as @randsum/roller. CORS-enabled; GET returns the contract.
-- Hosted games meta-schema: https://randsum.dev/schemas/v1/randsum.json (JSON Schema for *.randsum.json game specs; reference it via a "$schema" key for editor autocompletion).
+## Specification
 
-## Links
+- [RDN specification](https://randsum.dev/spec/): taxonomy, execution pipeline, conformance levels, syntax
+- [RDN specification, full text](https://randsum.dev/spec/llms-full.txt): the whole spec as plain text
+- [Games meta-schema](https://randsum.dev/schemas/v1/randsum.json): JSON Schema for `*.randsum.json` game specs; reference it from a `"$schema"` key for editor completion
 
-- Documentation: https://randsum.dev
-- RDN Specification: https://randsum.dev/spec/
-- GitHub: https://github.com/RANDSUM/randsum
-- RDN Spec (full text): https://randsum.dev/spec/llms-full.txt
+## Optional
+
+- [Legacy roll endpoint](https://randsum.dev/api/roll): `POST https://randsum.dev/api/roll` with `{ "notation": "4d6L" }` returns `{ notation, total, rolls, description }`; `GET` returns the contract. Prefer the `/v1` API for new work
+- [Source on GitHub](https://github.com/RANDSUM/randsum)

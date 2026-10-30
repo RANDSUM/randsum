@@ -13,4 +13,4 @@ To use it from Claude, add a custom connector with the URL `https://api.randsum.
 
 Docs: [HTTP API](https://randsum.dev/api/introduction/) · [MCP Server](https://randsum.dev/tools/mcp/)
 
-Private and never published; see [`CLAUDE.md`](./CLAUDE.md) for development.
+Private and never published; see [`AGENTS.md`](./AGENTS.md) for development.

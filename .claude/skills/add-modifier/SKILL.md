@@ -11,7 +11,7 @@ A modifier is split across two files on purpose:
 - `packages/roller/src/notation/definitions/<name>.ts` exports `<name>Schema` (pattern, parse, format, description, priority). It is added to `MODIFIER_SCHEMAS` in `packages/roller/src/notation/definitions/index.ts`.
 - `packages/roller/src/modifiers/<name>.ts` exports `<name>Modifier`, which spreads `<name>Schema` and adds the dice-pool behavior. It is added to `MODIFIERS_BY_NAME` in `packages/roller/src/modifiers/definitions.ts`.
 
-The tokenize path parses with the schemas, so it must never pull in behavior code. See `docs/adr/ADR-007-modifier-co-location.md` (status: amended, audit-1011) and the "Modifier system" section of `packages/roller/CLAUDE.md`.
+The tokenize path parses with the schemas, so it must never pull in behavior code. See `docs/adr/ADR-007-modifier-co-location.md` (status: amended, audit-1011) and the "Modifier system" section of `packages/roller/AGENTS.md`.
 
 ## Precondition — ask if missing
 

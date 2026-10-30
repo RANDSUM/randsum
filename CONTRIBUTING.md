@@ -33,7 +33,7 @@ Game packages are code-generated from `.randsum.json` specs. To add a game:
 3. Add tests in `packages/games/__tests__/<shortcode>.test.ts`
 4. Add a subpath export to `packages/games/package.json`
 
-See `packages/games/CLAUDE.md` for detailed patterns and conventions.
+See `packages/games/AGENTS.md` for detailed patterns and conventions.
 
 ## Testing
 
@@ -52,7 +52,7 @@ See `packages/games/CLAUDE.md` for detailed patterns and conventions.
 - Explicit return types on exported functions
 - Biome formatter: no semicolons, single quotes, no trailing commas
 
-See the root `CLAUDE.md` for the full TypeScript conventions reference.
+See the root `AGENTS.md` for the full TypeScript conventions reference.
 
 Run `bun run fix:all` to auto-fix lint and format issues.
 
@@ -71,6 +71,26 @@ Run `bun run fix:all` to auto-fix lint and format issues.
 **pre-commit** runs `bun install --frozen-lockfile` first (nothing else runs if it fails), then in parallel: Biome (`check --write` — lint + format, covering `.astro`), `typecheck`, and a codegen check (`gen:check`) when a `.randsum.json` spec changed. A failing step prints its own fix.
 
 **pre-push** is a heavier gauntlet — expect it to take a while. It runs `build` first (nothing else runs if it fails), then in parallel: codegen check (`gen:check`), conformance check (`@randsum/site conformance:check`), the full test suite, and `knip`. A failing step prints its own fix. See `lefthook.yml` for the exact config. Do not `--no-verify` past a real failure.
+
+## Releases
+
+Releases are automated via [changesets](https://github.com/changesets/changesets) and npm OIDC Trusted Publishing. Nobody runs a publish command by hand in the normal flow.
+
+1. Add a changeset with your change: `bun run changeset` (writes a markdown file under `.changeset/`).
+2. On merge to `main`, the `Release` workflow (`.github/workflows/publish.yml`) runs after CI succeeds. With changesets pending, its `version` job opens or updates a `chore: version packages` PR (applying `bun changeset version` to bump versions and roll per-package `CHANGELOG.md` entries) using a GitHub App token, because a PR pushed with `GITHUB_TOKEN` never gets CI. Once that PR is merged, its `publish` job, the only one holding the npm OIDC id-token, publishes the changed packages and pushes a `name@version` tag and GitHub release for each.
+3. Publishing runs `bun run publish`: `bun run build`, then `bun scripts/publish.ts`. There is no `check` or size step there, because Release runs only after CI passed on that commit. The script packs each package with `bun pm pack` (resolving `workspace:~` to a real semver range) and publishes the tarball with `npm publish`. In CI, auth is npm Trusted Publishing (no `NPM_TOKEN`) and `--provenance` attests the build.
+
+**npm version in Release:** the `publish` job sets up Node 24, which bundles npm >= 11.5.1, the minimum Trusted Publishing and provenance need.
+
+**Trusted publisher per package:** every published package needs its own Trusted Publisher entry on npmjs.com (package Settings → Trusted Publisher → GitHub Actions, repository `RANDSUM/randsum`, workflow `publish.yml`). A brand-new package cannot have one until it exists on the registry, so its first release is a local `bun scripts/publish.ts --otp=<CODE>` run by the owner.
+
+**`workspace:~` warning:** never run a bare `npm publish` from a package directory. npm ships the literal `workspace:~` string, which consumers cannot resolve. Publishing always goes through `scripts/publish.ts`.
+
+**Local fallback (rare):** `bun scripts/publish.ts --otp=<CODE>` (the npm account has 2FA set to `auth-and-writes`), optionally with `--dry-run`. Local runs omit `--provenance`. Publish order is fixed in the script: `@randsum/roller` → `@randsum/games` → `@randsum/mcp`.
+
+### Versioning
+
+`@randsum/roller` and `@randsum/games` are **linked** in `.changeset/config.json`, so they always bump together. `updateInternalDependencies` is `minor`, so a minor or major bump to core updates dependents' `workspace:~` ranges; patch bumps stay local. `@randsum/mcp` bundles roller and games as devDependencies, which never trigger a release, so `bun run check:changesets` fails when a pending changeset releases roller or games without also releasing mcp. Every `private: true` workspace (site, discord-bot, api) is skipped by `privatePackages: { version: false, tag: false }`.
 
 ## Resources
 

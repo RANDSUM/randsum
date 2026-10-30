@@ -1,9 +1,34 @@
+import { NotationParseError } from '../errors'
 import { parseNotation } from './lexer/parse'
 import { parsedToOptions } from './parse/notationToOptions'
 import type { DiceNotation } from './types'
 import type { InvalidValidationResult, ValidValidationResult, ValidationResult } from './types'
 import { optionsToDescription } from './transformers/optionsToDescription'
 import { formatNotation } from './transformers/optionsToNotation'
+
+function invalid(
+  notation: string,
+  message: string,
+  position: number | undefined
+): InvalidValidationResult {
+  return {
+    valid: false,
+    argument: notation,
+    error: { message, argument: notation, ...(position !== undefined ? { position } : {}) }
+  }
+}
+
+function buildOptions(
+  notation: string,
+  parsed: Parameters<typeof parsedToOptions>[1]
+): ReturnType<typeof parsedToOptions> | NotationParseError {
+  try {
+    return parsedToOptions(notation, parsed)
+  } catch (error) {
+    if (error instanceof NotationParseError) return error
+    throw error
+  }
+}
 
 /**
  * Validates dice notation and returns parsed information.
@@ -19,19 +44,16 @@ export function validateNotation(notation: string): ValidationResult {
   const parsed = typeof notation === 'string' ? parseNotation(notation) : null
 
   if (!parsed?.valid) {
-    const result: InvalidValidationResult = {
-      valid: false,
-      argument: notation,
-      error: {
-        message: `Invalid dice notation: "${notation}"`,
-        argument: notation,
-        ...(parsed?.error ? { position: parsed.error.position } : {})
-      }
-    }
-    return result
+    return invalid(notation, `Invalid dice notation: "${notation}"`, parsed?.error?.position)
   }
 
-  const options = parsedToOptions(notation, parsed)
+  // The repeat limits (count and nesting depth) are enforced while building
+  // options, after the grammar accepted the string; report them, never throw.
+  const built = buildOptions(notation, parsed)
+  if (built instanceof NotationParseError) {
+    return invalid(notation, built.message, built.context?.position)
+  }
+  const options = built
   const result: ValidValidationResult = {
     valid: true,
     argument: notation as DiceNotation,

@@ -19,5 +19,5 @@ language js
 
 JsImport() as $import where {
   $import <: r"[\s\S]*\{[\s\S]*[A-Za-z0-9_]+Modifier\b[\s\S]*\}[\s\S]*from[\s\S]*modifiers(?:/[^\x27\x22]*)?[\x27\x22][\s\S]*",
-  register_diagnostic(span=$import, message="Tokenize-reachable files must not import *Modifier (behavior) symbols — only *Schema exports. Importing a behavior here breaks tree-shaking and inflates dist/tokenize.js. See packages/roller/CLAUDE.md \"Tokenize Isolation Invariant\" and docs/adr/ADR-007-modifier-co-location.md.")
+  register_diagnostic(span=$import, message="Tokenize-reachable files must not import *Modifier (behavior) symbols — only *Schema exports. Importing a behavior here breaks tree-shaking and inflates dist/tokenize.js. See packages/roller/AGENTS.md \"Tokenize isolation invariant\" and docs/adr/ADR-007-modifier-co-location.md.")
 }

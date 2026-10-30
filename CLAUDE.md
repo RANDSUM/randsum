@@ -1,189 +1,15 @@
-# CLAUDE.md
+@AGENTS.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+## Claude Code
 
-## Architecture
+- Review changes with the built-in `/code-review`.
+- Subagents in `.claude/agents/`: `senior-dev` (implementation in an isolated worktree cut from `main`), `ttrpg-enthusiast` (read-only game-mechanics review), `json-schema-expert` (`.randsum.json` specs and the meta-schema).
+- Project skills in `.claude/skills/`: `add-modifier` (invoke as `/add-modifier`), and the vendored Cloudflare skills below.
+- The `randsum` plugin's skills do not load in this repo's sessions. Load the working tree with `claude --plugin-dir plugins/randsum`.
 
-Bun workspace monorepo for a dice rolling ecosystem targeting tabletop RPGs. All packages are TypeScript, published to npm under `@randsum`.
+### Cloudflare Skills
 
-**Core**: `@randsum/roller` — zero-dependency dice engine with built-in notation parsing and validation. Every other package depends on it via `workspace:~`.
-
-**Game packages** live in `packages/games/` — each wraps roller with game-specific interpretation, accessed via subpath exports:
-`blades` (Blades in the Dark), `daggerheart`, `fate` (Fate Core), `fifth` (D&D 5e), `root-rpg`, `salvageunion`, `pbta` (Powered by the Apocalypse). A `schema` subpath exports the codegen/validation API.
-
-**Apps**: `@randsum/api` (private Cloudflare Worker at api.randsum.dev: the `/v1` REST API and `/mcp`, the hosted `@randsum/mcp` server behind the Claude connector), `@randsum/discord-bot` (private Discord bot, deployed as a Cloudflare Worker at bot.randsum.dev), `@randsum/site` (Astro + Starlight docs site at randsum.dev, private; also serves the notation spec at `/spec` through its own non-Starlight layout)
-
-**UI**: the web-only React dice components (notation input with token overlay, roll step visualizer, combined roller) live in `apps/site/src/components/dice-ui/`, not in a package; `apps/site` is their only consumer.
-
-**Claude Code plugin**: `plugins/randsum/` — the `randsum` plugin the root `.claude-plugin/marketplace.json` publishes: three skills plus its own `.mcp.json`, which connects only the hosted `@randsum/mcp` at `https://api.randsum.dev/mcp`. The root `.mcp.json` holds the maintainers' ops servers and never ships. Its skills do not load in this repo's sessions; use `claude --plugin-dir plugins/randsum`.
-
-Game packages never depend on each other — only on `@randsum/roller`.
-
-Boundaries are enforced by tools, not review. Bun's isolated linker (`bunfig.toml`) lets a package import only what its own `package.json` declares, which holds the package DAG. Biome's `noImportCycles` rejects import cycles, and its `noRestrictedImports` rejects reach-ins to `@randsum/*/src` or `@randsum/*/dist`. Games are subpaths of one package, so the linker cannot keep them apart: a `biome.json` override bans `@randsum/games/<game>` imports (except `/schema`) in the hand-written `packages/games/src/**`, and `packages/games/__tests__/generated-imports.test.ts` holds each `*.generated.ts` entry to `@randsum/roller*`, `./types` and `./lib/**`. Biome excludes `*.generated.ts`, so `noImportCycles` does not see edges through them.
-
-## Commands
-
-```bash
-bun install                              # Install all dependencies
-bun run build                            # Build all packages (bunup: ESM + DTS, no CJS)
-bun run test                             # Run all tests (bun:test, recursive)
-bun run lint                             # Biome lint the whole repo
-bun run format                           # Biome format the whole repo
-bun run typecheck                        # TypeScript strict check (packages + scripts/)
-bun run knip                             # Find unused files, deps, and exports
-bun run check                            # Repo gates (biome ci, scripts/ typecheck) + per-package check (build, typecheck, test)
-bun run fix:all                          # Auto-fix lint + format issues
-
-# Single package
-bun run --filter @randsum/roller test    # Test one package
-bun run --filter @randsum/games build    # Build one package
-
-# Single test file
-bun test packages/roller/__tests__/roll/roll.test.ts
-
-# Other
-bun run --filter @randsum/roller size    # Bundle size checks (size-limit; `bun run size` runs every package)
-bun run bench                            # Performance benchmarks (mitata)
-bun run site:dev                         # Astro dev server (localhost:4321)
-bun run                                  # List every root script
-```
-
-## TypeScript Conventions
-
-- Strict mode with `isolatedDeclarations`, `exactOptionalPropertyTypes`, `noUncheckedIndexedAccess`
-- `const` only — `let` is banned by a Biome GritQL plugin
-- `import type { X }` enforced (`consistent-type-imports`)
-- Explicit return types on exported functions
-- PascalCase for types/interfaces/enums, UPPER_CASE for enum members
-- No `any` — use `unknown` with type guards
-- No `as unknown as T` — banned by a Biome GritQL plugin (both plain and parenthesized forms)
-- `prefer-readonly` enabled
-- No semicolons, single quotes, no trailing commas (Biome formatter)
-- Discriminated unions use `kind` or `type` as the discriminant field (e.g., `CollectedResults` with `kind: 'union' | 'numeric' | 'opaque' | 'result-mapping'`)
-- Literal types for API inputs: `roll()` accepts plain numbers and notation strings, not branded/opaque types
-- Error hierarchy: all errors extend `RandsumError`. roller exports `NotationParseError`, `ModifierError`, `ValidationError`, and `RollError` (`@randsum/roller/errors`); games exports `SchemaError`. Use `instanceof RandsumError` to catch all RANDSUM errors, or catch them individually for specific handling
-- Re-export conventions: game subpaths re-export `GameRollResult`, `RollRecord`, and `SchemaError`. Internal types stay internal. Use `export type` for type-only re-exports
-
-## Testing
-
-- Framework: `bun:test` (`import { describe, expect, test } from 'bun:test'`)
-- Tests live in `__tests__/` directories
-- Property-based tests use `fast-check` with `.property.test.ts` suffix
-- Stress tests use 9999 iterations for boundary validation
-- Seeded random available: `createSeededRandom(42)` from test-utils
-- Coverage target: 80% project, 70% patch (Codecov)
-
-## Package Build Output
-
-All publishable packages produce ESM only:
-
-- `dist/index.js` (ESM)
-- `dist/index.d.ts` (TypeScript declarations)
-- Subpath exports follow the same pattern: `dist/<subpath>.js`, `dist/<subpath>.d.ts`. The game subpaths in `@randsum/games` are code-generated, so each compiles to `dist/<game>.generated.js` / `dist/<game>.generated.d.ts` (e.g. `./fifth` → `dist/fifth.generated.js`); the `schema` subpath is `dist/schema.js`.
-- No `.cjs`, `.d.cts`, or `dist/cjs/` variants are produced
-- Bundle size limits enforced per package: the figures live only in each package's `size-limit` block in `package.json` (games: `.size-limit.ts`)
-
-CJS consumers must use a bundler (esbuild, rollup, webpack 5+) that translates ESM to CJS. Direct `require()` of an `@randsum/*` package without a bundler is not supported.
-
-## Publishing
-
-Releases are **automated via [changesets](https://github.com/changesets/changesets) + npm OIDC Trusted Publishing** — you do not run a publish command by hand in the normal flow.
-
-1. Add a changeset with your change: `bun run changeset` (writes a markdown file under `.changeset/`).
-2. On merge to `main`, the `Release` workflow (`.github/workflows/publish.yml`) runs after CI succeeds. With changesets pending, its `version` job opens or updates a `chore: version packages` PR (applying `bun changeset version` to bump versions and roll per-package `CHANGELOG.md` entries) using a GitHub App token, because a PR pushed with `GITHUB_TOKEN` never gets CI. Once that PR is merged, its `publish` job, the only one holding the npm OIDC id-token, publishes the changed packages and pushes a `name@version` tag and GitHub release for each.
-3. Publishing itself runs `bun run publish`: `bun run build`, then `bun scripts/publish.ts`. There is no `check` or size step there, because Release runs only after CI passed on that commit and CI is where those gates live. The script packs each package with `bun pm pack` (resolving `workspace:~` to a real semver range at pack time) and then publishes the resulting tarball with `npm publish`. In CI, auth is npm Trusted Publishing (OIDC — no `NPM_TOKEN`) and `--provenance` is added to attest the build.
-
-**npm version in Release:** the `publish` job sets up Node 24, which bundles npm >= 11.5.1, the minimum Trusted Publishing and provenance need. The workflow installs no separate npm.
-
-**Trusted publisher per package:** every published package needs its own Trusted Publisher entry on npmjs.com (package Settings → Trusted Publisher → GitHub Actions, repository `RANDSUM/randsum`, workflow `publish.yml`). A brand-new package cannot have one until it exists on the registry, so its first release is a local `bun scripts/publish.ts --otp=<CODE>` run by the owner; later releases go through OIDC.
-
-**`workspace:~` warning:** never run a bare `npm publish` from a package directory — `npm` ships the literal `workspace:~` string, which is unresolvable for consumers. The pack step in `scripts/publish.ts` (`bun pm pack`) is what resolves it, so publishing always goes through that script, never `npm publish` on the raw source tree.
-
-**Local fallback (rare):** `bun scripts/publish.ts` can publish from a workstation. Pass `--otp=<CODE>` (the npm account has 2FA set to `auth-and-writes`) and optionally `--dry-run`. Local runs omit `--provenance`. Publish order is fixed topologically in the script: `@randsum/roller` → `@randsum/games` → `@randsum/mcp`.
-
-## Versioning
-
-`@randsum/roller` and `@randsum/games` are **linked** in `.changeset/config.json`, so changesets bumps them together to a shared version whenever any of them changes. `updateInternalDependencies` is set to `minor`, so a bump to a dependency updates dependents' internal `workspace:~` ranges. In practice: a minor or major bump to core ripples across the linked ecosystem automatically; patch bumps stay local to the changed package. `@randsum/mcp` bundles roller and games as devDependencies, which never trigger a release, so `bun run check:changesets` fails when a pending changeset releases roller or games without also releasing mcp. Every `private: true` workspace (site, discord-bot, api) is skipped by `privatePackages: { version: false, tag: false }`, so a new private package needs no config entry.
-
-## Key Patterns
-
-### Code-Generated Game Packages
-
-Game packages are generated from `.randsum.json` specs via the codegen pipeline in `packages/games/codegen.ts`. Each spec defines dice pools, modifiers, outcome tables, and input validation. The generated TypeScript calls `roll()` from `@randsum/roller` directly.
-
-### Error Handling
-
-`roll()` throws on invalid input. Wrap calls in try/catch: `try { roll(...) } catch (e) { ... }`
-
-### Modifier Registry
-
-`MODIFIER_SCHEMAS` in `packages/roller/src/notation/definitions/index.ts`, sorted by each schema's `priority`, is the single source of truth for which modifiers exist and their execution order; `RANDSUM_MODIFIERS` (`src/modifiers/definitions.ts`) maps it to behaviors. Each modifier is split in two: its `<mod>Schema` (notation pattern, parse/format logic) lives in `packages/roller/src/notation/definitions/<mod>.ts` and its `<mod>Modifier` (dice pool behavior) in `packages/roller/src/modifiers/<mod>.ts`. See `packages/roller/CLAUDE.md`.
-
-See https://randsum.dev/spec/ for the formal specification including faceted classification, conformance levels, and execution pipeline contracts.
-
-### `roll()` Argument Types
-
-```typescript
-roll(20) // Number: 1d20
-roll("4d6L") // Notation string
-roll({ sides: 6, quantity: 4, modifiers: { drop: { lowest: 1 } } }) // Options object
-roll("1d20+5", "2d6") // Multiple arguments combined
-roll("d%") // Percentile: 1d100
-roll("4dF") // Fate Core: 4 Fate dice (-4 to +4)
-roll("dF.2") // Extended Fudge die (-2 to +2)
-roll("5d6W") // D6 System wild die
-roll("g6") // Geometric die (reroll while max; sum all rolls)
-roll("3DD6") // Draw die (no replacement)
-roll("4d6Lx6") // Repeat operator (6 ability scores)
-roll("2d6+3[fire]") // Annotation/label
-roll("4d6//2") // Integer division
-roll("5d10F{3}") // Count failures <= 3
-```
-
-## Git Hooks (Lefthook)
-
-`bun install` installs the hooks through the root `prepare` script, except where `$CI` is set: CI runners never install them, so a CI `git push` (the Release workflow's changesets push) does not run the pre-push hook.
-
-**pre-commit**: `bun install --frozen-lockfile` first (nothing else runs if it fails), then in parallel: Biome (`check --write`: lint + format, covering `.astro`), typecheck, and codegen check (`gen:check`)
-**pre-push**: build first (nothing else runs if it fails), then in parallel: codegen check, conformance check (`@randsum/site conformance:check`), tests, and knip
-
-A failing hook step prints its output and its own fix (`fail_text` in `lefthook.yml`).
-
-## Development Guidelines
-
-Per-package `CLAUDE.md` files exist in each `packages/*/` and `apps/*/` directory for detailed guidance on each component.
-
-Review changes with the built-in `/code-review`.
-
-## Debugging & Troubleshooting
-
-**Test failures**: Isolate with `bun test packages/roller/__tests__/roll/roll.test.ts`. Use `--bail` to stop on the first failure: `bun test --bail`. Filter by package: `bun run --filter @randsum/roller test`.
-
-**Lint failures (Biome)**: Common violations: the `no-let` GritQL plugin (use `const`), `useImportType` (use `import type`), the plugin banning `as unknown as T`, and the site's design-token plugins: `no-raw-color`, `no-raw-type`, `no-raw-shape`, `no-uppercase-labels` and `no-decorative-gradient` (a raw colour, size, weight, font, radius, shadow or gradient in a `.css` file or Astro `<style>` block other than `apps/site/src/styles/theme.css`; see `apps/site/CLAUDE.md`). Auto-fix with `bun run fix:all` (biome check --write).
-
-**Type errors**: Run `bun run typecheck`. Common strict-mode issues:
-
-- `isolatedDeclarations` — exported functions need explicit return types
-- `exactOptionalPropertyTypes` — optional properties cannot be assigned `undefined` explicitly unless the type includes `| undefined`
-- `noUncheckedIndexedAccess` — array/object index access returns `T | undefined`, requires narrowing
-
-**Bundle size failures**: Each publishable package defines `size-limit` in its own `package.json` (games derives its entries in `.size-limit.ts`). Run `bun run size` for all of them, or one: `bun run --filter @randsum/roller size`. Common cause: accidentally importing a heavy dependency into a game package.
-
-**Codegen issues**: Game packages are generated from `.randsum.json` specs. Generated files live at `packages/games/src/*.generated.ts`. Regenerate with `bun run --filter @randsum/games gen`. Verify generated output matches specs: `bun run --filter @randsum/games gen:check`.
-
-**Hook failures**: Pre-commit runs install first (nothing else runs if it fails), then lint --fix, format, typecheck, and codegen check (`gen:check`) in parallel. Pre-push runs build, then codegen check, conformance check, test, and knip in parallel. Each failing step prints its fix. See `lefthook.yml` for full config.
-
-## Dice Notation Reference
-
-Full spec: https://randsum.dev/spec/ (taxonomy, pipeline, conformance, syntax)
-
-Key syntax: `NdS` (basic), `+X`/`-X` (arithmetic), `L`/`H` (drop lowest/highest), `R{<3}` (reroll), `!` (explode), `!{condition}` (conditional explode), `U` (unique), `C{<1,>6}` (cap), `d%` (percentile), `dF`/`dF.2` (Fate/Fudge), `W` (wild die), `F{N}` (count failures), `//N` (integer divide), `%N` (modulo), `gN` (geometric die), `DDN` (draw die), `xN` (repeat), `[text]` (annotation)
-
-## Cloudflare Skills
-
-`.claude/skills/` vendors two of Cloudflare's published agent skills,
-`workers-best-practices` and `wrangler`. `scripts/sync-cloudflare-skills.ts`
-records why each is kept and why the others are not.
+`.claude/skills/` vendors two of Cloudflare's published agent skills, `workers-best-practices` and `wrangler`. `scripts/sync-cloudflare-skills.ts` records why each is kept and why the others are not.
 
 ```bash
 bun run skills:sync   # re-vendor at the pinned COMMIT; bump it to refresh
@@ -191,7 +17,7 @@ bun run skills:sync   # re-vendor at the pinned COMMIT; bump it to refresh
 
 Read the diff when you do: it is third-party prose that steers an agent.
 
-## MCP Servers
+### MCP Servers
 
 `.mcp.json` declares these. Run `/mcp` to authorize or check them.
 
@@ -200,6 +26,4 @@ Read the diff when you do: it is third-party prose that steers an agent.
 | `cloudflare-observability` | Workers logs and analytics        | OAuth                                      |
 | `github`                   | repo host (issues, PRs, releases) | PAT via `scripts/mcp-1password-headers.sh` |
 
-The `github` helper takes `GITHUB_PAT` if exported, otherwise reads
-`op://claude-agent/claude-git-pat/credential`. With neither it exits 1, and
-`/mcp` shows `github` as failed rather than connected with an empty token.
+The `github` helper takes `GITHUB_PAT` if exported, otherwise reads `op://claude-agent/claude-git-pat/credential`. With neither it exits 1, and `/mcp` shows `github` as failed rather than connected with an empty token.

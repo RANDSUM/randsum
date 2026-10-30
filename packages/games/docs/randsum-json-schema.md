@@ -972,6 +972,6 @@ Read `packages/games/src/blades.generated.ts` (58 lines) as a primer and
     `.property.test.ts`.
 11. Run `bun run --filter @randsum/games check`.
 
-The full end-to-end guide lives in `packages/games/CLAUDE.md` under "Adding a
+The full end-to-end guide lives in `packages/games/AGENTS.md` under "Adding a
 New Game" — it covers the `package.json` and test-scaffolding steps this
 document skipped.

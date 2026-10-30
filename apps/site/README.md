@@ -49,8 +49,8 @@ assets plus the `/api/roll` Worker in `worker/`, from
 
 ## More
 
-See [`CLAUDE.md`](./CLAUDE.md) for content/component conventions and the root
-[`CLAUDE.md`](../../CLAUDE.md) for monorepo-wide rules.
+See [`AGENTS.md`](./AGENTS.md) for content/component conventions and the root
+[`AGENTS.md`](../../AGENTS.md) for monorepo-wide rules.
 
 ## License
 

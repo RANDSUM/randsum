@@ -3,7 +3,7 @@
 Audience: contributors changing `@randsum/games` internals — adding a new
 resolution strategy, a new condition shape, a new pool variant, or any other
 feature that lives in `.randsum.json`. For adding a *game* (consumer of the
-existing schema), see `packages/games/CLAUDE.md`.
+existing schema), see `packages/games/AGENTS.md`.
 
 This guide assumes you already understand what a `.randsum.json` spec looks
 like. If not, skim `packages/games/blades.randsum.json` first — it exercises
