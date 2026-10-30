@@ -7,6 +7,14 @@ import { gamePackages } from '../src/utils/packageData'
 const siteDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const theme = fs.readFileSync(path.join(siteDir, 'src/styles/theme.css'), 'utf-8')
 
+// Drops each Astro <style>…</style> block. Our own source files, so a plain
+// scan is enough; this is not an HTML sanitiser.
+const withoutStyleBlocks = (source: string): string =>
+  source
+    .split('<style')
+    .map((part, i) => (i === 0 ? part : part.slice(part.indexOf('</style>') + '</style>'.length)))
+    .join('')
+
 // Biome's design-token plugins (biome-plugins/no-raw-*.grit) cover stylesheets
 // and Astro <style> blocks. Inline styles in React and Astro markup are code,
 // not CSS, so this holds them to the same rule.
@@ -24,7 +32,7 @@ describe('only theme colours', () => {
     file => {
       const source = fs.readFileSync(path.join(siteDir, file), 'utf-8')
       // <style> blocks are Biome's; everything else here is markup or script
-      const code = source.replace(/<style[^>]*>[\s\S]*?<\/style>/g, '')
+      const code = withoutStyleBlocks(source)
       expect(code.match(/['"`]#[0-9a-fA-F]{3,8}\b/g) ?? []).toEqual([])
     }
   )
