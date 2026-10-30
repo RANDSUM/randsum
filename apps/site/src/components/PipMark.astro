@@ -1,0 +1,51 @@
+---
+// The RANDSUM mark: seven pips on a d6 face spelling R. Two finishes of one
+// geometry (wall 8, corner 22, pip 8 on a 22 pitch): `outline` at rest, and
+// `knockout` (a solid die with the pips cut out) on colour and at small sizes.
+interface Props {
+  variant?: 'outline' | 'knockout'
+  size?: number
+  class?: string
+}
+const { variant = 'outline', size = 32, class: className } = Astro.props
+const pips: readonly (readonly [number, number])[] = [
+  [28, 28],
+  [50, 28],
+  [28, 50],
+  [50, 50],
+  [28, 72],
+  [72, 72]
+]
+const holes = pips.map(([cx, cy]) => `M${cx - 8} ${cy}a8 8 0 1 0 16 0a8 8 0 1 0-16 0Z`).join('')
+const body =
+  'M26 0H74A26 26 0 0 1 100 26V74A26 26 0 0 1 74 100H26A26 26 0 0 1 0 74V26A26 26 0 0 1 26 0Z'
+---
+
+<svg
+  class:list={['pip-mark', className]}
+  viewBox="0 0 100 100"
+  width={size}
+  height={size}
+  aria-hidden="true"
+  focusable="false"
+>
+  {variant === 'knockout' ? (
+    <path d={body + holes} fill="currentColor" fill-rule="evenodd" />
+  ) : (
+    <>
+      <rect
+        x="4"
+        y="4"
+        width="92"
+        height="92"
+        rx="22"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="8"
+      />
+      {pips.map(([cx, cy]) => (
+        <circle cx={cx} cy={cy} r="8" fill="currentColor" />
+      ))}
+    </>
+  )}
+</svg>

@@ -163,7 +163,7 @@ export function NotationRoller({
               aria-label="Roll the dice"
               title="Roll the dice"
             >
-              ROLL
+              Roll
             </button>
           </div>
         </div>

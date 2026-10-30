@@ -9,7 +9,7 @@ import SkillContent from '../../../../../../plugins/randsum/skills/dice-rolling/
 import NotationContent from '../../../../../../plugins/randsum/skills/dice-rolling/references/NOTATION.md'
 import GameSystemsContent from '../../../../../../plugins/randsum/skills/dice-rolling/references/GAME_SYSTEMS.md'
 
-RANDSUM provides a **Claude Code plugin** with three skills that give AI agents specialized knowledge for tabletop RPG dice mechanics.
+RANDSUM provides a **Claude Code plugin** with three skills that give AI agents specialized knowledge for tabletop RPG dice mechanics. It is one of the ways to [give an AI agent RANDSUM](/tools/agents/).
 
 ## Available skills
 
@@ -51,7 +51,16 @@ Add the RANDSUM marketplace and install the plugin from inside Claude Code:
 <CodeExample lang="bash" code={`/plugin marketplace add RANDSUM/randsum
 /plugin install randsum@randsum`} />
 
-The plugin also starts the [`@randsum/mcp`](/tools/mcp/) server through `npx`, so the skills can roll with the real engine instead of simulating.
+On Claude Code 2.1.275 or later, one command does both: `/plugin install randsum --marketplace RANDSUM/randsum`.
+
+The plugin also starts the [`@randsum/mcp`](/tools/mcp/) server through `npx`, so the skills can roll with the real engine instead of simulating. You do not need a separate `claude mcp add`.
+
+**Staying current.** The plugin tracks the marketplace's commits rather than a version number. Run `/plugin marketplace update randsum` to pick up changes, or turn on **Enable auto-update** for the `randsum` marketplace under **Marketplaces** in `/plugin`.
+
+**For a whole team.** Run these once in your project's shell and commit the `.claude/settings.json` they write. Everyone who trusts the folder is then offered the marketplace and the plugin:
+
+<CodeExample lang="bash" code={`claude plugin marketplace add RANDSUM/randsum --scope project
+claude plugin install randsum@randsum --scope project`} />
 
 </TabItem>
 <TabItem label="Custom Agent">

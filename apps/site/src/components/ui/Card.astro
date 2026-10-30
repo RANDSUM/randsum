@@ -1,0 +1,68 @@
+---
+// A bordered card that links somewhere. `accent` is any colour token; it
+// marks the card's top edge and its eyebrow, so a game or product card wears
+// its own colour while the card itself stays neutral.
+interface Props {
+  href: string
+  title: string
+  eyebrow?: string
+  accent?: string
+  class?: string
+}
+
+const { href, title, eyebrow, accent, class: className } = Astro.props
+---
+
+<a
+  href={href}
+  class:list={['rs-card', className]}
+  style={accent ? `--card-accent: ${accent}` : undefined}
+>
+  {eyebrow && <span class="rs-card-eyebrow">{eyebrow}</span>}
+  <span class="rs-card-title">{title}</span>
+  <span class="rs-card-body"><slot /></span>
+</a>
+
+<style>
+.rs-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  padding: 1.25rem 1.25rem 1.375rem;
+  border: var(--rs-border);
+  border-top: 3px solid var(--card-accent, var(--rs-gray-4));
+  border-radius: var(--rs-radius-lg);
+  background: var(--rs-bg);
+  color: var(--rs-fg);
+  text-decoration: none;
+  transition: border-color var(--rs-duration) var(--rs-ease);
+}
+
+.rs-card:hover {
+  border-color: var(--card-accent, var(--rs-gray-3));
+}
+
+.rs-card:focus-visible {
+  outline: none;
+  box-shadow: var(--rs-focus-ring);
+}
+
+.rs-card-eyebrow {
+  font-family: var(--rs-font-mono);
+  font-size: var(--rs-text-xs);
+  color: var(--card-accent, var(--rs-gray-3));
+}
+
+.rs-card-title {
+  font-family: var(--rs-font-heading);
+  font-size: var(--rs-text-md);
+  font-weight: var(--rs-weight-bold);
+  letter-spacing: var(--rs-tracking-tight);
+}
+
+.rs-card-body {
+  font-size: var(--rs-text-sm);
+  line-height: var(--rs-leading-body);
+  color: var(--rs-gray-2);
+}
+</style>

@@ -1,0 +1,10 @@
+---
+// A product's front page opens with its hero; every other page keeps Starlight's title.
+import Default from '@astrojs/starlight/components/PageTitle.astro'
+import ProductHero from './ProductHero.astro'
+import { heroProductForPath } from '../utils/product'
+
+const product = heroProductForPath(Astro.url.pathname)
+---
+
+{product ? <ProductHero product={product} /> : <Default />}

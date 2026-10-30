@@ -1,0 +1,27 @@
+---
+// A code sample: Expressive Code with soft wrapping, so a snippet never makes
+// its column scroll sideways.
+import { Code } from 'astro-expressive-code/components'
+
+interface Props {
+  code: string
+  lang: string
+  title?: string
+}
+
+const { code, lang, title } = Astro.props
+---
+
+<div class="rs-code-panel">
+  <Code code={code} lang={lang} title={title} wrap />
+</div>
+
+<style>
+.rs-code-panel {
+  min-width: 0;
+}
+
+.rs-code-panel :global(.expressive-code) {
+  margin: 0;
+}
+</style>

@@ -4,10 +4,8 @@ import LandingHero from '../components/landing/LandingHero.astro'
 import FeaturesPlayground from '../components/landing/FeaturesPlayground.astro'
 import GameSchemaSection from '../components/landing/GameSchemaSection.astro'
 import IntegrationsSection from '../components/landing/IntegrationsSection.astro'
-import FeaturesGrid from '../components/landing/FeaturesGrid.astro'
-import PackagesGrid from '../components/landing/PackagesGrid.astro'
+import ProductStack from '../components/landing/ProductStack.astro'
 import GamesGrid from '../components/landing/GamesGrid.astro'
-import ToolsGrid from '../components/landing/ToolsGrid.astro'
 import LandingFooter from '../components/landing/LandingFooter.astro'
 import LandingScripts from '../components/landing/LandingScripts.astro'
 import '../styles/landing.css'
@@ -52,27 +50,15 @@ import '../styles/landing.css'
   <div class="landing">
     <LandingHero />
 
-    <hr class="section-divider" />
+    <ProductStack />
 
     <FeaturesPlayground />
 
-    <hr class="section-divider" />
-
     <GameSchemaSection />
-
-    <hr class="section-divider" />
 
     <IntegrationsSection />
 
-    <hr class="section-divider" />
-
-    <FeaturesGrid />
-
-    <PackagesGrid />
-
     <GamesGrid />
-
-    <ToolsGrid />
 
     <LandingFooter />
   </div>

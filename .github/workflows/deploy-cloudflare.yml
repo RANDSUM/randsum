@@ -67,7 +67,7 @@ on:
   # safely here per the security note above: push-to-main commits only, and no
   # PR-controlled input or artifacts consumed.
   workflow_run:
-    workflows: ["CI"]
+    workflows: ['CI']
     types: [completed]
     branches: [main]
   workflow_dispatch:
@@ -219,6 +219,9 @@ jobs:
           ref: ${{ needs.plan.outputs.sha }}
           persist-credentials: false
       - uses: ./.github/actions/bun-setup
+        with:
+          # Astro 7.4 needs Node >= 22.23.4; the runner's default can lag behind
+          node-version: '22'
 
       # The site imports roller through a workspace subpath export; `site...`
       # builds roller first, then the site.

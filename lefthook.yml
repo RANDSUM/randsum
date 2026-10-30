@@ -28,7 +28,7 @@ pre-commit:
           # formats and lints the frontmatter script; the template markup is left
           # as-authored, the deliberate single-formatter trade-off).
           - name: biome
-            glob: "*.{ts,tsx,js,mjs,cjs,json,jsonc,css,astro}"
+            glob: '*.{ts,tsx,js,mjs,cjs,json,jsonc,css,astro,yml,yaml}'
             run: bunx biome check --write --no-errors-on-unmatched --files-ignore-unknown=true {staged_files}
             stage_fixed: true
             fail_text: Biome could not auto-fix the errors above. Fix them by hand, then re-stage
@@ -36,7 +36,7 @@ pre-commit:
             run: bun run typecheck
             fail_text: Fix the type errors above (`bun run typecheck`). TS2307 on @randsum/* means dist is missing; run `bun run build`
           - name: codegen-check
-            glob: "packages/games/*.randsum.json"
+            glob: 'packages/games/*.randsum.json'
             run: bun run --filter @randsum/games gen:check
             fail_text: Run `bun run --filter @randsum/games gen`, then stage packages/games/src/*.generated.ts
 

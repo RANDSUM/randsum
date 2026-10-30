@@ -86,169 +86,166 @@ const grouped: { label: string; items: Heading[] }[] = SIDEBAR_GROUPS.map(g => (
             d="M4 4L16 16M16 4L4 16"
             stroke="currentColor"
             stroke-width="1.5"
-            stroke-linecap="round"></path>
+            stroke-linecap="round"
+          ></path>
         </svg>
       </button>
     </div>
 
     <nav aria-label="Spec sections">
-      {
-        grouped.map(group => (
-          <div class="mobile-sidebar-group">
-            <span class="label mobile-sidebar-group-label">{group.label}</span>
-            <ul class="mobile-sidebar-list" role="list">
-              {group.items.map(heading => (
-                <li>
-                  <a href={`#${heading.slug}`} class="mobile-sidebar-link" data-mobile-nav-link>
-                    {heading.text}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-        ))
-      }
-    </nav>
-
-    {
-      specMarkdown.length > 0 && (
-        <div
-          class="mobile-sidebar-group"
-          style="border-top: 1px solid var(--border); padding-top: 1rem;"
-        >
-          <span class="label mobile-sidebar-group-label">Share</span>
+      {grouped.map(group => (
+        <div class="mobile-sidebar-group">
+          <span class="label mobile-sidebar-group-label">{group.label}</span>
           <ul class="mobile-sidebar-list" role="list">
-            <li>
-              <button
-                type="button"
-                class="mobile-sidebar-link mobile-copy-md-btn"
-                data-markdown={specMarkdown}
-                style="background: none; border: none; width: 100%; text-align: left; font: inherit; cursor: pointer;"
-              >
-                Copy Markdown
-              </button>
-            </li>
-            <li>
-              <a
-                class="mobile-sidebar-link"
-                href={claudeUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Open in Claude
-              </a>
-            </li>
-            <li>
-              <a
-                class="mobile-sidebar-link"
-                href={chatgptUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Open in ChatGPT
-              </a>
-            </li>
+            {group.items.map(heading => (
+              <li>
+                <a href={`#${heading.slug}`} class="mobile-sidebar-link" data-mobile-nav-link>
+                  {heading.text}
+                </a>
+              </li>
+            ))}
           </ul>
         </div>
-      )
-    }
+      ))}
+    </nav>
+
+    {specMarkdown.length > 0 && (
+      <div
+        class="mobile-sidebar-group"
+        style="border-top: 1px solid var(--border); padding-top: 1rem;"
+      >
+        <span class="label mobile-sidebar-group-label">Share</span>
+        <ul class="mobile-sidebar-list" role="list">
+          <li>
+            <button
+              type="button"
+              class="mobile-sidebar-link mobile-copy-md-btn"
+              data-markdown={specMarkdown}
+              style="background: none; border: none; width: 100%; text-align: left; font: inherit; cursor: pointer;"
+            >
+              Copy Markdown
+            </button>
+          </li>
+          <li>
+            <a
+              class="mobile-sidebar-link"
+              href={claudeUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Open in Claude
+            </a>
+          </li>
+          <li>
+            <a
+              class="mobile-sidebar-link"
+              href={chatgptUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Open in ChatGPT
+            </a>
+          </li>
+        </ul>
+      </div>
+    )}
   </div>
 </div>
 
 <script>
-  const trigger = document.getElementById('mobile-menu-trigger')
-  const overlay = document.getElementById('mobile-menu-overlay')
-  const backdrop = document.getElementById('mobile-menu-backdrop')
-  const closeBtn = document.getElementById('mobile-menu-close')
-  const navLinks = document.querySelectorAll('[data-mobile-nav-link]')
+const trigger = document.getElementById('mobile-menu-trigger')
+const overlay = document.getElementById('mobile-menu-overlay')
+const backdrop = document.getElementById('mobile-menu-backdrop')
+const closeBtn = document.getElementById('mobile-menu-close')
+const navLinks = document.querySelectorAll('[data-mobile-nav-link]')
 
-  if (!trigger || !overlay || !backdrop || !closeBtn) {
-    throw new Error('MobileMenu: required elements not found')
+if (!trigger || !overlay || !backdrop || !closeBtn) {
+  throw new Error('MobileMenu: required elements not found')
+}
+
+function getFocusableElements(): HTMLElement[] {
+  return Array.from(
+    overlay!.querySelectorAll<HTMLElement>(
+      'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])'
+    )
+  ).filter(el => !el.hasAttribute('disabled'))
+}
+
+function openMenu(): void {
+  trigger!.setAttribute('aria-expanded', 'true')
+  overlay!.classList.add('is-open')
+  backdrop!.classList.add('is-visible')
+  document.body.classList.add('mobile-menu-open')
+  // Focus first focusable element in overlay
+  const focusable = getFocusableElements()
+  if (focusable.length > 0) {
+    focusable[0]!.focus()
   }
+}
 
-  function getFocusableElements(): HTMLElement[] {
-    return Array.from(
-      overlay!.querySelectorAll<HTMLElement>(
-        'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])'
-      )
-    ).filter(el => !el.hasAttribute('disabled'))
-  }
+function closeMenu(): void {
+  trigger!.setAttribute('aria-expanded', 'false')
+  overlay!.classList.remove('is-open')
+  backdrop!.classList.remove('is-visible')
+  document.body.classList.remove('mobile-menu-open')
+  trigger!.focus()
+}
 
-  function openMenu(): void {
-    trigger!.setAttribute('aria-expanded', 'true')
-    overlay!.classList.add('is-open')
-    backdrop!.classList.add('is-visible')
-    document.body.classList.add('mobile-menu-open')
-    // Focus first focusable element in overlay
-    const focusable = getFocusableElements()
-    if (focusable.length > 0) {
-      focusable[0]!.focus()
+function trapFocus(e: KeyboardEvent): void {
+  if (!overlay!.classList.contains('is-open')) return
+  if (e.key !== 'Tab') return
+
+  const focusable = getFocusableElements()
+  if (focusable.length === 0) return
+
+  const first = focusable[0]!
+  const last = focusable[focusable.length - 1]!
+
+  if (e.shiftKey) {
+    if (document.activeElement === first) {
+      e.preventDefault()
+      last.focus()
+    }
+  } else {
+    if (document.activeElement === last) {
+      e.preventDefault()
+      first.focus()
     }
   }
+}
 
-  function closeMenu(): void {
-    trigger!.setAttribute('aria-expanded', 'false')
-    overlay!.classList.remove('is-open')
-    backdrop!.classList.remove('is-visible')
-    document.body.classList.remove('mobile-menu-open')
-    trigger!.focus()
+trigger.addEventListener('click', openMenu)
+closeBtn.addEventListener('click', closeMenu)
+backdrop.addEventListener('click', closeMenu)
+
+document.addEventListener('keydown', (e: KeyboardEvent) => {
+  if (e.key === 'Escape' && overlay!.classList.contains('is-open')) {
+    closeMenu()
   }
+  trapFocus(e)
+})
 
-  function trapFocus(e: KeyboardEvent): void {
-    if (!overlay!.classList.contains('is-open')) return
-    if (e.key !== 'Tab') return
+navLinks.forEach(link => {
+  link.addEventListener('click', closeMenu)
+})
 
-    const focusable = getFocusableElements()
-    if (focusable.length === 0) return
-
-    const first = focusable[0]!
-    const last = focusable[focusable.length - 1]!
-
-    if (e.shiftKey) {
-      if (document.activeElement === first) {
-        e.preventDefault()
-        last.focus()
-      }
-    } else {
-      if (document.activeElement === last) {
-        e.preventDefault()
-        first.focus()
-      }
+// Mobile copy markdown button
+const mobileCopyBtn = document.querySelector('.mobile-copy-md-btn') as HTMLButtonElement | null
+if (mobileCopyBtn) {
+  mobileCopyBtn.addEventListener('click', async () => {
+    const markdown = mobileCopyBtn.dataset.markdown ?? ''
+    try {
+      await navigator.clipboard.writeText(markdown)
+      const original = mobileCopyBtn.textContent
+      mobileCopyBtn.textContent = 'Copied!'
+      mobileCopyBtn.style.color = 'var(--accent)'
+      setTimeout(() => {
+        mobileCopyBtn.textContent = original
+        mobileCopyBtn.style.color = ''
+      }, 2000)
+    } catch {
+      // Clipboard API unavailable
     }
-  }
-
-  trigger.addEventListener('click', openMenu)
-  closeBtn.addEventListener('click', closeMenu)
-  backdrop.addEventListener('click', closeMenu)
-
-  document.addEventListener('keydown', (e: KeyboardEvent) => {
-    if (e.key === 'Escape' && overlay!.classList.contains('is-open')) {
-      closeMenu()
-    }
-    trapFocus(e)
   })
-
-  navLinks.forEach(link => {
-    link.addEventListener('click', closeMenu)
-  })
-
-  // Mobile copy markdown button
-  const mobileCopyBtn = document.querySelector('.mobile-copy-md-btn') as HTMLButtonElement | null
-  if (mobileCopyBtn) {
-    mobileCopyBtn.addEventListener('click', async () => {
-      const markdown = mobileCopyBtn.dataset.markdown ?? ''
-      try {
-        await navigator.clipboard.writeText(markdown)
-        const original = mobileCopyBtn.textContent
-        mobileCopyBtn.textContent = 'Copied!'
-        mobileCopyBtn.style.color = 'var(--accent)'
-        setTimeout(() => {
-          mobileCopyBtn.textContent = original
-          mobileCopyBtn.style.color = ''
-        }, 2000)
-      } catch {
-        // Clipboard API unavailable
-      }
-    })
-  }
+}
 </script>

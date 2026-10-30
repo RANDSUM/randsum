@@ -1,4 +1,5 @@
 ---
+import PipMark from '../../components/PipMark.astro'
 import VersionDropdown from './VersionDropdown.astro'
 
 interface Props {
@@ -13,18 +14,20 @@ const { version, versions, isLatest } = Astro.props
 <header class="spec-hero">
   <div class="spec-hero-inner">
     <div class="spec-hero-text">
-      <p class="label spec-hero-label">Specification</p>
+      <a class="spec-hero-brand" href="/">
+        <PipMark variant="knockout" size={24} class="spec-hero-mark" />
+        <span class="spec-hero-brand-name">RANDSUM</span>
+        <span class="spec-hero-brand-product">spec</span>
+      </a>
       <h1 class="spec-hero-title">RANDSUM Dice Notation</h1>
       <p class="spec-hero-subtitle">
         A formal specification for dice notation syntax used in tabletop role-playing games.
       </p>
     </div>
     <div class="spec-hero-actions">
-      {
-        versions.length > 0 && (
-          <VersionDropdown currentVersion={version} allVersions={versions} isLatest={isLatest} />
-        )
-      }
+      {versions.length > 0 && (
+        <VersionDropdown currentVersion={version} allVersions={versions} isLatest={isLatest} />
+      )}
       <button class="theme-toggle" aria-label="Toggle light/dark mode" data-theme-toggle>
         <svg
           class="theme-icon theme-icon--sun"
@@ -54,12 +57,7 @@ const { version, versions, isLatest } = Astro.props
           <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
         </svg>
       </button>
-      <a
-        href="/"
-        class="spec-hero-github"
-        aria-label="Documentation"
-        title="Documentation"
-      >
+      <a href="/" class="spec-hero-github" aria-label="Documentation" title="Documentation">
         <svg
           width="18"
           height="18"

@@ -159,7 +159,7 @@ Review changes with the built-in `/code-review`.
 
 **Test failures**: Isolate with `bun test packages/roller/__tests__/roll/roll.test.ts`. Use `--bail` to stop on the first failure: `bun test --bail`. Filter by package: `bun run --filter @randsum/roller test`.
 
-**Lint failures (Biome)**: Common violations: the `no-let` GritQL plugin (use `const`), `useImportType` (use `import type`), the plugin banning `as unknown as T`, and `no-raw-color` (hex in a `.css` file other than `apps/site/src/styles/theme.css`). Auto-fix with `bun run fix:all` (biome check --write).
+**Lint failures (Biome)**: Common violations: the `no-let` GritQL plugin (use `const`), `useImportType` (use `import type`), the plugin banning `as unknown as T`, and the site's design-token plugins: `no-raw-color`, `no-raw-type`, `no-raw-shape`, `no-uppercase-labels` and `no-decorative-gradient` (a raw colour, size, weight, font, radius, shadow or gradient in a `.css` file or Astro `<style>` block other than `apps/site/src/styles/theme.css`; see `apps/site/CLAUDE.md`). Auto-fix with `bun run fix:all` (biome check --write).
 
 **Type errors**: Run `bun run typecheck`. Common strict-mode issues:
 

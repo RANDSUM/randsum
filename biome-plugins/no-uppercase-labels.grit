@@ -1,0 +1,9 @@
+// No shouting labels. Uppercase, letter-spaced eyebrows are one of the "AI
+// tells" the RANDSUM design avoids; a label is set in sentence case at
+// --rs-text-sm with --rs-weight-semibold instead.
+language css
+
+CssDeclaration() as $decl where {
+  $decl <: r"^text-transform\s*:\s*uppercase[\s\S]*",
+  register_diagnostic(span=$decl, message="No uppercase labels: use sentence case with --rs-weight-semibold (RANDSUM design system).")
+}

@@ -24,6 +24,7 @@ import KofiButton from '../KofiButton.astro'
           <li><a href="/notation/introduction/">Dice Notation</a></li>
           <li><a href="/games/introduction/">Game Packages</a></li>
           <li><a href="/tools/claude-code-plugin/">Claude Plugin</a></li>
+          <li><a href="/tools/agents/">AI Agents</a></li>
         </ul>
       </div>
       <div class="footer-col">
@@ -49,11 +50,12 @@ import KofiButton from '../KofiButton.astro'
 </footer>
 
 <style>
-  .footer-support {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 2rem;
-    padding-bottom: 2rem;
-    border-bottom: 1px solid var(--sl-color-hairline, rgba(255, 255, 255, 0.1));
-  }
+.footer-support {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 2rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid
+    var(--sl-color-hairline, color-mix(in srgb, var(--rs-paper) 10%, transparent));
+}
 </style>

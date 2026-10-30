@@ -19,8 +19,8 @@ export const capDocs: readonly NotationDoc[] = [
   {
     key: 'C{..}',
     category: 'Clamp',
-    color: '#67e8f9',
-    colorLight: '#0891b2',
+    color: '#47d6cf',
+    colorLight: '#00807b',
     title: 'Cap',
     description:
       'Clamp individual die values to a range — dice outside the boundary are moved to it.',
@@ -52,8 +52,8 @@ export const replaceDocs: readonly NotationDoc[] = [
   {
     key: 'V{..}',
     category: 'Map',
-    color: '#2dd4bf',
-    colorLight: '#0d9488',
+    color: '#6fc8ff',
+    colorLight: '#0070b0',
     title: 'Replace',
     description: 'Replace dice showing specific values with a new value.',
     displayBase: 'V{..}',
@@ -102,8 +102,8 @@ export const rerollDocs: readonly NotationDoc[] = [
   {
     key: 'R{..}',
     category: 'Substitute',
-    color: '#f472b6',
-    colorLight: '#db2777',
+    color: '#6fc8ff',
+    colorLight: '#0070b0',
     title: 'Reroll',
     description:
       'Reroll dice that match a condition. The new result stands (may reroll again if still matching).',
@@ -140,8 +140,8 @@ export const rerollDocs: readonly NotationDoc[] = [
   {
     key: 'ro{..}',
     category: 'Substitute',
-    color: '#f472b6',
-    colorLight: '#db2777',
+    color: '#6fc8ff',
+    colorLight: '#0070b0',
     title: 'Reroll Once',
     description:
       'Reroll dice matching a condition with a maximum of 1 attempt. Sugar for Reroll with max=1.',
@@ -173,8 +173,8 @@ export const explodeDocs: readonly NotationDoc[] = [
   {
     key: '!',
     category: 'Generate',
-    color: '#fbbf24',
-    colorLight: '#d97706',
+    color: '#e1b75c',
+    colorLight: '#8d6000',
     title: 'Explode',
     description:
       'Each die showing its maximum value triggers one additional die roll (single wave; the new dice are not themselves checked for explosion).',
@@ -211,8 +211,8 @@ export const compoundDocs: readonly NotationDoc[] = [
   {
     key: '!!',
     category: 'Accumulate',
-    color: '#f59e0b',
-    colorLight: '#b45309',
+    color: '#e1b75c',
+    colorLight: '#8d6000',
     title: 'Compound Explode',
     description:
       'Like explode, but extra rolls add to the triggering die rather than creating new dice.',
@@ -249,8 +249,8 @@ export const penetrateDocs: readonly NotationDoc[] = [
   {
     key: '!p',
     category: 'Accumulate',
-    color: '#d97706',
-    colorLight: '#92400e',
+    color: '#e1b75c',
+    colorLight: '#8d6000',
     title: 'Penetrating Explode',
     description:
       'Like explode, but each subsequent explosion subtracts 1 from the result (Hackmaster-style).',
@@ -287,8 +287,8 @@ export const explodeSequenceDocs: readonly NotationDoc[] = [
   {
     key: '!s{..}',
     category: 'Generate',
-    color: '#fcd34d',
-    colorLight: '#ca8a04',
+    color: '#e1b75c',
+    colorLight: '#8d6000',
     title: 'Explode Sequence',
     description:
       'On max, re-roll with the next die size in a custom sequence rather than reusing the same die.',
@@ -310,8 +310,8 @@ export const explodeSequenceDocs: readonly NotationDoc[] = [
   {
     key: '!i',
     category: 'Generate',
-    color: '#fcd34d',
-    colorLight: '#ca8a04',
+    color: '#e1b75c',
+    colorLight: '#8d6000',
     title: 'Inflation',
     description:
       'Explode upward through the TTRPG standard die set (4, 6, 8, 10, 12, 20, 100). Sugar for Explode Sequence going up.',
@@ -328,8 +328,8 @@ export const explodeSequenceDocs: readonly NotationDoc[] = [
   {
     key: '!r',
     category: 'Generate',
-    color: '#fcd34d',
-    colorLight: '#ca8a04',
+    color: '#e1b75c',
+    colorLight: '#8d6000',
     title: 'Reduction',
     description:
       'Explode downward through the TTRPG standard die set (4, 6, 8, 10, 12, 20, 100). Sugar for Explode Sequence going down.',
@@ -349,8 +349,8 @@ export const wildDieDocs: readonly NotationDoc[] = [
   {
     key: 'W',
     category: 'Dispatch',
-    color: '#facc15',
-    colorLight: '#a16207',
+    color: '#a3a3aa',
+    colorLight: '#63636a',
     title: 'Wild Die',
     description:
       'D6 System wild die: compound-explode on max, drop wild die and highest on 1, no effect otherwise. A macro that dispatches to multiple primitives based on runtime state.',
@@ -370,8 +370,8 @@ export const uniqueDocs: readonly NotationDoc[] = [
   {
     key: 'U',
     category: 'Substitute',
-    color: '#5eead4',
-    colorLight: '#0f766e',
+    color: '#6fc8ff',
+    colorLight: '#0070b0',
     title: 'Unique',
     description: 'Force all dice in the pool to show different values by rerolling duplicates.',
     displayBase: 'U',
@@ -395,8 +395,8 @@ export const dropDocs: readonly NotationDoc[] = [
   {
     key: 'L',
     category: 'Filter',
-    color: '#fb7185',
-    colorLight: '#e11d48',
+    color: '#ff9d9e',
+    colorLight: '#ab4046',
     title: 'Drop Lowest',
     description: 'Remove the lowest-valued dice from the pool before summing.',
     displayBase: 'L',
@@ -417,8 +417,8 @@ export const dropDocs: readonly NotationDoc[] = [
   {
     key: 'H',
     category: 'Filter',
-    color: '#fb7185',
-    colorLight: '#e11d48',
+    color: '#ff9d9e',
+    colorLight: '#ab4046',
     title: 'Drop Highest',
     description: 'Remove the highest-valued dice from the pool before summing.',
     displayBase: 'H',
@@ -439,8 +439,8 @@ export const dropDocs: readonly NotationDoc[] = [
   {
     key: 'D{..}',
     category: 'Filter',
-    color: '#e11d48',
-    colorLight: '#9f1239',
+    color: '#ff9d9e',
+    colorLight: '#ab4046',
     title: 'Drop by Condition',
     description:
       'Drop any dice matching a condition — more flexible than L/H for arbitrary thresholds.',
@@ -474,8 +474,8 @@ export const keepDocs: readonly NotationDoc[] = [
   {
     key: 'K',
     category: 'Filter',
-    color: '#fb923c',
-    colorLight: '#c2410c',
+    color: '#ff9d9e',
+    colorLight: '#ab4046',
     title: 'Keep Highest',
     description: 'Keep only the n highest-valued dice; discard the rest.',
     displayBase: 'K',
@@ -496,8 +496,8 @@ export const keepDocs: readonly NotationDoc[] = [
   {
     key: 'KL',
     category: 'Filter',
-    color: '#f97316',
-    colorLight: '#9a3412',
+    color: '#ff9d9e',
+    colorLight: '#ab4046',
     title: 'Keep Lowest',
     description: 'Keep only the n lowest-valued dice; discard the rest.',
     displayBase: 'KL',
@@ -518,8 +518,8 @@ export const keepDocs: readonly NotationDoc[] = [
   {
     key: 'KM',
     category: 'Filter',
-    color: '#fdba74',
-    colorLight: '#ea580c',
+    color: '#ff9d9e',
+    colorLight: '#ab4046',
     title: 'Keep Middle',
     description:
       'Keep N dice closest to the middle of the pool by dropping equal numbers from both ends. Sugar for Drop lowest + Drop highest.',
@@ -540,8 +540,8 @@ export const countDocs: readonly NotationDoc[] = [
   {
     key: '#{..}',
     category: 'Reinterpret',
-    color: '#60a5fa',
-    colorLight: '#2563eb',
+    color: '#bdb0ff',
+    colorLight: '#6a57b3',
     title: 'Count',
     description:
       'Count dice matching comparison conditions instead of summing values. More powerful than S{}/F{} sugar.',
@@ -574,8 +574,8 @@ export const countDocs: readonly NotationDoc[] = [
   {
     key: 'S{..}',
     category: 'Reinterpret',
-    color: '#3b82f6',
-    colorLight: '#1d4ed8',
+    color: '#bdb0ff',
+    colorLight: '#6a57b3',
     title: 'Count Successes',
     description:
       'Count dice that meet a threshold instead of summing values — used in dice pool systems.',
@@ -604,8 +604,8 @@ export const countDocs: readonly NotationDoc[] = [
   {
     key: 'F{..}',
     category: 'Reinterpret',
-    color: '#93c5fd',
-    colorLight: '#3b82f6',
+    color: '#bdb0ff',
+    colorLight: '#6a57b3',
     title: 'Count Failures',
     description:
       'Count dice at or below a threshold instead of summing values. Sugar for Count with lessThanOrEqual.',
@@ -622,8 +622,8 @@ export const countDocs: readonly NotationDoc[] = [
   {
     key: 'ms{..}',
     category: 'Scale',
-    color: '#6366f1',
-    colorLight: '#4338ca',
+    color: '#8bd28d',
+    colorLight: '#267d30',
     title: 'Margin of Success',
     description:
       'Subtract a target number from the total to get the margin of success or failure. Sugar for Minus N.',
@@ -643,8 +643,8 @@ export const multiplyDocs: readonly NotationDoc[] = [
   {
     key: '*',
     category: 'Scale',
-    color: '#a3e635',
-    colorLight: '#4d7c0f',
+    color: '#8bd28d',
+    colorLight: '#267d30',
     title: 'Multiply Dice',
     description: 'Multiply the dice sum before applying +/− arithmetic modifiers.',
     displayBase: '*',
@@ -664,8 +664,8 @@ export const plusDocs: readonly NotationDoc[] = [
   {
     key: '+',
     category: 'Scale',
-    color: '#4ade80',
-    colorLight: '#16a34a',
+    color: '#8bd28d',
+    colorLight: '#267d30',
     title: 'Add',
     description: 'Add a fixed number to the total after all dice are rolled.',
     displayBase: '+',
@@ -689,8 +689,8 @@ export const minusDocs: readonly NotationDoc[] = [
   {
     key: '-',
     category: 'Scale',
-    color: '#f87171',
-    colorLight: '#dc2626',
+    color: '#8bd28d',
+    colorLight: '#267d30',
     title: 'Subtract',
     description: 'Subtract a fixed number from the total after all dice are rolled.',
     displayBase: '−',
@@ -714,8 +714,8 @@ export const integerDivideDocs: readonly NotationDoc[] = [
   {
     key: '//',
     category: 'Scale',
-    color: '#34d399',
-    colorLight: '#059669',
+    color: '#8bd28d',
+    colorLight: '#267d30',
     title: 'Integer Divide',
     description: 'Divide the total by a number and round down (floor division).',
     displayBase: '//',
@@ -739,8 +739,8 @@ export const moduloDocs: readonly NotationDoc[] = [
   {
     key: '%',
     category: 'Scale',
-    color: '#10b981',
-    colorLight: '#047857',
+    color: '#8bd28d',
+    colorLight: '#267d30',
     title: 'Modulo',
     description: 'Take the remainder after dividing the total by a number.',
     displayBase: '%',
@@ -764,8 +764,8 @@ export const sortDocs: readonly NotationDoc[] = [
   {
     key: 'sort',
     category: 'Order',
-    color: '#94a3b8',
-    colorLight: '#475569',
+    color: '#a3a3aa',
+    colorLight: '#63636a',
     title: 'Sort',
     description:
       'Sort the dice pool in ascending or descending order. Does not affect the total — only the presentation order of dice.',
@@ -793,8 +793,8 @@ export const multiplyTotalDocs: readonly NotationDoc[] = [
   {
     key: '**',
     category: 'Scale',
-    color: '#84cc16',
-    colorLight: '#3f6212',
+    color: '#8bd28d',
+    colorLight: '#267d30',
     title: 'Multiply Total',
     description: 'Multiply the entire final total after all other modifiers have been applied.',
     displayBase: '**',

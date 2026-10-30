@@ -36,7 +36,9 @@
       "entry": ["src/worker/index.ts", "src/deploy-commands.ts"],
       "project": ["src/**/*.ts"]
     },
-    "apps/site": {}
+    "apps/site": {
+      "ignoreDependencies": ["@astrojs/ts-content-mapper", "satteri"]
+    }
   },
   "ignoreBinaries": ["skills-ref"],
   "ignore": ["**/bunup.config.ts", "**/*.generated.ts"],

@@ -1,5 +1,4 @@
 ---
-
 ---
 
 <starlight-theme-select>
@@ -46,136 +45,136 @@
 
 {/* Inlined to avoid FOUC. Uses global scope from ThemeProvider.astro */}
 <script is:inline>
-  StarlightThemeProvider.updatePickers()
+StarlightThemeProvider.updatePickers()
 </script>
 
 <script>
-  declare const StarlightThemeProvider: { updatePickers(theme?: string): void }
+declare const StarlightThemeProvider: { updatePickers(theme?: string): void }
 
-  type Theme = 'auto' | 'dark' | 'light'
+type Theme = 'auto' | 'dark' | 'light'
 
-  const storageKey = 'starlight-theme'
+const storageKey = 'starlight-theme'
 
-  const parseTheme = (theme: unknown): Theme =>
-    theme === 'auto' || theme === 'dark' || theme === 'light' ? theme : 'auto'
+const parseTheme = (theme: unknown): Theme =>
+  theme === 'auto' || theme === 'dark' || theme === 'light' ? theme : 'auto'
 
-  const loadTheme = (): Theme =>
-    parseTheme(typeof localStorage !== 'undefined' && localStorage.getItem(storageKey))
+const loadTheme = (): Theme =>
+  parseTheme(typeof localStorage !== 'undefined' && localStorage.getItem(storageKey))
 
-  function storeTheme(theme: Theme): void {
-    if (typeof localStorage !== 'undefined') {
-      localStorage.setItem(storageKey, theme === 'light' || theme === 'dark' ? theme : '')
-    }
+function storeTheme(theme: Theme): void {
+  if (typeof localStorage !== 'undefined') {
+    localStorage.setItem(storageKey, theme === 'light' || theme === 'dark' ? theme : '')
   }
+}
 
-  const getPreferredColorScheme = (): Theme =>
-    matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark'
+const getPreferredColorScheme = (): Theme =>
+  matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark'
 
-  function getEffectiveTheme(theme: Theme): 'dark' | 'light' {
-    return theme === 'auto' ? (getPreferredColorScheme() as 'dark' | 'light') : theme
-  }
+function getEffectiveTheme(theme: Theme): 'dark' | 'light' {
+  return theme === 'auto' ? (getPreferredColorScheme() as 'dark' | 'light') : theme
+}
 
-  function onThemeChange(theme: Theme): void {
-    StarlightThemeProvider.updatePickers(theme)
-    const effective = getEffectiveTheme(theme)
-    document.documentElement.dataset['theme'] = effective
-    storeTheme(theme)
-    updateToggleState(effective)
-  }
+function onThemeChange(theme: Theme): void {
+  StarlightThemeProvider.updatePickers(theme)
+  const effective = getEffectiveTheme(theme)
+  document.documentElement.dataset['theme'] = effective
+  storeTheme(theme)
+  updateToggleState(effective)
+}
 
-  function updateToggleState(effective: 'dark' | 'light'): void {
-    document.querySelectorAll<HTMLElement>('.theme-toggle').forEach(toggle => {
-      toggle.setAttribute('aria-checked', String(effective === 'dark'))
-      toggle.dataset['theme'] = effective
+function updateToggleState(effective: 'dark' | 'light'): void {
+  document.querySelectorAll<HTMLElement>('.theme-toggle').forEach(toggle => {
+    toggle.setAttribute('aria-checked', String(effective === 'dark'))
+    toggle.dataset['theme'] = effective
+  })
+}
+
+matchMedia('(prefers-color-scheme: light)').addEventListener('change', () => {
+  if (loadTheme() === 'auto') onThemeChange('auto')
+})
+
+class StarlightThemeSelect extends HTMLElement {
+  constructor() {
+    super()
+    const stored = loadTheme()
+    onThemeChange(stored)
+
+    this.querySelector('.theme-toggle')?.addEventListener('click', () => {
+      const current = getEffectiveTheme(loadTheme())
+      const next: Theme = current === 'dark' ? 'light' : 'dark'
+      onThemeChange(next)
     })
   }
-
-  matchMedia('(prefers-color-scheme: light)').addEventListener('change', () => {
-    if (loadTheme() === 'auto') onThemeChange('auto')
-  })
-
-  class StarlightThemeSelect extends HTMLElement {
-    constructor() {
-      super()
-      const stored = loadTheme()
-      onThemeChange(stored)
-
-      this.querySelector('.theme-toggle')?.addEventListener('click', () => {
-        const current = getEffectiveTheme(loadTheme())
-        const next: Theme = current === 'dark' ? 'light' : 'dark'
-        onThemeChange(next)
-      })
-    }
-  }
-  customElements.define('starlight-theme-select', StarlightThemeSelect)
+}
+customElements.define('starlight-theme-select', StarlightThemeSelect)
 </script>
 
 <style>
-  .theme-toggle {
-    appearance: none;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.35rem;
-    background: transparent;
-    border: none;
-    padding: 0.25rem;
-    cursor: pointer;
-    color: var(--sl-color-gray-3);
-    transition: color 0.15s ease;
-  }
+.theme-toggle {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: transparent;
+  border: none;
+  padding: 0.25rem;
+  cursor: pointer;
+  color: var(--sl-color-gray-3);
+  transition: color 0.15s ease;
+}
 
-  .theme-toggle:hover {
-    color: var(--sl-color-gray-1);
-  }
+.theme-toggle:hover {
+  color: var(--sl-color-gray-1);
+}
 
-  .theme-icon {
-    flex-shrink: 0;
-    opacity: 0.5;
-    transition: opacity 0.2s ease;
-  }
+.theme-icon {
+  flex-shrink: 0;
+  opacity: 0.5;
+  transition: opacity 0.2s ease;
+}
 
-  .theme-toggle[data-theme='light'] .theme-icon--sun {
-    opacity: 1;
-    color: var(--sl-color-accent);
-  }
+.theme-toggle[data-theme='light'] .theme-icon--sun {
+  opacity: 1;
+  color: var(--sl-color-accent);
+}
 
-  .theme-toggle[data-theme='dark'] .theme-icon--moon {
-    opacity: 1;
-    color: var(--sl-color-accent);
-  }
+.theme-toggle[data-theme='dark'] .theme-icon--moon {
+  opacity: 1;
+  color: var(--sl-color-accent);
+}
 
-  .theme-toggle-track {
-    position: relative;
-    width: 2rem;
-    height: 1.1rem;
-    background: var(--sl-color-gray-5);
-    border-radius: 999px;
-    border: 1px solid var(--sl-color-gray-4);
-    transition:
-      background 0.2s ease,
-      border-color 0.2s ease;
-  }
+.theme-toggle-track {
+  position: relative;
+  width: 2rem;
+  height: 1.1rem;
+  background: var(--sl-color-gray-5);
+  border-radius: var(--rs-radius-pill);
+  border: 1px solid var(--sl-color-gray-4);
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease;
+}
 
-  .theme-toggle:hover .theme-toggle-track {
-    border-color: var(--sl-color-gray-3);
-  }
+.theme-toggle:hover .theme-toggle-track {
+  border-color: var(--sl-color-gray-3);
+}
 
-  .theme-toggle-thumb {
-    position: absolute;
-    top: 2px;
-    left: 2px;
-    width: 0.7rem;
-    height: 0.7rem;
-    background: var(--sl-color-accent);
-    border-radius: 50%;
-    transition: transform 0.2s ease;
-  }
+.theme-toggle-thumb {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 0.7rem;
+  height: 0.7rem;
+  background: var(--sl-color-accent);
+  border-radius: 50%;
+  transition: transform 0.2s ease;
+}
 
-  .theme-toggle[data-theme='light'] .theme-toggle-thumb {
-    transform: translateX(0);
-  }
+.theme-toggle[data-theme='light'] .theme-toggle-thumb {
+  transform: translateX(0);
+}
 
-  .theme-toggle[data-theme='dark'] .theme-toggle-thumb {
-    transform: translateX(0.8rem);
-  }
+.theme-toggle[data-theme='dark'] .theme-toggle-thumb {
+  transform: translateX(0.8rem);
+}
 </style>

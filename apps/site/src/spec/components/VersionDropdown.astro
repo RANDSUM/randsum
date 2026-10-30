@@ -31,70 +31,69 @@ const { currentVersion, allVersions, isLatest } = Astro.props
         stroke="currentColor"
         stroke-width="1.5"
         stroke-linecap="round"
-        stroke-linejoin="round"></path>
+        stroke-linejoin="round"
+      ></path>
     </svg>
   </button>
   <ul class="version-dropdown-list" hidden>
-    {
-      allVersions
-        .slice()
-        .reverse()
-        .map(v => {
-          const isSelected = v === currentVersion
-          const href = v === allVersions[allVersions.length - 1] ? '/spec/' : `/spec/v/${v}/`
-          return (
-            <li>
-              <a
-                href={href}
-                aria-current={isSelected ? 'page' : undefined}
-                class:list={['version-option', { 'version-option--active': isSelected }]}
-              >
-                <span>{v}</span>
-                {v === allVersions[allVersions.length - 1] && (
-                  <span class="version-latest-badge">latest</span>
-                )}
-              </a>
-            </li>
-          )
-        })
-    }
+    {allVersions
+      .slice()
+      .reverse()
+      .map(v => {
+        const isSelected = v === currentVersion
+        const href = v === allVersions[allVersions.length - 1] ? '/spec/' : `/spec/v/${v}/`
+        return (
+          <li>
+            <a
+              href={href}
+              aria-current={isSelected ? 'page' : undefined}
+              class:list={['version-option', { 'version-option--active': isSelected }]}
+            >
+              <span>{v}</span>
+              {v === allVersions[allVersions.length - 1] && (
+                <span class="version-latest-badge">latest</span>
+              )}
+            </a>
+          </li>
+        )
+      })}
   </ul>
 </div>
 
 <script>
-  const wrapper = document.querySelector('.version-dropdown-wrapper')
-  const trigger = wrapper?.querySelector<HTMLElement>('.version-dropdown-trigger')
-  const list = wrapper?.querySelector('.version-dropdown-list')
+const wrapper = document.querySelector('.version-dropdown-wrapper')
+const trigger = wrapper?.querySelector<HTMLElement>('.version-dropdown-trigger')
+const list = wrapper?.querySelector('.version-dropdown-list')
 
-  function open() {
-    list?.removeAttribute('hidden')
-    trigger?.setAttribute('aria-expanded', 'true')
+function open() {
+  list?.removeAttribute('hidden')
+  trigger?.setAttribute('aria-expanded', 'true')
+}
+
+function close() {
+  list?.setAttribute('hidden', '')
+  trigger?.setAttribute('aria-expanded', 'false')
+}
+
+trigger?.addEventListener('click', () => {
+  const isOpen = trigger.getAttribute('aria-expanded') === 'true'
+  if (isOpen) {
+    close()
+  } else {
+    open()
   }
+})
 
-  function close() {
-    list?.setAttribute('hidden', '')
-    trigger?.setAttribute('aria-expanded', 'false')
+document.addEventListener('click', e => {
+  if (!wrapper?.contains(e.target as Node)) {
+    close()
   }
+})
 
-  trigger?.addEventListener('click', () => {
-    const isOpen = trigger.getAttribute('aria-expanded') === 'true'
-    if (isOpen) {
-      close()
-    } else {
-      open()
-    }
-  })
-
-  document.addEventListener('click', e => {
-    if (!wrapper?.contains(e.target as Node)) {
-      close()
-    }
-  })
-
-  document.addEventListener('keydown', e => {
-    if (e.key === 'Escape') {
-      close()
-      ;(trigger as HTMLElement | null)?.focus()
-    }
-  })
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    close()
+    ;(trigger as HTMLElement | null)?.focus()
+  }
+})
 </script>

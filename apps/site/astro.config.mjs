@@ -16,10 +16,10 @@ export default defineConfig({
   // would only emit meta-refresh pages without an adapter.
   fonts: [
     {
-      name: 'Inter',
-      cssVariable: '--font-inter',
+      name: 'Gabarito',
+      cssVariable: '--font-gabarito',
       provider: fontProviders.google(),
-      weights: [400, 500, 600, 700],
+      weights: [400, 500, 600, 700, 800],
       styles: ['normal']
     },
     {
@@ -31,29 +31,31 @@ export default defineConfig({
     }
   ],
   site: 'https://randsum.dev',
+  vite: {
+    // satteri (Starlight's Markdown renderer) loads a native binding relative to
+    // its own files, which breaks once Vite bundles it into the prerender chunks.
+    ssr: { external: ['satteri'] },
+    environments: { prerender: { resolve: { external: ['satteri'] } } }
+  },
   integrations: [
     sitemap(),
     starlight({
       title: 'RANDSUM — TypeScript Dice Rolling Library for Tabletop RPGs',
-      favicon: '/favicon.ico',
+      favicon: '/favicon.svg',
       head: [
         {
           tag: 'meta',
-          attrs: { property: 'og:image', content: 'https://randsum.dev/og-image.svg' }
+          attrs: { property: 'og:image', content: 'https://randsum.dev/og-image.png' }
         },
         {
           tag: 'meta',
-          attrs: { name: 'twitter:image', content: 'https://randsum.dev/og-image.svg' }
+          attrs: { name: 'twitter:image', content: 'https://randsum.dev/og-image.png' }
         },
         {
           tag: 'meta',
           attrs: { name: 'twitter:card', content: 'summary_large_image' }
         }
       ],
-      logo: {
-        src: './src/assets/randsum-logo.png',
-        replacesTitle: true
-      },
       social: [
         {
           icon: 'github',
@@ -69,6 +71,7 @@ export default defineConfig({
       components: {
         Head: './src/components/Head.astro',
         Header: './src/components/Header.astro',
+        PageTitle: './src/components/PageTitle.astro',
         SiteTitle: './src/components/SiteTitle.astro',
         ThemeSelect: './src/components/ThemeSelect.astro',
         Footer: './src/components/Footer.astro'
@@ -162,9 +165,15 @@ export default defineConfig({
             link: '/tools/discord-bot/',
             icon: 'setting',
             items: [
-              { label: 'MCP Server', slug: 'tools/mcp' },
+              {
+                label: 'AI Agents',
+                items: [
+                  { label: 'Overview', slug: 'tools/agents' },
+                  { label: 'Claude Code Plugin', slug: 'tools/claude-code-plugin' },
+                  { label: 'MCP Server', slug: 'tools/mcp' }
+                ]
+              },
               { label: 'Discord Bot', slug: 'tools/discord-bot' },
-              { label: 'Claude Plugin', slug: 'tools/claude-code-plugin' },
               { label: 'HTTP API & Schema', slug: 'tools/http-api' }
             ]
           }

@@ -154,33 +154,35 @@ function highlightJson(json: string): React.JSX.Element {
       positions.push({
         start,
         end: start + colonIdx,
-        element: <span style={{ color: '#82aaff' }}>{fullMatch.slice(0, colonIdx)}</span>
+        element: (
+          <span style={{ color: 'var(--rs-code-property)' }}>{fullMatch.slice(0, colonIdx)}</span>
+        )
       })
       positions.push({
         start: start + colonIdx,
         end: start + fullMatch.length,
-        element: <span style={{ color: '#abb2bf' }}>{fullMatch.slice(colonIdx)}</span>
+        element: <span style={{ color: 'var(--rs-code-punct)' }}>{fullMatch.slice(colonIdx)}</span>
       })
     } else if (match[2] !== undefined) {
       // String value
       positions.push({
         start,
         end: start + fullMatch.length,
-        element: <span style={{ color: '#98c379' }}>{fullMatch}</span>
+        element: <span style={{ color: 'var(--rs-code-string)' }}>{fullMatch}</span>
       })
     } else if (match[3] !== undefined) {
       // Number
       positions.push({
         start,
         end: start + fullMatch.length,
-        element: <span style={{ color: '#d19a66' }}>{fullMatch}</span>
+        element: <span style={{ color: 'var(--rs-code-number)' }}>{fullMatch}</span>
       })
     } else if (match[4] !== undefined) {
       // Boolean/null
       positions.push({
         start,
         end: start + fullMatch.length,
-        element: <span style={{ color: '#c678dd' }}>{fullMatch}</span>
+        element: <span style={{ color: 'var(--rs-code-keyword)' }}>{fullMatch}</span>
       })
     }
   }

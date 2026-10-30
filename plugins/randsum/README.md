@@ -15,6 +15,12 @@ The `randsum` plugin, published through this repo's marketplace (`.claude-plugin
 /plugin install randsum@randsum
 ```
 
+On Claude Code 2.1.275 or later, `/plugin install randsum --marketplace RANDSUM/randsum` does both in one step.
+
+The plugin has no `version`, so installs track this repo's commits. Users pick up changes with `/plugin marketplace update randsum`, or by turning on auto-update for the `randsum` marketplace in `/plugin`.
+
+To offer it to everyone on a project, run `claude plugin marketplace add RANDSUM/randsum --scope project` and `claude plugin install randsum@randsum --scope project` there and commit the `.claude/settings.json` they write.
+
 The skills do not load just because you are working inside this repo. Install the plugin, or load the working tree directly while editing it:
 
 ```bash
@@ -32,6 +38,12 @@ Roll with advantage and a +5 modifier
 ```
 
 Plugin skills are namespaced, so the explicit form is `/randsum:dice-rolling`.
+
+## Discovery
+
+The marketplace entry carries a `relevance` block, so Claude Code can suggest the plugin when a session reads a `*.randsum.json` spec or a `package.json` that depends on `@randsum/roller`, `@randsum/games` or `@randsum/mcp`. Suggestions show only where an admin lists the `randsum` marketplace in `pluginSuggestionMarketplaces`. [`icon.png`](.claude-plugin/icon.png) is the plugin's die in its product colour, from the site's design system.
+
+The site lists every agent channel on [randsum.dev/tools/agents](https://randsum.dev/tools/agents/), from [`agents.ts`](../../apps/site/src/utils/agents.ts). A new channel is one entry there plus its own doc page.
 
 ## Adding a New Skill
 
