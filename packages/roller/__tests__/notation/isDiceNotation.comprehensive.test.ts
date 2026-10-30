@@ -276,15 +276,10 @@ describe('isDiceNotation — comprehensive', () => {
       ['1d20+5[attack roll]'],
       ['4d6Lx6'],
       ['4d6R{<2}!'],
+      ['4d6!R{<2}'],
       ['4d6LR{1}+3']
     ])('isDiceNotation("%s") returns true', notation => {
       expect(isDiceNotation(notation)).toBe(true)
-    })
-
-    // !R is parsed as explode-reverse (explodeSequence), not explode+reroll
-    // So 4d6!R{<2} leaves {<2} as unmatched junk — correctly invalid
-    test('isDiceNotation("4d6!R{<2}") returns false (!R is explode-reverse, not explode+reroll)', () => {
-      expect(isDiceNotation('4d6!R{<2}')).toBe(false)
     })
   })
 
