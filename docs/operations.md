@@ -1,6 +1,6 @@
 # Operations Runbook — Deploy, Rollback & DR
 
-_Last verified against source: 2026-09-01. Covers all deployable apps in this monorepo._
+_Last verified against source: 2026-10-30. Covers all deployable apps in this monorepo._
 
 This is the operational counterpart to each app's `CLAUDE.md` (which covers development).
 It documents how each surface is hosted, deployed, rolled back, and recovered.
@@ -15,7 +15,8 @@ It documents how each surface is hosted, deployed, rolled back, and recovered.
 | npm packages       | `packages/roller`, `packages/games`, `packages/mcp` | npm registry        | changesets on merge      | npmjs.com/org/randsum |
 
 DNS for `randsum.dev` is on Cloudflare (nameservers
-`davina`/`rajeev`.ns.cloudflare.com, registrar still Hover), and all three
+`davina`/`rajeev`.ns.cloudflare.com; registrar moving from Hover to Cloudflare
+Registrar, transfer started 2026-10-30), and all three
 surfaces serve from Workers with custom domains. `/api/roll` runs as a Worker
 route on the apex.
 
@@ -24,8 +25,12 @@ route on the apex.
 > `apps/discord-bot/wrangler.jsonc`. Deployment runs from
 > `.github/workflows/deploy-cloudflare.yml`. There are no other deploy configs.
 >
-> `randsum.io` serves a frozen build of the deleted Expo app (#1121). Nothing here builds it
-> and nothing links to it; it should 301 to randsum.dev via a Cloudflare redirect rule.
+> **randsum.dev is the only front page.** `randsum.io` and `www.randsum.io` 301 to
+> `https://randsum.dev` through a Redirect Rule in the `randsum.io` zone (set 2026-10-30;
+> randsum.io no longer points at the deleted Expo app's hosting, #1121). The site Worker
+> sets `workers_dev: false` and `preview_urls: false`, so it has no `*.workers.dev` copy.
+> `www.randsum.dev` must 301 to the apex through a Redirect Rule in the `randsum.dev` zone,
+> because static assets answer before the Worker and cannot redirect by hostname.
 
 ---
 
@@ -167,14 +172,17 @@ reversible — rolling back does not delete newer versions.
   `notation.randsum.dev` redirect (`bun run --filter @randsum/site
   deploy:notation`); if the `randsum-rdn` Worker itself is
   lost, re-add `notation.randsum.dev` as its Custom Domain after deploying.
-- The non-git state is **DNS and the zone**: `randsum.dev` is on Cloudflare
-  nameservers with the registrar still at Hover. Keep the registrar credentials
+- The non-git state is **DNS and the zones**: `randsum.dev` and `randsum.io`
+  are on Cloudflare nameservers, with both registrations moving from Hover to
+  Cloudflare Registrar (started 2026-10-30). The `randsum.io` zone holds only
+  its redirect rule. Keep the registrar credentials
   and the Cloudflare account documented in the password vault. The zone holds
   four proxied names — the apex, `www`, `notation` (the redirect Worker) and
   `bot` — all pointing at Workers custom domains.
-- **Owner action outstanding:** the old Netlify DNS zone was kept after the
-  2026-08-18 cutover as a two-week nameserver rollback. That window closed on
-  2026-09-01; delete the zone from the Netlify account.
+- The old Netlify DNS zones (`randsum.dev`, `randsum.io`) were deleted on
+  2026-10-30. Nothing RANDSUM-related is left on Netlify.
+- **Owner action outstanding:** finish the Hover → Cloudflare Registrar
+  transfers for `randsum.dev` and `randsum.io`, then close the Hover account.
 - **A trailing-slash redirect returns 307, not 301**, because Workers Static
   Assets hardcodes it and `html_handling` cannot change it. This is not a
   regression to chase: pages emit `<link rel="canonical">` and the sitemap uses

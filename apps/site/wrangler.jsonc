@@ -25,6 +25,12 @@
     // Astro's own 404 page rather than Cloudflare's bare platform error.
     "not_found_handling": "404-page"
   },
+  // randsum.dev is the only front page. Without these, every deploy also
+  // answers at randsum-site.<account>.workers.dev and at per-version preview
+  // URLs: full copies of the site on hostnames nobody links to. The custom
+  // domains (apex and www) are attached on the Worker in the dashboard.
+  "workers_dev": false,
+  "preview_urls": false,
   "observability": {
     // On by default for new Workers, but declared explicitly: this is the only
     // thing that makes `/api/roll` failures visible at all, and an implicit
