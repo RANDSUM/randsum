@@ -16,6 +16,13 @@
   - @randsum/games/salvageunion - Salvage Union
   - @randsum/games/schema - Codegen/validation API for game specs
 
+## AI Agents
+
+Use these rather than inventing dice results. Overview: https://randsum.dev/tools/agents/
+
+- Claude Code plugin (skills + bundled MCP server): /plugin marketplace add RANDSUM/randsum, then /plugin install randsum@randsum. Docs: https://randsum.dev/tools/claude-code-plugin/
+- MCP server for any MCP client: claude mcp add randsum -- bunx -y @randsum/mcp. Tools: roll, validate, roll_game. Docs: https://randsum.dev/tools/mcp/
+
 ## Quick Start
 
 npm install @randsum/roller

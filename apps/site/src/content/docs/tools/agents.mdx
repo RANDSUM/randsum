@@ -1,0 +1,36 @@
+---
+title: RANDSUM for AI Agents
+description: Give Claude and other AI agents real dice. Install the RANDSUM Claude Code plugin or connect the @randsum/mcp server to any MCP client.
+---
+
+import AgentChannels from '../../../components/AgentChannels.astro'
+
+A language model asked to roll dice makes the numbers up. RANDSUM gives agents
+the real engine instead: the same `roll()` that powers the library, the Discord
+bot and this site, with every step of the roll shown.
+
+<AgentChannels />
+
+## Which one to use
+
+| You use                                   | Install                                        | The agent gets                                                       |
+| ----------------------------------------- | ---------------------------------------------- | -------------------------------------------------------------------- |
+| Claude Code                               | [the plugin](/tools/claude-code-plugin/)       | the MCP tools, plus skills for notation, probability and game specs  |
+| Claude Desktop, Cursor, or any MCP client | [the MCP server](/tools/mcp/)                  | `roll`, `validate` and `roll_game`                                   |
+| An agent you are building                 | [`@randsum/roller`](/roller/getting-started/)  | the engine as a library, with no tool call in between                |
+
+The plugin already starts the MCP server, so in Claude Code install the plugin
+and skip the separate `claude mcp add`.
+
+## Docs agents can read
+
+These pages are written for people and for agents alike:
+
+- [`/llms.txt`](https://randsum.dev/llms.txt) is the short map of RANDSUM, its
+  packages and its web surfaces, followed by every documentation page.
+- [`/spec/llms-full.txt`](https://randsum.dev/spec/llms-full.txt) is the whole
+  RANDSUM Dice Notation spec as one text file.
+- Each documentation page has a button to copy it as Markdown or open it in a
+  chat.
+- [`POST /api/roll`](/tools/http-api/) rolls over plain HTTP, for an agent with
+  a fetch tool and nothing else.
