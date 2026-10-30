@@ -95,6 +95,17 @@ imported only by `SpecLayout`, since its resets are global to the page.
   `wrangler.notation.jsonc` to the old `randsum-rdn` Worker, which keeps the
   hostname's Custom Domain (`docs/operations.md`).
 
+## Roller app (`/app`)
+
+`src/pages/app/index.astro` is the installable roller, the "app" product
+(lime). Like `/spec` it is not a Starlight page: a full-screen shell around
+`components/roller-app/RollerApp.tsx`, which reuses `dice-ui`'s
+`NotationRoller` and `RollResultDisplay` and keeps history in localStorage.
+`public/app/` holds its manifest, icons and `sw.js`, a service worker scoped
+to `/app/` that caches the page and its `/_astro/` assets for offline use
+(`_headers` keeps `sw.js` uncached). Bump `CACHE` in `sw.js` only to force old
+entries out; fingerprinted assets refresh on their own.
+
 ## Content Structure
 
 Docs live in `src/content/docs/` as `.mdx` files; Starlight auto-routes them.

@@ -15,3 +15,12 @@
 # @astrojs/cloudflare used to inject this rule at build time.
 /_astro/*
   Cache-Control: public, max-age=31536000, immutable
+
+# The roller app's service worker must be revalidated on every visit, or a
+# deploy would never reach installed copies.
+/app/sw.js
+  Cache-Control: no-cache
+  Service-Worker-Allowed: /app/
+
+/app/manifest.webmanifest
+  Content-Type: application/manifest+json; charset=utf-8
