@@ -1,0 +1,47 @@
+---
+title: Random Numbers
+description: Draw uniform random integers in any range over HTTP with /v1/random at api.randsum.dev, from a cryptographic source with no modulo bias.
+---
+
+`/v1/random` draws plain random integers, for when you want numbers rather than
+dice: a raffle, a shuffle seed, a random table row, a sample.
+
+```bash
+curl "https://api.randsum.dev/v1/random?min=1&max=6&count=3"
+```
+
+```json
+{ "min": 1, "max": 6, "count": 3, "values": [4, 1, 6] }
+```
+
+## Parameters
+
+| Parameter | Default | Limits                                          |
+| --------- | ------- | ----------------------------------------------- |
+| `min`     | `1`     | Any integer; must not be greater than `max`     |
+| `max`     | `100`   | Any integer; `max - min + 1` at most 2³²         |
+| `count`   | `1`     | 1 to 1000                                       |
+
+The range is inclusive at both ends, and negative numbers are fine:
+`min=-10&max=10` draws from 21 values. Values are independent, so repeats can
+happen; for a shuffle, draw one value per position.
+
+## Quality
+
+Values come from `crypto.getRandomValues`, the platform's cryptographically
+secure generator. Each 32-bit draw that would make some values more likely
+than others (the leftover at the top of the range) is thrown away and drawn
+again, so every integer in the range is exactly equally likely. Responses are
+never cached.
+
+This is good randomness for games, sampling and simulations. It is not a
+substitute for a local secure generator when the numbers are secrets, because
+they travel over the network and through logs.
+
+## Dice or numbers?
+
+`/v1/random?min=1&max=20` and `/v1/roll?notation=1d20` both give a number from
+1 to 20. Use `/v1/roll` when you want dice semantics: modifiers, several pools,
+a description of the roll, or a seed to replay it. Use `/v1/random` for ranges
+that are not dice, such as `0` to `999999` or `-50` to `50`, or for many plain
+values at once.

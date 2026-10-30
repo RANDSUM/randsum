@@ -1,22 +1,23 @@
 ---
-title: MCP Server — RANDSUM for AI Agents
+title: MCP Server & Claude Connector
 description: Expose RANDSUM dice rolling to any MCP client. The @randsum/mcp server, hosted at api.randsum.dev/mcp or run locally over stdio, gives AI agents roll, validate, and roll_game tools with seeded reproducibility.
 ---
 
 import CodeExample from '../../../components/live-repl/CodeExample.astro'
 
-The **RANDSUM MCP server** (`@randsum/mcp`) is a
-[Model Context Protocol](https://modelcontextprotocol.io) stdio server that
-exposes the RANDSUM dice-rolling ecosystem to AI agents. It wraps
+The **RANDSUM MCP server** (`@randsum/mcp`) is the part of the
+[RANDSUM plugin](/tools/agents/) that does the rolling: a
+[Model Context Protocol](https://modelcontextprotocol.io) server that exposes
+the RANDSUM dice-rolling ecosystem to AI agents. It wraps
 `@randsum/roller` and `@randsum/games`, so an assistant can roll dice, validate
 notation, and roll for specific tabletop game systems.
 
-The server speaks MCP over stdio and ships as a CLI binary (`randsum-mcp`), so
-any MCP client can launch it with `bunx` or `npx` — no global install required.
-It is also hosted at `https://api.randsum.dev/mcp`, which is the URL to give a
-Claude connector.
+It is hosted at `https://api.randsum.dev/mcp`, which is the URL to give a
+Claude connector or any MCP client that takes a URL. It also ships as a CLI
+binary (`randsum-mcp`) that speaks MCP over stdio, so a client can launch it
+locally with `bunx` or `npx`, with no global install.
 
-In Claude Code, the [RANDSUM plugin](/tools/claude-code-plugin/) starts this
+In Claude Code, the [RANDSUM plugin](/tools/claude-code-plugin/) connects this
 server for you and adds skills on top. See [RANDSUM for AI agents](/tools/agents/)
 for every option.
 
@@ -38,7 +39,7 @@ and `roll_game` tools are then available in any chat.
 
 The [Claude Code plugin](/tools/claude-code-plugin/) connects this hosted
 server for you. For plain HTTP without MCP, see the
-[HTTP API](/tools/http-api/).
+[HTTP API](/api/introduction/).
 
 ### Local stdio server
 

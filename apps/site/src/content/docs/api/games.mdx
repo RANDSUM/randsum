@@ -1,0 +1,92 @@
+---
+title: Game Systems
+description: Roll for D&D 5e, Blades in the Dark, Daggerheart, Fate Core, PbtA, Root RPG and Salvage Union over HTTP with /v1/games/{game}/roll, interpreted by each game's rules.
+---
+
+`/v1/games/{game}/roll` rolls the way a game's rules say to, and returns the
+game's own result: a Blades outcome, a PbtA tier, a 5e total with advantage
+applied. It runs the same generated code as the
+[`@randsum/games`](/games/introduction/) package.
+
+## List the games
+
+```bash
+curl https://api.randsum.dev/v1/games
+```
+
+```json
+{
+  "games": [
+    {
+      "game": "blades",
+      "roll": "/v1/games/blades/roll",
+      "inputs": {
+        "rating": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10,
+          "default": 1,
+          "description": "..."
+        }
+      }
+    }
+  ]
+}
+```
+
+Each game's `inputs` come straight from its
+[`.randsum.json` spec](/games/schema/overview/): the type, the bounds, the
+allowed values and the default. This response is the same for everyone, so it
+is cacheable for five minutes.
+
+## Roll for a game
+
+Pass the game's inputs as query parameters, or as a JSON body:
+
+```bash
+curl "https://api.randsum.dev/v1/games/blades/roll?rating=3"
+curl -X POST https://api.randsum.dev/v1/games/fifth/roll \
+  -H "Content-Type: application/json" \
+  -d '{"modifier":5,"rollingWith":"Advantage"}'
+```
+
+```json
+{ "game": "blades", "total": 6, "result": "success", "rolls": [6] }
+```
+
+| Field     | Description                                                         |
+| --------- | ------------------------------------------------------------------- |
+| `game`    | The game that was rolled                                            |
+| `total`   | The numeric total                                                   |
+| `result`  | The game's interpreted outcome, such as `"success"` or a tier name   |
+| `details` | Extra game-specific detail, when the game provides any              |
+| `rolls`   | Every die value rolled                                              |
+
+## Inputs by game
+
+| `{game}`       | Game                       | Inputs                                                                                                   |
+| -------------- | -------------------------- | -------------------------------------------------------------------------------------------------------- |
+| `blades`       | Blades in the Dark         | `rating` 0 to 10 (default 1)                                                                             |
+| `daggerheart`  | Daggerheart                | `modifier` −30 to 30, `amplifyHope`, `amplifyFear` (booleans), `rollingWith` `Advantage` or `Disadvantage` |
+| `fate`         | Fate Core                  | `modifier` −2 to 5 (default 0)                                                                           |
+| `fifth`        | D&D 5th Edition            | `modifier` −30 to 30, `rollingWith` `Advantage` or `Disadvantage`, `crit` (boolean)                       |
+| `pbta`         | Powered by the Apocalypse  | `stat` −3 to 5 (**required**), `forward` and `ongoing` −5 to 5, `rollingWith`                            |
+| `root-rpg`     | Root RPG                   | `bonus` −3 to 5 (**required**), `rollingWith`                                                            |
+| `salvageunion` | Salvage Union              | `tableName` (**required**)                                                                              |
+
+`GET /v1/games` is the authoritative list; this table mirrors it. Each game's
+page under [Games](/games/introduction/) explains what its results mean.
+
+## Input errors
+
+Inputs are checked against the spec before rolling, and an error names the
+field:
+
+```json
+{ "error": "\"modifier\" must be at most 5.", "inputs": { "modifier": { "...": "..." } } }
+```
+
+A missing required input, a value of the wrong type, one out of range or one
+not in the allowed list is a `400` that also returns the game's `inputs`, so a
+client can correct itself. An unknown game is a `404` listing the real ones.
+Fields a game does not declare are ignored.

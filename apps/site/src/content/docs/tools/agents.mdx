@@ -1,6 +1,6 @@
 ---
 title: RANDSUM for AI Agents
-description: Give Claude and other AI agents real dice. Install the RANDSUM Claude Code plugin or connect the @randsum/mcp server to any MCP client.
+description: Give Claude and other AI agents real dice. The RANDSUM plugin covers it all, from Claude Code skills to a Claude connector and the MCP server, and any agent with a fetch tool can call the HTTP API.
 ---
 
 import AgentChannels from '../../../components/AgentChannels.astro'
@@ -8,6 +8,11 @@ import AgentChannels from '../../../components/AgentChannels.astro'
 A language model asked to roll dice makes the numbers up. RANDSUM gives agents
 the real engine instead: the same `roll()` that powers the library, the Discord
 bot and this site, with every step of the roll shown.
+
+Everything agent-facing is one product, the **RANDSUM plugin**: skills that
+teach notation, odds and game specs, and the RANDSUM MCP server, hosted at
+`https://api.randsum.dev/mcp` or run locally. For agents without MCP, the
+[RANDSUM API](/api/introduction/) gives the same rolls as plain JSON.
 
 <AgentChannels />
 
@@ -18,6 +23,7 @@ bot and this site, with every step of the roll shown.
 | Claude Code                               | [the plugin](/tools/claude-code-plugin/)       | the MCP tools, plus skills for notation, probability and game specs  |
 | Claude (claude.ai, Desktop, mobile)       | [a connector](/tools/mcp/#hosted-server-no-install) to `https://api.randsum.dev/mcp` | `roll`, `validate` and `roll_game` |
 | Cursor, VS Code, or any MCP client        | [the MCP server](/tools/mcp/)                  | `roll`, `validate` and `roll_game`                                   |
+| Any agent with a fetch tool or a shell    | nothing: call [the HTTP API](/api/introduction/) | rolls, game results and random integers as JSON                    |
 | An agent you are building                 | [`@randsum/roller`](/roller/getting-started/)  | the engine as a library, with no tool call in between                |
 
 The plugin already connects the hosted MCP server, so in Claude Code install
@@ -33,6 +39,6 @@ These pages are written for people and for agents alike:
   RANDSUM Dice Notation spec as one text file.
 - Each documentation page has a button to copy it as Markdown or open it in a
   chat.
-- [`https://api.randsum.dev/v1`](/tools/http-api/) rolls dice, rolls for game
+- [`https://api.randsum.dev/v1`](/api/introduction/) rolls dice, rolls for game
   systems and draws random integers over plain HTTP, for an agent with a fetch
   tool and nothing else.
