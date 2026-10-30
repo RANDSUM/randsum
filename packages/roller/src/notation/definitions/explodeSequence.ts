@@ -8,7 +8,7 @@ export const explodeSequenceSchema: NotationSchema<number[]> = defineNotationSch
   tokenKey: '!s',
   category: 'Generate',
 
-  pattern: /![sS]\{[\d,]+\}|![iI]|![rR]/,
+  pattern: /![sS]\{[\d,]+\}|![iI]|![rR](?![oO]?\{)/,
 
   parse: notation => {
     const match = explodeSequencePattern.exec(notation)

@@ -553,6 +553,19 @@
       "conformanceLevel": 3,
       "expectedError": true,
       "errorDescription": "A max-face explosion needs a condition on a die without faces 1..N"
+    },
+    {
+      "id": 55,
+      "notation": "4d6!R{1}",
+      "category": "extended_coverage",
+      "seedRolls": [1, 3, 6, 2],
+      "rerollRolls": [4],
+      "explodeRolls": [5],
+      "expectedPool": [4, 3, 6, 2, 5],
+      "expectedTotal": 20,
+      "section": "8.3",
+      "conformanceLevel": 2,
+      "note": "`!` followed by `R{...}` is Explode then Reroll, not Reduction (`!r` takes no condition block). Reroll (40) runs before explode (50)."
     }
   ]
 }

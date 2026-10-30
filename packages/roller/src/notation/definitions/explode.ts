@@ -8,7 +8,7 @@ import {
 import { type NotationSchema, defineNotationSchema } from '../schema'
 
 const explodePattern =
-  /(?<!!)!(?!!|[pPsSiIrR])(\{((?:>=|<=|>|<|=)?\d+(?:,(?:>=|<=|>|<|=)?\d+)*)\})?/
+  /(?<!!)!(?!!|[pPsSiI]|[rR](?![oO]?\{))(\{((?:>=|<=|>|<|=)?\d+(?:,(?:>=|<=|>|<|=)?\d+)*)\})?/
 
 export const explodeSchema: NotationSchema<boolean | ComparisonOptions> = defineNotationSchema<
   boolean | ComparisonOptions
@@ -18,7 +18,7 @@ export const explodeSchema: NotationSchema<boolean | ComparisonOptions> = define
   tokenKey: '!',
   category: 'Generate',
 
-  pattern: /(?<!!)!(?!!|[pPsSiIrR])(\{((?:>=|<=|>|<|=)?\d+(?:,(?:>=|<=|>|<|=)?\d+)*)\})?/,
+  pattern: explodePattern,
 
   parse: notation => {
     const match = explodePattern.exec(notation)

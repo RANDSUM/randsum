@@ -165,6 +165,43 @@ describe('reductive explosion sugar (!r)', () => {
   })
 })
 
+describe('explode followed by reroll (! then R{..}) is not reduction', () => {
+  test.each(['4d6!R{<3}', '4d6!r{<3}'])('%s parses as explode + reroll', notation => {
+    const modifiers = notationToOptions(notation)[0]?.modifiers
+    expect(modifiers?.explode).toBe(true)
+    expect(modifiers?.reroll).toEqual({ lessThan: 3 })
+    expect(modifiers?.explodeSequence).toBeUndefined()
+  })
+
+  test('!R{..}N keeps the reroll max count', () => {
+    const modifiers = notationToOptions('4d6!R{<3}2')[0]?.modifiers
+    expect(modifiers?.explode).toBe(true)
+    expect(modifiers?.reroll).toEqual({ lessThan: 3, max: 2 })
+  })
+
+  test('!ro{..} parses as explode + reroll once', () => {
+    const modifiers = notationToOptions('4d6!ro{1}')[0]?.modifiers
+    expect(modifiers?.explode).toBe(true)
+    expect(modifiers?.reroll).toEqual({ exact: [1], max: 1 })
+  })
+
+  test('conditional explode followed by reroll', () => {
+    const modifiers = notationToOptions('4d6!{>5}R{<3}')[0]?.modifiers
+    expect(modifiers?.explode).toEqual({ greaterThan: 5 })
+    expect(modifiers?.reroll).toEqual({ lessThan: 3 })
+  })
+
+  test('!r followed by another modifier is still reduction', () => {
+    const modifiers = notationToOptions('1d20!rL')[0]?.modifiers
+    expect(modifiers?.explodeSequence).toEqual([12, 10, 8, 6, 4])
+    expect(modifiers?.explode).toBeUndefined()
+  })
+
+  test('isDiceNotation accepts !R{<3}', () => {
+    expect(isDiceNotation('4d6!R{<3}')).toBe(true)
+  })
+})
+
 describe('isDiceNotation recognizes explode sequence notations', () => {
   test('accepts !s{4,6,8}', () => {
     expect(isDiceNotation('4d6!s{6,8,10}')).toBe(true)
