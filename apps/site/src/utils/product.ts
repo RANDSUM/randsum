@@ -25,3 +25,129 @@ export const PRODUCT_LABELS: Readonly<Record<Product, string>> = {
 export function productForPath(pathname: string): Product | undefined {
   return PREFIXES.find(([prefix]) => pathname.startsWith(prefix))?.[1]
 }
+
+interface ProductFact {
+  readonly value: string
+  readonly label: string
+}
+
+export interface ProductInfo {
+  readonly id: Product
+  // One line in the landing stack and the hero
+  readonly tagline: string
+  readonly summary: string
+  readonly href: string
+  readonly snippet: { readonly lang: string; readonly code: string }
+  readonly facts: readonly ProductFact[]
+}
+
+// Every product, in the order the landing page stacks them
+export const PRODUCTS: readonly ProductInfo[] = [
+  {
+    id: 'roller',
+    tagline: 'Write the roll, get every step back',
+    summary:
+      'The dice engine. Parses any notation, rolls it, and tells you what each modifier changed and why the total is what it is.',
+    href: '/roller/introduction/',
+    snippet: {
+      lang: 'ts',
+      code: "import { roll } from '@randsum/roller'\n\nconst { total, rolls } = roll('4d6L')\nrolls[0].description // ['Roll 4 6-sided dice', 'Drop lowest']"
+    },
+    facts: [
+      { value: '0', label: 'runtime dependencies' },
+      { value: '26', label: 'modifiers in the spec' },
+      { value: 'ESM', label: 'with full type declarations' }
+    ]
+  },
+  {
+    id: 'games',
+    tagline: 'Seven tabletop games, ready to roll',
+    summary:
+      'Typed rolls for D&D 5e, Blades in the Dark, Daggerheart, Fate and more, generated from open .randsum.json specs.',
+    href: '/games/introduction/',
+    snippet: {
+      lang: 'ts',
+      code: "import { roll } from '@randsum/games/fifth'\n\nconst { result } = roll({ modifier: 5, rollingWith: 'Advantage' })"
+    },
+    facts: [
+      { value: '7', label: 'game systems' },
+      { value: '1', label: 'package, one subpath each' },
+      { value: 'JSON', label: 'specs you can write yourself' }
+    ]
+  },
+  {
+    id: 'spec',
+    tagline: 'An open standard for dice notation',
+    summary:
+      'RANDSUM Dice Notation: one grammar, a fixed modifier order, and conformance levels any roller can implement.',
+    href: '/spec/',
+    snippet: {
+      lang: 'text',
+      code: '4d6R{1}L+2\n\nroll 4d6 → reroll 1s → drop lowest → add 2'
+    },
+    facts: [
+      { value: '26', label: 'modifiers' },
+      { value: '4', label: 'conformance levels' },
+      { value: '3', label: 'pipeline stages' }
+    ]
+  },
+  {
+    id: 'mcp',
+    tagline: 'Real dice for AI agents',
+    summary:
+      'An MCP server that gives Claude and other agents roll, validate and roll_game tools, so the dice are never made up.',
+    href: '/tools/mcp/',
+    snippet: { lang: 'bash', code: 'claude mcp add randsum -- bunx -y @randsum/mcp' },
+    facts: [
+      { value: '3', label: 'tools' },
+      { value: 'stdio', label: 'works with any MCP client' }
+    ]
+  },
+  {
+    id: 'discord',
+    tagline: 'Roll from any Discord server',
+    summary:
+      'Slash commands for any notation and every supported game, with each step of the roll shown in the reply.',
+    href: '/tools/discord-bot/',
+    snippet: { lang: 'text', code: '/roll notation:4d6L+2\n/blades dice:3' },
+    facts: [
+      { value: '0', label: 'setup after adding it' },
+      { value: '7', label: 'games with their own command' }
+    ]
+  },
+  {
+    id: 'plugin',
+    tagline: 'Dice skills for Claude Code',
+    summary:
+      'Three skills and the MCP server, packaged for Claude Code: rolling, probability and writing your own game specs.',
+    href: '/tools/claude-code-plugin/',
+    snippet: {
+      lang: 'bash',
+      code: '/plugin marketplace add RANDSUM/randsum\n/plugin install randsum@randsum'
+    },
+    facts: [
+      { value: '3', label: 'skills' },
+      { value: '1', label: 'MCP server, bundled' }
+    ]
+  }
+]
+
+export function productInfo(id: Product): ProductInfo {
+  const info = PRODUCTS.find(product => product.id === id)
+  if (info === undefined) throw new Error(`Unknown product: ${id}`)
+  return info
+}
+
+// Each product's front page, which opens with its ProductHero instead of a plain title
+const HERO_PAGES: Readonly<Record<string, Product>> = {
+  '/roller/introduction/': 'roller',
+  '/games/introduction/': 'games',
+  '/notation/introduction/': 'spec',
+  '/tools/mcp/': 'mcp',
+  '/tools/discord-bot/': 'discord',
+  '/tools/claude-code-plugin/': 'plugin'
+}
+
+export function heroProductForPath(pathname: string): Product | undefined {
+  return HERO_PAGES[pathname.endsWith('/') ? pathname : `${pathname}/`]
+}

@@ -20,7 +20,7 @@ Private app, deploys to Cloudflare Workers once CI is green on `main` via
 - **`@astrojs/react` 5.0.7** — interactive React islands (playground, REPL)
 - **`astro-expressive-code`** — code block rendering
 - **`@randsum/roller`** — workspace-linked, powers the live notation components
-- Fonts (Figtree for text, Bricolage Grotesque for headings, JetBrains Mono for code)
+- Fonts (Gabarito for text and headings, JetBrains Mono for code)
   via Astro's Google font provider, loaded by the `<Font />` tags in `Head.astro`
 - Brand: the pip R mark (`src/components/PipMark.astro`, outline and knockout) and a
   product family. Chrome is neutral; `src/utils/product.ts` maps a path to its product
@@ -88,9 +88,11 @@ Top-level topics: `welcome/`, `roller/`, `notation/`, `games/` (incl.
 
 The home page is **not** a Starlight doc — it's a custom `src/pages/index.astro`
 that renders a `StarlightPage` shell wrapping landing sections from
-`src/components/landing/` (`LandingHero`, `FeaturesGrid`, `FeaturesPlayground`,
-`GamesGrid`, `PackagesGrid`, `ToolsGrid`, `IntegrationsSection`,
-`GameSchemaSection`, `LandingFooter`, `LandingScripts`). There is also a
+`src/components/landing/` (`LandingHero`, `ProductStack`, `FeaturesPlayground`,
+`GameSchemaSection`, `IntegrationsSection`, `GamesGrid`, `LandingFooter`,
+`LandingScripts`). `ProductStack` renders one section per product from
+`PRODUCTS` in `src/utils/product.ts`, which also feeds `ProductHero`, the
+hero at the top of each product's introduction page. There is also a
 `src/pages/discord.astro` route.
 
 ## Adding Content
@@ -131,7 +133,8 @@ Interactive / shared components:
 - `HeroInteractive.tsx` — hero dice playground
 - `GameSchemaViewer.tsx` — schema viewer
 - `IntegrationViewer.tsx` — integration viewer
-- `LabeledSection.astro` — labeled content block
+- `PipMark.astro` — the pip R mark, outline or knockout
+- `ProductHero.astro` — a product's hero: lockup, name in its colour, pitch, install, facts
 - `ErrorBoundary/` — React error boundary
 
 ## Build Pipeline

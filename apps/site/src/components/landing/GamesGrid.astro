@@ -1,10 +1,10 @@
 ---
 import { gamePackages } from '../../utils/packageData'
-import LabeledSection from '../LabeledSection.astro'
 import { getCardStyle } from './cardHelpers'
 ---
 
-<LabeledSection label="Games" labelSide="left">
+<section class="games-section not-content" aria-labelledby="games-title">
+  <h2 id="games-title" class="section-heading">Ready for your table</h2>
   <div class="pkg-grid">
     {
       gamePackages.map(pkg => (
@@ -18,4 +18,4 @@ import { getCardStyle } from './cardHelpers'
       ))
     }
   </div>
-</LabeledSection>
+</section>

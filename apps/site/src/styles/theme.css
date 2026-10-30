@@ -89,8 +89,8 @@
   --rs-syntax-count: light-dark(#6a57b3, #bdb0ff);
 
   /* Fonts: the family names behind --font-* are hashed by Astro's font API */
-  --rs-font-sans: var(--font-figtree), ui-sans-serif, system-ui, sans-serif;
-  --rs-font-heading: var(--font-bricolage-grotesque), ui-sans-serif, system-ui, sans-serif;
+  --rs-font-sans: var(--font-gabarito), ui-sans-serif, system-ui, sans-serif;
+  --rs-font-heading: var(--font-gabarito), ui-sans-serif, system-ui, sans-serif;
   --rs-font-mono: var(--font-jetbrains-mono), ui-monospace, SFMono-Regular, monospace;
 }
 

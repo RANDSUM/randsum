@@ -16,17 +16,10 @@ export default defineConfig({
   // would only emit meta-refresh pages without an adapter.
   fonts: [
     {
-      name: 'Figtree',
-      cssVariable: '--font-figtree',
+      name: 'Gabarito',
+      cssVariable: '--font-gabarito',
       provider: fontProviders.google(),
-      weights: [400, 500, 600, 700],
-      styles: ['normal']
-    },
-    {
-      name: 'Bricolage Grotesque',
-      cssVariable: '--font-bricolage-grotesque',
-      provider: fontProviders.google(),
-      weights: [600, 700, 800],
+      weights: [400, 500, 600, 700, 800],
       styles: ['normal']
     },
     {
@@ -72,6 +65,7 @@ export default defineConfig({
       components: {
         Head: './src/components/Head.astro',
         Header: './src/components/Header.astro',
+        PageTitle: './src/components/PageTitle.astro',
         SiteTitle: './src/components/SiteTitle.astro',
         ThemeSelect: './src/components/ThemeSelect.astro',
         Footer: './src/components/Footer.astro'

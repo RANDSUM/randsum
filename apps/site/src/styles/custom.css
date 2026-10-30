@@ -5,6 +5,10 @@
   --sl-color-accent-low: var(--rs-accent-low);
   --sl-color-accent: var(--rs-accent);
   --sl-color-accent-high: var(--rs-accent-high);
+  /* Starlight paints :::tip in purple; it takes the page's product colour instead */
+  --sl-color-purple-low: var(--rs-accent-low);
+  --sl-color-purple: var(--rs-accent);
+  --sl-color-purple-high: var(--rs-accent-high);
 
   --sl-color-white: var(--rs-fg);
   --sl-color-gray-1: var(--rs-gray-1);
