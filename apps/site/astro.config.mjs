@@ -165,9 +165,15 @@ export default defineConfig({
             link: '/tools/discord-bot/',
             icon: 'setting',
             items: [
-              { label: 'MCP Server', slug: 'tools/mcp' },
+              {
+                label: 'AI Agents',
+                items: [
+                  { label: 'Overview', slug: 'tools/agents' },
+                  { label: 'Claude Code Plugin', slug: 'tools/claude-code-plugin' },
+                  { label: 'MCP Server', slug: 'tools/mcp' }
+                ]
+              },
               { label: 'Discord Bot', slug: 'tools/discord-bot' },
-              { label: 'Claude Plugin', slug: 'tools/claude-code-plugin' },
               { label: 'HTTP API & Schema', slug: 'tools/http-api' }
             ]
           }

@@ -35,7 +35,19 @@
         "pbta"
       ],
       "category": "gaming",
-      "tags": ["dice-rolling", "ttrpg", "game-mechanics", "rdn-spec"]
+      "tags": ["dice-rolling", "ttrpg", "game-mechanics", "rdn-spec"],
+      "relevance": {
+        "topic": "tabletop dice",
+        "signals": {
+          "filesRead": ["**/*.randsum.json"],
+          "manifestDeps": [
+            {
+              "file": "[/\\\\]package\\.json$",
+              "pattern": "\"@randsum/(roller|games|mcp)\"\\s*:"
+            }
+          ]
+        }
+      }
     }
   ]
 }

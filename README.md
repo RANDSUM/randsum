@@ -39,6 +39,17 @@ This repository contains multiple packages and applications for dice rolling and
 - **[@randsum/discord-bot](apps/discord-bot)** - Discord bot for dice rolling
 - **[@randsum/site](apps/site)** - Documentation site built with Astro + Starlight ([randsum.dev](https://randsum.dev)), including the RANDSUM Dice Notation specification ([randsum.dev/spec](https://randsum.dev/spec/))
 
+### For AI agents
+
+Give Claude or any other agent the real engine instead of made-up numbers. Every option is on [randsum.dev/tools/agents](https://randsum.dev/tools/agents/).
+
+- **[Claude Code plugin](plugins/randsum)** - Skills for rolling, probability and game specs, with the MCP server bundled:
+  ```
+  /plugin marketplace add RANDSUM/randsum
+  /plugin install randsum@randsum
+  ```
+- **[@randsum/mcp](packages/mcp)** - MCP stdio server with `roll`, `validate` and `roll_game` tools, for any MCP client: `claude mcp add randsum -- bunx -y @randsum/mcp`
+
 ## 🚀 Quick Example
 
 ```typescript
