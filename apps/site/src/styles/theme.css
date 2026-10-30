@@ -50,6 +50,8 @@
   --product-discord-fill: #00b4ca;
   --product-plugin: light-dark(#a8501a, #f2a066);
   --product-plugin-fill: #e07a2f;
+  --product-app: light-dark(#55700a, #b5dc4a);
+  --product-app-fill: #94c11f;
 
   /* Accent: ink by default. A page inside a product sets <html data-product>,
      and the accent becomes that product's colour (see below). */
@@ -191,4 +193,10 @@ html[data-product='plugin'] {
   --rs-accent: var(--product-plugin);
   --rs-accent-high: var(--product-plugin);
   --rs-accent-low: color-mix(in srgb, var(--product-plugin-fill) 14%, var(--rs-bg));
+}
+
+html[data-product='app'] {
+  --rs-accent: var(--product-app);
+  --rs-accent-high: var(--product-app);
+  --rs-accent-low: color-mix(in srgb, var(--product-app-fill) 14%, var(--rs-bg));
 }

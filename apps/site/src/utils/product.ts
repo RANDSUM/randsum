@@ -1,6 +1,6 @@
 // The product a page belongs to. Each product wears the pip R die in its own
 // colour; theme.css turns <html data-product> into that page's accent.
-export type Product = 'roller' | 'games' | 'spec' | 'api' | 'discord' | 'plugin'
+export type Product = 'roller' | 'games' | 'spec' | 'api' | 'discord' | 'plugin' | 'app'
 
 const PREFIXES: readonly (readonly [string, Product])[] = [
   ['/roller/', 'roller'],
@@ -13,7 +13,8 @@ const PREFIXES: readonly (readonly [string, Product])[] = [
   // The plugin product is every agent surface: skills, the MCP server, the connector
   ['/tools/agents', 'plugin'],
   ['/tools/mcp', 'plugin'],
-  ['/tools/claude-code-plugin', 'plugin']
+  ['/tools/claude-code-plugin', 'plugin'],
+  ['/app/', 'app']
 ]
 
 export const PRODUCT_LABELS: Readonly<Record<Product, string>> = {
@@ -22,7 +23,8 @@ export const PRODUCT_LABELS: Readonly<Record<Product, string>> = {
   spec: 'spec',
   api: 'api',
   discord: 'discord bot',
-  plugin: 'plugin'
+  plugin: 'plugin',
+  app: 'app'
 }
 
 export function productForPath(pathname: string): Product | undefined {
@@ -171,6 +173,25 @@ export const PRODUCTS: readonly ProductInfo[] = [
     actions: [
       { label: 'Set it up', href: '/tools/claude-code-plugin/#setup' },
       { label: 'Every agent option', href: '/tools/agents/' }
+    ]
+  },
+  {
+    id: 'app',
+    tagline: 'A dice roller for your home screen',
+    summary:
+      'Any notation, every step shown, and your last rolls kept. Install it on your phone and it rolls offline, no account and no network.',
+    href: '/app/',
+    snippet: {
+      lang: 'text',
+      code: '4d6L    → 14   [6, 5, 3] dropped 1\n1d20+5  → 17\n2d8!    → 11   exploded on 8'
+    },
+    facts: [
+      { value: '1', label: 'tap to roll' },
+      { value: '0', label: 'network needed once installed' }
+    ],
+    actions: [
+      { label: 'Open the app', href: '/app/' },
+      { label: 'Notation guide', href: '/notation/getting-started/' }
     ]
   }
 ]
