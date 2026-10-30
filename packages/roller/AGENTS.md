@@ -54,6 +54,10 @@ The `size-limit` gate on `dist/tokenize.js` is the backstop. After any modifier 
 
 The `size-limit` block in `package.json` is the only copy of the budgets, one per JS entry. There is no `.d.ts` entry: size-limit runs files through esbuild, which strips types, so a declaration entry could never fail.
 
+## Plugin bundle
+
+The Claude Code plugin's `/roll` mod rolls with `plugins/randsum/hooks/roller.generated.js`, a bundle of `src/roll/index.ts`. After changing anything under `src/`, run `bun run plugin:roller` from the repo root and commit the result; `bun run check:plugin-roller` fails in CI otherwise.
+
 ## Conformance vectors
 
 `spec/` holds the hand-authored RDN conformance vectors (not published). `apps/site` serializes them to randsum.dev/conformance/, and `__tests__/spec/` runs them through `roll()`.

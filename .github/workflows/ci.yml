@@ -73,6 +73,9 @@ jobs:
               - '.github/workflows/ci.yml'
             skill:
               - 'plugins/**'
+              # The plugin's /roll mod commits a bundle of roller's roll().
+              - 'packages/roller/src/**'
+              - 'scripts/build-plugin-roller.ts'
               - '.claude-plugin/**'
               - '.claude/**'
               - '.mcp.json'
@@ -238,6 +241,14 @@ jobs:
       # warning into exit 1 for both. Errors still fail the step.
       - name: Verify plugin
         run: claude plugin validate plugins/randsum
+      # Hooks modules are early access; this pinned build runs them only when asked.
+      - name: Test the plugin's /roll mod
+        run: claude plugin test plugins/randsum
+        env:
+          CLAUDE_CODE_ENABLE_FUNCTION_HOOKS: '1'
+      - uses: ./.github/actions/bun-setup
+      - name: Plugin roller bundle is fresh
+        run: bun run check:plugin-roller
       - name: Verify marketplace
         run: claude plugin validate .claude-plugin/marketplace.json
 

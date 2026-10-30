@@ -8,6 +8,7 @@
       "!**/dist",
       "!**/coverage",
       "!**/*.generated.ts",
+      "!**/*.generated.js",
       "!**/*.d.ts",
       "!**/.astro",
       "!**/public",

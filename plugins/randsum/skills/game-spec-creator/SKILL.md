@@ -1,10 +1,9 @@
 ---
 name: game-spec-creator
-description: Help users create .randsum.json specs for custom TTRPG dice mechanics. Use when someone wants to define a new game system, translate tabletop game rules into declarative specs, or understand the RANDSUM spec format.
+description: Helps users create .randsum.json specs for custom TTRPG dice mechanics. Use when someone wants to define a new game system, translate tabletop game rules into declarative specs, or understand the RANDSUM spec format.
 license: MIT
 metadata:
   author: RANDSUM
-  version: "1.0"
   repository: https://github.com/RANDSUM/randsum
 ---
 
@@ -182,6 +181,8 @@ Define pools, modifiers, resolution strategy, and outcome ranges. Use `when` for
 **Boolean-conditional values:** `{ "$input": "flag", "ifTrue": 20, "ifFalse": 12 }` for inputs that change die size.
 
 ## Validation and Testing
+
+The commands below run in a clone of the RANDSUM repo, where a new spec lands as `packages/games/<shortcode>.randsum.json` and becomes a `@randsum/games/<shortcode>` subpath. Outside the repo, validate the spec against the meta-schema URL with any JSON Schema validator.
 
 - **Meta-schema**: `packages/games/randsum.json` (or `https://randsum.dev/schemas/v1/randsum.json`)
 - **Run codegen**: `bun run --filter @randsum/games gen`

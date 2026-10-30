@@ -1,177 +1,112 @@
 ---
 name: dice-rolling
-description: Roll dice and interpret results for tabletop RPGs using RANDSUM notation. Use this skill whenever a user asks to roll dice, wants a random result, needs a game mechanic simulated, or mentions TTRPGs — even casually (e.g. "roll for me", "give me a strength score", "what do I get?"). Also use for questions about dice notation, probability, D&D 5E, Blades in the Dark, Daggerheart, PbtA, Root RPG, or Salvage Union mechanics.
+description: Rolls tabletop RPG dice for the user with the real RANDSUM engine (its MCP tools or the api.randsum.dev HTTP API) and explains the result. Use whenever the user asks to roll dice or wants a random game result, even casually ("roll for initiative", "give me a strength score", "do I hit?"), writes dice notation such as 4d6L or 2d20+5, or asks for a roll in D&D 5e, Blades in the Dark, Daggerheart, Fate, PbtA, Root RPG or Salvage Union. For writing code that rolls dice use randsum-library; for odds and expected values use dice-probability.
 license: MIT
 metadata:
   author: RANDSUM
-  version: "3.0"
   repository: https://github.com/RANDSUM/randsum
 ---
 
-# Dice Rolling Skill
+# Dice Rolling
 
-## Executing Rolls
+Turn what the user asked for into a RANDSUM roll, get the result from the real engine, and report it. **Never invent a dice result.** Language models are not random; a made-up roll is a wrong answer even when it looks plausible.
 
-When a user asks you to roll dice, **produce an actual result** — don't just show notation or code.
+## 1. Pick the tool
 
-Get the result from the real engine whenever you can, in this order:
+Use the first one available:
 
-1. **MCP tools.** If the RANDSUM MCP server is connected (this plugin connects it, and claude.ai users can add it as a connector at `https://api.randsum.dev/mcp`), use its tools: `roll` for plain notation, `validate` to check notation, and `roll_game` for a game's own mechanics.
-2. **The HTTP API.** Otherwise, if you can make a web request (a shell with `curl`, or a fetch tool), call `https://api.randsum.dev/v1`. It is public, keyless and returns JSON:
-   - `GET /v1/roll?notation=4d6L` rolls notation. Add `&seed=42` for a reproducible roll. URL-encode the notation (`+` is `%2B`).
-   - `GET /v1/validate?notation=2d20H%2B5` checks notation without rolling.
-   - `GET /v1/games/<game>/roll?<inputs>` rolls for a game, e.g. `/v1/games/blades/roll?rating=3` or `/v1/games/fifth/roll?modifier=5&rollingWith=Advantage`. `GET /v1/games` lists each game's inputs.
-   - `GET /v1/random?min=1&max=100&count=5` draws plain random integers.
+1. **RANDSUM MCP tools.** This plugin connects them (claude.ai users add `https://api.randsum.dev/mcp` as a connector). In Claude Code they are listed as `mcp__plugin_randsum_randsum__roll` and so on.
+   - `roll_game` when the user names a supported game. It returns the game's outcome, not just a number.
+   - `roll` for plain notation.
+   - `validate` to check or explain notation, or to repair notation `roll` rejected.
+2. **The HTTP API** at `https://api.randsum.dev/v1`, if you can make a web request (`curl` in a shell, or a fetch tool). Public, keyless, JSON:
+   - `GET /v1/roll?notation=4d6L` (URL-encode: `+` is `%2B`, `{` is `%7B`, `}` is `%7D`)
+   - `GET /v1/games/<game>/roll?<inputs>`, e.g. `/v1/games/blades/roll?rating=3`
+   - `GET /v1/validate?notation=...`, `GET /v1/random?min=1&max=100&count=5`, `GET /v1/games`
+   - `POST` with a JSON body works for `roll`, `validate` and game rolls too, and avoids URL encoding.
+3. **Local code**, if you have a shell but no network: `node -e "console.log(require('crypto').randomInt(1, 21))"` for a d20, and do the dice arithmetic yourself. Say the roll came from a local RNG.
+4. **Nothing available:** tell the user you cannot roll real dice here and give the notation they can roll themselves. Only simulate if they ask you to, and label it simulated.
 
-   A 400 response carries an `error` and, for bad notation, often a `suggestion` to retry with.
-3. **Simulate.** With neither available, **simulate the roll yourself**: generate random numbers as you would genuinely roll dice, present them clearly, and say the roll was simulated. Don't just describe how the roll would work without giving a result.
+## 2. Translate the request
 
-## Response Format
+| The user says | Call |
+|---|---|
+| "Roll a d20" / "roll 2d6+3" | `roll` with `1d20` / `2d6+3` |
+| "Attack with advantage, +5" (D&D) | `roll_game` `fifth` `{ "modifier": 5, "rollingWith": "Advantage", "crit": true }` |
+| "Roll stats" / "ability scores" | `roll` with `4d6Lx6` |
+| "Roll 3 dice for Blades" / "action rating 2 plus a push" | `roll_game` `blades` `{ "rating": 3 }` |
+| "Duality roll, +2, with advantage" (Daggerheart) | `roll_game` `daggerheart` `{ "modifier": 2, "rollingWith": "Advantage" }` |
+| "Fate roll, Good skill" | `roll_game` `fate` `{ "modifier": 3 }` |
+| "Roll +Hard" with Hard 2 (PbtA) | `roll_game` `pbta` `{ "stat": 2 }` |
+| "Roll on the Morale table" (Salvage Union) | `roll_game` `salvageunion` `{ "tableName": "Morale" }` |
+| "Fireball damage" | `roll` with `8d6` |
+| "Crit with my longsword, +3" | `roll` with `2d8+3` (double the dice, not the modifier) |
+| "Five d10s, count 8 or higher" | `roll` with `5d10S{8}` |
+| "Roll percentile" | `roll` with `d%` |
 
-After rolling, always show:
-1. **What you rolled** — the notation and what it represents
-2. **The dice** — raw values (and which were dropped/kept if relevant)
-3. **The total** — the final number
-4. **The meaning** — what it means in the game context (hit/miss, success tier, stat value, etc.)
+Rules of thumb:
+
+- **Ask only when a required number is missing** and you cannot reasonably assume it (a PbtA `stat`, a Salvage Union table). Otherwise assume the common default and say so ("assuming no modifier").
+- **One call per independent roll.** Attack and damage are two calls, because damage only happens on a hit. Use `xN` (`4d6Lx6`) for N identical rolls.
+- **Pass a `seed` only when the user asks** for a reproducible or shareable roll.
+- **On an error,** read the message and the `suggestion`, fix the notation once (or call `validate`), and retry. Do not loop.
+- **Unsupported games** roll as plain notation; interpret by the game's rules yourself.
+
+Each game's inputs, ranges and outcomes: [references/GAME_SYSTEMS.md](references/GAME_SYSTEMS.md).
+
+## 3. Report the result
+
+Show, in one compact block:
+
+1. **What was rolled**: the notation or game roll, and what it is for
+2. **The dice**: values from the tool, marking dropped or rerolled dice when it tells you
+3. **The total**
+4. **What it means** in the game: hit or miss, success tier, Hope or Fear, ladder rung, table entry
 
 ```
-Rolling 4d6L (4 six-sided dice, drop lowest) for Strength:
-Dice: [5, 3, 4, 2] → dropped 2 → kept [5, 3, 4]
-Total: 12
-→ Strength score: 12 (modifier: +1)
+Strength (4d6L): rolled [5, 3, 4, 2], dropped the 2 → 12 (modifier +1)
 ```
 
-Keep it compact — one block, no lengthy preamble. For game-system rolls, add one sentence of flavor or consequence after the result (e.g. "You pull it off cleanly." or "Brace for a complication.").
+```
+Blades, 3 dice: [2, 5, 4] → highest 5: partial success.
+You do it, but there's a consequence: harm, a complication, or reduced effect.
+```
 
-## Notation Quick Reference
+Report the numbers exactly as returned. Add at most one sentence of flavour for game rolls. Don't explain notation unless asked.
 
-All notation is case-insensitive. Basic syntax: `NdS` (N dice, S sides).
+## Notation quick reference
 
-### Core Modifiers
+Case-insensitive. `NdS` rolls N dice with S sides; `d20` means `1d20`.
 
-| Notation | Description |
+| Notation | Meaning |
 |---|---|
-| `4d6L` | Drop lowest die |
-| `4d6H` | Drop highest die |
-| `4d6L2` | Drop 2 lowest |
-| `4d6K3` | Keep highest 3 |
-| `4d6kl2` | Keep lowest 2 |
-| `1d20+5` | Add 5 to total |
-| `4d6-1` | Subtract 1 |
-| `2d6*2` | Multiply dice sum (before +/-) |
-| `2d6+3**2` | Multiply final total (after +/-) |
-
-### Conditional Modifiers
-
-Conditions use comparison operators: `>N` (greater than), `<N` (less than), `>=N` (at or over), `<=N` (at or under), `=N` or bare `N` (exact match).
-
-| Notation | Description |
-|---|---|
-| `4d6R{1}` | Reroll 1s (bare number = exact match) |
-| `4d6R{=1}` | Same — explicit `=` form |
+| `1d20+5` | Add 5 (`-` subtracts) |
+| `4d6L` | Drop the lowest (`L2` drops two) |
+| `2d20H` | Drop the highest |
+| `4d6K3` | Keep the highest 3 |
+| `4d6kl2` | Keep the lowest 2 |
+| `4d6R{1}` | Reroll 1s |
 | `4d20R{<5}` | Reroll under 5 |
-| `4d20R{<=5}` | Reroll 5 or under |
-| `4d20R{>=17}` | Reroll 17 or over |
-| `4d20R{<5}3` | Reroll under 5, max 3 attempts |
-| `4d20V{8=12}` | Replace 8s with 12s |
-| `4d20V{>17=20}` | Replace results over 17 with 20 |
-| `4d20V{>=17=20}` | Replace results at or over 17 with 20 |
-| `4d20V{<=3=1}` | Replace results at or under 3 with 1 |
-| `4d20C{>18}` | Cap rolls over 18 down to 18 |
-| `4d20C{5}` | Cap rolls above 5 to 5 (bare number = max cap) |
-| `4d20C{=5}` | Same — explicit `=` form |
-| `4d20C{>=5}` | Cap rolls at or over 5 to 5 |
-| `4d20C{<2,>19}` | Floor 2, ceiling 19 |
-| `4d20U` | All results must be unique |
-| `4d20D{>17}` | Drop dice over 17 |
-| `4d20D{>=17}` | Drop dice at or over 17 |
-| `4d20D{1,2}` | Drop 1s and 2s |
-| `4d20D{=1,=2}` | Same — explicit `=` form |
-
-**Ultra-complex example** — roll 8d10, cap to [3,8] range, keep top 5, reroll floor values, add 4:
-```
-8d10C{>8,<3}K5R{=3}+4
-```
-
-### Exploding Dice
-
-| Notation | Description |
-|---|---|
-| `3d6!` | Explode: new die on max result |
-| `3d6!!` | Compound: add to same die on max |
-| `3d6!p` | Penetrate: explode minus 1 each time |
-| `3d6!!5` | Compound up to 5 times per die |
-
-### Dice Pools
-
-| Notation | Description |
-|---|---|
-| `5d10S{7}` | Count dice >= 7 (successes) |
-| `5d10S{7,1}` | Successes >= 7, subtract botches <= 1 |
-| `5d10F{3}` | Count dice <= 3 (failures) |
-
-### Wild Die, Integer Division, Modulo
-
-| Notation | Description |
-|---|---|
-| `5d6W` | D6 System wild die (last die is wild) |
-| `4d6//2` | Integer divide total by 2 |
+| `3d6!` | Explode: roll again on a max |
+| `3d6!!` | Compound: add the extra roll to the same die |
+| `3d6!p` | Penetrate: explode, minus 1 each time |
+| `4d20C{>18}` | Cap results over 18 at 18 |
+| `4d20V{1=20}` | Replace 1s with 20s |
+| `4d20U` | Every die unique |
+| `5d10S{7}` | Count dice at 7 or over as successes |
+| `5d10S{7,1}` | Successes at 7+, minus botches at 1 |
+| `5d10F{3}` | Count dice at 3 or under as failures |
+| `5d6W` | D6 System wild die |
+| `2d6*2` | Multiply the dice sum, before `+`/`-` |
+| `2d6+3**2` | Multiply the final total |
+| `4d6//2` | Integer-divide the total |
 | `4d6%3` | Total modulo 3 |
+| `4dF` | Fate dice |
+| `d%` | Percentile, 1d100 |
+| `g6` | Geometric die: roll d6 until a 1, count the rolls |
+| `3DD6` | Draw 3 from a d6 without replacement |
+| `4d6Lx6` | Repeat 6 times |
+| `2d6+3[fire]` | Label a group |
+| `1d20+2d6+5` | Several groups, one total |
 
-### Special Dice
-
-| Notation | Description |
-|---|---|
-| `g6` | Geometric die: roll d6 until 1, return count |
-| `3g6` | Three independent geometric rolls |
-| `DD6` | Draw die: sample without replacement from d6 |
-| `3DD6` | Draw 3 unique values from d6 pool |
-
-### Annotations and Repeat
-
-| Notation | Description |
-|---|---|
-| `2d6+3[fire]` | Label a roll group (no mechanical effect) |
-| `4d6Lx6` | Repeat notation 6 times (ability score gen) |
-
-### Multiple Groups
-
-```
-1d20+2d6+5        # attack (d20) + damage (2d6) + mod
-2d12-1d6          # roll 2d12, subtract 1d6
-```
-
-**Modifier order** (lower = earlier): Cap (10) → Drop/Keep (20/21) → Replace (30) → Reroll (40) → Explode (50-52) → Wild Die (55) → Unique (60) → Multiply (85) → Plus/Minus (90/91) → Sort (92) → Integer Divide (93) → Modulo (94) → Count Successes (95) → Count Failures (96) → Total Multiply (100)
-
-Full notation reference: [references/NOTATION.md](references/NOTATION.md)
-
-## Game Systems
-
-See [references/GAME_SYSTEMS.md](references/GAME_SYSTEMS.md) for full mechanics.
-
-| Game | Roll | Interpretation |
-|---|---|---|
-| **D&D 5E** advantage | `2d20L+mod` | Keep highest + modifier |
-| **D&D 5E** disadvantage | `2d20H+mod` | Keep lowest + modifier |
-| **D&D 5E** ability score | `4d6L` | Drop lowest of 4d6 |
-| **D&D 5E** crit | `2×damage dice + mod` | Double the dice |
-| **Blades in the Dark** | `Nd6`, keep highest | 6 = success, 4–5 = partial, 1–3 = failure; two 6s = critical |
-| **Daggerheart** | `2d12` (Hope/Fear) | Higher die = narrative control; sum = mechanical success |
-| **PbtA / Root RPG** | `2d6+stat` | 10+ = strong hit, 7–9 = weak hit, 6– = miss |
-| **Salvage Union** | `d20` vs target | Roll under; 1 = critical success, 20 = critical failure |
-
-## Programmatic API
-
-```typescript
-import { roll } from "@randsum/roller"
-
-roll(20)                    // 1d20
-roll("4d6L")                // notation string
-roll({ sides: 6, quantity: 4, modifiers: { drop: { lowest: 1 } } })
-roll("1d20+5", "2d6")      // multiple args, combined total
-
-const result = roll("2d6+3")
-result.total   // final sum
-result.rolls   // RollRecord[] — full roll data per dice group
-result.values  // string[] — rolled values as strings
-```
+Conditions: `>N`, `<N`, `>=N`, `<=N`, `=N` or a bare `N` (exact). Modifiers run in a fixed order whatever order they are written in; [references/NOTATION.md](references/NOTATION.md) has the order and every modifier in full, and https://randsum.dev/spec/ is the specification.
