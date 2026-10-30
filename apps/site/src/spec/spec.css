@@ -1,6 +1,6 @@
 /* Loaded only by SpecLayout, so these globals never reach a Starlight page.
-   Every colour is an alias of the site theme; only the accent differs (cyan
-   here, ADR-015). */
+   Every colour is an alias of the site theme; the accent is the spec's
+   product colour (ADR-015). */
 @import '../styles/theme.css';
 
 /* === Reset === */
@@ -29,8 +29,8 @@ html {
   color-scheme: dark;
 
   /* Accent */
-  --accent: var(--rs-cyan);
-  --accent-light: var(--rs-cyan-high);
+  --accent: var(--product-spec);
+  --accent-light: var(--product-spec);
   --accent-tint: color-mix(in srgb, var(--accent) 8%, transparent);
   --accent-border: color-mix(in srgb, var(--accent) 20%, transparent);
 
@@ -70,7 +70,7 @@ html {
 body {
   background: var(--bg);
   color: var(--text-primary);
-  font-family: var(--font-inter), system-ui, sans-serif;
+  font-family: var(--font-figtree), system-ui, sans-serif;
   font-size: 15px;
   line-height: 1.7;
 }
@@ -90,7 +90,7 @@ body {
   padding: 0.5rem 1rem;
   background: var(--accent);
   color: var(--bg);
-  font-family: var(--font-inter), system-ui, sans-serif;
+  font-family: var(--font-figtree), system-ui, sans-serif;
   font-size: 13px;
   font-weight: 600;
   text-decoration: none;
@@ -157,7 +157,7 @@ body {
 
 /* === Typography helpers === */
 .label {
-  font-family: var(--font-inter), system-ui, sans-serif;
+  font-family: var(--font-figtree), system-ui, sans-serif;
   font-size: 10px;
   text-transform: uppercase;
   letter-spacing: 1.5px;
@@ -188,7 +188,7 @@ body {
   display: inline-block;
   padding: 0.1rem 0.4rem;
   font-size: 10px;
-  font-family: var(--font-inter), system-ui, sans-serif;
+  font-family: var(--font-figtree), system-ui, sans-serif;
   text-transform: uppercase;
   letter-spacing: 1px;
   background: var(--accent-tint);
@@ -221,7 +221,7 @@ body {
 .sidebar-link {
   display: block;
   padding: 0.3rem 0.5rem;
-  font-family: var(--font-inter), system-ui, sans-serif;
+  font-family: var(--font-figtree), system-ui, sans-serif;
   font-size: 13px;
   color: var(--text-secondary);
   text-decoration: none;
@@ -262,13 +262,33 @@ body {
   max-width: calc(var(--sidebar-width) + var(--content-max-width) + var(--aside-width));
 }
 
-.spec-hero-label {
+.spec-hero-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+  color: var(--text-primary);
+  text-decoration: none;
+  font-family: var(--rs-font-heading);
+  font-size: 1.05rem;
+}
+
+.spec-hero-mark {
+  color: var(--product-spec-fill);
+}
+
+.spec-hero-brand-name {
+  font-weight: 800;
+  letter-spacing: 0.04em;
+}
+
+.spec-hero-brand-product {
+  font-weight: 700;
   color: var(--accent);
-  margin-bottom: 0.5rem;
 }
 
 .spec-hero-title {
-  font-family: var(--font-jetbrains-mono), monospace;
+  font-family: var(--rs-font-heading);
   font-size: clamp(1.5rem, 4vw, 2.25rem);
   font-weight: 700;
   color: var(--text-primary);
@@ -376,7 +396,7 @@ body {
   border: 1px solid var(--border);
   border-radius: 6px;
   color: var(--text-primary);
-  font-family: var(--font-inter), system-ui, sans-serif;
+  font-family: var(--font-figtree), system-ui, sans-serif;
   font-size: 13px;
   cursor: pointer;
   white-space: nowrap;
@@ -432,7 +452,7 @@ body {
   gap: 0.5rem;
   padding: 0.4rem 0.6rem;
   border-radius: 4px;
-  font-family: var(--font-inter), system-ui, sans-serif;
+  font-family: var(--font-figtree), system-ui, sans-serif;
   font-size: 13px;
   color: var(--text-secondary);
   text-decoration: none;
@@ -460,7 +480,7 @@ body {
   display: inline-block;
   padding: 0.1rem 0.4rem;
   font-size: 10px;
-  font-family: var(--font-inter), system-ui, sans-serif;
+  font-family: var(--font-figtree), system-ui, sans-serif;
   text-transform: uppercase;
   letter-spacing: 1px;
   background: var(--accent-tint);
@@ -477,7 +497,7 @@ body {
   padding: 0.6rem 2rem;
   background: color-mix(in srgb, var(--rs-warn) 8%, transparent);
   border-bottom: 1px solid color-mix(in srgb, var(--rs-warn) 20%, transparent);
-  font-family: var(--font-inter), system-ui, sans-serif;
+  font-family: var(--font-figtree), system-ui, sans-serif;
   font-size: 13px;
   color: var(--rs-warn);
 }
@@ -624,7 +644,7 @@ body {
   display: inline-block;
   padding: 0.1rem 0.4rem;
   font-size: 10px;
-  font-family: var(--font-inter), system-ui, sans-serif;
+  font-family: var(--font-figtree), system-ui, sans-serif;
   text-transform: uppercase;
   letter-spacing: 1px;
   background: var(--accent-tint);
@@ -685,7 +705,7 @@ body {
 .mobile-sidebar-link {
   display: block;
   padding: 0.4rem 0.5rem;
-  font-family: var(--font-inter), system-ui, sans-serif;
+  font-family: var(--font-figtree), system-ui, sans-serif;
   font-size: 13px;
   color: var(--text-secondary);
   text-decoration: none;
@@ -749,7 +769,7 @@ body.mobile-menu-open {
 
 /* --- Headings --- */
 .spec-content-body h2 {
-  font-family: var(--font-jetbrains-mono), monospace;
+  font-family: var(--rs-font-heading);
   font-size: 1.5rem;
   font-weight: 700;
   color: var(--text-primary);
@@ -767,7 +787,7 @@ body.mobile-menu-open {
 }
 
 .spec-content-body h3 {
-  font-family: var(--font-jetbrains-mono), monospace;
+  font-family: var(--rs-font-heading);
   font-size: 1.15rem;
   font-weight: 600;
   color: var(--text-primary);
@@ -776,7 +796,7 @@ body.mobile-menu-open {
 }
 
 .spec-content-body h4 {
-  font-family: var(--font-jetbrains-mono), monospace;
+  font-family: var(--rs-font-heading);
   font-size: 1rem;
   font-weight: 600;
   color: var(--text-primary);
@@ -1032,7 +1052,7 @@ body.mobile-menu-open {
 .toc-link {
   display: block;
   padding: 0.2rem 0.5rem;
-  font-family: var(--font-inter), system-ui, sans-serif;
+  font-family: var(--font-figtree), system-ui, sans-serif;
   font-size: 12px;
   color: var(--text-secondary);
   text-decoration: none;

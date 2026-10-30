@@ -138,10 +138,8 @@ body:has(.landing) .content-panel:has(#_top) {
 
 .tagline-dice {
   display: inline-block;
-  background: var(--rs-brand-gradient);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: var(--product-roller);
+  -webkit-text-fill-color: var(--product-roller);
   cursor: pointer;
 }
 
@@ -502,10 +500,8 @@ body:has(.landing) .content-panel:has(#_top) {
 }
 
 .pitch-accent {
-  background: var(--rs-brand-gradient);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: var(--product-roller);
+  -webkit-text-fill-color: var(--product-roller);
 }
 
 .pitch-highlight {

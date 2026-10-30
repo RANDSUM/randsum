@@ -100,8 +100,8 @@ export const FATE = {
   terrible: 0xb03a3a
 } as const
 
-/** `/roll` and the informational commands. Brand identity, not an outcome. */
-export const BRAND = 0x7c3aed
+/** `/roll` and the informational commands. The discord bot's product colour on randsum.dev, not an outcome. */
+export const BRAND = 0x00b4ca
 
 /**
  * Errors. Deliberately distinct from every failure accent above: the embed

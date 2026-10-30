@@ -17,32 +17,44 @@
  */
 :root {
   /* Neutrals, on Starlight's scale: --rs-fg is the strongest text and the
-     steps fade toward --rs-bg, the page background. */
-  --rs-fg: light-dark(#18181b, #fafafa);
-  --rs-gray-1: light-dark(#27272a, #e4e4e7);
-  --rs-gray-2: light-dark(#3f3f46, #a1a1aa);
-  --rs-gray-3: #71717a;
-  --rs-gray-4: light-dark(#a1a1aa, #52525b);
-  --rs-gray-5: light-dark(#e4e4e7, #2e2e35);
-  --rs-gray-6: light-dark(#ebebed, #222228);
+     steps fade toward --rs-bg, the page background. The chrome stays neutral;
+     colour comes from the product a page belongs to. */
+  --rs-fg: light-dark(#0f0f11, #f2f2f3);
+  --rs-gray-1: light-dark(#26262a, #e2e2e5);
+  --rs-gray-2: light-dark(#3f3f45, #a3a3aa);
+  --rs-gray-3: light-dark(#63636a, #8b8b93);
+  --rs-gray-4: light-dark(#a3a3aa, #55555c);
+  --rs-gray-5: light-dark(#e6e6e4, #2a2a2e);
+  --rs-gray-6: light-dark(#efefed, #1d1d21);
   /* Starlight reads gray-7 in light mode only (nav background). */
-  --rs-gray-7: light-dark(#f0f0f2, #222228);
-  --rs-bg: light-dark(#f4f4f6, #1a1a1f);
-  --rs-code-bg: light-dark(#fafafa, #222228);
+  --rs-gray-7: light-dark(#f3f3f2, #17171a);
+  --rs-bg: light-dark(#fbfbfa, #0f0f11);
+  --rs-code-bg: light-dark(#f6f6f5, #17171a);
 
-  /* Text on a filled background */
-  --rs-on-accent: #fff;
-  --rs-ink: #18181b;
+  /* Text on a filled background: every accent is dark in light mode and light in dark mode */
+  --rs-on-accent: light-dark(#fff, #0f0f11);
+  --rs-ink: #0f0f11;
 
-  /* Accent: purple */
-  --rs-accent: light-dark(#7c3aed, #a855f7);
-  --rs-accent-low: light-dark(#f5f0ff, #2e1065);
-  --rs-accent-high: light-dark(#5b21b6, #d8b4fe);
-  --rs-brand-gradient: linear-gradient(135deg, #c084fc, #a855f7, #7c3aed);
+  /* Products: each wears the pip R die in its own colour. The bare token is a
+     text shade (AA on --rs-bg in both modes); -fill is the die and badge colour. */
+  --product-roller: light-dark(#af3b43, #ff9495);
+  --product-roller-fill: #ef656b;
+  --product-games: light-dark(#955b00, #e3ad4b);
+  --product-games-fill: #ce8900;
+  --product-spec: light-dark(#1f68bc, #7dbaff);
+  --product-spec-fill: #4699fe;
+  --product-mcp: light-dark(#007f35, #76cf8a);
+  --product-mcp-fill: #2eb45c;
+  --product-discord: light-dark(#007f91, #1acfdf);
+  --product-discord-fill: #00b4ca;
+  --product-plugin: light-dark(#a8501a, #f2a066);
+  --product-plugin-fill: #e07a2f;
 
-  /* Spec accent (/spec): cyan */
-  --rs-cyan: light-dark(#0891b2, #06b6d4);
-  --rs-cyan-high: light-dark(#06b6d4, #22d3ee);
+  /* Accent: ink by default. A page inside a product sets <html data-product>,
+     and the accent becomes that product's colour (see below). */
+  --rs-accent: var(--rs-fg);
+  --rs-accent-low: light-dark(#ececea, #222226);
+  --rs-accent-high: var(--rs-fg);
 
   /* Semantic: AA (4.5:1) as text on --rs-bg in both modes */
   --rs-error: light-dark(#b91c1c, #f87171);
@@ -61,22 +73,61 @@
   --game-fifth: light-dark(#dc2626, #ef4444);
   --game-pbta: light-dark(#4b5563, #6b7280);
   --game-root-rpg: light-dark(#059669, #10b981);
-  --game-salvageunion: light-dark(#5a7f8f, #7a9baa);
+  /* Legendary pink, from salvageunion.io */
+  --game-salvageunion: light-dark(#b84a86, #ce5898);
 
-  /* Notation syntax: the landing page's colour cycle */
-  --rs-syntax-core: light-dark(#2563eb, #60a5fa);
-  --rs-syntax-drop: light-dark(#b028a8, #f060d0);
-  --rs-syntax-keep: light-dark(#c2620a, #ffab70);
-  --rs-syntax-explode: light-dark(#9a7c1a, #e5c07b);
-  --rs-syntax-reroll: light-dark(#7c4dab, #c792ea);
-  --rs-syntax-cap: light-dark(#0082a5, #89ddff);
-  --rs-syntax-unique: light-dark(#1a7a72, #80cbc4);
-  --rs-syntax-plus: light-dark(#3a7d20, #98c379);
-  --rs-syntax-count: light-dark(#3a60c8, #82aaff);
+  /* Notation syntax: one ink per spec category family. Dice (core) are plain
+     ink; drop and keep are both Filter, reroll and unique both Substitute. */
+  --rs-syntax-core: var(--rs-fg);
+  --rs-syntax-drop: light-dark(#ab4046, #ff9d9e);
+  --rs-syntax-keep: light-dark(#ab4046, #ff9d9e);
+  --rs-syntax-explode: light-dark(#8d6000, #e1b75c);
+  --rs-syntax-reroll: light-dark(#0070b0, #6fc8ff);
+  --rs-syntax-cap: light-dark(#00807b, #47d6cf);
+  --rs-syntax-unique: light-dark(#0070b0, #6fc8ff);
+  --rs-syntax-plus: light-dark(#267d30, #8bd28d);
+  --rs-syntax-count: light-dark(#6a57b3, #bdb0ff);
 
   /* Fonts: the family names behind --font-* are hashed by Astro's font API */
-  --rs-font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --rs-font-sans: var(--font-figtree), ui-sans-serif, system-ui, sans-serif;
+  --rs-font-heading: var(--font-bricolage-grotesque), ui-sans-serif, system-ui, sans-serif;
   --rs-font-mono: var(--font-jetbrains-mono), ui-monospace, SFMono-Regular, monospace;
+}
+
+html[data-product='roller'] {
+  --rs-accent: var(--product-roller);
+  --rs-accent-high: var(--product-roller);
+  --rs-accent-low: color-mix(in srgb, var(--product-roller-fill) 14%, var(--rs-bg));
+}
+
+html[data-product='games'] {
+  --rs-accent: var(--product-games);
+  --rs-accent-high: var(--product-games);
+  --rs-accent-low: color-mix(in srgb, var(--product-games-fill) 14%, var(--rs-bg));
+}
+
+html[data-product='spec'] {
+  --rs-accent: var(--product-spec);
+  --rs-accent-high: var(--product-spec);
+  --rs-accent-low: color-mix(in srgb, var(--product-spec-fill) 14%, var(--rs-bg));
+}
+
+html[data-product='mcp'] {
+  --rs-accent: var(--product-mcp);
+  --rs-accent-high: var(--product-mcp);
+  --rs-accent-low: color-mix(in srgb, var(--product-mcp-fill) 14%, var(--rs-bg));
+}
+
+html[data-product='discord'] {
+  --rs-accent: var(--product-discord);
+  --rs-accent-high: var(--product-discord);
+  --rs-accent-low: color-mix(in srgb, var(--product-discord-fill) 14%, var(--rs-bg));
+}
+
+html[data-product='plugin'] {
+  --rs-accent: var(--product-plugin);
+  --rs-accent-high: var(--product-plugin);
+  --rs-accent-low: color-mix(in srgb, var(--product-plugin-fill) 14%, var(--rs-bg));
 }
 
 /*

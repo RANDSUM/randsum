@@ -22,7 +22,8 @@ export const corePackages: PackageInfo[] = [
     npmPackage: '@randsum/roller',
     sourceUrl: 'https://github.com/RANDSUM/randsum/tree/main/packages/roller',
     version: rollerPkg.version,
-    category: 'core'
+    category: 'core',
+    color: 'var(--product-roller)'
   },
   {
     id: 'games',
@@ -32,7 +33,8 @@ export const corePackages: PackageInfo[] = [
     npmPackage: '@randsum/games',
     sourceUrl: 'https://github.com/RANDSUM/randsum/tree/main/packages/games',
     version: gamesPkg.version,
-    category: 'core'
+    category: 'core',
+    color: 'var(--product-games)'
   }
 ]
 
@@ -123,7 +125,7 @@ export const toolPackages: PackageInfo[] = [
     npmPackage: 'plugins/randsum/skills/dice-rolling/SKILL.md',
     sourceUrl: 'https://github.com/RANDSUM/randsum/tree/main/plugins/randsum',
     category: 'tool',
-    color: 'var(--rs-claude)'
+    color: 'var(--product-plugin)'
   },
   {
     id: 'discord-bot',
@@ -134,7 +136,7 @@ export const toolPackages: PackageInfo[] = [
     sourceUrl: 'https://github.com/RANDSUM/randsum/tree/main/apps/discord-bot',
     version: '1.1.2',
     category: 'tool',
-    color: 'var(--rs-discord)'
+    color: 'var(--product-discord)'
   },
   {
     id: 'mcp',
@@ -145,6 +147,6 @@ export const toolPackages: PackageInfo[] = [
     npmPackage: '@randsum/mcp',
     sourceUrl: 'https://github.com/RANDSUM/randsum/tree/main/packages/mcp',
     category: 'tool',
-    color: 'var(--rs-claude)'
+    color: 'var(--product-mcp)'
   }
 ]

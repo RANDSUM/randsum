@@ -16,10 +16,17 @@ export default defineConfig({
   // would only emit meta-refresh pages without an adapter.
   fonts: [
     {
-      name: 'Inter',
-      cssVariable: '--font-inter',
+      name: 'Figtree',
+      cssVariable: '--font-figtree',
       provider: fontProviders.google(),
       weights: [400, 500, 600, 700],
+      styles: ['normal']
+    },
+    {
+      name: 'Bricolage Grotesque',
+      cssVariable: '--font-bricolage-grotesque',
+      provider: fontProviders.google(),
+      weights: [600, 700, 800],
       styles: ['normal']
     },
     {
@@ -35,25 +42,21 @@ export default defineConfig({
     sitemap(),
     starlight({
       title: 'RANDSUM — TypeScript Dice Rolling Library for Tabletop RPGs',
-      favicon: '/favicon.ico',
+      favicon: '/favicon.svg',
       head: [
         {
           tag: 'meta',
-          attrs: { property: 'og:image', content: 'https://randsum.dev/og-image.svg' }
+          attrs: { property: 'og:image', content: 'https://randsum.dev/og-image.png' }
         },
         {
           tag: 'meta',
-          attrs: { name: 'twitter:image', content: 'https://randsum.dev/og-image.svg' }
+          attrs: { name: 'twitter:image', content: 'https://randsum.dev/og-image.png' }
         },
         {
           tag: 'meta',
           attrs: { name: 'twitter:card', content: 'summary_large_image' }
         }
       ],
-      logo: {
-        src: './src/assets/randsum-logo.png',
-        replacesTitle: true
-      },
       social: [
         {
           icon: 'github',

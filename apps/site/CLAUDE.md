@@ -20,8 +20,12 @@ Private app, deploys to Cloudflare Workers once CI is green on `main` via
 - **`@astrojs/react` 5.0.7** — interactive React islands (playground, REPL)
 - **`astro-expressive-code`** — code block rendering
 - **`@randsum/roller`** — workspace-linked, powers the live notation components
-- Fonts (Inter, JetBrains Mono) via Astro's Google font provider, loaded by the
-  `<Font />` tags in `Head.astro`
+- Fonts (Figtree for text, Bricolage Grotesque for headings, JetBrains Mono for code)
+  via Astro's Google font provider, loaded by the `<Font />` tags in `Head.astro`
+- Brand: the pip R mark (`src/components/PipMark.astro`, outline and knockout) and a
+  product family. Chrome is neutral; `src/utils/product.ts` maps a path to its product
+  (roller, games, spec, mcp, discord, plugin), `Head.astro` stamps `<html data-product>`,
+  and `theme.css` turns that into the page's accent (`--product-*`)
 
 > **`typescript` is pinned to `6.0.3` here, deliberately — do NOT move it to `catalog:`.**
 > The rest of the workspace is on TypeScript 7.0.2 via the root `catalog`; this app is the
@@ -49,7 +53,7 @@ The RANDSUM Dice Notation spec is served from this app at `/spec` but is
 **not** a Starlight page (ADR-015): `src/pages/spec/` are plain Astro pages
 that render `src/spec/SpecLayout.astro`, which has its own header, sidebar,
 scroll-spy and share actions in vanilla `<script>` blocks (ADR-017), and the
-cyan accent. Never import `StarlightPage` there, and keep `src/spec/spec.css`
+spec's product colour as its accent. Never import `StarlightPage` there, and keep `src/spec/spec.css`
 imported only by `SpecLayout`, since its resets are global to the page.
 
 - Versions live in `src/content/specs/` (the `specs` collection). `v0.9.0.md`

@@ -17,7 +17,7 @@
   --sl-color-black: var(--rs-bg);
 
   /* Border radius */
-  --radius: 5px;
+  --radius: 8px;
 
   /* Fonts */
   --sl-font: var(--rs-font-sans);
@@ -26,7 +26,7 @@
 
 /* ===== Heading typography ===== */
 :root {
-  --sl-font-heading: var(--rs-font-mono);
+  --sl-font-heading: var(--rs-font-heading);
 }
 
 h1,
@@ -37,6 +37,13 @@ h5,
 h6 {
   font-family: var(--sl-font-heading);
   letter-spacing: -0.02em;
+}
+
+/* The default accent is ink, so content links carry an underline to stand apart */
+.sl-markdown-content a:not([class]):not(:where(.not-content *)) {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
 }
 
 /* ===== NotationRoller spacing ===== */

@@ -13,15 +13,12 @@ interface CardPackage {
 // Daggerheart's gold is bright in dark mode only, so its hover text flips with it
 const darkTextOnAccent = new Set(['daggerheart'])
 
-// Cards that get the RANDSUM gradient instead of a flat color
-const gradientAccent = new Set(['roller'])
-
 export function getBadgeUrl(pkg: Pick<CardPackage, 'npmPackage' | 'version'>): string | null {
   if (pkg.version) {
-    return `https://img.shields.io/badge/v${pkg.version}-a855f7?style=flat-square`
+    return `https://img.shields.io/badge/v${pkg.version}-3f3f45?style=flat-square`
   }
   if (pkg.npmPackage.startsWith('@')) {
-    return `https://img.shields.io/npm/v/${pkg.npmPackage}?style=flat-square&color=a855f7`
+    return `https://img.shields.io/npm/v/${pkg.npmPackage}?style=flat-square&color=3f3f45`
   }
   return null
 }
@@ -37,10 +34,7 @@ export function getCardStyle(pkg: Pick<CardPackage, 'id' | 'category' | 'color'>
   const textColor = darkTextOnAccent.has(pkg.id)
     ? 'light-dark(var(--rs-on-accent), var(--rs-ink))'
     : 'var(--rs-on-accent)'
-  const gradientBg = gradientAccent.has(pkg.id)
-    ? '; --card-accent-bg: var(--rs-brand-gradient)'
-    : ''
-  return `--card-accent: ${accent}; --card-hover-text: ${textColor}${gradientBg}`
+  return `--card-accent: ${accent}; --card-hover-text: ${textColor}`
 }
 
 export function getCoreCardHref(pkg: Pick<CardPackage, 'id'>): string {

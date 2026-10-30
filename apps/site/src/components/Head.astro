@@ -1,6 +1,7 @@
 ---
 import { Font } from 'astro:assets'
 import Default from '@astrojs/starlight/components/Head.astro'
+import { productForPath } from '../utils/product'
 const { entry } = Astro.props
 const title = entry?.data.title ?? 'RANDSUM — TypeScript Dice Rolling Library'
 const description =
@@ -8,7 +9,16 @@ const description =
 ---
 
 <Default {...Astro.props}><slot /></Default>
-<Font cssVariable="--font-inter" preload />
+{
+  productForPath(Astro.url.pathname) && (
+    <script is:inline define:vars={{ product: productForPath(Astro.url.pathname) }}>
+      document.documentElement.dataset.product = product
+    </script>
+  )
+}
+<link rel="icon" href="/favicon.ico" sizes="32x32" />
+<Font cssVariable="--font-figtree" preload />
+<Font cssVariable="--font-bricolage-grotesque" preload />
 <Font cssVariable="--font-jetbrains-mono" />
 <meta property="og:title" content={title} />
 <meta property="og:description" content={description} />

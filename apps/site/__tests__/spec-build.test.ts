@@ -16,8 +16,9 @@ const versioned = read('spec/v/0.9.0/index.html')
 describe.skipIf(root === '' || versioned === '')('built /spec pages', () => {
   // The fonts are configured in astro.config.mjs, but nothing loads them unless
   // a page renders <Font />. SpecLayout is not Starlight's Head, so it must.
-  test('declares @font-face rules for Inter and JetBrains Mono', () => {
-    expect(/@font-face\{font-family:Inter-/.test(root)).toBe(true)
+  test('declares @font-face rules for Figtree, Bricolage Grotesque and JetBrains Mono', () => {
+    expect(/@font-face\{font-family:Figtree-/.test(root)).toBe(true)
+    expect(/@font-face\{font-family:"?Bricolage Grotesque-/.test(root)).toBe(true)
     expect(/@font-face\{font-family:"?JetBrains Mono-/.test(root)).toBe(true)
   })
 

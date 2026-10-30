@@ -1,6 +1,7 @@
 ---
 import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro'
 import KofiButton from '../components/KofiButton.astro'
+import PipMark from '../components/PipMark.astro'
 
 const OAUTH_URL =
   'https://discord.com/oauth2/authorize?client_id=1290434147159904276&permissions=274877906944&scope=bot%20applications.commands'
@@ -122,13 +123,7 @@ const commands = [
     <section class="hero">
       <div class="hero-inner">
         <div class="hero-logos">
-          <img
-            src="/randsum-logo.png"
-            alt="RANDSUM"
-            class="hero-logo hero-logo-randsum"
-            width="80"
-            height="80"
-          />
+          <PipMark variant="knockout" size={80} class="hero-logo hero-logo-randsum" />
           <svg class="hero-connector" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true">
             <path
               fill="#5865F2"
@@ -370,10 +365,10 @@ const commands = [
     flex-shrink: 0;
   }
 
-  .hero-logo-randsum {
+  :global(.hero-logo-randsum) {
     width: 80px;
     height: 80px;
-    border-radius: 0.75rem;
+    color: var(--product-discord-fill);
   }
 
   .hero-logo-discord {
@@ -634,7 +629,7 @@ const commands = [
       gap: 0.75rem;
     }
 
-    .hero-logo-randsum {
+    :global(.hero-logo-randsum) {
       width: 56px;
       height: 56px;
     }

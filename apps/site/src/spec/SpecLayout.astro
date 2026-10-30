@@ -34,12 +34,13 @@ const isCanonical = Astro.url.pathname.replace(/\/?$/, '/') === new URL(specUrl)
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="en" data-product="spec">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{pageTitle}</title>
-    <link rel="icon" href="/favicon.ico" />
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="canonical" href={specUrl} />
     <meta
       name="description"
@@ -50,7 +51,7 @@ const isCanonical = Astro.url.pathname.replace(/\/?$/, '/') === new URL(specUrl)
       property="og:description"
       content="The formal specification for RANDSUM Dice Notation — a human-readable syntax for dice rolls in tabletop RPGs. Defines modifiers, execution pipeline, conformance levels, and special dice types."
     />
-    <meta property="og:image" content="https://randsum.dev/og-image.svg" />
+    <meta property="og:image" content="https://randsum.dev/og-image.png" />
     <meta property="og:url" content={specUrl} />
     <meta property="og:type" content="article" />
     <meta name="twitter:card" content="summary_large_image" />
@@ -59,8 +60,9 @@ const isCanonical = Astro.url.pathname.replace(/\/?$/, '/') === new URL(specUrl)
       name="twitter:description"
       content="The formal specification for RANDSUM Dice Notation — a human-readable syntax for dice rolls in tabletop RPGs. Defines modifiers, execution pipeline, conformance levels, and special dice types."
     />
-    <meta name="twitter:image" content="https://randsum.dev/og-image.svg" />
-    <Font cssVariable="--font-inter" preload />
+    <meta name="twitter:image" content="https://randsum.dev/og-image.png" />
+    <Font cssVariable="--font-figtree" preload />
+    <Font cssVariable="--font-bricolage-grotesque" />
     <Font cssVariable="--font-jetbrains-mono" />
     <script is:inline>
       // Apply the theme before render to prevent a flash: a saved choice wins,

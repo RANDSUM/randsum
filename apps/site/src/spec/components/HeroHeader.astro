@@ -1,4 +1,5 @@
 ---
+import PipMark from '../../components/PipMark.astro'
 import VersionDropdown from './VersionDropdown.astro'
 
 interface Props {
@@ -13,7 +14,11 @@ const { version, versions, isLatest } = Astro.props
 <header class="spec-hero">
   <div class="spec-hero-inner">
     <div class="spec-hero-text">
-      <p class="label spec-hero-label">Specification</p>
+      <a class="spec-hero-brand" href="/">
+        <PipMark variant="knockout" size={24} class="spec-hero-mark" />
+        <span class="spec-hero-brand-name">RANDSUM</span>
+        <span class="spec-hero-brand-product">spec</span>
+      </a>
       <h1 class="spec-hero-title">RANDSUM Dice Notation</h1>
       <p class="spec-hero-subtitle">
         A formal specification for dice notation syntax used in tabletop role-playing games.
