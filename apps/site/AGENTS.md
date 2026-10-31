@@ -161,7 +161,9 @@ Interactive / shared components:
   and mount through happy-dom, which `bunfig.toml` preloads for every site test.
 - `NotationRoller/` — wraps `dice-ui`'s roller with the StackBlitz action and
   the floating result overlay
-- `HeroInteractive.tsx` — hero dice playground
+- `HeroRoller/` — the landing hero's live roller (notation field, token breakdown,
+  rolled result with every step, example presets), in the roller's colour
+- `HeroInteractive.tsx` — the clickable tagline, which spins `HeroRoller`'s presets
 - `GameSchemaViewer.tsx` — schema viewer
 - `PipMark.astro` — the pip R mark, outline or knockout
 - `ProductHero.astro` — a product's hero: lockup, name in its colour, pitch, install, facts

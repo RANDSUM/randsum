@@ -1,7 +1,8 @@
 ---
 // The top of randsum.dev: the promise on the left, the live roller on the right,
 // so the first thing a visitor can do is roll.
-import { ClickableTagline, HeroRollerPlayground } from '../HeroInteractive'
+import { ClickableTagline } from '../HeroInteractive'
+import { HeroRoller } from '../HeroRoller/HeroRoller'
 import PipMark from '../PipMark.astro'
 import Button from '../ui/Button.astro'
 
@@ -53,12 +54,15 @@ const proof = [
         >
       </button>
     </div>
-    <div class="hero-roller" aria-label="Live dice roller">
+    <div class="hero-roller" role="region" aria-labelledby="hero-roller-title">
       <div class="hero-roller-top">
-        <span>Try it: <b>@randsum/roller</b></span>
-        <span>Pick a roll or type your own</span>
+        <h2 id="hero-roller-title" class="hero-roller-title">
+          <PipMark variant="knockout" size={20} />
+          Try <code>@randsum/roller</code>
+        </h2>
+        <span class="hero-roller-note">Runs in your browser</span>
       </div>
-      <HeroRollerPlayground client:only="react" />
+      <HeroRoller client:only="react" />
     </div>
   </div>
   <dl class="hero-proof">
