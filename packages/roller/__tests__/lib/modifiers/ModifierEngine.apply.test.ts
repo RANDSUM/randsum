@@ -73,6 +73,26 @@ describe('applyModifier', () => {
 
       expect(result.rolls).toEqual([2, 5, 3, 4])
     })
+
+    test('logs each clamped die as a one-for-one replacement', () => {
+      const result = applyModifier(
+        'cap',
+        { greaterThan: 5, lessThan: 2 },
+        [1, 6, 3, 4],
+        mockContext
+      )
+
+      expect(result.log?.replacements).toEqual([
+        { from: 1, to: 2 },
+        { from: 6, to: 5 }
+      ])
+    })
+
+    test('logs no replacements when nothing is clamped', () => {
+      const result = applyModifier('cap', { greaterThan: 5 }, [1, 2, 3], mockContext)
+
+      expect(result.log?.replacements).toBeUndefined()
+    })
   })
 
   describe('drop modifier', () => {
