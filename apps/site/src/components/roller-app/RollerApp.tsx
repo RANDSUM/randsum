@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { roll } from '@randsum/roller/roll'
 import { isDiceNotation } from '@randsum/roller/validate'
-import { NotationRoller, RollResultDisplay } from '../dice-ui'
+import { NotationDescription, NotationRoller, RollResultDisplay } from '../dice-ui'
 import type { RollResult } from '../dice-ui'
 import { addDie, adjustConstant, toggleModifier } from './notationEdits'
 import './RollerApp.css'
@@ -157,6 +157,7 @@ export function RollerApp(): React.JSX.Element {
       </section>
 
       <section className="ra-dock" aria-label="Build a roll">
+        <NotationDescription className="ra-description" notation={notation} />
         <div className="ra-pad" role="group" aria-label="Add a die">
           {DICE.map(sides => (
             <button
@@ -232,6 +233,7 @@ export function RollerApp(): React.JSX.Element {
         <NotationRoller
           className="ra-roller"
           notation={notation}
+          showDescription={false}
           onChange={setNotation}
           onRoll={record}
         />

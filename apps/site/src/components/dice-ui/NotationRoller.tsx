@@ -1,11 +1,10 @@
-import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { roll } from '@randsum/roller/roll'
-import { isDiceNotation } from '@randsum/roller/validate'
 import { tokenize } from '@randsum/roller/tokenize'
-import { NOTATION_DOCS } from '@randsum/roller/docs'
+import { isDiceNotation } from '@randsum/roller/validate'
+import { NotationDescription, checkNotation } from './NotationDescription'
 import { TokenOverlayInput } from './TokenOverlayInput'
 import { useTheme } from './useTheme'
-import { tokenColor } from './tokenColor'
 import type { RollResult } from './types'
 import './NotationRoller.css'
 
@@ -17,6 +16,8 @@ export interface NotationRollerProps {
   readonly resetToken?: number
   /** Render prop for custom actions in the description row */
   readonly renderActions?: (notation: string) => React.ReactNode
+  /** Set false to render the description elsewhere with NotationDescription. */
+  readonly showDescription?: boolean
   /** Fires with roll result data when a roll completes. */
   readonly onRoll?: (result: RollResult) => void
 }
@@ -28,6 +29,7 @@ export function NotationRoller({
   onChange,
   resetToken,
   renderActions,
+  showDescription = true,
   onRoll
 }: NotationRollerProps = {}): React.JSX.Element {
   const theme = useTheme()
@@ -52,11 +54,12 @@ export function NotationRoller({
     setHoveredTokenIdx(null)
   }, [controlledNotation, resetToken])
 
-  const isValid = notation.length > 0 && isDiceNotation(notation)
-  const shellVariant = notation.length === 0 ? 'empty' : isValid ? 'valid' : 'invalid'
+  const check = useMemo(() => checkNotation(notation), [notation])
+  const isValid = check.kind === 'valid'
+  const shellVariant = check.kind
 
   const handleRoll = useCallback(() => {
-    if (!isValid) return
+    if (!isValid || !isDiceNotation(notation)) return
     setRolling(true)
     if (timerRef.current) clearTimeout(timerRef.current)
     timerRef.current = setTimeout(() => {
@@ -68,7 +71,7 @@ export function NotationRoller({
         }
         onRoll?.({ total: result.total, records: result.rolls, notation })
       } catch {
-        // invalid notation — isDiceNotation guard above should prevent this
+        // checkNotation's trial roll above should prevent this
       }
       setRolling(false)
     }, 300)
@@ -168,75 +171,17 @@ export function NotationRoller({
           </div>
         </div>
 
-        <div className="du-notation-roller-desc-row">
-          {notation.length === 0 ? (
-            <span className="du-notation-roller-desc du-notation-roller-desc--hint">
-              Try: 4d6L, 1d20+5, 2d8!
-            </span>
-          ) : !isValid ? (
-            <span className="du-notation-roller-desc du-notation-roller-desc--invalid">
-              Invalid notation
-            </span>
-          ) : (
-            <span className="du-notation-roller-desc du-notation-roller-desc--valid">
-              {tokens
-                .map((token, tokenIdx) => ({ token, tokenIdx }))
-                .filter(({ token }) => Boolean(token.description))
-                .map(({ token, tokenIdx }, i) => {
-                  const sep =
-                    i === 0
-                      ? null
-                      : token.category === 'Core'
-                        ? token.text.startsWith('-')
-                          ? ' \u2212 '
-                          : ' + '
-                        : ', '
-                  return (
-                    <Fragment key={tokenIdx}>
-                      {sep !== null && (
-                        <span
-                          className={[
-                            'du-nr-desc-sep',
-                            hoveredTokenIdx !== null ? 'du-nr-desc-sep--dim' : ''
-                          ]
-                            .filter(Boolean)
-                            .join(' ')}
-                        >
-                          {sep}
-                        </span>
-                      )}
-                      <span
-                        className={[
-                          'du-nr-desc-chip',
-                          `du-nr-desc-chip--${token.category}`,
-                          hoveredTokenIdx === tokenIdx ? 'du-nr-desc-chip--active' : '',
-                          hoveredTokenIdx !== null && hoveredTokenIdx !== tokenIdx
-                            ? 'du-nr-desc-chip--dim'
-                            : ''
-                        ]
-                          .filter(Boolean)
-                          .join(' ')}
-                        style={
-                          {
-                            '--chip-color': tokenColor(NOTATION_DOCS[token.key], theme)
-                          } as React.CSSProperties
-                        }
-                        onMouseEnter={() => {
-                          setHoveredTokenIdx(tokenIdx)
-                        }}
-                        onMouseLeave={() => {
-                          setHoveredTokenIdx(null)
-                        }}
-                      >
-                        {token.description}
-                      </span>
-                    </Fragment>
-                  )
-                })}
-            </span>
-          )}
-          {renderActions?.(notation)}
-        </div>
+        {showDescription && (
+          <NotationDescription
+            notation={notation}
+            tokens={tokens}
+            check={check}
+            hoveredTokenIdx={hoveredTokenIdx}
+            onHoverToken={setHoveredTokenIdx}
+          >
+            {renderActions?.(notation)}
+          </NotationDescription>
+        )}
       </div>
     </div>
   )
