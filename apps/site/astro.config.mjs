@@ -38,7 +38,9 @@ export default defineConfig({
     environments: { prerender: { resolve: { external: ['satteri'] } } }
   },
   integrations: [
-    sitemap(),
+    // /app-shell/ is the Roller's shell, moved to app.randsum.dev by
+    // scripts/build-app.ts; randsum.dev never serves it.
+    sitemap({ filter: page => !page.includes('/app-shell/') }),
     starlight({
       title: 'RANDSUM',
       favicon: '/favicon.svg',

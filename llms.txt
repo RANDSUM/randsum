@@ -40,7 +40,7 @@ roll("2d6+3[fire]") // Annotation
 
 ## Apps
 
-- [Roller app](https://randsum.dev/app/): installable, offline-capable dice roller in the browser, for people rather than agents
+- [Roller app](https://randsum.dev/app/): installable, offline-capable dice roller in the browser at https://app.randsum.dev/, for people rather than agents
 - [Discord bot](https://randsum.dev/tools/discord-bot/): slash commands for every supported game
 
 ## Specification

@@ -11,6 +11,7 @@ It documents how each surface is hosted, deployed, rolled back, and recovered.
 | ------------------ | ----------------------------------------------- | ------------------- | ------------------------ | --------------------- |
 | Docs site + spec   | `apps/site`                                     | **Cloudflare**      | green CI on `main`       | randsum.dev           |
 | Old spec host      | `apps/site` (`wrangler.notation.jsonc`, 301 only) | **Cloudflare**      | green CI on `main`       | notation.randsum.dev  |
+| Roller app         | `apps/site` (`wrangler.app.jsonc`, static)      | **Cloudflare**      | green CI on `main`       | app.randsum.dev       |
 | Discord bot        | `apps/discord-bot`                              | **Cloudflare**      | green CI on `main`       | bot.randsum.dev       |
 | npm packages       | `packages/roller`, `packages/games`, `packages/mcp` | npm registry        | changesets on merge      | npmjs.com/org/randsum |
 
@@ -21,13 +22,16 @@ surfaces serve from Workers with custom domains. `/api/roll` runs as a Worker
 route on the apex.
 
 > Config sources: `apps/site/wrangler.jsonc`, `apps/site/wrangler.notation.jsonc`
-> (the `notation.randsum.dev` 301s, deployed to the `randsum-rdn` Worker) and
+> (the `notation.randsum.dev` 301s, deployed to the `randsum-rdn` Worker),
+> `apps/site/wrangler.app.jsonc` (the Roller app at `app.randsum.dev`, the `randsum-app`
+> Worker, whose custom domain route creates its DNS record) and
 > `apps/discord-bot/wrangler.jsonc`. Deployment runs from
 > `.github/workflows/deploy-cloudflare.yml`. There are no other deploy configs.
 >
-> **randsum.dev is the only front page.** `randsum.io` and `www.randsum.io` 301 to
-> `https://randsum.dev` through a Redirect Rule in the `randsum.io` zone (set 2026-10-30;
-> randsum.io no longer points at the deleted Expo app's hosting, #1121). The site Worker
+> **randsum.dev is the only docs front page.** `randsum.io` and `www.randsum.io` 301 to
+> the Roller app at `https://app.randsum.dev/` through a Redirect Rule in the `randsum.io`
+> zone (to randsum.dev from 2026-10-30, retargeted to the app 2026-10-31; randsum.io no
+> longer points at the deleted Expo app's hosting, #1121). The site Worker
 > sets `workers_dev: false` and `preview_urls: false`, so it has no `*.workers.dev` copy.
 > `www.randsum.dev` must 301 to the apex through a Redirect Rule in the `randsum.dev` zone,
 > because static assets answer before the Worker and cannot redirect by hostname.

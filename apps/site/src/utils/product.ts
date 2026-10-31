@@ -31,6 +31,9 @@ export function productForPath(pathname: string): Product | undefined {
   return PREFIXES.find(([prefix]) => pathname.startsWith(prefix))?.[1]
 }
 
+// Where the installable Roller lives. randsum.dev/app/ is its product page.
+export const APP_URL = 'https://app.randsum.dev/'
+
 // The bot's install link, shared by every page that offers it
 export const DISCORD_INSTALL_URL =
   'https://discord.com/oauth2/authorize?client_id=1290434147159904276&permissions=274877906944&scope=bot%20applications.commands'
@@ -190,7 +193,7 @@ export const PRODUCTS: readonly ProductInfo[] = [
       { value: '0', label: 'network needed once installed' }
     ],
     actions: [
-      { label: 'Open the app', href: '/app/' },
+      { label: 'Open the app', href: APP_URL },
       { label: 'Notation guide', href: '/notation/getting-started/' }
     ]
   }
@@ -210,7 +213,8 @@ const HERO_PAGES: Readonly<Record<string, Product>> = {
   '/api/introduction/': 'api',
   '/tools/discord-bot/': 'discord',
   '/tools/claude-code-plugin/': 'plugin',
-  '/discord/': 'discord'
+  '/discord/': 'discord',
+  '/app/': 'app'
 }
 
 export function heroProductForPath(pathname: string): Product | undefined {

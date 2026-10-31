@@ -28,10 +28,11 @@
   },
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build",
+    "build": "astro build && bun scripts/build-app.ts",
     "preview": "astro preview",
     "deploy": "wrangler deploy -c wrangler.jsonc",
     "deploy:notation": "wrangler deploy -c wrangler.notation.jsonc",
+    "deploy:app": "wrangler deploy -c wrangler.app.jsonc",
     "astro": "astro",
     "test": "bun test",
     "typecheck": "astro sync && tsc --noEmit --runExternalCode",
