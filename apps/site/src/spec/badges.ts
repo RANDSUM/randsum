@@ -88,7 +88,7 @@ const textWidth = (text: string): number =>
   [...text].reduce((sum, ch) => sum + (WIDTHS[ch] ?? 7.0), 0)
 
 const escapeXml = (text: string): string =>
-  text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+  text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
 
 interface BadgeColours {
   label: string
