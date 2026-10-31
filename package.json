@@ -41,7 +41,7 @@
     "check:doc-claims": "bun scripts/check-doc-claims.ts",
     "plugin:roller": "bun scripts/build-plugin-roller.ts",
     "check:plugin-roller": "bun scripts/build-plugin-roller.ts --check",
-    "build": "bun run --filter '@randsum/mcp...' build",
+    "build": "bun run --filter '@randsum/mcp...' --filter '@randsum/notation-spec...' build",
     "test": "bun run --filter '*' test",
     "test:coverage": "bun test --coverage --coverage-reporter=lcov --coverage-dir=./coverage",
     "lint": "biome lint .",
