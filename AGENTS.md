@@ -9,6 +9,7 @@ Bun workspace monorepo for a dice rolling ecosystem targeting tabletop RPGs. All
 - **`@randsum/roller`** (`packages/roller/`): zero-dependency dice engine with built-in notation parsing and validation. Every other package depends on it via `workspace:~`.
 - **`@randsum/games`** (`packages/games/`): code-generated game interpretations as subpath exports: `blades`, `daggerheart`, `fate`, `fifth` (D&D 5e), `pbta`, `root-rpg`, `salvageunion`, plus `schema` (the codegen/validation API).
 - **`@randsum/mcp`** (`packages/mcp/`): MCP server exposing `roll`, `validate` and `roll_game`.
+- **`@randsum/notation-spec`** (`packages/notation-spec/`): the RANDSUM Dice Notation spec, its conformance vectors (JSON) and the `rdn-conformance` runner. Source of truth for all three; mirrored to github.com/RANDSUM/notation-spec.
 - **`@randsum/api`** (`apps/api/`, private): Cloudflare Worker at api.randsum.dev serving the `/v1` REST API and `/mcp`, the hosted `@randsum/mcp` behind the Claude connector.
 - **`@randsum/discord-bot`** (`apps/discord-bot/`, private): Discord bot, a Cloudflare Worker at bot.randsum.dev.
 - **`@randsum/site`** (`apps/site/`, private): Astro + Starlight docs site at randsum.dev. It also serves the notation spec at `/spec` and the installable Roller app at `/app`, and owns the web-only React dice components in `src/components/dice-ui/`.
@@ -75,7 +76,7 @@ Never run `npm publish` or `bun publish` yourself: npm would ship the literal `w
 
 - **Code-generated games**: each game is a `.randsum.json` spec compiled by `packages/games/codegen.ts` into `packages/games/src/<game>.generated.ts`. Edit the spec, then `bun run --filter @randsum/games gen`; never edit generated files.
 - **Modifier registry**: `MODIFIER_SCHEMAS` in `packages/roller/src/notation/definitions/index.ts` is the single source of truth for which modifiers exist and their execution order. Each modifier is split into a schema (`src/notation/definitions/<mod>.ts`) and a behavior (`src/modifiers/<mod>.ts`). See `packages/roller/AGENTS.md`.
-- **Notation spec**: https://randsum.dev/spec/ is the formal specification (taxonomy, pipeline, conformance, syntax).
+- **Notation spec**: https://randsum.dev/spec/ is the formal specification (taxonomy, pipeline, conformance, syntax). Its source is `packages/notation-spec/spec/`; the conformance vectors are `packages/notation-spec/vectors/`.
 
 ```typescript
 roll(20) // Number: 1d20
@@ -99,7 +100,7 @@ Key syntax: `NdS`, `+X`/`-X`, `L`/`H` (drop lowest/highest), `R{<3}` (reroll), `
 ## Git Hooks (Lefthook)
 
 - **pre-commit**: `bun install --frozen-lockfile`, then in parallel Biome (`check --write`), typecheck and `gen:check`.
-- **pre-push**: build, then in parallel `gen:check`, conformance check (`@randsum/site conformance:check`), tests and knip.
+- **pre-push**: build, then in parallel `gen:check`, tests and knip.
 
 A failing step prints its own fix (`fail_text` in `lefthook.yml`). Do not `--no-verify` past a real failure. CI never installs the hooks.
 

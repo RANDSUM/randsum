@@ -1,7 +1,7 @@
 {
+  "$schema": "https://randsum.dev/conformance/conformance.schema.json",
   "$id": "https://randsum.dev/conformance/v0.9.0.json",
   "specVersion": "0.9.0",
-  "generatedFrom": "packages/roller/spec/vectors.ts",
   "conformanceLevels": {
     "level1_core": [1, 2, 3, 10, 11, 14, 15, 16, 19, 20, 26, 27],
     "level2_vtt": [
@@ -323,7 +323,10 @@
       "expectedTotal": null,
       "section": "4.2",
       "conformanceLevel": 3,
-      "note": "Face indices: 1=fire, 2=ice, 3=lightning. Roll values map to face labels."
+      "note": "Face indices: 1=fire, 2=ice, 3=lightning. Roll values map to face labels.",
+      "unseeded": {
+        "faces": ["fire", "ice", "lightning"]
+      }
     },
     {
       "id": 32,
@@ -343,7 +346,11 @@
       "expectedPool": [4, 1, 6],
       "expectedTotal": 11,
       "section": "4.4",
-      "conformanceLevel": 4
+      "conformanceLevel": 4,
+      "unseeded": {
+        "faces": [1, 2, 3, 4, 5, 6],
+        "distinct": true
+      }
     },
     {
       "id": 34,
@@ -525,7 +532,11 @@
       "expectedPool": [4, 6],
       "expectedTotal": 10,
       "section": "4.4",
-      "conformanceLevel": 4
+      "conformanceLevel": 4,
+      "unseeded": {
+        "faces": [1, 2, 3, 4, 5, 6],
+        "distinct": true
+      }
     },
     {
       "id": 52,

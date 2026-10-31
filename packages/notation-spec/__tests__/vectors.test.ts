@@ -1,5 +1,10 @@
 import { describe, expect, test } from 'bun:test'
-import { CONFORMANCE_FILE } from '../../../packages/roller/spec/vectors'
+import { levelsOf } from '../src/levels'
+import type { ConformanceFile } from '../src/types'
+import file from '../vectors/v0.9.0.json'
+import schema from '../schema/conformance.schema.json'
+
+const CONFORMANCE_FILE = file as ConformanceFile
 
 const { vectors, conformanceLevels } = CONFORMANCE_FILE
 const vectorById = new Map(vectors.map(v => [v.id, v]))
@@ -202,5 +207,67 @@ describe('vector category coverage', () => {
     for (const v of vectors) {
       expect(knownCategories.has(v.category), `unknown category: ${v.category}`).toBe(true)
     }
+  })
+})
+
+describe('the file is the source of truth', () => {
+  test("conformanceLevels matches what each vector's conformanceLevel derives", () => {
+    expect(conformanceLevels).toEqual(levelsOf(vectors))
+  })
+
+  test('$id is where randsum.dev serves it', () => {
+    expect(CONFORMANCE_FILE.$id).toBe(
+      `https://randsum.dev/conformance/v${CONFORMANCE_FILE.specVersion}.json`
+    )
+  })
+
+  test('every unseeded check agrees with its own expected pool', () => {
+    for (const v of vectors.filter(v => v.unseeded !== undefined)) {
+      const faces = v.unseeded?.faces ?? []
+      for (const value of v.expectedPool ?? []) expect(faces).toContain(value)
+    }
+  })
+})
+
+// A dependency-free check that the vectors use only the fields the schema
+// declares, with the types it declares; enough to keep the two from drifting.
+describe('schema/conformance.schema.json', () => {
+  const vectorSchema = schema.$defs.vector
+  const props = vectorSchema.properties as Record<string, { type?: string | string[] }>
+
+  test('every vector has the required fields', () => {
+    for (const v of vectors) {
+      for (const key of vectorSchema.required) expect(v).toHaveProperty(key)
+    }
+  })
+
+  test('every vector field is declared, with its type', () => {
+    const typeOf = (value: unknown): string =>
+      value === null
+        ? 'null'
+        : Array.isArray(value)
+          ? 'array'
+          : Number.isInteger(value)
+            ? 'integer'
+            : typeof value
+    for (const v of vectors) {
+      for (const [key, value] of Object.entries(v)) {
+        const declared = props[key]
+        expect(declared, `vector ${v.id} has undeclared field ${key}`).toBeDefined()
+        const types = [declared?.type ?? []].flat()
+        const actual = typeOf(value)
+        const ok =
+          types.length === 0 ||
+          types.includes(actual) ||
+          (actual === 'integer' && types.includes('number'))
+        expect(ok, `vector ${v.id} field ${key} is ${actual}, schema says ${types.join('|')}`).toBe(
+          true
+        )
+      }
+    }
+  })
+
+  test('top-level keys are declared', () => {
+    for (const key of Object.keys(CONFORMANCE_FILE)) expect(schema.properties).toHaveProperty(key)
   })
 })

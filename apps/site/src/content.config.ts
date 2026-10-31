@@ -5,12 +5,13 @@ import { docsLoader } from '@astrojs/starlight/loaders'
 import { docsSchema } from '@astrojs/starlight/schema'
 
 // The notation spec is not a Starlight doc: /spec renders it through its own
-// layout (src/spec/SpecLayout.astro, ADR-015). The ID drops the leading "v",
-// so v0.9.0.md is served at /spec/v/0.9.0/.
+// layout (src/spec/SpecLayout.astro, ADR-015). Its source is the
+// @randsum/notation-spec package, which is also mirrored to its own repo. The
+// ID drops the leading "v", so v0.9.0.md is served at /spec/v/0.9.0/.
 const specs = defineCollection({
   loader: glob({
-    pattern: '*.md',
-    base: './src/content/specs',
+    pattern: 'v*.md',
+    base: '../../packages/notation-spec/spec',
     generateId: ({ entry }) => entry.replace(/\.md$/, '').replace(/^v/, '')
   }),
   // The document header (src/spec/components/SpecHead.astro) and the Markdown

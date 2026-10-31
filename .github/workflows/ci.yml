@@ -20,6 +20,7 @@ jobs:
       roller: ${{ steps.filter.outputs.roller }}
       games: ${{ steps.filter.outputs.games }}
       mcp: ${{ steps.filter.outputs.mcp }}
+      notation-spec: ${{ steps.filter.outputs.notation-spec }}
       site: ${{ steps.filter.outputs.site }}
       skill: ${{ steps.filter.outputs.skill }}
       discord-bot: ${{ steps.filter.outputs.discord-bot }}
@@ -48,7 +49,7 @@ jobs:
             roller:
               - 'packages/roller/**'
               # Roller tests also guard published docs: the site's modifier
-              # application-order table and the Level 4 conformance claim check.
+              # application-order table.
               - 'apps/site/src/content/docs/**'
               - 'README.md'
               - 'llms.txt'
@@ -63,6 +64,12 @@ jobs:
               - 'packages/roller/**'
               - 'packages/games/**'
               - 'packages/mcp/**'
+              - '.github/workflows/ci.yml'
+            notation-spec:
+              # The spec, its vectors and runner, proved against roller through
+              # the reference adapter.
+              - 'packages/notation-spec/**'
+              - 'packages/roller/**'
               - '.github/workflows/ci.yml'
             site:
               - 'packages/**'
@@ -110,6 +117,7 @@ jobs:
             {"pkg":"roller","coverage":"roller","size":true},
             {"pkg":"games","coverage":"games","size":true},
             {"pkg":"mcp"},
+            {"pkg":"notation-spec"},
             {"pkg":"discord-bot"},
             {"pkg":"api"},
             {"pkg":"site","node":"24"}

@@ -70,7 +70,7 @@ Run `bun run fix:all` to auto-fix lint and format issues.
 
 **pre-commit** runs `bun install --frozen-lockfile` first (nothing else runs if it fails), then in parallel: Biome (`check --write` — lint + format, covering `.astro`), `typecheck`, and a codegen check (`gen:check`) when a `.randsum.json` spec changed. A failing step prints its own fix.
 
-**pre-push** is a heavier gauntlet — expect it to take a while. It runs `build` first (nothing else runs if it fails), then in parallel: codegen check (`gen:check`), conformance check (`@randsum/site conformance:check`), the full test suite, and `knip`. A failing step prints its own fix. See `lefthook.yml` for the exact config. Do not `--no-verify` past a real failure.
+**pre-push** is a heavier gauntlet — expect it to take a while. It runs `build` first (nothing else runs if it fails), then in parallel: codegen check (`gen:check`), the full test suite, and `knip`. A failing step prints its own fix. See `lefthook.yml` for the exact config. Do not `--no-verify` past a real failure.
 
 ## Releases
 

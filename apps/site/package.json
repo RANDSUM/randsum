@@ -19,6 +19,7 @@
   "dependencies": {
     "@astrojs/react": "7.1.2",
     "@astrojs/starlight": "0.42.7",
+    "@randsum/notation-spec": "workspace:~",
     "@randsum/roller": "workspace:~",
     "@stackblitz/sdk": "~1.11.0",
     "astro": "7.4.4",
@@ -36,9 +37,7 @@
     "astro": "astro",
     "test": "bun test",
     "typecheck": "astro sync && tsc --noEmit --runExternalCode",
-    "check": "bun run build && bun run typecheck && bun run test && bun run conformance:check",
-    "conformance:gen": "bun conformance-gen.ts",
-    "conformance:check": "bun conformance-gen.ts --check"
+    "check": "bun run build && bun run typecheck && bun run test"
   },
   "devDependencies": {
     "@astrojs/sitemap": "3.7.4",

@@ -45,6 +45,8 @@ The implementation contract:
 
 The conformance vectors are hand-authored and live with the engine they specify. `packages/roller/spec/vectors.ts` defines `CONFORMANCE_FILE` (the canonical vector set). The site's `conformance:gen` script (`conformance-gen.ts`) serializes it with a stable key order to `public/conformance/v0.9.0.json`; it does not run `@randsum/roller`. `conformance:check` regenerates it in memory and fails if it differs from the file, or if `public/conformance/` holds any file the generator did not write, so the published JSON cannot drift from `vectors.ts`. It runs in the site's `check`, so CI runs it as well as pre-push. The engine check is the roller test `packages/roller/__tests__/spec/conformance-vectors.test.ts`, which runs each vector through `roll()`.
 
+**Addendum (2026-10-31): the spec gets its own package.** The spec Markdown, the conformance vectors and a conformance runner moved to `packages/notation-spec` (`@randsum/notation-spec`), which is mirrored to github.com/RANDSUM/notation-spec as the spec's standalone home. The paths above are historical. Now: the `specs` collection's glob loader reads `packages/notation-spec/spec/`; the vectors are a hand-edited JSON file, `packages/notation-spec/vectors/v0.9.0.json`, and its tests check the stored `conformanceLevels` against each vector's level; the site serves that file verbatim from `src/pages/conformance/[file].ts`, so there is no generator or `conformance:check` to drift; and the engine check runs every vector through the runner's reference adapter for `@randsum/roller` (`packages/notation-spec/__tests__/runner.test.ts`). The per-version page contract above is unchanged.
+
 ## Consequences
 
 ### Positive
@@ -63,8 +65,8 @@ The conformance vectors are hand-authored and live with the engine they specify.
 ## References
 
 - ADR-017: Vanilla TypeScript for Client Interactivity
-- `apps/site/src/content/specs/` — versioned spec storage (currently `v0.9.0.md`)
+- `packages/notation-spec/spec/` — versioned spec storage (currently `v0.9.0.md`)
 - `apps/site/src/content.config.ts` — `specs` content collection and ID generation
-- `packages/roller/spec/vectors.ts` — the conformance vectors
-- `apps/site/conformance-gen.ts` — `conformance:gen` / `conformance:check` vector serializer
+- `packages/notation-spec/vectors/v0.9.0.json` — the conformance vectors
+- `apps/site/src/pages/conformance/[file].ts` — serves the vectors and their schema
 - ADR-015 addendum — why the spec moved from `apps/rdn` into `apps/site`

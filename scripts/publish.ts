@@ -34,7 +34,13 @@ process.env['RANDSUM_PUBLISH_SCRIPT'] = '1'
  * Packages must be published in dependency order so that downstream
  * packages can resolve their dependencies on the registry.
  */
-const PUBLISH_ORDER: readonly string[] = ['packages/roller', 'packages/games', 'packages/mcp']
+const PUBLISH_ORDER: readonly string[] = [
+  'packages/roller',
+  'packages/games',
+  'packages/mcp',
+  // Depends on roller only for its tests and reference adapter, so its place is free.
+  'packages/notation-spec'
+]
 
 interface PublishablePackage {
   readonly name: string

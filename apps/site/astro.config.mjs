@@ -12,8 +12,10 @@ import { curatedLlmsTxt } from './src/integrations/curated-llms-txt'
 // The newest spec version. /spec/v/<latest>/ repeats /spec/ and names it as
 // canonical (SpecLayout), so the sitemap lists only /spec/. Pre-releases are not
 // handled here; src/spec/versions.ts orders those for the pages themselves.
-const latestSpecVersion = readdirSync(new URL('./src/content/specs/', import.meta.url))
-  .filter(file => file.endsWith('.md'))
+const latestSpecVersion = readdirSync(
+  new URL('../../packages/notation-spec/spec/', import.meta.url)
+)
+  .filter(file => /^v.+\.md$/.test(file))
   .map(file => file.replace(/^v/, '').replace(/\.md$/, ''))
   .sort((a, b) => a.localeCompare(b, 'en', { numeric: true }))
   .at(-1)
