@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'bun:test'
-import { checkNotation, describe as describeLines, rollNotation } from '../src/core/check'
+import { checkNotation, describe as describeLines, rollNotation } from '../src/check'
 
 describe('checkNotation', () => {
   test('empty notation is empty, not invalid', () => {

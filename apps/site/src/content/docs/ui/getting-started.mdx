@@ -1,0 +1,88 @@
+---
+title: Getting Started with @randsum/ui
+description: Install @randsum/ui, load its styles, and drop a dice roller into a React app in one of three sizes.
+---
+
+## Install
+
+```bash
+npm install @randsum/ui @randsum/roller react react-dom
+```
+
+`@randsum/ui` needs React 18 or later. It rolls with `@randsum/roller`, so a
+roll in the component follows exactly the rules a roll in code does.
+
+## Load the styles once
+
+```tsx
+import '@randsum/ui/styles.css'
+```
+
+The stylesheet covers every component. Its tokens are `--rsui-*` custom
+properties declared under `:where(.rsui)`, so your own CSS overrides any of
+them without a specificity fight:
+
+```css
+.rsui {
+  --rsui-accent: #0f766e;
+  --rsui-radius-md: 4px;
+}
+```
+
+Colours use `light-dark()`, so set `color-scheme` on your page and the
+components follow it.
+
+## Pick a size
+
+```tsx
+import { RollerMini } from '@randsum/ui/roller-mini'
+
+<RollerMini defaultNotation="4d6L" />
+```
+
+```tsx
+import { RollerCompact } from '@randsum/ui/roller-compact'
+
+<RollerCompact defaultNotation="2d20H+5" orientation="auto" />
+```
+
+```tsx
+import { RollerMax } from '@randsum/ui/roller-max'
+
+<RollerMax storageKey="my-app-history" />
+```
+
+## Props every size takes
+
+| Prop              | Type                           | Notes                                              |
+| ----------------- | ------------------------------ | -------------------------------------------------- |
+| `defaultNotation` | `string`                       | Starting notation                                  |
+| `notation`        | `string`                       | Controlled notation; pair it with `onChange`       |
+| `onChange`        | `(notation: string) => void`   | Every edit: typing, a key or a preset              |
+| `onRoll`          | `(result: RollResult) => void` | After each roll, with the total and every record   |
+| `rollSignal`      | `number`                       | Each new value rolls the current notation          |
+| `keys`            | `readonly Key[]`               | Defaults to `DEFAULT_KEYS`; always shown           |
+| `presets`         | `readonly Preset[]`            | Optional named rolls, behind a switch; keys first  |
+| `presetsLabel`    | `string`                       | What the presets are called. Defaults to "Presets" |
+| `placeholder`     | `string`                       | The empty field's hint                             |
+| `className`       | `string`                       | Added to the root element                          |
+
+## Keys and presets
+
+Every size shows dice keys. Pass `keys` to change them, and `presets` to add
+named rolls:
+
+```tsx
+import { RollerCompact } from '@randsum/ui/roller-compact'
+import { modifierKeys } from '@randsum/ui/keys'
+import { modifierPresets } from '@randsum/ui/presets'
+
+<RollerCompact
+  defaultNotation="3d6!"
+  keys={modifierKeys('explode')}
+  presets={modifierPresets('explode')}
+/>
+```
+
+`modifierKeys(name)` and `modifierPresets(name)` give each modifier's own keys
+and its documented examples, the same ones on the [modifiers page](/roller/modifiers/).

@@ -21,27 +21,28 @@ roll("4d6Lx6")      // Repeat operator
 roll("2d6+3[fire]") // Annotation
 ```
 
-## AI Agents
+## Packages
 
-- [Agent integrations](https://randsum.dev/tools/agents/): overview of every way an agent can roll with RANDSUM
-- [Claude connector](https://randsum.dev/tools/mcp/): tools `roll`, `validate`, `roll_game` at `https://api.randsum.dev/mcp`. Add it as a custom connector in Claude; any other MCP client takes the same URL (`claude mcp add --transport http randsum https://api.randsum.dev/mcp`). Local stdio fallback: `claude mcp add randsum -- bunx -y @randsum/mcp`
-- [Claude Code plugin](https://randsum.dev/tools/claude-code-plugin/): skills, a `/roll` command and the hosted connector's tools. `/plugin marketplace add RANDSUM/randsum`, then `/plugin install randsum@randsum`
+- [@randsum/roller](https://randsum.dev/roller/introduction/): core dice engine with the built-in RDN notation parser
+- [@randsum/games](https://randsum.dev/games/introduction/): game interpretations as subpath exports: `/fifth` (D&D 5e), `/blades` (Blades in the Dark), `/pbta`, `/daggerheart`, `/fate` (Fate Core), `/root-rpg`, `/salvageunion`, and `/schema` (codegen and validation for game specs)
+- [@randsum/ui](https://randsum.dev/ui/introduction/): React dice roller components in three sizes (`/roller-max`, `/roller-compact`, `/roller-mini`) plus each part as its own import (`/use-roller`, `/notation-field`, `/roll-button`, `/key-pad`, `/readout` and more), with `/styles.css`; no root entry
+- [@randsum/mcp](https://randsum.dev/tools/mcp/): the MCP server behind the Claude connector (see AI Agents), also runnable over stdio with `bunx @randsum/mcp`
 
 ## HTTP API
 
 - [API introduction](https://randsum.dev/api/introduction/): `https://api.randsum.dev/v1`, public, keyless, CORS. `GET /v1/roll?notation=4d6L[&seed=N]`, `/v1/validate?notation=`, `/v1/games`, `/v1/games/{game}/roll?<inputs>`, `/v1/random?min=&max=&count=`; POST takes the same fields as JSON
 - [API reference](https://randsum.dev/api/reference/): every route, parameter and response shape
 
-## Packages
-
-- [@randsum/roller](https://randsum.dev/roller/introduction/): core dice engine with the built-in RDN notation parser
-- [@randsum/games](https://randsum.dev/games/introduction/): game interpretations as subpath exports: `/fifth` (D&D 5e), `/blades` (Blades in the Dark), `/pbta`, `/daggerheart`, `/fate` (Fate Core), `/root-rpg`, `/salvageunion`, and `/schema` (codegen and validation for game specs)
-- [@randsum/mcp](https://randsum.dev/tools/mcp/): the MCP server above, also runnable over stdio with `bunx @randsum/mcp`
-
 ## Apps
 
 - [Roller app](https://randsum.dev/app/): installable, offline-capable dice roller in the browser at https://app.randsum.dev/, for people rather than agents
 - [Discord bot](https://randsum.dev/tools/discord-bot/): slash commands for every supported game
+
+## AI Agents
+
+- [Agent integrations](https://randsum.dev/tools/agents/): overview of every way an agent can roll with RANDSUM
+- [Claude connector](https://randsum.dev/tools/mcp/): tools `roll`, `validate`, `roll_game` at `https://api.randsum.dev/mcp`. Add it as a custom connector in Claude; any other MCP client takes the same URL (`claude mcp add --transport http randsum https://api.randsum.dev/mcp`). Local stdio fallback: `claude mcp add randsum -- bunx -y @randsum/mcp`
+- [Claude Code plugin](https://randsum.dev/tools/claude-code-plugin/): skills, a `/roll` command and the hosted connector's tools. `/plugin marketplace add RANDSUM/randsum`, then `/plugin install randsum@randsum`
 
 ## Specification
 

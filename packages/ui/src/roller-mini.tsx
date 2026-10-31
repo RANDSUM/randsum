@@ -1,19 +1,17 @@
 import type React from 'react'
 import { useEffect, useId, useRef, useState } from 'react'
 import { DEFAULT_KEYS } from './keys'
-import {
-  KeyPad,
-  NotationField,
-  PresetList,
-  RollButton,
-  RollSteps,
-  StatusLine,
-  cx
-} from './core/parts'
-import type { RollerBaseProps } from './core/props'
-import { useRoller } from './core/useRoller'
+import { KeyPad } from './key-pad'
+import { NotationField } from './notation-field'
+import { PresetList } from './preset-list'
+import { RollButton } from './roll-button'
+import { RollSteps } from './roll-steps'
+import { StatusLine } from './status-line'
+import { cx } from './internal/cx'
+import type { RollerBaseProps } from './internal/props'
+import { useRoller } from './use-roller'
 
-export type { RollResult } from './core/props'
+export type { RollResult } from './internal/props'
 
 export interface RollerMiniProps extends RollerBaseProps {
   /** A link to the full roller, shown at the end of the hint line. */

@@ -2,10 +2,10 @@
 // keeps its keys first; each modifier's canonical presets are the examples its
 // docs already teach, so the docs and the components never drift apart.
 import { NOTATION_DOCS } from '@randsum/roller/docs'
-import { MODIFIER_TABLE } from './modifiers'
-import type { ModifierName } from './modifiers'
+import { MODIFIER_TABLE } from './internal/modifiers'
+import type { ModifierName } from './internal/modifiers'
 
-export type { ModifierName } from './modifiers'
+export type { ModifierName } from './internal/modifiers'
 
 export interface Preset {
   /** What the preset button shows. */

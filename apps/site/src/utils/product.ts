@@ -1,10 +1,11 @@
 // The product a page belongs to. Each product wears the pip die in its own
 // colour and its own pattern; theme.css turns <html data-product> into that page's accent.
-export type Product = 'roller' | 'games' | 'spec' | 'api' | 'discord' | 'plugin' | 'app'
+export type Product = 'roller' | 'games' | 'ui' | 'api' | 'app' | 'discord' | 'plugin' | 'spec'
 
 const PREFIXES: readonly (readonly [string, Product])[] = [
   ['/roller/', 'roller'],
   ['/games/', 'games'],
+  ['/ui/', 'ui'],
   ['/notation/', 'spec'],
   ['/spec', 'spec'],
   ['/api/', 'api'],
@@ -16,14 +17,16 @@ const PREFIXES: readonly (readonly [string, Product])[] = [
   ['/app/', 'app']
 ]
 
+// In family order: what you build with first, then what you use, then the paperwork
 export const PRODUCT_LABELS: Readonly<Record<Product, string>> = {
   roller: 'roller',
   games: 'games',
-  spec: 'spec',
+  ui: 'ui',
   api: 'api',
+  app: 'app',
   discord: 'discord bot',
   plugin: 'plugin',
-  app: 'app'
+  spec: 'spec'
 }
 
 // Each product's pattern on the die's 3x3 face, centres on a 22 pitch. The
@@ -48,20 +51,32 @@ export const PIPS: Readonly<Record<Product, readonly Pip[]>> = {
     [H, M],
     [M, H]
   ],
-  // Lines of text, the middle one short
-  spec: [
+  // U, the letter UI starts with: a cup that holds the roll
+  ui: [
     [L, L],
-    [M, L],
     [H, L],
     [L, M],
+    [H, M],
     [L, H],
-    [M, H]
+    [M, H],
+    [H, H]
   ],
   // A > prompt
   api: [
     [L, L],
     [M, M],
     [L, H]
+  ],
+  // An app icon on a home screen
+  app: [
+    [L, L],
+    [M, L],
+    [H, L],
+    [L, M],
+    [H, M],
+    [L, H],
+    [M, H],
+    [H, H]
   ],
   // D
   discord: [
@@ -80,16 +95,14 @@ export const PIPS: Readonly<Record<Product, readonly Pip[]>> = {
     [M, M],
     [L, H]
   ],
-  // An app icon on a home screen
-  app: [
+  // Lines of text, the middle one short
+  spec: [
     [L, L],
     [M, L],
     [H, L],
     [L, M],
-    [H, M],
     [L, H],
-    [M, H],
-    [H, H]
+    [M, H]
   ]
 }
 
@@ -126,7 +139,7 @@ export interface ProductInfo {
   readonly actions: readonly [ProductAction, ...ProductAction[]]
 }
 
-// Every product, in the order the landing page stacks them
+// Every product, in family order: the landing page, footer and header die all follow it
 export const PRODUCTS: readonly ProductInfo[] = [
   {
     id: 'roller',
@@ -169,23 +182,23 @@ export const PRODUCTS: readonly ProductInfo[] = [
     ]
   },
   {
-    id: 'spec',
-    tagline: 'An open standard for dice notation',
+    id: 'ui',
+    tagline: 'The roller as React components',
     summary:
-      'RANDSUM Dice Notation: one grammar, a fixed modifier order, and conformance levels any roller can implement.',
-    href: 'https://notation.randsum.dev/',
+      'The RANDSUM roller in three sizes, Max, Compact and Mini, plus every part they are built from. Import one component and your bundle gets only that component.',
+    href: '/ui/introduction/',
     snippet: {
-      lang: 'text',
-      code: '4d6R{1}L+2\n\nroll 4d6 → reroll 1s → drop lowest → add 2'
+      lang: 'tsx',
+      code: "import { RollerMini } from '@randsum/ui/roller-mini'\nimport '@randsum/ui/styles.css'\n\n<RollerMini defaultNotation=\"4d6L\" />"
     },
     facts: [
-      { value: '26', label: 'modifiers' },
-      { value: '4', label: 'conformance levels' },
-      { value: '3', label: 'pipeline stages' }
+      { value: '3', label: 'roller sizes' },
+      { value: '1', label: 'import per component' },
+      { value: 'CSS', label: 'variables you can override' }
     ],
     actions: [
-      { label: 'Read the spec', href: 'https://notation.randsum.dev/' },
-      { label: 'Getting started', href: '/notation/getting-started/' }
+      { label: 'Get started', href: '/ui/getting-started/' },
+      { label: 'npm', href: 'https://www.npmjs.com/package/@randsum/ui' }
     ]
   },
   {
@@ -206,6 +219,25 @@ export const PRODUCTS: readonly ProductInfo[] = [
     actions: [
       { label: 'Get started', href: '/api/introduction/#quick-start' },
       { label: 'Endpoint reference', href: '/api/reference/' }
+    ]
+  },
+  {
+    id: 'app',
+    tagline: 'A dice roller for your home screen',
+    summary:
+      'Any notation, every step shown, and your last rolls kept. Install it on your phone and it rolls offline, no account and no network.',
+    href: '/app/',
+    snippet: {
+      lang: 'text',
+      code: '4d6L    → 14   [6, 5, 3] dropped 1\n1d20+5  → 17\n2d8!    → 11   exploded on 8'
+    },
+    facts: [
+      { value: '1', label: 'tap to roll' },
+      { value: '0', label: 'network needed once installed' }
+    ],
+    actions: [
+      { label: 'Open the app', href: APP_URL },
+      { label: 'Notation guide', href: '/notation/getting-started/' }
     ]
   },
   {
@@ -245,22 +277,23 @@ export const PRODUCTS: readonly ProductInfo[] = [
     ]
   },
   {
-    id: 'app',
-    tagline: 'A dice roller for your home screen',
+    id: 'spec',
+    tagline: 'An open standard for dice notation',
     summary:
-      'Any notation, every step shown, and your last rolls kept. Install it on your phone and it rolls offline, no account and no network.',
-    href: '/app/',
+      'RANDSUM Dice Notation: one grammar, a fixed modifier order, and conformance levels any roller can implement.',
+    href: 'https://notation.randsum.dev/',
     snippet: {
       lang: 'text',
-      code: '4d6L    → 14   [6, 5, 3] dropped 1\n1d20+5  → 17\n2d8!    → 11   exploded on 8'
+      code: '4d6R{1}L+2\n\nroll 4d6 → reroll 1s → drop lowest → add 2'
     },
     facts: [
-      { value: '1', label: 'tap to roll' },
-      { value: '0', label: 'network needed once installed' }
+      { value: '26', label: 'modifiers' },
+      { value: '4', label: 'conformance levels' },
+      { value: '3', label: 'pipeline stages' }
     ],
     actions: [
-      { label: 'Open the app', href: APP_URL },
-      { label: 'Notation guide', href: '/notation/getting-started/' }
+      { label: 'Read the spec', href: 'https://notation.randsum.dev/' },
+      { label: 'Getting started', href: '/notation/getting-started/' }
     ]
   }
 ]
@@ -275,6 +308,7 @@ export function productInfo(id: Product): ProductInfo {
 const HERO_PAGES: Readonly<Record<string, Product>> = {
   '/roller/introduction/': 'roller',
   '/games/introduction/': 'games',
+  '/ui/introduction/': 'ui',
   '/notation/introduction/': 'spec',
   '/api/introduction/': 'api',
   '/tools/discord-bot/': 'discord',

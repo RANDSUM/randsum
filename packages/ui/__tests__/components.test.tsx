@@ -1,3 +1,4 @@
+import type React from 'react'
 import { afterEach, describe, expect, test } from 'bun:test'
 import { act, cleanup, fireEvent, render, screen } from '@testing-library/react'
 import { RollerCompact } from '../src/roller-compact'
@@ -5,7 +6,11 @@ import { RollerMax } from '../src/roller-max'
 import { RollerMini } from '../src/roller-mini'
 import { modifierKeys } from '../src/keys'
 import { modifierPresets } from '../src/presets'
-import type { RollResult } from '../src/core/check'
+import { NotationField } from '../src/notation-field'
+import { Readout } from '../src/readout'
+import { RollButton } from '../src/roll-button'
+import { useRoller } from '../src/use-roller'
+import type { RollResult } from '../src/check'
 
 afterEach(() => {
   cleanup()
@@ -192,5 +197,26 @@ describe('RollerMax', () => {
     unmount()
     render(<RollerMax history={false} />)
     expect(screen.queryByText('Recent')).toBeNull()
+  })
+})
+
+function MyRoller(): React.JSX.Element {
+  const roller = useRoller({ defaultNotation: '2d6+1' })
+  return (
+    <div>
+      <NotationField roller={roller} />
+      <RollButton roller={roller} />
+      <Readout roller={roller} />
+    </div>
+  )
+}
+
+describe('standalone parts', () => {
+  test('compose a roller from single-component imports', () => {
+    render(<MyRoller />)
+    fireEvent.click(screen.getByRole('button', { name: 'Roll' }))
+    const total = Number(screen.getByLabelText(/^Total /).textContent)
+    expect(total).toBeGreaterThanOrEqual(3)
+    expect(total).toBeLessThanOrEqual(13)
   })
 })

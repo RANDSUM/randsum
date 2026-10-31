@@ -36,6 +36,11 @@ html[data-product='app'] .rsui {
   --rsui-accent: var(--product-app-fill);
 }
 
+/* The UI demos, in the docs and on the landing page, wear the UI product's colour */
+.ui-demo .rsui {
+  --rsui-accent: var(--product-ui-fill);
+}
+
 /* Starlight styles bare links and lists inside docs content; the rollers are
    rendered with .not-content, and their footer action is a plain text button. */
 .site-roller-action {
@@ -59,4 +64,14 @@ html[data-product='app'] .rsui {
   margin-inline: auto;
   padding: 1rem;
   align-content: start;
+}
+
+/* The UI docs' demos sit in the page flow with room around them */
+.ui-demo {
+  margin-block: 1.5rem;
+}
+
+.ui-demo-parts {
+  display: grid;
+  gap: 1rem;
 }

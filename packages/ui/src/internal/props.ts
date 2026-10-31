@@ -1,8 +1,8 @@
 import type { Key } from '../keys'
 import type { Preset } from '../presets'
-import type { RollerOptions } from './useRoller'
+import type { RollerOptions } from '../use-roller'
 
-export type { RollResult } from './check'
+export type { RollResult } from '../check'
 
 /** Props every roller size takes. */
 export interface RollerBaseProps extends RollerOptions {
