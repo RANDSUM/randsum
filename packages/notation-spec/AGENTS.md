@@ -18,7 +18,9 @@ Published (`@randsum/notation-spec`, public) home of the RANDSUM Dice Notation s
 
 ## Mirror
 
-`.github/workflows/sync-notation-spec.yml` runs after green CI on main. It writes the tree with `scripts/sync-notation-spec.ts`, which rewrites `package.json` (published `@randsum/roller` range, the root build toolchain, `private`) and `tsconfig.json` (inlined root options) so the mirror builds alone, and adds `scripts/notation-spec-mirror/` (its CI workflow). It pushes to the mirror's `main` and tags `v<version>-rev.<n>`. The mirror's CI runs against the published roller, so it goes red when the vectors need a roller change that has not been released yet. Preview the tree with `bun scripts/sync-notation-spec.ts <dir>`.
+`.github/workflows/sync-notation-spec.yml` runs after green CI on main. It writes the tree with `scripts/sync-notation-spec.ts`, which rewrites `package.json` (the root build toolchain, `private`) and `tsconfig.json` (inlined root options) so the mirror builds alone, adds `scripts/notation-spec-mirror/` (its CI workflow), and vendors roller's build at `vendor/roller/` (`@randsum/roller` is `file:./vendor/roller` there). The vectors can need a roller change before it is released, so the mirror tests the roller it was synced beside, not the one on npm. It pushes to the mirror's `main` and tags `v<version>-rev.<n>`.
+
+The mirror's `check` job is required there and must never go red. `bun run check:notation-mirror` (`scripts/check-notation-mirror.ts`) runs that job's commands on a fresh tree; the notation-spec CI leg runs it, so it gates `CI Success`, and the sync runs it again on the exact tree before pushing. Preview the tree with `bun scripts/sync-notation-spec.ts <dir>`.
 
 ## Commands
 

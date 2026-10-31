@@ -51,6 +51,8 @@ jobs:
         with:
           ref: ${{ env.SHA }}
           persist-credentials: false
+          # The sync names the last roller commit in vendor/roller/.
+          fetch-depth: 0
       - uses: ./.github/actions/bun-setup
         if: env.HAS_TOKEN == 'true'
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -63,6 +65,11 @@ jobs:
       - name: Write the mirror tree
         if: env.HAS_TOKEN == 'true'
         run: bun scripts/sync-notation-spec.ts .mirror
+      - name: Run the mirror's check on the tree
+        # CI already ran this check on main; running it again on the exact tree
+        # means nothing reaches the mirror that its required `check` fails.
+        if: env.HAS_TOKEN == 'true'
+        run: bun scripts/check-notation-mirror.ts .mirror
       - name: Commit, push and tag
         if: env.HAS_TOKEN == 'true'
         working-directory: .mirror

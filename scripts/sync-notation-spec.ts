@@ -10,10 +10,16 @@
  * its own, outside the workspace, so the copy differs from the package in a few
  * places only:
  *
- * - package.json: `workspace:~` ranges become the published versions, the root
- *   build toolchain (bunup, typescript, @types/bun) is added, the monorepo-only
- *   prepublishOnly guard is dropped, and `private` is set so nothing publishes
- *   from the mirror (npm releases go through scripts/publish.ts here);
+ * - package.json: the root build toolchain (bunup, typescript, @types/bun) is
+ *   added, the monorepo-only prepublishOnly guard is dropped, and `private` is
+ *   set so nothing publishes from the mirror (npm releases go through
+ *   scripts/publish.ts here);
+ * - vendor/roller/: the roller build from this commit, which the reference
+ *   adapter runs against (`@randsum/roller` is `file:./vendor/roller`). The
+ *   vectors are written beside roller and can need a roller change before it is
+ *   released, so testing the mirror against the published roller would turn it
+ *   red until the next release. This way the mirror tests exactly what passed
+ *   here, and scripts/check-notation-mirror.ts proves it before every sync;
  * - tsconfig.json: the root compiler options inlined instead of extended;
  * - the files in scripts/notation-spec-mirror/ (its CI workflow, .gitignore),
  *   and the root .bun-version, which that workflow installs.
@@ -61,9 +67,12 @@ const toolVersion = (name: string): string => {
   if (range === undefined) throw new Error(`The root package.json has no devDependency ${name}`)
   return range === 'catalog:' ? (catalog[name] ?? range) : range
 }
-const workspaceVersion = (name: string): string => {
-  const dir = name.replace('@randsum/', 'packages/')
-  return `^${String(readJson(join(ROOT, dir, 'package.json'))['version'])}`
+const ROLLER = join(ROOT, 'packages/roller')
+const VENDORED: Record<string, string> = { '@randsum/roller': 'file:./vendor/roller' }
+const vendoredRange = (name: string): string => {
+  const range = VENDORED[name]
+  if (range === undefined) throw new Error(`No vendored build for the workspace package ${name}`)
+  return range
 }
 
 // Start from an empty tree, keeping the mirror's own history.
@@ -82,10 +91,41 @@ for (const file of tracked) {
 cpSync(TEMPLATE, OUT, { recursive: true })
 cpSync(join(ROOT, '.bun-version'), join(OUT, '.bun-version'))
 
+// The roller build from this commit, without source maps.
+await $`bun run build`.cwd(ROLLER).quiet()
+// The last commit that touched roller, not HEAD, so a sync that changes nothing
+// else leaves vendor/ alone.
+const commit = (await $`git log -1 --format=%H -- packages/roller`.cwd(ROOT).text()).trim()
+const vendor = join(OUT, 'vendor/roller')
+cpSync(join(ROLLER, 'dist'), join(vendor, 'dist'), {
+  recursive: true,
+  filter: source => !source.endsWith('.map')
+})
+cpSync(join(ROLLER, 'LICENSE'), join(vendor, 'LICENSE'))
+const roller = readJson(join(ROLLER, 'package.json'))
+writeJson(join(vendor, 'package.json'), {
+  name: roller['name'],
+  description: `${String(roller['description'])}. Built from RANDSUM/randsum@${commit} (the last roller change before the sync) for the reference adapter.`,
+  version: roller['version'],
+  private: true,
+  type: roller['type'],
+  sideEffects: roller['sideEffects'],
+  exports: roller['exports'],
+  license: roller['license'],
+  repository: roller['repository']
+})
+writeFileSync(
+  join(vendor, 'README.md'),
+  `# vendor/roller
+
+The \`@randsum/roller\` build from [RANDSUM/randsum@${commit.slice(0, 7)}](https://github.com/RANDSUM/randsum/tree/${commit}/packages/roller), the last change to roller before this mirror was synced. The reference adapter in \`examples/randsum-roller/\` runs against it, so the vectors are always tested against the roller they were written beside, released or not. Install \`@randsum/roller\` from npm to use the roller itself. MIT, see \`LICENSE\`.
+`
+)
+
 const manifest = readJson(join(ROOT, PACKAGE, 'package.json'))
 const devDependencies = Object.fromEntries(
   Object.entries((manifest['devDependencies'] ?? {}) as Record<string, string>).map(
-    ([name, range]) => [name, range.startsWith('workspace:') ? workspaceVersion(name) : range]
+    ([name, range]) => [name, range.startsWith('workspace:') ? vendoredRange(name) : range]
   )
 )
 const scripts = { ...(manifest['scripts'] as Record<string, string>) }
