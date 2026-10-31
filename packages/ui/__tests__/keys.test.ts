@@ -3,8 +3,8 @@ import { NOTATION_DOCS } from '@randsum/roller/docs'
 import { isDiceNotation } from '@randsum/roller/validate'
 import { CLEAR_KEY, DEFAULT_KEYS, DICE_KEYS, applyKey, modifierKeys } from '../src/keys'
 import type { ModifierName } from '../src/keys'
-import { MODIFIER_TABLE } from '../src/modifiers'
-import { checkNotation } from '../src/core/check'
+import { MODIFIER_TABLE } from '../src/internal/modifiers'
+import { checkNotation } from '../src/check'
 
 const NAMES = Object.keys(MODIFIER_TABLE) as ModifierName[]
 

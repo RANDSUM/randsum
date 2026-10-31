@@ -5,16 +5,21 @@ The site's app, landing page and modifier docs all render them.
 
 ## Layout
 
-- `src/roller-max.tsx`, `src/roller-compact.tsx`, `src/roller-mini.tsx`: one
-  component per entry. There is no root barrel, so a page that imports Mini
-  never bundles Max.
-- `src/keys.ts`: `DEFAULT_KEYS`, `modifierKeys(name)` and `applyKey`. Key edits
-  live in `src/edits.ts`.
-- `src/presets.ts`: `modifierPresets(name)`, built from the roller's
-  `NOTATION_DOCS` examples, so docs and component never drift.
-- `src/modifiers.ts`: `MODIFIER_TABLE`, each modifier's doc keys and canonical keys.
-- `src/core/`: the shared hook (`useRoller`), notation checks (`check.ts`) and
-  the parts every size composes (`parts.tsx`).
+- Every file directly in `src/` is a public entry with its own subpath, one per
+  component, hook or helper (lodash style). There is no root barrel, so a page
+  that imports `RollerMini` never bundles `RollerMax`, and one that imports
+  `KeyPad` gets only the key pad. `__tests__/entries.test.ts` holds
+  `package.json` `exports`, the bunup `entry` list and the `size-limit` block to
+  exactly that set: add a file to `src/` and it must appear in all three.
+- `src/roller-max.tsx`, `src/roller-compact.tsx`, `src/roller-mini.tsx`: the
+  three sizes, composed from the parts below.
+- Parts: `notation-field`, `roll-button`, `status-line`, `key-pad`,
+  `preset-list`, `readout`, `roll-steps`, all driven by `use-roller`.
+- `src/keys.ts`, `src/presets.ts`, `src/check.ts`: data and logic with no React.
+  `presets` builds from the roller's `NOTATION_DOCS` examples, so docs and
+  component never drift.
+- `src/internal/`: shared code that is not an entry (`cx`, base props, key
+  edits, the modifier table). bunup splits shared code into `dist/shared/` chunks.
 - `src/tokens.css` is the only file that spells a raw colour, size or radius
   (it is excluded from the design plugins in `biome.json`). `src/styles.css`
   uses only `--rsui-*`. `scripts/build-css.ts` joins the two into

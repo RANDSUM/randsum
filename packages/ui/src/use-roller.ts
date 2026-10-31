@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import type { Token } from '@randsum/roller/tokenize'
 import { tokenize } from '@randsum/roller/tokenize'
-import { applyKey } from '../keys'
-import type { Key } from '../keys'
-import type { Preset } from '../presets'
+import { applyKey } from './keys'
+import type { Key } from './keys'
+import type { Preset } from './presets'
 import { checkNotation, rollNotation } from './check'
 import type { NotationCheck, RollResult } from './check'
 

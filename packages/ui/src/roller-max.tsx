@@ -1,20 +1,18 @@
 import type React from 'react'
 import { useCallback, useEffect, useId, useRef, useState } from 'react'
 import { DEFAULT_KEYS } from './keys'
-import type { RollResult } from './core/check'
-import {
-  KeyPad,
-  NotationField,
-  PresetList,
-  Readout,
-  RollButton,
-  StatusLine,
-  cx
-} from './core/parts'
-import type { RollerBaseProps } from './core/props'
-import { useRoller } from './core/useRoller'
+import type { RollResult } from './check'
+import { KeyPad } from './key-pad'
+import { NotationField } from './notation-field'
+import { PresetList } from './preset-list'
+import { Readout } from './readout'
+import { RollButton } from './roll-button'
+import { StatusLine } from './status-line'
+import { cx } from './internal/cx'
+import type { RollerBaseProps } from './internal/props'
+import { useRoller } from './use-roller'
 
-export type { RollResult } from './core/props'
+export type { RollResult } from './internal/props'
 
 export interface HistoryEntry {
   readonly id: number

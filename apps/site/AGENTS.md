@@ -25,7 +25,7 @@ Private app, deploys to Cloudflare Workers once CI is green on `main` via
 - Brand: the pip mark (`src/components/PipMark.astro`, outline and knockout) and a
   product family. The roller's die spells R, the family mark; every other product has its own
   pip pattern (`PIPS` in `src/utils/product.ts`), so pass `product` wherever a die stands
-  for one. Chrome is neutral; `src/utils/product.ts` maps a path to its product (roller, games, spec, api, discord, plugin, app), `Head.astro` stamps `<html data-product>`,
+  for one. Chrome is neutral; `src/utils/product.ts` maps a path to its product (roller, games, ui, api, app, discord, plugin, spec), `Head.astro` stamps `<html data-product>`,
   and `theme.css` turns that into the page's accent (`--product-*`)
 - Social cards: `public/og-image.png` is the family card; each product has
   `public/og/<product>.png`, and `src/routeData.ts` (Starlight route middleware) points a
@@ -62,6 +62,9 @@ Every page is built from tokens and shared components, and tools hold them there
   (Expressive Code with wrapping), `CodeFrame` (a named file with an action on
   its header bar) and `DiscordGlyph`.
   `ProductHero` and `ProductCarousel` render from `PRODUCTS` in `src/utils/product.ts`.
+- Family order: tech first, then the apps, the plugin and the paperwork (Roller, Games, UI,
+  API, App, Discord, Plugin, Spec). `PRODUCTS`, `PRODUCT_LABELS`, `PIPS`, the `--product-*`
+  tokens in `theme.css` and the sidebar topics in `astro.config.mjs` all follow it.
 - **Enforcement**: Biome's `no-raw-color`, `no-raw-type`, `no-raw-shape`,
   `no-uppercase-labels` and `no-decorative-gradient` plugins (`biome-plugins/`)
   fail raw values in every `.css` file and Astro `<style>` block except
@@ -159,7 +162,7 @@ Top-level topics: `welcome/`, `roller/`, `notation/`, `games/` (incl.
 The home page is **not** a Starlight doc — it's a custom `src/pages/index.astro`
 that renders a `StarlightPage` shell wrapping landing sections from
 `src/components/landing/` (`LandingHero`, `ProductCarousel`, `QuickStart`,
-`GameSchemaSection`, `GamesGrid`, `Faq`, `ClosingCta`, `LandingFooter`,
+`GameSchemaSection`, `GamesGrid`, `UiSection`, `Faq`, `ClosingCta`, `LandingFooter`,
 `LandingScripts`). `LandingHero` puts the live roller beside the tagline.
 `ProductCarousel` is a vertical carousel with one pane per product from
 `PRODUCTS` in `src/utils/product.ts`; every pane is in the HTML, and the script
@@ -167,7 +170,7 @@ only slides between them. `PRODUCTS` also feeds `ProductHero`, the
 hero at the top of each product's introduction page. After the carousel, each
 section wears its product's lockup (`QuickStart` the roller, `GameSchemaSection`
 the games, whose spec samples live in `src/utils/gameSchemas.ts` and render
-server-side behind tabs), and `ClosingCta` and `LandingFooter` show the whole
+server-side behind tabs, `UiSection` the UI package with a live `RollerMini`), and `ClosingCta` and `LandingFooter` show the whole
 family's dice. `landing.css` holds only the page frame and the hero; every
 other section styles itself. `Faq` and the page's
 FAQPage structured data share `LANDING_FAQ` in `src/utils/faq.ts`. The Discord bot's

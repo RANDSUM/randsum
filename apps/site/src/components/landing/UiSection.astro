@@ -1,0 +1,47 @@
+---
+// @randsum/ui on the landing page: the Mini roller, live, beside the two lines
+// that put it in an app.
+import Button from '../ui/Button.astro'
+import CodeFrame from '../ui/CodeFrame.astro'
+import Section from '../ui/Section.astro'
+import { UiDemo } from '../rollers/UiDemo'
+
+const codeExample = [
+  "import { RollerMini } from '@randsum/ui/roller-mini'",
+  "import '@randsum/ui/styles.css'",
+  '',
+  'export const Roll = () => <RollerMini defaultNotation="4d6L" />'
+].join('\n')
+---
+
+<Section
+  id="ui"
+  product="ui"
+  title="Put the roller in your app"
+  lede="The roller on this page is a React component. @randsum/ui ships it in three sizes, and every part it is built from as an import of its own, so you ship only what you use."
+>
+  <Button slot="actions" href="/ui/getting-started/" variant="product" product="ui">
+    Get the components
+  </Button>
+  <Button slot="actions" href="/ui/components/" variant="secondary">Every component</Button>
+  <div class="ui-section">
+    <CodeFrame label="Roll.tsx" code={codeExample} lang="tsx" />
+    <UiDemo size="mini" client:only="react" />
+  </div>
+</Section>
+
+<style>
+.ui-section {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+  align-items: center;
+  gap: 2.5rem;
+}
+
+@media (max-width: 900px) {
+  .ui-section {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+}
+</style>

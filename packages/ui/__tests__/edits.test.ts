@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'bun:test'
 import { isDiceNotation } from '@randsum/roller/validate'
-import { addDie, adjustConstant, toggleModifier } from '../src/edits'
+import { addDie, adjustConstant, toggleModifier } from '../src/internal/edits'
 
 describe('notation edits', () => {
   test('a die adds to a matching pool or starts a new one', () => {

@@ -1,0 +1,48 @@
+---
+title: "@randsum/ui Components"
+description: Every entry in @randsum/ui, one import per component, hook and helper, with what each renders and its props.
+---
+
+Every component, hook and helper in `@randsum/ui` is its own entry. There is no
+root import: `import … from '@randsum/ui'` does not exist, so each page ships
+only what it uses. Shared code is split into chunks, so two parts on one page
+do not load it twice.
+
+## Rollers
+
+| Import                       | Export          | Adds to the shared props                                                     |
+| ---------------------------- | --------------- | ---------------------------------------------------------------------------- |
+| `@randsum/ui/roller-mini`    | `RollerMini`    | `appLink`                                                                    |
+| `@randsum/ui/roller-compact` | `RollerCompact` | `orientation` (`'auto'`, `'landscape'`, `'portrait'`), `presetsLayout`, `appLink`, `footer` |
+| `@randsum/ui/roller-max`     | `RollerMax`     | `history`, `storageKey`, `historyLimit`                                      |
+
+## Parts
+
+Each part takes the `roller` that `useRoller` returns.
+
+| Import                       | Export          | Renders                                                     |
+| ---------------------------- | --------------- | ----------------------------------------------------------- |
+| `@randsum/ui/use-roller`     | `useRoller`     | Nothing: the notation, its check, the last result and the actions |
+| `@randsum/ui/notation-field` | `NotationField` | The input, with each notation token in its modifier's colour |
+| `@randsum/ui/roll-button`    | `RollButton`    | Roll, disabled until the notation is valid; `tip` shows the English |
+| `@randsum/ui/status-line`    | `StatusLine`    | The hint, the error, or the roll in English (takes `check`) |
+| `@randsum/ui/key-pad`        | `KeyPad`        | Dice and modifier keys (takes `keys`)                       |
+| `@randsum/ui/preset-list`    | `PresetList`    | Named rolls as chips or a list (takes `presets`)            |
+| `@randsum/ui/readout`        | `Readout`       | The total and every step, or what to do before a roll       |
+| `@randsum/ui/roll-steps`     | `RollSteps`     | Just the steps of a roll (takes `records`)                  |
+
+## Data and logic
+
+These import no React.
+
+| Import                | Exports                                                        |
+| --------------------- | -------------------------------------------------------------- |
+| `@randsum/ui/keys`    | `DEFAULT_KEYS`, `DICE_KEYS`, `CLEAR_KEY`, `CONSTANT_KEYS`, `modifierKeys`, `applyKey` |
+| `@randsum/ui/presets` | `modifierPresets`                                              |
+| `@randsum/ui/check`   | `checkNotation`, `rollNotation`, `describe`                    |
+
+## Styles
+
+| Import                   | What it is                                           |
+| ------------------------ | ---------------------------------------------------- |
+| `@randsum/ui/styles.css` | Every component's styles, as `--rsui-*` tokens       |

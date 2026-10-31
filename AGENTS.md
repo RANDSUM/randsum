@@ -9,7 +9,7 @@ Bun workspace monorepo for a dice rolling ecosystem targeting tabletop RPGs. All
 - **`@randsum/roller`** (`packages/roller/`): zero-dependency dice engine with built-in notation parsing and validation. Every other package depends on it via `workspace:~`.
 - **`@randsum/games`** (`packages/games/`): code-generated game interpretations as subpath exports: `blades`, `daggerheart`, `fate`, `fifth` (D&D 5e), `pbta`, `root-rpg`, `salvageunion`, plus `schema` (the codegen/validation API).
 - **`@randsum/mcp`** (`packages/mcp/`): MCP server exposing `roll`, `validate` and `roll_game`.
-- **`@randsum/ui`** (`packages/ui/`): React roller components in three sizes, as narrow subpath exports: `roller-max`, `roller-compact`, `roller-mini`, `keys`, `presets`, `styles.css`. Depends on roller; React is a peer.
+- **`@randsum/ui`** (`packages/ui/`): React roller components: three sizes (`roller-max`, `roller-compact`, `roller-mini`) and every part they are built from, each its own subpath export, lodash style (`use-roller`, `notation-field`, `key-pad`, `readout`, …, plus `keys`, `presets`, `check`, `styles.css`). No root entry. Depends on roller; React is a peer.
 - **`@randsum/notation-spec`** (`packages/notation-spec/`): the RANDSUM Dice Notation spec, its conformance vectors (JSON) and the `rdn-conformance` runner. Source of truth for all three; mirrored to github.com/RANDSUM/notation-spec.
 - **`@randsum/api`** (`apps/api/`, private): Cloudflare Worker at api.randsum.dev serving the `/v1` REST API and `/mcp`, the hosted `@randsum/mcp` behind the Claude connector.
 - **`@randsum/discord-bot`** (`apps/discord-bot/`, private): Discord bot, a Cloudflare Worker at bot.randsum.dev.

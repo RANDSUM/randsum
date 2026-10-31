@@ -132,22 +132,6 @@ export default defineConfig({
             ]
           },
           {
-            label: 'Notation',
-            link: '/notation/introduction/',
-            icon: 'document',
-            items: [
-              { label: 'Introduction', slug: 'notation/introduction' },
-              { label: 'Getting Started', slug: 'notation/getting-started' },
-              {
-                label: 'RDN Syntax Guide',
-                slug: 'notation/randsum-dice-notation'
-              },
-              { label: 'Validation & Parsing', slug: 'notation/validation-and-parsing' },
-              { label: 'API Reference', slug: 'notation/api-reference' },
-              { label: 'Formal Specification', link: 'https://notation.randsum.dev/' }
-            ]
-          },
-          {
             label: 'Games',
             link: '/games/introduction/',
             icon: 'puzzle',
@@ -181,6 +165,16 @@ export default defineConfig({
             ]
           },
           {
+            label: 'UI',
+            link: '/ui/introduction/',
+            icon: 'seti:react',
+            items: [
+              { label: 'Introduction', slug: 'ui/introduction' },
+              { label: 'Getting Started', slug: 'ui/getting-started' },
+              { label: 'Components', slug: 'ui/components' }
+            ]
+          },
+          {
             label: 'API',
             link: '/api/introduction/',
             icon: 'rocket',
@@ -207,6 +201,22 @@ export default defineConfig({
               },
               { label: 'Discord Bot', slug: 'tools/discord-bot' },
               { label: 'Hosted Schema', slug: 'tools/http-api' }
+            ]
+          },
+          {
+            label: 'Notation',
+            link: '/notation/introduction/',
+            icon: 'document',
+            items: [
+              { label: 'Introduction', slug: 'notation/introduction' },
+              { label: 'Getting Started', slug: 'notation/getting-started' },
+              {
+                label: 'RDN Syntax Guide',
+                slug: 'notation/randsum-dice-notation'
+              },
+              { label: 'Validation & Parsing', slug: 'notation/validation-and-parsing' },
+              { label: 'API Reference', slug: 'notation/api-reference' },
+              { label: 'Formal Specification', link: 'https://notation.randsum.dev/' }
             ]
           }
         ])

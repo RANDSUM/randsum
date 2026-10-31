@@ -14,22 +14,16 @@
     "README.md"
   ],
   "exports": {
-    "./roller-max": {
+    "./check": {
       "import": {
-        "types": "./dist/roller-max.d.ts",
-        "default": "./dist/roller-max.js"
+        "types": "./dist/check.d.ts",
+        "default": "./dist/check.js"
       }
     },
-    "./roller-compact": {
+    "./key-pad": {
       "import": {
-        "types": "./dist/roller-compact.d.ts",
-        "default": "./dist/roller-compact.js"
-      }
-    },
-    "./roller-mini": {
-      "import": {
-        "types": "./dist/roller-mini.d.ts",
-        "default": "./dist/roller-mini.js"
+        "types": "./dist/key-pad.d.ts",
+        "default": "./dist/key-pad.js"
       }
     },
     "./keys": {
@@ -38,10 +32,70 @@
         "default": "./dist/keys.js"
       }
     },
+    "./notation-field": {
+      "import": {
+        "types": "./dist/notation-field.d.ts",
+        "default": "./dist/notation-field.js"
+      }
+    },
+    "./preset-list": {
+      "import": {
+        "types": "./dist/preset-list.d.ts",
+        "default": "./dist/preset-list.js"
+      }
+    },
     "./presets": {
       "import": {
         "types": "./dist/presets.d.ts",
         "default": "./dist/presets.js"
+      }
+    },
+    "./readout": {
+      "import": {
+        "types": "./dist/readout.d.ts",
+        "default": "./dist/readout.js"
+      }
+    },
+    "./roll-button": {
+      "import": {
+        "types": "./dist/roll-button.d.ts",
+        "default": "./dist/roll-button.js"
+      }
+    },
+    "./roll-steps": {
+      "import": {
+        "types": "./dist/roll-steps.d.ts",
+        "default": "./dist/roll-steps.js"
+      }
+    },
+    "./roller-compact": {
+      "import": {
+        "types": "./dist/roller-compact.d.ts",
+        "default": "./dist/roller-compact.js"
+      }
+    },
+    "./roller-max": {
+      "import": {
+        "types": "./dist/roller-max.d.ts",
+        "default": "./dist/roller-max.js"
+      }
+    },
+    "./roller-mini": {
+      "import": {
+        "types": "./dist/roller-mini.d.ts",
+        "default": "./dist/roller-mini.js"
+      }
+    },
+    "./status-line": {
+      "import": {
+        "types": "./dist/status-line.d.ts",
+        "default": "./dist/status-line.js"
+      }
+    },
+    "./use-roller": {
+      "import": {
+        "types": "./dist/use-roller.d.ts",
+        "default": "./dist/use-roller.js"
       }
     },
     "./styles.css": "./dist/styles.css",
@@ -100,8 +154,40 @@
   },
   "size-limit": [
     {
-      "path": "dist/roller-mini.js",
-      "limit": "21.5 KB"
+      "path": "dist/check.js",
+      "limit": "12.5 KB"
+    },
+    {
+      "path": "dist/key-pad.js",
+      "limit": "0.5 KB"
+    },
+    {
+      "path": "dist/keys.js",
+      "limit": "1.5 KB"
+    },
+    {
+      "path": "dist/notation-field.js",
+      "limit": "5.5 KB"
+    },
+    {
+      "path": "dist/preset-list.js",
+      "limit": "0.5 KB"
+    },
+    {
+      "path": "dist/presets.js",
+      "limit": "5.5 KB"
+    },
+    {
+      "path": "dist/readout.js",
+      "limit": "2 KB"
+    },
+    {
+      "path": "dist/roll-button.js",
+      "limit": "0.5 KB"
+    },
+    {
+      "path": "dist/roll-steps.js",
+      "limit": "1.75 KB"
     },
     {
       "path": "dist/roller-compact.js",
@@ -112,12 +198,16 @@
       "limit": "22 KB"
     },
     {
-      "path": "dist/keys.js",
-      "limit": "1.5 KB"
+      "path": "dist/roller-mini.js",
+      "limit": "21.5 KB"
     },
     {
-      "path": "dist/presets.js",
-      "limit": "5.5 KB"
+      "path": "dist/status-line.js",
+      "limit": "0.5 KB"
+    },
+    {
+      "path": "dist/use-roller.js",
+      "limit": "13.5 KB"
     }
   ]
 }

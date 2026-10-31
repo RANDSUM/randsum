@@ -1,11 +1,11 @@
 // Keys edit the notation string in place, so what a key builds is always what
 // the input shows and what rolls. Every roller size takes a `keys` list; these
 // are the default set and each modifier's canonical set.
-import { addDie, adjustConstant, toggleModifier } from './edits'
-import { MODIFIER_TABLE } from './modifiers'
-import type { ModifierName } from './modifiers'
+import { addDie, adjustConstant, toggleModifier } from './internal/edits'
+import { MODIFIER_TABLE } from './internal/modifiers'
+import type { ModifierName } from './internal/modifiers'
 
-export type { ModifierName } from './modifiers'
+export type { ModifierName } from './internal/modifiers'
 
 export type KeyAction =
   | { readonly kind: 'die'; readonly sides: number }

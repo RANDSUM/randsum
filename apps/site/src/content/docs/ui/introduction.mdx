@@ -1,0 +1,65 @@
+---
+title: "@randsum/ui: React Dice Roller Components"
+description: The RANDSUM dice roller as React components in three sizes, plus every part they are built from, each importable on its own.
+---
+
+import { UiDemo } from '../../../components/rollers/UiDemo'
+
+**`@randsum/ui`** is the RANDSUM roller as React components. The same
+components run the [Roller app](/app/), the landing page and every roller in
+these docs.
+
+It ships three sizes and every part they are built from. Each one is its own
+module, the way lodash ships one module per function: import a single
+component and your bundle gets that component and nothing else.
+
+```bash
+npm install @randsum/ui @randsum/roller react react-dom
+```
+
+## Three sizes
+
+**Mini** is one row for docs, READMEs and chat. Hover or focus Roll to read
+the roll in English.
+
+<UiDemo size="mini" client:only="react" />
+
+**Compact** is a panel: the builder on one side and the result on the other,
+or stacked in a narrow column.
+
+<UiDemo size="compact" client:only="react" />
+
+**Max** is the whole roller, with a readout, recent rolls and history.
+
+<UiDemo size="max" client:only="react" />
+
+## Or build your own
+
+Every part is an import of its own. `useRoller` holds the state, and each part
+reads it.
+
+<UiDemo size="parts" client:only="react" />
+
+```tsx
+import { useRoller } from '@randsum/ui/use-roller'
+import { NotationField } from '@randsum/ui/notation-field'
+import { RollButton } from '@randsum/ui/roll-button'
+import { Readout } from '@randsum/ui/readout'
+import '@randsum/ui/styles.css'
+
+export function MyRoller() {
+  const roller = useRoller({ defaultNotation: '2d6+1' })
+  return (
+    <div className="rsui">
+      <NotationField roller={roller} />
+      <RollButton roller={roller} />
+      <Readout roller={roller} />
+    </div>
+  )
+}
+```
+
+## Next
+
+- [Getting started](/ui/getting-started/): install, styles and the props every size takes
+- [Components](/ui/components/): every entry, what it renders and its props

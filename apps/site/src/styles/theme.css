@@ -36,22 +36,24 @@
   --rs-ink: #0f0f11;
   --rs-paper: #fff;
 
-  /* Products: each wears the pip R die in its own colour. The bare token is a
+  /* Products, in family order: each wears the pip die in its own colour. The bare token is a
      text shade (AA on --rs-bg in both modes); -fill is the die and badge colour. */
   --product-roller: light-dark(#af3b43, #ff9495);
   --product-roller-fill: #ef656b;
   --product-games: light-dark(#955b00, #e3ad4b);
   --product-games-fill: #ce8900;
-  --product-spec: light-dark(#1f68bc, #7dbaff);
-  --product-spec-fill: #4699fe;
+  --product-ui: light-dark(#00796b, #5fd6c6);
+  --product-ui-fill: #14b8a6;
   --product-api: light-dark(#007f35, #76cf8a);
   --product-api-fill: #2eb45c;
+  --product-app: light-dark(#55700a, #b5dc4a);
+  --product-app-fill: #94c11f;
   --product-discord: light-dark(#4752c4, #949cf7);
   --product-discord-fill: #5865f2;
   --product-plugin: light-dark(#a8501a, #f2a066);
   --product-plugin-fill: #e07a2f;
-  --product-app: light-dark(#55700a, #b5dc4a);
-  --product-app-fill: #94c11f;
+  --product-spec: light-dark(#1f68bc, #7dbaff);
+  --product-spec-fill: #4699fe;
 
   /* Accent: ink by default. A page inside a product sets <html data-product>,
      and the accent becomes that product's colour (see below). */
@@ -174,16 +176,22 @@ html[data-product='games'] {
   --rs-accent-low: color-mix(in srgb, var(--product-games-fill) 14%, var(--rs-bg));
 }
 
-html[data-product='spec'] {
-  --rs-accent: var(--product-spec);
-  --rs-accent-high: var(--product-spec);
-  --rs-accent-low: color-mix(in srgb, var(--product-spec-fill) 14%, var(--rs-bg));
+html[data-product='ui'] {
+  --rs-accent: var(--product-ui);
+  --rs-accent-high: var(--product-ui);
+  --rs-accent-low: color-mix(in srgb, var(--product-ui-fill) 14%, var(--rs-bg));
 }
 
 html[data-product='api'] {
   --rs-accent: var(--product-api);
   --rs-accent-high: var(--product-api);
   --rs-accent-low: color-mix(in srgb, var(--product-api-fill) 14%, var(--rs-bg));
+}
+
+html[data-product='app'] {
+  --rs-accent: var(--product-app);
+  --rs-accent-high: var(--product-app);
+  --rs-accent-low: color-mix(in srgb, var(--product-app-fill) 14%, var(--rs-bg));
 }
 
 html[data-product='discord'] {
@@ -198,8 +206,8 @@ html[data-product='plugin'] {
   --rs-accent-low: color-mix(in srgb, var(--product-plugin-fill) 14%, var(--rs-bg));
 }
 
-html[data-product='app'] {
-  --rs-accent: var(--product-app);
-  --rs-accent-high: var(--product-app);
-  --rs-accent-low: color-mix(in srgb, var(--product-app-fill) 14%, var(--rs-bg));
+html[data-product='spec'] {
+  --rs-accent: var(--product-spec);
+  --rs-accent-high: var(--product-spec);
+  --rs-accent-low: color-mix(in srgb, var(--product-spec-fill) 14%, var(--rs-bg));
 }

@@ -2,7 +2,7 @@ import { describe, expect, test } from 'bun:test'
 import { isDiceNotation } from '@randsum/roller/validate'
 import { modifierPresets } from '../src/presets'
 import type { ModifierName } from '../src/presets'
-import { MODIFIER_TABLE } from '../src/modifiers'
+import { MODIFIER_TABLE } from '../src/internal/modifiers'
 
 describe('modifierPresets', () => {
   test('every modifier has presets, and every preset rolls', () => {
