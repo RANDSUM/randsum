@@ -1,29 +1,163 @@
 ---
-import { GameSchemaViewer } from '../GameSchemaViewer'
+// The games product: a game's rules are a .randsum.json spec, and the codegen
+// turns each into a typed roller. Every sample is in the HTML; the tabs only
+// choose which one shows.
+import PipMark from '../PipMark.astro'
 import Button from '../ui/Button.astro'
+import CodeFrame from '../ui/CodeFrame.astro'
+import Section from '../ui/Section.astro'
+import { GAME_SCHEMAS } from '../../utils/gameSchemas'
 ---
 
-<section class="game-schema-section">
-  <div class="section-inner">
-    <div class="game-schema-row">
-      <div class="game-schema-pitch">
-        <h2 class="pitch-heading">Define the rules, get the rolls.</h2>
-        <p class="pitch-body">
-          Describe your game&rsquo;s mechanics in a <code>.randsum.json</code> spec and
-          <code>@randsum/games</code>
-          generates a bespoke, fully-typed roller for that system. Adding a new game is just writing
-          a config file.
-        </p>
-        <div class="pitch-actions">
-          <Button href="/games/introduction/" variant="secondary" size="sm">Game packages</Button>
-          <Button href="/games/schema/overview/" variant="secondary" size="sm"
-            >Write a game spec</Button
-          >
-        </div>
-      </div>
-      <div class="game-schema-viewer-col not-content">
-        <GameSchemaViewer client:only="react" />
-      </div>
+<Section
+  id="game-specs"
+  product="games"
+  title="Describe a game, get a typed roller"
+  lede="Write a game's dice rules as a .randsum.json spec and @randsum/games generates a fully typed roller for that system. Adding a game is writing a config file."
+>
+  <Button slot="actions" href="/games/introduction/" variant="product" product="games">
+    Explore the games
+  </Button>
+  <Button slot="actions" href="/games/schema/overview/" variant="secondary">
+    Write a game spec
+  </Button>
+  <div class="schema" data-schema-tabs>
+    <div class="schema-tabs" role="tablist" aria-label="Game specs">
+      {GAME_SCHEMAS.map((game, i) => (
+        <button
+          type="button"
+          role="tab"
+          id={`schema-tab-${game.shortcode}`}
+          aria-controls={`schema-${game.shortcode}`}
+          aria-selected={i === 0 ? 'true' : 'false'}
+          tabindex={i === 0 ? 0 : -1}
+          class="schema-tab"
+          style={`--g: var(--game-${game.shortcode})`}
+        >
+          <PipMark variant="knockout" size={16} />
+          {game.label}
+        </button>
+      ))}
     </div>
+    {GAME_SCHEMAS.map((game, i) => (
+      <div
+        id={`schema-${game.shortcode}`}
+        class="schema-panel"
+        role="tabpanel"
+        aria-labelledby={`schema-tab-${game.shortcode}`}
+        hidden={i !== 0}
+      >
+        <CodeFrame label={`${game.shortcode}.randsum.json`} code={game.json} lang="json">
+          <a slot="actions" class="schema-link" href={`/games/${game.shortcode}/`}>
+            {game.label} docs
+          </a>
+        </CodeFrame>
+      </div>
+    ))}
   </div>
-</section>
+</Section>
+
+<script>
+for (const root of document.querySelectorAll<HTMLElement>('[data-schema-tabs]')) {
+  const tabs = Array.from(root.querySelectorAll<HTMLButtonElement>('[role="tab"]'))
+  const panels = Array.from(root.querySelectorAll<HTMLElement>('[role="tabpanel"]'))
+
+  const show = (next: number, focus: boolean): void => {
+    const index = (next + tabs.length) % tabs.length
+    tabs.forEach((tab, i) => {
+      tab.setAttribute('aria-selected', String(i === index))
+      tab.tabIndex = i === index ? 0 : -1
+    })
+    panels.forEach((panel, i) => {
+      panel.hidden = i !== index
+    })
+    if (focus) tabs[index]?.focus()
+  }
+
+  tabs.forEach((tab, i) => {
+    tab.addEventListener('click', () => show(i, false))
+    tab.addEventListener('keydown', event => {
+      const moves: Record<string, number> = {
+        ArrowRight: i + 1,
+        ArrowLeft: i - 1,
+        Home: 0,
+        End: tabs.length - 1
+      }
+      const next = moves[event.key]
+      if (next === undefined) return
+      event.preventDefault()
+      show(next, true)
+    })
+  })
+}
+</script>
+
+<style>
+.schema-tabs {
+  display: flex;
+  gap: 0.375rem;
+  margin-bottom: 1rem;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.schema-tab {
+  appearance: none;
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 0.5rem;
+  height: 2.25rem;
+  padding: 0 0.875rem;
+  border: var(--rs-border);
+  border-radius: var(--rs-radius-pill);
+  background: var(--rs-bg);
+  font: inherit;
+  font-size: var(--rs-text-sm);
+  font-weight: var(--rs-weight-medium);
+  color: var(--rs-gray-2);
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    border-color var(--rs-duration) var(--rs-ease),
+    background-color var(--rs-duration) var(--rs-ease),
+    color var(--rs-duration) var(--rs-ease);
+}
+
+.schema-tab :global(.pip-mark) {
+  color: var(--g);
+}
+
+.schema-tab:hover {
+  border-color: var(--rs-gray-4);
+  color: var(--rs-fg);
+}
+
+.schema-tab[aria-selected='true'] {
+  border-color: color-mix(in srgb, var(--g) 60%, transparent);
+  background: color-mix(in srgb, var(--g) 12%, transparent);
+  color: var(--rs-fg);
+}
+
+.schema-tab:focus-visible {
+  outline: none;
+  box-shadow: var(--rs-focus-ring);
+}
+
+.schema-panel :global(.rs-code-frame-body) {
+  max-height: 26rem;
+  overflow-y: auto;
+}
+
+.schema-link {
+  flex: none;
+  font-size: var(--rs-text-2xs);
+  color: var(--rs-gray-3);
+  text-decoration: none;
+  transition: color var(--rs-duration) var(--rs-ease);
+}
+
+.schema-link:hover {
+  color: var(--product-games);
+}
+</style>

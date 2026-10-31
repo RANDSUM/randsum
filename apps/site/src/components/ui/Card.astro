@@ -1,7 +1,8 @@
 ---
 // A bordered card that links somewhere. `accent` is any colour token; it
 // marks the card's top edge and its eyebrow, so a game or product card wears
-// its own colour while the card itself stays neutral.
+// its own colour while the card itself stays neutral. A `mark` slot puts an
+// icon (a game's die, say) beside the eyebrow.
 interface Props {
   href: string
   title: string
@@ -18,7 +19,12 @@ const { href, title, eyebrow, accent, class: className } = Astro.props
   class:list={['rs-card', className]}
   style={accent ? `--card-accent: ${accent}` : undefined}
 >
-  {eyebrow && <span class="rs-card-eyebrow">{eyebrow}</span>}
+  {(eyebrow || Astro.slots.has('mark')) && (
+    <span class="rs-card-top">
+      <slot name="mark" />
+      {eyebrow && <span class="rs-card-eyebrow">{eyebrow}</span>}
+    </span>
+  )}
   <span class="rs-card-title">{title}</span>
   <span class="rs-card-body"><slot /></span>
 </a>
@@ -45,6 +51,18 @@ const { href, title, eyebrow, accent, class: className } = Astro.props
 .rs-card:focus-visible {
   outline: none;
   box-shadow: var(--rs-focus-ring);
+}
+
+.rs-card-top {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+.rs-card-top :global(.pip-mark) {
+  flex: none;
+  color: var(--card-accent, var(--rs-gray-3));
 }
 
 .rs-card-eyebrow {

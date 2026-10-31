@@ -1,14 +1,25 @@
 ---
 // Common questions, answered on the page and marked up as FAQPage data in index.astro.
+import Button from '../ui/Button.astro'
 import Section from '../ui/Section.astro'
 import { LANDING_FAQ } from '../../utils/faq'
 ---
 
-<Section id="faq" title="Questions">
+<Section
+  id="faq"
+  layout="split"
+  title="Questions"
+  lede="What RANDSUM is, where it runs and what it costs. Anything else is in the docs."
+>
+  <Button slot="actions" href="/welcome/introduction/" variant="secondary" size="sm">
+    Read the docs
+  </Button>
   <div class="faq">
     {LANDING_FAQ.map((entry, i) => (
       <details class="faq-item" open={i === 0}>
-        <summary>{entry.question}</summary>
+        <summary>
+          <h3>{entry.question}</h3>
+        </summary>
         <p>
           {entry.answer}
           {entry.link && (
@@ -25,7 +36,6 @@ import { LANDING_FAQ } from '../../utils/faq'
 
 <style>
 .faq {
-  max-width: 48rem;
   border-top: var(--rs-border);
 }
 
@@ -39,10 +49,6 @@ import { LANDING_FAQ } from '../../utils/faq'
   align-items: center;
   gap: 1rem;
   padding: 1.1rem 0;
-  font-family: var(--rs-font-heading);
-  font-size: var(--rs-text-md);
-  font-weight: var(--rs-weight-bold);
-  color: var(--sl-color-white);
   cursor: pointer;
   list-style: none;
 }
@@ -54,12 +60,18 @@ import { LANDING_FAQ } from '../../utils/faq'
 .faq-item summary::after {
   content: '+';
   flex: none;
-  color: var(--sl-color-gray-3);
+  font-size: var(--rs-text-lg);
+  line-height: 1;
+  color: var(--rs-gray-3);
   transition: transform var(--rs-duration) var(--rs-ease);
 }
 
 .faq-item[open] summary::after {
   transform: rotate(45deg);
+}
+
+.faq-item summary:hover h3 {
+  color: var(--rs-gray-1);
 }
 
 .faq-item summary:focus-visible {
@@ -68,8 +80,35 @@ import { LANDING_FAQ } from '../../utils/faq'
   border-radius: var(--rs-radius-sm);
 }
 
+.faq-item h3 {
+  margin: 0;
+  font-family: var(--rs-font-heading);
+  font-size: var(--rs-text-md);
+  font-weight: var(--rs-weight-bold);
+  letter-spacing: var(--rs-tracking-tight);
+  line-height: var(--rs-leading-snug);
+  color: var(--rs-fg);
+  transition: color var(--rs-duration) var(--rs-ease);
+}
+
 .faq-item p {
+  max-width: 40rem;
   margin: 0 0 1.25rem;
-  color: var(--sl-color-gray-2);
+  color: var(--rs-gray-2);
+}
+
+.faq-item p a {
+  color: var(--rs-fg);
+  text-underline-offset: 0.2em;
+}
+
+.faq-item p a:hover {
+  color: var(--rs-gray-1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .faq-item summary::after {
+    transition: none;
+  }
 }
 </style>

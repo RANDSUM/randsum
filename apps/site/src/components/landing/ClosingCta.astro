@@ -1,18 +1,52 @@
 ---
-// The last ask before the footer: roll something.
+// The last ask before the footer: the whole family in a row, then roll something.
 import PipMark from '../PipMark.astro'
 import Button from '../ui/Button.astro'
+import { PRODUCT_LABELS, PRODUCTS } from '../../utils/product'
 ---
 
 <section class="closing not-content" aria-labelledby="closing-title">
-  <PipMark variant="knockout" size={40} />
+  <ul class="closing-family" aria-label="The RANDSUM family">
+    {PRODUCTS.map(product => (
+      <li style={`--p: var(--product-${product.id}-fill)`}>
+        <a href={product.href} title={product.tagline}>
+          <PipMark variant="knockout" size={36} />
+          <span>{PRODUCT_LABELS[product.id]}</span>
+        </a>
+      </li>
+    ))}
+  </ul>
   <h2 id="closing-title">Roll your first die in a minute.</h2>
-  <p>Install the roller, or skip the install and call the API from anywhere.</p>
+  <p>
+    Install the roller, or skip the install and call the API from anywhere. Free and MIT licensed.
+  </p>
   <div class="closing-actions">
     <Button href="/roller/getting-started/">Get started</Button>
     <Button href="/api/introduction/" variant="secondary">Try the API</Button>
-    <Button href="/discord/" variant="secondary">Add the Discord bot</Button>
   </div>
+  <button
+    type="button"
+    class="install-cmd"
+    data-cmd="bun add @randsum/roller"
+    aria-label="Copy the install command"
+  >
+    <code>bun add @randsum/roller</code>
+    <span class="install-copy-icon" aria-hidden="true"
+      ><svg
+        width="12"
+        height="12"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+      </svg></span
+    >
+  </button>
 </section>
 
 <style>
@@ -20,32 +54,72 @@ import Button from '../ui/Button.astro'
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.75rem;
+  gap: 1rem;
   max-width: 72rem;
-  margin: 4.5rem auto 0;
+  margin: 6rem auto 0;
   padding: 3.5rem 1.5rem;
   border: var(--rs-border);
   border-radius: var(--rs-radius-lg);
+  background: var(--rs-gray-7);
   text-align: center;
 }
 
-.closing :global(.pip-mark) {
-  color: var(--product-roller-fill);
+.closing-family {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem 1.25rem;
+  margin: 0 0 1rem;
+  padding: 0;
+  list-style: none;
+}
+
+.closing-family li {
+  margin: 0;
+}
+
+.closing-family a {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.25rem;
+  border-radius: var(--rs-radius-md);
+  font-size: var(--rs-text-2xs);
+  color: var(--rs-gray-3);
+  text-decoration: none;
+  transition: color var(--rs-duration) var(--rs-ease);
+}
+
+.closing-family a:hover {
+  color: var(--rs-fg);
+}
+
+.closing-family a:focus-visible {
+  outline: none;
+  box-shadow: var(--rs-focus-ring);
+}
+
+.closing-family :global(.pip-mark) {
+  color: var(--p);
 }
 
 .closing h2 {
-  margin: 0.25rem 0 0;
+  margin: 0;
   font-family: var(--rs-font-heading);
-  font-size: var(--rs-text-2xl);
+  font-size: var(--rs-text-3xl);
   font-weight: var(--rs-weight-heavy);
-  letter-spacing: var(--rs-tracking-heading);
-  line-height: var(--rs-leading-snug);
-  color: var(--sl-color-white);
+  letter-spacing: var(--rs-tracking-display);
+  line-height: var(--rs-leading-tight);
+  color: var(--rs-fg);
+  text-wrap: balance;
 }
 
 .closing p {
+  max-width: 34rem;
   margin: 0;
-  color: var(--sl-color-gray-2);
+  font-size: var(--rs-text-md);
+  color: var(--rs-gray-2);
 }
 
 .closing-actions {
@@ -53,6 +127,26 @@ import Button from '../ui/Button.astro'
   flex-wrap: wrap;
   justify-content: center;
   gap: 0.75rem;
-  margin-top: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+@media (max-width: 900px) {
+  .closing {
+    margin-top: 4rem;
+    padding: 2.5rem 1.25rem;
+  }
+
+  .closing h2 {
+    font-size: var(--rs-text-2xl);
+  }
+
+  .closing-family {
+    gap: 0.5rem 0.75rem;
+  }
+
+  .closing-family :global(.pip-mark) {
+    width: 1.75rem;
+    height: 1.75rem;
+  }
 }
 </style>

@@ -1,57 +1,145 @@
 ---
 // A landing-style page section: one heading, an optional lede, then content.
-// Pages stack these instead of drawing dividers between blocks.
+// Pages stack these instead of drawing dividers between blocks. `product` puts
+// that product's die and name above the heading, the family's lockup; `split`
+// sets the header beside the content instead of above it.
+import PipMark from '../PipMark.astro'
+import { PRODUCT_LABELS, type Product } from '../../utils/product'
+
 interface Props {
   title: string
   id?: string
   lede?: string
+  product?: Product
+  layout?: 'stack' | 'split'
   class?: string
 }
 
-const { title, id, lede, class: className } = Astro.props
+const { title, id, lede, product, layout = 'stack', class: className } = Astro.props
 const headingId = id ? `${id}-title` : undefined
+const style = product
+  ? `--section-fill: var(--product-${product}-fill); --section-text: var(--product-${product})`
+  : undefined
 ---
 
-<section id={id} class:list={['rs-section', 'not-content', className]} aria-labelledby={headingId}>
+<section
+  id={id}
+  class:list={['rs-section', `rs-section--${layout}`, 'not-content', className]}
+  aria-labelledby={headingId}
+  style={style}
+>
   <header class="rs-section-header">
+    {product && (
+      <p class="rs-section-product">
+        <PipMark variant="knockout" size={20} />
+        {PRODUCT_LABELS[product]}
+      </p>
+    )}
     <h2 id={headingId} class="rs-section-title">{title}</h2>
     {lede && <p class="rs-section-lede">{lede}</p>}
-    <slot name="actions" />
+    <div class="rs-section-actions"><slot name="actions" /></div>
   </header>
-  <slot />
+  <div class="rs-section-body"><slot /></div>
 </section>
 
 <style>
 .rs-section {
   max-width: 72rem;
   margin: 0 auto;
-  padding: 3.5rem 0.5rem 0;
+  padding: 5rem 0.5rem 0;
+  scroll-margin-top: calc(var(--sl-nav-height, 4rem) + 1rem);
 }
 
 .rs-section-header {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.75rem;
+  max-width: 44rem;
+  margin-bottom: 2rem;
+}
+
+.rs-section-product {
+  display: inline-flex;
   align-items: center;
-  gap: 0.5rem 1.5rem;
-  margin-bottom: 1.5rem;
+  gap: 0.5rem;
+  margin: 0;
+  font-weight: var(--rs-weight-bold);
+  color: var(--section-text);
+}
+
+.rs-section-product :global(.pip-mark) {
+  color: var(--section-fill);
 }
 
 .rs-section-title {
   margin: 0;
   font-family: var(--rs-font-heading);
-  font-size: var(--rs-text-xl);
-  font-weight: var(--rs-weight-bold);
+  font-size: var(--rs-text-2xl);
+  font-weight: var(--rs-weight-heavy);
   letter-spacing: var(--rs-tracking-heading);
   line-height: var(--rs-leading-snug);
   color: var(--rs-fg);
+  text-wrap: balance;
 }
 
 .rs-section-lede {
-  grid-row: 2;
-  grid-column: 1 / -1;
-  max-width: 40rem;
   margin: 0;
   font-size: var(--rs-text-md);
+  line-height: var(--rs-leading-body);
   color: var(--rs-gray-2);
+  text-wrap: pretty;
+}
+
+.rs-section-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.rs-section-actions:empty {
+  display: none;
+}
+
+.rs-section-actions:not(:empty) {
+  margin-top: 0.5rem;
+}
+
+.rs-section-body {
+  min-width: 0;
+}
+
+/* Header in a column of its own, held in view while the content scrolls past */
+.rs-section--split {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr);
+  align-items: start;
+  gap: 3rem;
+}
+
+.rs-section--split .rs-section-header {
+  position: sticky;
+  top: calc(var(--sl-nav-height, 4rem) + 2rem);
+  margin-bottom: 0;
+}
+
+@media (max-width: 900px) {
+  .rs-section {
+    padding-top: 3.5rem;
+  }
+
+  .rs-section-title {
+    font-size: var(--rs-text-xl);
+  }
+
+  .rs-section--split {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  .rs-section--split .rs-section-header {
+    position: static;
+    margin-bottom: 1.5rem;
+  }
 }
 </style>

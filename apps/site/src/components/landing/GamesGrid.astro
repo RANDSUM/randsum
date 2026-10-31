@@ -1,15 +1,17 @@
 ---
-import { gamePackages } from '../../utils/packageData'
-import Button from '../ui/Button.astro'
+// Every game @randsum/games ships, each wearing its own colour, and a way to add yours.
+import PipMark from '../PipMark.astro'
 import Card from '../ui/Card.astro'
 import CardGrid from '../ui/CardGrid.astro'
 import Section from '../ui/Section.astro'
+import { gamePackages } from '../../utils/packageData'
 ---
 
-<Section id="games" title="Ready for your table">
-  <Button slot="actions" href="/games/introduction/" variant="secondary" size="sm">
-    All games
-  </Button>
+<Section
+  id="games"
+  title="Ready for your table"
+  lede="Each game resolves a roll by its own rules: hits and misses, hope and fear, the Fate ladder. Import one subpath and roll."
+>
   <CardGrid>
     {gamePackages.map(pkg => (
       <Card
@@ -18,8 +20,17 @@ import Section from '../ui/Section.astro'
         eyebrow={pkg.npmPackage}
         accent={`var(--game-${pkg.id})`}
       >
+        <PipMark slot="mark" variant="knockout" size={18} />
         {pkg.description}
       </Card>
     ))}
+    <Card
+      href="/games/schema/contributing-a-game/"
+      title="Your game here"
+      eyebrow="a .randsum.json spec"
+    >
+      <PipMark slot="mark" variant="outline" size={18} />
+      Write your system's rules as a spec and contribute it, or keep it in your own project.
+    </Card>
   </CardGrid>
 </Section>
