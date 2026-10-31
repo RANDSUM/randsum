@@ -88,33 +88,44 @@ export function RollerApp(): React.JSX.Element {
 
   return (
     <div className="ra-app">
-      <section className="ra-stage" aria-label="Result">
-        {result === undefined ? (
-          <div className="ra-empty">
-            <p className="ra-empty-title">Pick some dice, or type any roll.</p>
-            <p className="ra-empty-hint">
-              Tap a die to add it, then roll. Try <code>4d6L</code> or <code>2d20L+5</code>.
-            </p>
-          </div>
-        ) : (
-          <div className="ra-result" key={history[0]?.id}>
-            <p className="ra-total" aria-live="polite">
-              {result.total}
-            </p>
-            <div className="ra-steps">
-              <RollResultDisplay records={result.records} notation={result.notation} />
+      <div className="ra-scroll">
+        <section className="ra-stage" aria-label="Result">
+          {result === undefined ? (
+            <div className="ra-empty">
+              <p className="ra-empty-title">Pick some dice, or type any roll.</p>
+              <p className="ra-empty-hint">
+                Tap a die to add it, then roll. Try <code>4d6L</code> or <code>2d20L+5</code>.
+              </p>
             </div>
-          </div>
-        )}
+          ) : (
+            <div className="ra-result" key={history[0]?.id}>
+              <p className="ra-total" aria-live="polite">
+                {result.total}
+              </p>
+              <div className="ra-steps">
+                <RollResultDisplay records={result.records} notation={result.notation} />
+              </div>
+            </div>
+          )}
+        </section>
 
-        {history.length > 0 && (
-          <div className="ra-history">
-            <div className="ra-history-head">
-              <h2>Recent rolls</h2>
+        <aside
+          className={['ra-history', history.length === 0 ? 'ra-history--empty' : '']
+            .filter(Boolean)
+            .join(' ')}
+          aria-label="Recent rolls"
+        >
+          <div className="ra-history-head">
+            <h2>Recent rolls</h2>
+            {history.length > 0 && (
               <button type="button" className="ra-text-button" onClick={clearHistory}>
                 Clear
               </button>
-            </div>
+            )}
+          </div>
+          {history.length === 0 ? (
+            <p className="ra-history-hint">Your rolls land here. Tap one to roll it again.</p>
+          ) : (
             <ol>
               {history.map(entry => (
                 <li key={entry.id}>
@@ -133,9 +144,9 @@ export function RollerApp(): React.JSX.Element {
                 </li>
               ))}
             </ol>
-          </div>
-        )}
-      </section>
+          )}
+        </aside>
+      </div>
 
       <section className="ra-dock" aria-label="Build a roll">
         <NotationDescription className="ra-description" notation={notation} />
