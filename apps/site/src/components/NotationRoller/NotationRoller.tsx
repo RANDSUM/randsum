@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { NotationRoller as DuNotationRoller, RollResultPanel } from '../dice-ui'
 import type { RollResult } from '../dice-ui'
-import { buildStackBlitzProject } from '../../helpers/stackblitz'
+import { openNotationInStackBlitz } from '../../helpers/stackblitz'
 import { ErrorBoundary } from '../ErrorBoundary'
 import './NotationRoller.css'
 
@@ -17,20 +17,7 @@ function SiteActions(notation: string): React.JSX.Element {
         aria-label="Open and edit this notation in StackBlitz"
         disabled={notation.length === 0}
         onClick={() => {
-          const project = buildStackBlitzProject(notation)
-          const params = new URLSearchParams({
-            title: project.title,
-            description: project.description,
-            template: project.template
-          })
-          for (const [name, content] of Object.entries(project.files)) {
-            params.set(`file[${name}]`, content)
-          }
-          window.open(
-            `https://stackblitz.com/run?${params.toString()}`,
-            '_blank',
-            'noopener,noreferrer'
-          )
+          openNotationInStackBlitz(notation)
         }}
       >
         <svg

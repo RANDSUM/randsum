@@ -9,7 +9,7 @@ import type { RollTraceStep } from '@randsum/roller/trace'
 import { TokenOverlayInput } from '../dice-ui/TokenOverlayInput'
 import { tokenColor } from '../dice-ui/tokenColor'
 import { useTheme } from '../dice-ui/useTheme'
-import { buildStackBlitzProject } from '../../helpers/stackblitz'
+import { openNotationInStackBlitz } from '../../helpers/stackblitz'
 import './HeroRoller.css'
 
 // Slot machine tick intervals in ms: fast start, slowing to a stop (~2.5s total)
@@ -44,19 +44,6 @@ interface HeroRoll {
 
 const prefersReducedMotion = (): boolean =>
   typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
-
-function openInStackBlitz(notation: string): void {
-  const project = buildStackBlitzProject(notation)
-  const params = new URLSearchParams({
-    title: project.title,
-    description: project.description,
-    template: project.template
-  })
-  for (const [name, content] of Object.entries(project.files)) {
-    params.set(`file[${name}]`, content)
-  }
-  window.open(`https://stackblitz.com/run?${params.toString()}`, '_blank', 'noopener,noreferrer')
-}
 
 function dice(
   values: readonly number[],
@@ -375,7 +362,7 @@ export function HeroRoller(): React.JSX.Element {
           className="hr-stackblitz"
           disabled={!isValid}
           onClick={() => {
-            openInStackBlitz(notation)
+            openNotationInStackBlitz(notation)
           }}
         >
           Edit in StackBlitz
