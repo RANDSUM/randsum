@@ -1,7 +1,8 @@
 ---
-// Three lines from install to a typed result, beside why the notation can be trusted.
-import { Code } from 'astro-expressive-code/components'
+// The roller in code: three lines from install to a typed result, beside the
+// three reasons to trust it.
 import Button from '../ui/Button.astro'
+import CodeFrame from '../ui/CodeFrame.astro'
 import Section from '../ui/Section.astro'
 
 const codeExample = [
@@ -18,43 +19,120 @@ const codeExample = [
   'console.log(rolls[0].description)',
   '// ["Roll 4 6-sided dice", "Drop lowest"]'
 ].join('\n')
+
+const points = [
+  {
+    title: 'Every modifier, parsed',
+    body: 'Drop, keep, reroll, explode, cap, unique and count successes, plus Fate, percentile, wild, geometric and draw dice.'
+  },
+  {
+    title: 'Errors before dice',
+    body: 'Bad notation throws a typed error before anything is rolled, so you catch it where you wrote it.'
+  },
+  {
+    title: 'Runs everywhere',
+    body: 'Plain ES modules with full type declarations, and no runtime dependencies. Bun, Node.js, Deno or the browser.'
+  }
+] as const
 ---
 
-<Section id="quick-start" title="A typed roll in three lines">
+<Section
+  id="quick-start"
+  product="roller"
+  title="A typed dice roll in three lines"
+  lede="roll() takes a number, a notation string or an options object, and returns the total with every die and every modifier step that produced it."
+>
+  <Button slot="actions" href="/roller/getting-started/" variant="product" product="roller">
+    Install the roller
+  </Button>
+  <Button slot="actions" href="/notation/randsum-dice-notation/" variant="secondary">
+    Notation reference
+  </Button>
   <div class="quick-start">
-    <div class="code-example">
-      <div class="code-example-chrome">
-        <span class="code-chrome-filename">index.ts</span>
-        <button
-          class="code-example-stackblitz"
-          data-notation="4d6L"
-          aria-label="Open this example in StackBlitz"
-          title="Open in StackBlitz"
-        >
-          Open in StackBlitz
-        </button>
-      </div>
-      <Code code={codeExample} lang="typescript" />
-    </div>
-    <div class="quick-start-pitch">
-      <h3>Every modifier, parsed and validated.</h3>
-      <p>
-        <code>roll()</code>
-        takes a number, a notation string or an options object, and returns the total with every die
-        and every modifier step. Bad notation throws a typed error before any dice are rolled, so
-        you catch it where you wrote it.
-      </p>
-      <ul>
-        <li>Drop, keep, reroll, explode, cap, unique, count successes and more</li>
-        <li>Fate, percentile, wild, geometric and draw dice</li>
-        <li>Runs in Bun, Node.js, Deno and the browser as plain ES modules</li>
-      </ul>
-      <div class="quick-start-actions">
-        <Button href="/roller/getting-started/" size="sm">Install the roller</Button>
-        <Button href="/notation/randsum-dice-notation/" variant="secondary" size="sm">
-          Notation reference
-        </Button>
-      </div>
-    </div>
+    <CodeFrame label="index.ts" code={codeExample} lang="typescript">
+      <button
+        slot="actions"
+        type="button"
+        class="code-example-stackblitz"
+        data-notation="4d6L"
+        aria-label="Open this example in StackBlitz"
+      >
+        Open in StackBlitz
+      </button>
+    </CodeFrame>
+    <ul class="quick-start-points">
+      {points.map(point => (
+        <li>
+          <h3>{point.title}</h3>
+          <p>{point.body}</p>
+        </li>
+      ))}
+    </ul>
   </div>
 </Section>
+
+<style>
+.quick-start {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+  align-items: start;
+  gap: 2.5rem;
+}
+
+.quick-start-points {
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.quick-start-points li {
+  margin: 0;
+}
+
+.quick-start-points h3 {
+  margin: 0 0 0.35rem;
+  font-family: var(--rs-font-heading);
+  font-size: var(--rs-text-md);
+  font-weight: var(--rs-weight-bold);
+  letter-spacing: var(--rs-tracking-tight);
+  line-height: var(--rs-leading-snug);
+  color: var(--rs-fg);
+}
+
+.quick-start-points p {
+  margin: 0;
+  color: var(--rs-gray-2);
+}
+
+.code-example-stackblitz {
+  appearance: none;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  font-size: var(--rs-text-2xs);
+  color: var(--rs-gray-3);
+  cursor: pointer;
+  transition: color var(--rs-duration) var(--rs-ease);
+}
+
+.code-example-stackblitz:hover {
+  color: var(--product-roller);
+}
+
+.code-example-stackblitz:focus-visible {
+  outline: none;
+  border-radius: var(--rs-radius-xs);
+  box-shadow: var(--rs-focus-ring);
+}
+
+@media (max-width: 900px) {
+  .quick-start {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+}
+</style>

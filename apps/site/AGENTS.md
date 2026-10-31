@@ -52,8 +52,11 @@ Every page is built from tokens and shared components, and tools hold them there
   `--rs-leading-*`, `--rs-radius-*`, `--rs-border`, `--rs-shadow-overlay` (only
   for things that float), `--rs-focus-ring`, `--rs-code-*` and motion.
 - **Components** (`src/components/ui/`): `Button` (primary, secondary, or a
-  product's colour), `Section` (heading, lede, actions slot), `Card` and
-  `CardGrid`, `CodePanel` (Expressive Code with wrapping) and `DiscordGlyph`.
+  product's colour), `Section` (heading, lede, actions slot; `product` adds
+  that product's die-and-name lockup, `layout="split"` puts the header beside
+  the content), `Card` (with a `mark` slot) and `CardGrid`, `CodePanel`
+  (Expressive Code with wrapping), `CodeFrame` (a named file with an action on
+  its header bar) and `DiscordGlyph`.
   `ProductHero` and `ProductCarousel` render from `PRODUCTS` in `src/utils/product.ts`.
 - **Enforcement**: Biome's `no-raw-color`, `no-raw-type`, `no-raw-shape`,
   `no-uppercase-labels` and `no-decorative-gradient` plugins (`biome-plugins/`)
@@ -122,7 +125,12 @@ that renders a `StarlightPage` shell wrapping landing sections from
 `ProductCarousel` is a vertical carousel with one pane per product from
 `PRODUCTS` in `src/utils/product.ts`; every pane is in the HTML, and the script
 only slides between them. `PRODUCTS` also feeds `ProductHero`, the
-hero at the top of each product's introduction page. `Faq` and the page's
+hero at the top of each product's introduction page. After the carousel, each
+section wears its product's lockup (`QuickStart` the roller, `GameSchemaSection`
+the games, whose spec samples live in `src/utils/gameSchemas.ts` and render
+server-side behind tabs), and `ClosingCta` and `LandingFooter` show the whole
+family's dice. `landing.css` holds only the page frame and the hero; every
+other section styles itself. `Faq` and the page's
 FAQPage structured data share `LANDING_FAQ` in `src/utils/faq.ts`. There is also a
 `src/pages/discord.astro` route.
 
@@ -164,7 +172,6 @@ Interactive / shared components:
 - `HeroRoller/` — the landing hero's live roller (notation field, token breakdown,
   rolled result with every step, example presets), in the roller's colour
 - `HeroInteractive.tsx` — the clickable tagline, which spins `HeroRoller`'s presets
-- `GameSchemaViewer.tsx` — schema viewer
 - `PipMark.astro` — the pip R mark, outline or knockout
 - `ProductHero.astro` — a product's hero: lockup, name in its colour, pitch, install, facts
 - `ErrorBoundary/` — React error boundary

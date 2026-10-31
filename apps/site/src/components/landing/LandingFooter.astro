@@ -1,26 +1,19 @@
 ---
+// The landing page's footer: the family with each product's die, the docs
+// people look for most, and where the project lives.
 import KofiButton from '../KofiButton.astro'
 import PipMark from '../PipMark.astro'
+import { PRODUCT_LABELS, PRODUCTS } from '../../utils/product'
 
 const columns = [
-  {
-    title: 'Products',
-    links: [
-      { label: 'Roller', href: '/roller/introduction/' },
-      { label: 'Games', href: '/games/introduction/' },
-      { label: 'API', href: '/api/introduction/' },
-      { label: 'Discord bot', href: '/discord/' },
-      { label: 'Agent plugin', href: '/tools/agents/' }
-    ]
-  },
   {
     title: 'Learn',
     links: [
       { label: 'Introduction', href: '/welcome/introduction/' },
       { label: 'Getting started', href: '/roller/getting-started/' },
       { label: 'Dice notation', href: '/notation/randsum-dice-notation/' },
-      { label: 'Notation spec', href: '/spec/' },
-      { label: 'Ecosystem', href: '/welcome/ecosystem-overview/' }
+      { label: 'Ecosystem', href: '/welcome/ecosystem-overview/' },
+      { label: 'Add a game', href: '/games/schema/contributing-a-game/' }
     ]
   },
   {
@@ -28,20 +21,35 @@ const columns = [
     links: [
       { label: 'GitHub', href: 'https://github.com/RANDSUM/randsum' },
       { label: 'npm', href: 'https://www.npmjs.com/org/randsum' },
-      { label: 'Add a game', href: '/games/schema/contributing-a-game/' }
+      { label: 'Discord bot', href: '/discord/' }
     ]
   }
 ] as const
+
+const year = new Date().getFullYear()
 ---
 
 <footer class="landing-footer not-content">
-  <div class="section-inner footer-grid">
+  <div class="footer-grid">
     <div class="footer-brand">
       <p class="footer-wordmark"><PipMark variant="knockout" size={22} /> RANDSUM</p>
-      <p class="footer-tagline">Throw Dice, Not Exceptions. MIT licensed.</p>
+      <p class="footer-tagline">Throw Dice, Not Exceptions.</p>
       <KofiButton />
     </div>
     <nav class="footer-links" aria-label="Footer">
+      <div class="footer-col">
+        <h2>Products</h2>
+        <ul>
+          {PRODUCTS.map(product => (
+            <li style={`--p: var(--product-${product.id}-fill)`}>
+              <a href={product.href} class="footer-product">
+                <PipMark variant="knockout" size={14} />
+                {PRODUCT_LABELS[product.id]}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
       {columns.map(column => (
         <div class="footer-col">
           <h2>{column.title}</h2>
@@ -62,4 +70,104 @@ const columns = [
       ))}
     </nav>
   </div>
+  <p class="footer-legal">&copy; {year} RANDSUM. Open source under the MIT license.</p>
 </footer>
+
+<style>
+.landing-footer {
+  max-width: 72rem;
+  margin: 5rem auto 0;
+  padding: 3rem 0.5rem 2rem;
+  border-top: var(--rs-border);
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+  gap: 2rem;
+}
+
+.footer-brand {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.footer-wordmark {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0;
+  font-weight: var(--rs-weight-bold);
+  letter-spacing: var(--rs-tracking-wordmark);
+  color: var(--rs-fg);
+}
+
+.footer-tagline {
+  margin: 0;
+  font-size: var(--rs-text-sm);
+  color: var(--rs-gray-3);
+}
+
+.footer-links {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 2rem;
+}
+
+.footer-col h2 {
+  margin: 0 0 0.75rem;
+  font-family: var(--rs-font-heading);
+  font-size: var(--rs-text-sm);
+  font-weight: var(--rs-weight-bold);
+  letter-spacing: 0;
+  color: var(--rs-fg);
+}
+
+.footer-col ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.footer-col li {
+  margin: 0 0 0.45rem;
+}
+
+.footer-col a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: var(--rs-text-sm);
+  color: var(--rs-gray-2);
+  text-decoration: none;
+  transition: color var(--rs-duration) var(--rs-ease);
+}
+
+.footer-col a:hover {
+  color: var(--rs-fg);
+}
+
+.footer-product :global(.pip-mark) {
+  color: var(--p);
+}
+
+.footer-legal {
+  margin: 2.5rem 0 0;
+  font-size: var(--rs-text-xs);
+  color: var(--rs-gray-3);
+}
+
+@media (max-width: 900px) {
+  .footer-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 560px) {
+  .footer-links {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+</style>

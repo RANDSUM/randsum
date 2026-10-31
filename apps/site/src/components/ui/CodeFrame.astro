@@ -1,0 +1,75 @@
+---
+// A file in a frame: its name on a header bar, an optional action beside it,
+// then the code. The landing page's samples all sit in one of these, so they
+// read as the same kind of thing. Pass `code` and `lang`, or slot your own body.
+import { Code } from 'astro-expressive-code/components'
+
+interface Props {
+  label: string
+  code?: string
+  lang?: string
+  class?: string
+}
+
+const { label, code, lang = 'ts', class: className } = Astro.props
+---
+
+<figure class:list={['rs-code-frame', className]}>
+  <figcaption class="rs-code-frame-bar">
+    <span class="rs-code-frame-label">{label}</span>
+    <slot name="actions" />
+  </figcaption>
+  <div class="rs-code-frame-body">
+    {code === undefined ? <slot /> : <Code code={code} lang={lang} wrap />}
+  </div>
+</figure>
+
+<style>
+.rs-code-frame {
+  min-width: 0;
+  margin: 0;
+  overflow: hidden;
+  border: var(--rs-border);
+  border-radius: var(--rs-radius-lg);
+  background: var(--rs-code-bg);
+}
+
+.rs-code-frame-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  min-height: 2.5rem;
+  padding: 0 1rem;
+  border-bottom: var(--rs-border);
+  background: var(--rs-bg);
+}
+
+.rs-code-frame-label {
+  font-family: var(--rs-font-mono);
+  font-size: var(--rs-text-2xs);
+  color: var(--rs-gray-3);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.rs-code-frame-body {
+  min-width: 0;
+}
+
+.rs-code-frame-body :global(.expressive-code) {
+  margin: 0;
+}
+
+.rs-code-frame-body :global(.expressive-code .frame) {
+  border: none;
+  box-shadow: none;
+}
+
+.rs-code-frame-body :global(.expressive-code pre) {
+  border: none;
+  border-radius: 0;
+  background: var(--rs-code-bg);
+}
+</style>

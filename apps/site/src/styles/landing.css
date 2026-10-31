@@ -1,8 +1,6 @@
 /*
- * Landing page styles for src/pages/index.astro. Sections with their own <style>
- * block (the product carousel, FAQ, closing call to action) keep their rules there;
- * this sheet holds the hero, the shared pitch layout, the code example, the game
- * schema viewer and the footer.
+ * Landing page styles for src/pages/index.astro: the page frame and the hero.
+ * Every other section keeps its rules in its own <style> block.
  */
 
 /* The splash page renders its own hero, so Starlight's title is hidden */
@@ -14,12 +12,6 @@ body:has(.landing) .content-panel:has(#_top) {
 .landing {
   max-width: 100%;
   overflow-x: hidden;
-}
-
-.section-inner {
-  max-width: 72rem;
-  margin: 0 auto;
-  padding: 0 0.5rem;
 }
 
 /* ===== Hero ===== */
@@ -179,44 +171,6 @@ body:has(.landing) .content-panel:has(#_top) {
   color: var(--sl-color-gray-3);
 }
 
-/* Chips, used by the game schema viewer */
-.hero-chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.4rem;
-  margin-bottom: 1rem;
-}
-
-.hero-chip {
-  appearance: none;
-  display: inline-flex;
-  align-items: center;
-  height: 1.75rem;
-  padding: 0 0.65rem;
-  border: var(--rs-border);
-  border-radius: var(--rs-radius-pill);
-  background: transparent;
-  font-size: var(--rs-text-2xs);
-  font-weight: var(--rs-weight-medium);
-  color: var(--sl-color-gray-2);
-  white-space: nowrap;
-  cursor: pointer;
-  transition:
-    border-color var(--rs-duration) var(--rs-ease),
-    color var(--rs-duration) var(--rs-ease);
-}
-
-.hero-chip:hover {
-  border-color: var(--sl-color-gray-3);
-  color: var(--sl-color-white);
-}
-
-.hero-chip--active {
-  border-color: var(--product-roller-fill);
-  background: color-mix(in srgb, var(--product-roller-fill) 14%, transparent);
-  color: var(--sl-color-white);
-}
-
 /* Facts that make the case at a glance */
 .hero-proof {
   display: grid;
@@ -252,281 +206,13 @@ body:has(.landing) .content-panel:has(#_top) {
   color: var(--sl-color-gray-3);
 }
 
-/* ===== Shared pitch layout (game schema section) ===== */
-.pitch-heading {
-  font-family: var(--rs-font-heading);
-  font-size: var(--rs-text-2xl);
-  font-weight: var(--rs-weight-bold);
-  letter-spacing: var(--rs-tracking-heading);
-  line-height: var(--rs-leading-snug);
-  color: var(--rs-fg);
-  margin: 0 0 0.75rem;
-}
-
-.pitch-body {
-  margin: 0 0 1.25rem;
-  color: var(--sl-color-gray-2);
-}
-
-.pitch-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-}
-
-/* ===== Quick start ===== */
-.quick-start {
-  display: grid;
-  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
-  align-items: center;
-  gap: 2.5rem;
-}
-
-.quick-start-pitch h3 {
-  margin: 0 0 0.75rem;
-  font-family: var(--rs-font-heading);
-  font-size: var(--rs-text-lg);
-  font-weight: var(--rs-weight-bold);
-  letter-spacing: var(--rs-tracking-heading);
-  color: var(--sl-color-white);
-}
-
-.quick-start-pitch p,
-.quick-start-pitch li {
-  color: var(--sl-color-gray-2);
-}
-
-.quick-start-pitch ul {
-  margin: 1rem 0 1.5rem;
-  padding-left: 1.1rem;
-}
-
-.quick-start-pitch li + li {
-  margin-top: 0.35rem;
-}
-
-.quick-start-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-}
-
-.code-example {
-  min-width: 0;
-  overflow: hidden;
-  border: var(--rs-border);
-  border-radius: var(--rs-radius-lg);
-  background: var(--rs-code-bg);
-}
-
-.code-example .expressive-code .frame {
-  border: none;
-  box-shadow: none;
-}
-
-.code-example .expressive-code pre {
-  border: none !important;
-  border-radius: 0;
-  overflow-x: auto;
-}
-
-.code-example-chrome {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0.55rem 0.9rem;
-  border-bottom: var(--rs-border);
-}
-
-.code-chrome-filename {
-  font-family: var(--rs-font-mono);
-  font-size: var(--rs-text-2xs);
-  color: var(--sl-color-gray-3);
-}
-
-.code-example-stackblitz {
-  appearance: none;
-  padding: 0;
-  border: 0;
-  background: none;
-  font: inherit;
-  font-size: var(--rs-text-2xs);
-  color: var(--sl-color-gray-3);
-  cursor: pointer;
-  transition: color var(--rs-duration) var(--rs-ease);
-}
-
-.code-example-stackblitz:hover {
-  color: var(--sl-color-white);
-}
-
-/* ===== Game Schema Section ===== */
-.game-schema-section {
-  padding: 1.5rem 0;
-}
-
-.game-schema-row {
-  display: flex;
-  gap: 2rem;
-  align-items: stretch;
-}
-
-.game-schema-pitch {
-  flex: 0 0 40%;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  min-width: 0;
-}
-
-.game-schema-viewer-col {
-  flex: 1;
-  min-width: 0;
-}
-
-.game-schema-viewer {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-  height: 100%;
-}
-
-.game-schema-chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.4rem;
-  justify-content: center;
-}
-
-.game-schema-display {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  border: 1px solid color-mix(in srgb, var(--sl-color-accent) 25%, transparent);
-  border-radius: var(--rs-radius-md);
-  overflow: hidden;
-  min-height: 0;
-  mask-image: linear-gradient(to bottom, black 75%, transparent 100%);
-  -webkit-mask-image: linear-gradient(to bottom, black 75%, transparent 100%);
-}
-
-.game-schema-chrome {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 0.75rem;
-  background: color-mix(in srgb, var(--sl-color-black) 70%, transparent);
-  border-bottom: 1px solid color-mix(in srgb, var(--sl-color-accent) 15%, transparent);
-  flex-shrink: 0;
-}
-
-.game-schema-code {
-  flex: 1;
-  overflow: hidden;
-  max-height: 22rem;
-  background: var(--rs-code-bg);
-}
-
-.game-schema-code pre {
-  margin: 0;
-  padding: 1rem 1.25rem;
-  font-size: var(--rs-text-2xs);
-  line-height: 1.5;
-  font-family: var(--rs-font-mono);
-  color: var(--sl-color-gray-1);
-  white-space: pre;
-  background: transparent;
-  tab-size: 2;
-  overflow-x: auto;
-}
-
-.game-schema-code code {
-  font-family: inherit;
-  font-size: inherit;
-  background: none;
-  padding: 0;
-  border: none;
-}
-
-/* ===== Footer ===== */
-.landing-footer {
-  margin-top: 4.5rem;
-  padding: 3rem 0 2rem;
-  border-top: var(--rs-border);
-}
-
-.footer-grid {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
-  gap: 2rem;
-}
-
-.footer-brand {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 0.75rem;
-}
-
-.footer-wordmark {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  margin: 0;
-  font-weight: var(--rs-weight-bold);
-  letter-spacing: var(--rs-tracking-wordmark);
-  color: var(--sl-color-white);
-}
-
-.footer-tagline {
-  margin: 0;
-  font-size: var(--rs-text-sm);
-  color: var(--sl-color-gray-3);
-}
-
-.footer-links {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 2rem;
-}
-
-.footer-col h2 {
-  margin: 0 0 0.75rem;
-  font-family: var(--rs-font-heading);
-  font-size: var(--rs-text-sm);
-  font-weight: var(--rs-weight-bold);
-  color: var(--sl-color-white);
-}
-
-.footer-col ul {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.footer-col li {
-  margin: 0 0 0.4rem;
-}
-
-.footer-col a {
-  font-size: var(--rs-text-sm);
-  color: var(--sl-color-gray-2);
-  text-decoration: none;
-  transition: color var(--rs-duration) var(--rs-ease);
-}
-
-.footer-col a:hover {
-  color: var(--sl-color-white);
-}
-
 /* ===== Responsive ===== */
 @media (max-width: 900px) {
   .hero {
     padding-top: 1.5rem;
   }
 
-  .hero-inner,
-  .quick-start {
+  .hero-inner {
     grid-template-columns: 1fr;
     gap: 2rem;
   }
@@ -541,29 +227,5 @@ body:has(.landing) .content-panel:has(#_top) {
 
   .hero-proof div:nth-child(n + 3) {
     border-top: var(--rs-border);
-  }
-
-  .game-schema-row {
-    flex-direction: column;
-  }
-
-  .game-schema-pitch,
-  .game-schema-viewer-col {
-    flex: none;
-  }
-
-  .footer-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
-@media (max-width: 560px) {
-  .footer-links {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .code-example .expressive-code pre,
-  .game-schema-code pre {
-    font-size: var(--rs-text-2xs);
   }
 }
