@@ -2,7 +2,7 @@
 
 ## Status
 
-Accepted (amended — originally proposed all-in-one-page embedding, revised to per-version pages for LLM friendliness; amended again to generate `llms.txt` and `llms-full.txt` from the specs collection instead of committing them; amended a third time when the spec moved to `randsum.dev/spec`, so the root and the latest version page both carry `rel=canonical` to `/spec/v/<latest>/`)
+Accepted (amended — originally proposed all-in-one-page embedding, revised to per-version pages for LLM friendliness; amended again to generate `llms.txt` and `llms-full.txt` from the specs collection instead of committing them; amended a third time when the spec moved to `randsum.dev/spec`, so the root and the latest version page both carry `rel=canonical` to `/spec/v/<latest>/`; amended a fourth time so both carry `rel=canonical` to `/spec/` instead, keeping links and rankings on the shared address across releases, with older versions canonical to themselves and only `/spec/` in the sitemap)
 
 ## Context
 

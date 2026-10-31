@@ -26,8 +26,10 @@ interface Props {
 const { title, version, versions, isLatest, specMarkdown = '', headings = [] } = Astro.props
 const pageTitle = isLatest ? `${title}` : `${title} — ${version}`
 // /spec/ and /spec/v/<latest>/ render the same version (ADR-016 keeps both,
-// with no redirect), so both name the versioned URL as canonical.
-const specUrl = new URL(`/spec/v/${version}/`, Astro.site).href
+// with no redirect), so both name /spec/ as canonical: links and rankings stay
+// on the address people share when a new version ships. Older versions are
+// canonical to themselves.
+const specUrl = new URL(isLatest ? '/spec/' : `/spec/v/${version}/`, Astro.site).href
 // Starlight's Pagefind index skips pages without data-pagefind-body. Opt in
 // the canonical page only, so search lists each version once.
 const isCanonical = Astro.url.pathname.replace(/\/?$/, '/') === new URL(specUrl).pathname

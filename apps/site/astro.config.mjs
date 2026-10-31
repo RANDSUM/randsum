@@ -6,7 +6,17 @@ import starlight from '@astrojs/starlight'
 import starlightPageActions from 'starlight-page-actions'
 import starlightSidebarTopics from 'starlight-sidebar-topics'
 import react from '@astrojs/react'
+import { readdirSync } from 'node:fs'
 import { curatedLlmsTxt } from './src/integrations/curated-llms-txt'
+
+// The newest spec version. /spec/v/<latest>/ repeats /spec/ and names it as
+// canonical (SpecLayout), so the sitemap lists only /spec/. Pre-releases are not
+// handled here; src/spec/versions.ts orders those for the pages themselves.
+const latestSpecVersion = readdirSync(new URL('./src/content/specs/', import.meta.url))
+  .filter(file => file.endsWith('.md'))
+  .map(file => file.replace(/^v/, '').replace(/\.md$/, ''))
+  .sort((a, b) => a.localeCompare(b, 'en', { numeric: true }))
+  .at(-1)
 
 // https://astro.build/config
 export default defineConfig({
@@ -40,7 +50,10 @@ export default defineConfig({
   integrations: [
     // /app-shell/ is the Roller's shell, moved to app.randsum.dev by
     // scripts/build-app.ts; randsum.dev never serves it.
-    sitemap({ filter: page => !page.includes('/app-shell/') }),
+    sitemap({
+      filter: page =>
+        !page.includes('/app-shell/') && !page.endsWith(`/spec/v/${latestSpecVersion}/`)
+    }),
     starlight({
       title: 'RANDSUM',
       favicon: '/favicon.svg',
@@ -73,7 +86,7 @@ export default defineConfig({
         {
           icon: 'discord',
           label: 'Discord Bot',
-          href: '/discord/'
+          href: '/tools/discord-bot/'
         }
       ],
       components: {

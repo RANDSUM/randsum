@@ -78,8 +78,9 @@ imported only by `SpecLayout`, since its resets are global to the page.
 
 - Versions live in `src/content/specs/` (the `specs` collection). `v0.9.0.md`
   has ID `0.9.0` and is served at `/spec/v/0.9.0/`; `/spec/` renders the latest
-  inline, not as a redirect (ADR-016). Both name `/spec/v/<latest>/` as
-  canonical, and only that page opts into the Pagefind index.
+  inline, not as a redirect (ADR-016). Both name `/spec/` as canonical, only
+  `/spec/` opts into the Pagefind index, and `astro.config.mjs` keeps
+  `/spec/v/<latest>/` out of the sitemap. Older versions are canonical to themselves.
 - `ModifierReference.astro` builds Appendix H from `@randsum/roller/docs`, so it
   renders only on the latest version.
 - `/spec/llms.txt` and `/spec/llms-full.txt` are built from the same entry.
@@ -145,8 +146,8 @@ the games, whose spec samples live in `src/utils/gameSchemas.ts` and render
 server-side behind tabs), and `ClosingCta` and `LandingFooter` show the whole
 family's dice. `landing.css` holds only the page frame and the hero; every
 other section styles itself. `Faq` and the page's
-FAQPage structured data share `LANDING_FAQ` in `src/utils/faq.ts`. There is also a
-`src/pages/discord.astro` route.
+FAQPage structured data share `LANDING_FAQ` in `src/utils/faq.ts`. The Discord bot's
+only page is `/tools/discord-bot/`; `/discord/` 301s there (`public/_redirects`).
 
 ## Adding Content
 
