@@ -275,10 +275,6 @@
   background: var(--product-app-fill);
 }
 
-.ra-install {
-  justify-self: center;
-}
-
 @media (min-width: 40rem) {
   .ra-pad {
     grid-template-columns: repeat(8, minmax(0, 1fr));

@@ -13,10 +13,6 @@ interface HistoryEntry {
   readonly description: string
 }
 
-interface InstallPrompt extends Event {
-  readonly prompt: () => Promise<void>
-}
-
 const HISTORY_KEY = 'randsum-app-history'
 const HISTORY_LIMIT = 50
 const DICE = [4, 6, 8, 10, 12, 20, 100] as const
@@ -53,24 +49,9 @@ export function RollerApp(): React.JSX.Element {
   const [notation, setNotation] = useState('1d20')
   const [result, setResult] = useState<RollResult | undefined>(undefined)
   const [history, setHistory] = useState<readonly HistoryEntry[]>([])
-  const [installPrompt, setInstallPrompt] = useState<InstallPrompt | undefined>(undefined)
 
   useEffect(() => {
     setHistory(loadHistory())
-    const onPrompt = (event: Event): void => {
-      if (!('prompt' in event)) return
-      event.preventDefault()
-      setInstallPrompt(event as InstallPrompt)
-    }
-    const onInstalled = (): void => {
-      setInstallPrompt(undefined)
-    }
-    window.addEventListener('beforeinstallprompt', onPrompt)
-    window.addEventListener('appinstalled', onInstalled)
-    return () => {
-      window.removeEventListener('beforeinstallprompt', onPrompt)
-      window.removeEventListener('appinstalled', onInstalled)
-    }
   }, [])
 
   const record = useCallback((next: RollResult) => {
@@ -237,19 +218,6 @@ export function RollerApp(): React.JSX.Element {
           onChange={setNotation}
           onRoll={record}
         />
-        {installPrompt !== undefined && (
-          <button
-            type="button"
-            className="ra-text-button ra-install"
-            onClick={() => {
-              void installPrompt.prompt().finally(() => {
-                setInstallPrompt(undefined)
-              })
-            }}
-          >
-            Install on this device
-          </button>
-        )}
       </section>
     </div>
   )
