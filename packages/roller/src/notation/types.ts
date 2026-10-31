@@ -26,8 +26,10 @@ export interface KeepOptions {
 }
 
 export interface RerollOptions extends ComparisonOptions {
-  /** Maximum number of rerolls allowed */
+  /** Maximum number of dice rerolled */
   max?: number
+  /** Reroll each matching die once and keep the new result (`ro{..}`) */
+  once?: boolean
 }
 
 export interface ReplaceOptions {
@@ -77,7 +79,7 @@ export interface ModifierOptions {
   reroll?: RerollOptions
   /** Ensure unique values (true or options) */
   unique?: boolean | UniqueOptions
-  /** Exploding dice: reroll and add on max value (single pass) */
+  /** Exploding dice: add a die on max value, and again while new dice explode */
   explode?: boolean | ComparisonOptions
   /** Compounding exploding: add to triggering die instead of creating new dice */
   compound?: boolean | number | ComparisonOptions

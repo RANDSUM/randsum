@@ -6,45 +6,29 @@ import { STRESS_ITERATIONS } from '../stressIterations'
 
 describe('notation sugar', () => {
   describe('reroll once (ro{})', () => {
-    test('ro{1} parses and applies reroll with max 1', () => {
-      const seeded = createSeededRandom(42)
-      const result = roll('4d6ro{1}', { randomFn: seeded })
+    // A scripted d6: each value v is fed as (v - 1) / 6
+    const d6 = (...values: number[]): (() => number) => {
+      const queue = values.map(v => (v - 1) / 6)
+      return () => queue.shift() ?? 0
+    }
 
-      expect(result.rolls).toHaveLength(1)
-      const record = result.rolls[0]
-      expect(record).toBeDefined()
-      expect(record!.rolls).toHaveLength(4)
+    test('ro{1} rerolls every 1 once and keeps the new result', () => {
+      // initial [1, 1, 3, 4], rerolls [1, 2]: the second reroll of the first die never happens
+      const result = roll('4d6ro{1}', { randomFn: d6(1, 1, 3, 4, 1, 2) })
+      expect(result.rolls[0]?.rolls).toEqual([1, 2, 3, 4])
     })
 
-    test('ro{1} is equivalent to R{1}1 with same seed', () => {
-      const seeded1 = createSeededRandom(42)
-      const result1 = roll('4d6ro{1}', { randomFn: seeded1 })
+    test('ro{<3} rerolls each low die once, unlike R{<3}1', () => {
+      const once = roll('4d6ro{<3}', { randomFn: d6(2, 1, 5, 6, 3, 4) })
+      expect(once.rolls[0]?.rolls).toEqual([3, 4, 5, 6])
 
-      const seeded2 = createSeededRandom(42)
-      const result2 = roll('4d6R{1}1', { randomFn: seeded2 })
-
-      expect(result1.total).toBe(result2.total)
-      expect(result1.rolls[0]!.rolls).toEqual(result2.rolls[0]!.rolls)
+      const oneDie = roll('4d6R{<3}1', { randomFn: d6(2, 1, 5, 6, 3, 4) })
+      expect(oneDie.rolls[0]?.rolls).toEqual([3, 1, 5, 6])
     })
 
-    test('ro{<3} rerolls values under 3 at most once', () => {
-      const seeded = createSeededRandom(42)
-      const result = roll('4d6ro{<3}', { randomFn: seeded })
-
-      const seededEquiv = createSeededRandom(42)
-      const resultEquiv = roll('4d6R{<3}1', { randomFn: seededEquiv })
-
-      expect(result.total).toBe(resultEquiv.total)
-    })
-
-    test('ro{<=2} rerolls values at or under 2 at most once', () => {
-      const seeded = createSeededRandom(42)
-      const result = roll('4d6ro{<=2}', { randomFn: seeded })
-
-      const seededEquiv = createSeededRandom(42)
-      const resultEquiv = roll('4d6R{<=2}1', { randomFn: seededEquiv })
-
-      expect(result.total).toBe(resultEquiv.total)
+    test('ro{<=2} leaves dice that do not match alone', () => {
+      const result = roll('4d6ro{<=2}', { randomFn: d6(6, 5, 2, 4, 1) })
+      expect(result.rolls[0]?.rolls).toEqual([6, 5, 1, 4])
     })
 
     test('RO{1} is case-insensitive', () => {

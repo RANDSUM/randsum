@@ -13,11 +13,15 @@ const specs = defineCollection({
     base: './src/content/specs',
     generateId: ({ entry }) => entry.replace(/\.md$/, '').replace(/^v/, '')
   }),
+  // The document header (src/spec/components/SpecHead.astro) and the Markdown
+  // copies (src/spec/document.ts) read these; the body starts at the Abstract.
   schema: z.object({
-    title: z.string().optional(),
-    version: z.string().optional(),
-    status: z.string().optional(),
-    date: z.string().optional()
+    title: z.string(),
+    version: z.string(),
+    revision: z.number().int().positive().optional(),
+    status: z.string(),
+    date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+    editor: z.string()
   })
 })
 

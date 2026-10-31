@@ -40,6 +40,23 @@ export interface ParseResult {
 
 const COUNT_FAMILY_KEYS = new Set(['#{..}', 'S{..}', 'F{..}'])
 
+/** Modifier tokens whose repeats sum (`+2+3`, `LL`), so a pool may hold several. */
+const SUMMING = /^(?:[+-]\d+|ms\{\d+\}|[LH]\d*)$/i
+
+/** Flags that say the same thing twice (`4d6!L!`), so a repeat loses nothing. */
+const FLAG = /^(?:!|!!|!p|!i|!r|W|U|sa|sd)$/i
+
+/**
+ * What a modifier token sets, for the once-per-pool rule. `K`, `kl` and `Km` share
+ * a token key but set different things; `!s{..}`, `!i` and `!r` all set the
+ * explode sequence; `L`, `H` and `D{..}` share `drop`.
+ */
+function modifierKind(token: LexToken): string {
+  if (token.key === 'K') return token.text.replace(/\d+$/, '').toLowerCase()
+  if (token.key === 'drop') return token.text.slice(0, 1).toUpperCase()
+  return token.key
+}
+
 const LEADING_QUANTITY = /^\d+/
 const STANDARD_BODY = /^\d*[Dd]([1-9]\d*)$/
 
@@ -158,16 +175,77 @@ export function parseNotation(input: string): ParseResult {
     )
   }
 
+  // A custom-faces die lists at least one face per comma: `d{a,}` has an empty one.
+  const emptyFace = tokens.find(
+    t =>
+      t.role === 'pool' &&
+      t.poolKind === 'custom' &&
+      (/\{([^}]*)\}/.exec(t.text)?.[1] ?? '').split(',').some(face => face.trim() === '')
+  )
+  if (emptyFace) {
+    return invalid(`"${emptyFace.text}" has an empty face`, emptyFace.start + trimOffset)
+  }
+
+  // `!!N{..}` and `!pN{..}` would keep the condition and drop the depth.
+  const depthAndCondition = tokens.find(t => /^!(?:!|p)\d+\{/i.test(t.text))
+  if (depthAndCondition) {
+    return invalid(
+      `"${depthAndCondition.text}" takes a depth or a condition, not both`,
+      depthAndCondition.start + trimOffset
+    )
+  }
+
+  // Explode Sequence rolls each listed size, so every size must be a real die.
+  const zeroSize = tokens.find(t => t.key === '!s' && /[{,]0+[,}]/.test(t.text))
+  if (zeroSize) {
+    return invalid(`"${zeroSize.text}" lists a die with no sides`, zeroSize.start + trimOffset)
+  }
+
   // Group tokens into pools: each pool token owns the following modifier /
   // annotation tokens until the next pool token. The trailing `xN` run (the only
   // position `xN` is accepted) is returned separately; notationToOptions applies
   // it to the whole expression.
-  const pools = tokens.flatMap((tok, i) => {
+  const groups = tokens.flatMap((tok, i) => {
     if (tok.role !== 'pool') return []
     const nextOffset = tokens.slice(i + 1).findIndex(t => t.role === 'pool')
     const end = nextOffset === -1 ? tokens.length : i + 1 + nextOffset
-    return [buildPool(tok, tokens.slice(i + 1, end))]
+    return [{ head: tok, bound: tokens.slice(i + 1, end) }]
   })
+
+  // Within one pool a modifier that sets a value may appear once (RDN §8.3):
+  // a second `*3`, `V{..}` or `sd` would otherwise be dropped without a word.
+  // Only the summing forms (+N, -N, ms{N}, L, H) may repeat, and a flag may be
+  // written twice.
+  for (const { bound } of groups) {
+    const annotations = bound.filter(t => t.role === 'annotation')
+    if (annotations.length > 1) {
+      return invalid(
+        'A die expression takes one annotation',
+        (annotations[1]?.start ?? 0) + trimOffset
+      )
+    }
+    const repeated = bound.find(
+      (t, i) =>
+        t.role === 'modifier' &&
+        !SUMMING.test(t.text) &&
+        bound
+          .slice(0, i)
+          .some(
+            u =>
+              u.role === 'modifier' &&
+              modifierKind(u) === modifierKind(t) &&
+              !(FLAG.test(t.text) && u.text.toLowerCase() === t.text.toLowerCase())
+          )
+    )
+    if (repeated) {
+      return invalid(
+        `"${repeated.text}" repeats a modifier this die expression already has`,
+        repeated.start + trimOffset
+      )
+    }
+  }
+
+  const pools = groups.map(({ head: poolHead, bound }) => buildPool(poolHead, bound))
   const repeats = tokens
     .filter(t => t.role === 'repeat')
     .map(t => ({ count: Number(t.text.slice(1)), position: t.start + trimOffset }))

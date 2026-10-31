@@ -357,16 +357,9 @@ describe(parseArguments, () => {
       describe('with a repeat unique notation', () => {
         const argument = `${coreTestString}U{5,6}U`
 
-        test('returns a RollParameter matching the notation', () => {
-          const [params] = parseArguments(argument, 1)
-
-          expect(params).toMatchObject({
-            argument,
-            ...coreDicePools,
-            modifiers: { unique: { notUnique: [5, 6] } },
-            notation: '4d6U{5,6}',
-            description: ['Roll 4 6-sided dice', 'No Duplicates (except 5 and 6)']
-          })
+        // RDN §8.3: a second U would be dropped, so the notation is rejected
+        test('throws rather than dropping the second U', () => {
+          expect(() => parseArguments(argument, 1)).toThrow()
         })
       })
 
@@ -474,7 +467,7 @@ describe(parseArguments, () => {
       })
 
       describe('like a complicated dice notation', () => {
-        const argument = `10d20H2LV{1=2,>2=6}D{<2,>5,2,4}C{<2,>18}R{5,2}3U{5}R{<6}!+2-5+3`
+        const argument = `10d20H2LV{1=2,>2=6}D{<2,>5,2,4}C{<2,>18}R{5,2,<6}3U{5}!+2-5+3`
 
         test('returns a RollParameter matching the notation', () => {
           const [params] = parseArguments(argument, 1)

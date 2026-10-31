@@ -95,6 +95,8 @@
   --rs-font-sans: var(--font-gabarito), ui-sans-serif, system-ui, sans-serif;
   --rs-font-heading: var(--font-gabarito), ui-sans-serif, system-ui, sans-serif;
   --rs-font-mono: var(--font-jetbrains-mono), ui-monospace, SFMono-Regular, monospace;
+  /* The notation spec's body text only: a formal document, set apart */
+  --rs-font-serif: var(--font-source-serif), Charter, Georgia, serif;
 
   /* Code: plain code reuses the notation inks, so a snippet and a notation
      string read in the same colours */

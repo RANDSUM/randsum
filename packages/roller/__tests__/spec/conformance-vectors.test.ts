@@ -18,9 +18,8 @@ import type { DiceNotation } from '../../src/notation/types'
  *   createQueueRandom only handles numeric faces.
  * - Null expectedPool/expectedTotal: indeterminate result per spec.
  *
- * Known conformance gaps (marked .todo):
- * - Vector 39 (3d6!s{4,6,8}): spec uses {values} as trigger set for sequence start;
- *   roller uses them as die sizes in a step-through sequence — semantics mismatch
+ * Explode Sequence vectors list each sequence roll as the value on its own die
+ * (a d4, then a d6, ...), so those are mapped through the sequence's sizes.
  */
 
 /**
@@ -43,9 +42,7 @@ const FATE_2_FACES = [-2, -1, 0, 1, 2] as const
 
 // Known conformance gaps: vector ids that cannot pass due to roller behavior mismatches
 // These are marked .todo() rather than skipped to surface them as known failures.
-const KNOWN_CONFORMANCE_GAPS: Record<number, string> = {
-  39: 'spec interprets !s{4,6,8} as trigger values for sequence; roller uses them as die sizes'
-}
+const KNOWN_CONFORMANCE_GAPS: Record<number, string> = {}
 
 describe('Conformance Vectors', () => {
   for (const vector of CONFORMANCE_FILE.vectors) {
@@ -160,15 +157,31 @@ describe('Conformance Vectors', () => {
       const sequenceRolls =
         'sequenceRolls' in vector ? (vector.sequenceRolls as number[]) : undefined
 
-      const queueRandom = createQueueRandom({
+      // createQueueRandom maps every value through one die size; a sequence die
+      // has its own, so its rolls are appended at their own sizes.
+      const sequenceSizes = /!s\{([\d,]+)\}/i.exec(notation)?.[1]?.split(',').map(Number) ?? []
+      const baseRandom = createQueueRandom({
         sides,
         rolls: queueRolls,
         ...(rerollRolls !== undefined ? { rerollRolls } : {}),
         ...(explodeRolls !== undefined ? { explodeRolls } : {}),
         ...(compoundRolls !== undefined ? { compoundRolls } : {}),
-        ...(penetrateRolls !== undefined ? { penetrateRolls } : {}),
-        ...(sequenceRolls !== undefined ? { sequenceRolls } : {})
+        ...(penetrateRolls !== undefined ? { penetrateRolls } : {})
       })
+      const sequenceQueue = (sequenceRolls ?? []).map(
+        (v, i) => (v - 1) / (sequenceSizes[i] ?? sequenceSizes.at(-1) ?? sides)
+      )
+      const baseCalls =
+        queueRolls.length +
+        (rerollRolls?.length ?? 0) +
+        (explodeRolls?.length ?? 0) +
+        (compoundRolls?.length ?? 0) +
+        (penetrateRolls?.length ?? 0)
+      const calls = { n: 0 }
+      const queueRandom = (): number => {
+        calls.n += 1
+        return calls.n > baseCalls ? (sequenceQueue[calls.n - baseCalls - 1] ?? 0) : baseRandom()
+      }
 
       const result = roll(notation, { randomFn: queueRandom })
       const record = result.rolls[0]!
@@ -203,5 +216,30 @@ describe('published conformance claims', () => {
       }
     }
     expect(offenders).toEqual([])
+  })
+})
+
+// Vectors 31, 33 and 51 depend on how an implementation maps random numbers to
+// faces and shuffles (spec §11.3), so the queue above cannot replay them. Check
+// what they promise regardless of the shuffle: the pool's size and its values.
+describe('vectors that depend on the shuffle', () => {
+  test('Vector 31: 2d{fire,ice,lightning} rolls two of its faces', () => {
+    const record = roll('2d{fire,ice,lightning}').rolls[0]!
+    expect(record.customResults).toHaveLength(2)
+    for (const face of record.customResults ?? []) {
+      expect(['fire', 'ice', 'lightning']).toContain(face)
+    }
+  })
+
+  test.each([
+    ['3DD6', 3, 3],
+    ['3DD6L', 3, 2]
+  ])('%s draws %i distinct values from 1..6 and keeps %i', (notation, drawn, kept) => {
+    for (const _ of Array.from({ length: 200 })) {
+      const record = roll(notation as DiceNotation).rolls[0]!
+      expect(record.rolls).toHaveLength(kept)
+      expect(new Set(record.initialRolls).size).toBe(drawn)
+      for (const value of record.initialRolls) expect(value >= 1 && value <= 6).toBe(true)
+    }
   })
 })

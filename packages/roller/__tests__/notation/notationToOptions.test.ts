@@ -421,7 +421,7 @@ describe('notationToOptions', () => {
       expect(result?.quantity).toBe(4)
       expect(result?.sides).toBe(6)
       expect(result?.modifiers?.reroll?.exact).toContain(1)
-      expect(result?.modifiers?.reroll?.max).toBe(1)
+      expect(result?.modifiers?.reroll?.once).toBe(true)
     })
 
     test('parses reroll once with less than', () => {
@@ -430,7 +430,7 @@ describe('notationToOptions', () => {
       expect(result?.quantity).toBe(2)
       expect(result?.sides).toBe(10)
       expect(result?.modifiers?.reroll?.lessThan).toBe(3)
-      expect(result?.modifiers?.reroll?.max).toBe(1)
+      expect(result?.modifiers?.reroll?.once).toBe(true)
     })
 
     test('parses reroll once with other modifiers', () => {
@@ -439,7 +439,7 @@ describe('notationToOptions', () => {
       expect(result?.quantity).toBe(4)
       expect(result?.sides).toBe(6)
       expect(result?.modifiers?.reroll?.exact).toContain(1)
-      expect(result?.modifiers?.reroll?.max).toBe(1)
+      expect(result?.modifiers?.reroll?.once).toBe(true)
       expect(result?.modifiers?.plus).toBe(3)
     })
   })

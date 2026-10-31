@@ -1,9 +1,5 @@
 ---
-interface Heading {
-  depth: number
-  slug: string
-  text: string
-}
+import { type Heading, sectionGroups } from '../sections'
 
 interface Props {
   headings: Heading[]
@@ -23,29 +19,7 @@ const truncatedForLlm =
 const claudeUrl = `https://claude.ai/new?q=${encodeURIComponent(truncatedForLlm)}`
 const chatgptUrl = `https://chatgpt.com/?q=${encodeURIComponent(truncatedForLlm)}`
 
-const SIDEBAR_GROUPS = [
-  { label: 'Foundations', prefixes: ['1.', '2.', '3.'] },
-  { label: 'Features', prefixes: ['4.', '5.'] },
-  { label: 'Pipeline', prefixes: ['6.', '7.'] },
-  { label: 'Reference', prefixes: ['8.', '9.', '10.'] },
-  { label: 'Appendices', prefixes: ['A.', 'B.', 'C.', 'D.'] }
-]
-
-const topHeadings = headings.filter(h => h.depth === 2)
-
-function getGroupForHeading(text: string) {
-  for (const group of SIDEBAR_GROUPS) {
-    for (const prefix of group.prefixes) {
-      if (text.startsWith(prefix)) return group.label
-    }
-  }
-  return null
-}
-
-const grouped: { label: string; items: Heading[] }[] = SIDEBAR_GROUPS.map(g => ({
-  label: g.label,
-  items: topHeadings.filter(h => getGroupForHeading(h.text) === g.label)
-})).filter(g => g.items.length > 0)
+const grouped = sectionGroups(headings)
 ---
 
 <div class="mobile-menu" id="mobile-menu">

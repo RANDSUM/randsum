@@ -3,10 +3,14 @@
 // (ADR-015) inside this app. Renders the latest version inline (ADR-016).
 import { getCollection, render } from 'astro:content'
 import { getLatestVersion, getVersions } from '../../spec/versions'
+import { specMarkdown } from '../../spec/document'
+import { specHtml } from '../../spec/specHtml'
+import { withAppendixH } from '../../spec/sections'
 import SpecLayout from '../../spec/SpecLayout.astro'
+import SpecHead from '../../spec/components/SpecHead.astro'
+import SpecToc from '../../spec/components/SpecToc.astro'
 import SpecContent from '../../spec/components/SpecContent.astro'
 import SidebarNav from '../../spec/components/SidebarNav.astro'
-import OnThisPage from '../../spec/components/OnThisPage.astro'
 import ModifierReference from '../../spec/components/ModifierReference.astro'
 
 const latestId = await getLatestVersion()
@@ -14,21 +18,25 @@ const allVersions = await getVersions()
 const entries = await getCollection('specs')
 const entry = entries.find(e => e.id === latestId)
 if (!entry) throw new Error(`No spec entry found for version: ${latestId}`)
-const { Content, headings } = await render(entry)
+const { headings: markdownHeadings } = await render(entry)
+const html = specHtml(entry.rendered?.html ?? '')
+const headings = withAppendixH(markdownHeadings)
 ---
 
 <SpecLayout
-  title="RANDSUM Dice Notation Specification"
+  title={entry.data.title}
   version={latestId}
   versions={allVersions}
   isLatest={true}
-  specMarkdown={entry.body ?? ''}
+  specMarkdown={specMarkdown(entry)}
   headings={headings}
+  published={entry.data.date}
 >
-  <SidebarNav slot="sidebar" headings={headings} version={latestId} isLatest={true} />
+  <SidebarNav slot="sidebar" headings={headings} />
+  <SpecHead slot="content" entry={entry} versions={allVersions} />
+  <SpecToc slot="content" headings={headings} />
   <SpecContent slot="content">
-    <Content />
+    <Fragment set:html={html} />
     <ModifierReference />
   </SpecContent>
-  <OnThisPage slot="aside" headings={headings} />
 </SpecLayout>

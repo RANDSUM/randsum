@@ -87,6 +87,19 @@ imported only by `SpecLayout`, since its resets are global to the page.
   `/spec/v/<latest>/` out of the sitemap. Older versions are canonical to themselves.
 - `ModifierReference.astro` builds Appendix H from `@randsum/roller/docs`, so it
   renders only on the latest version.
+- The page follows formal-spec conventions (W3C/IETF), not the site's
+  marketing look: a document header (`SpecHead.astro`), a numbered table of
+  contents (`SpecToc.astro`), a Source Serif body (`--rs-font-serif`), and
+  section numbers, BCP 14 keywords, non-normative labels and note boxes
+  marked by `src/spec/specHtml.ts`. Sätteri takes no rehype plugins, so that
+  is a string transform over `entry.rendered.html`. `src/spec/sections.ts`
+  groups headings for the sidebar; `src/spec/document.ts` puts the front
+  matter (title, version, revision, status, date, editor, all validated by
+  `content.config.ts`) back on the Markdown for `llms-full.txt`.
+- Conformance badges: `src/pages/spec/badges/[version]/[badge].ts` serves a
+  shields-style SVG per level at `/spec/badges/v<version>/level-<n>.svg`,
+  drawn by `src/spec/badges.ts` in theme colours. `/spec/conformance/`
+  explains how to claim a level and gives the embed snippets.
 - `/spec/llms.txt` and `/spec/llms-full.txt` are built from the same entry.
 - Code blocks go through Starlight's Expressive Code, which reads a few
   `--sl-color-*` names; `spec.css` maps them onto the spec's tokens.
