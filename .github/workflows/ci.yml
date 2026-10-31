@@ -302,12 +302,14 @@ jobs:
         # Validate each tarball's manifest and type-resolution profile. Pinned via
         # bunx so no root deps are added. These are ESM-only packages, so attw runs
         # with --profile esm-only to not fail on the expected missing-CJS resolutions.
+        # `./styles.css` (@randsum/ui) is a stylesheet with no types by design;
+        # the excluded name is absent from every other tarball, so it is a no-op there.
         run: |
           set -euo pipefail
           for tgz in "$RUNNER_TEMP"/tarballs/*.tgz; do
             echo "::group::$(basename "$tgz")"
             bunx publint@0.3.21 "$tgz"
-            bunx @arethetypeswrong/cli@0.18.4 --profile esm-only "$tgz"
+            bunx @arethetypeswrong/cli@0.18.4 "$tgz" --profile esm-only --exclude-entrypoints ./styles.css
             echo "::endgroup::"
           done
 
