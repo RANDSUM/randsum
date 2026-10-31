@@ -67,11 +67,39 @@ const url = new URL('/app/', Astro.site).href
         <span class="app-wordmark" translate="no">RANDSUM</span>
         <span class="app-product">app</span>
       </a>
-      <a href="/" class="app-link">Docs</a>
+      <div class="app-actions">
+        <button type="button" class="app-link app-install" hidden>Install app</button>
+        <a href="/" class="app-link">Docs</a>
+      </div>
     </header>
     <main class="app-main">
       <RollerApp client:load />
     </main>
+    <script>
+    // Install: the browser offers its prompt once the page qualifies as an app;
+    // keep it and show the header button until the user takes it.
+    interface InstallPrompt extends Event {
+      prompt: () => Promise<void>
+    }
+    const installButton = document.querySelector<HTMLButtonElement>('.app-install')
+    const pending: { prompt: InstallPrompt | undefined } = { prompt: undefined }
+    addEventListener('beforeinstallprompt', event => {
+      if (!('prompt' in event)) return
+      event.preventDefault()
+      pending.prompt = event as InstallPrompt
+      if (installButton) installButton.hidden = false
+    })
+    addEventListener('appinstalled', () => {
+      pending.prompt = undefined
+      if (installButton) installButton.hidden = true
+    })
+    installButton?.addEventListener('click', () => {
+      void pending.prompt?.prompt().finally(() => {
+        pending.prompt = undefined
+        installButton.hidden = true
+      })
+    })
+    </script>
     <script>
     // Offline: the worker caches this page and its assets on first visit.
     if ('serviceWorker' in navigator) {
@@ -163,6 +191,12 @@ body {
   letter-spacing: var(--rs-tracking-heading);
 }
 
+.app-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
 .app-link {
   padding: 0.375rem 0.625rem;
   border-radius: var(--rs-radius-sm);
@@ -170,6 +204,15 @@ body {
   font-size: var(--rs-text-sm);
   font-weight: var(--rs-weight-medium);
   text-decoration: none;
+}
+
+.app-install {
+  border: none;
+  background: none;
+  color: var(--rs-accent);
+  font-family: var(--rs-font-sans);
+  font-weight: var(--rs-weight-semibold);
+  cursor: pointer;
 }
 
 .app-link:hover {
