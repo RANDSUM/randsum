@@ -132,9 +132,8 @@ static assets only). `randsum.dev/app/` (`src/pages/app/index.astro`) is its
 product page: a Starlight splash page that opens with the app's `ProductHero`.
 
 - The shell is `src/pages/app-shell/index.astro`. Like `/spec` it is not a
-  Starlight page: a full-screen shell around `components/roller-app/RollerApp.tsx`,
-  which reuses `dice-ui`'s `NotationRoller` and `RollResultDisplay` and keeps
-  history in localStorage. Its links are absolute to the app host's root.
+  Starlight page: a full-screen shell around `components/rollers/AppRoller.tsx`,
+  which renders `@randsum/ui`'s `RollerMax` and keeps history in localStorage. Its links are absolute to the app host's root.
 - `bun run build` is `astro build` then `scripts/build-app.ts`, which writes
   `dist-app/`: the shell as `index.html`, `app-public/` (manifest, icons,
   `_headers`, `sw.js`), `dist/_astro/` and the favicon. It then deletes
@@ -201,17 +200,13 @@ Starlight component overrides (in `src/components/`, wired in `astro.config.mjs`
 Interactive / shared components:
 
 - `live-repl/` — live code examples (used via `<CodeExample>` in MDX)
-- `dice-ui/` — the web-only React dice UI: `NotationRoller` (token-overlay
-  input + roll button), `RollResultPanel`/`RollResultDisplay` (roll steps), and
-  their internals (`TokenOverlayInput`, `RollSteps`, `useTheme`, `tokenColor`).
-  `index.ts` is the barrel and loads `tokens.css` (spacing and radii) once;
-  colours and fonts are the site theme's `--rs-*`. Its component tests live in `__tests__/dice-ui/`
+- `rollers/` — the site's wrappers around `@randsum/ui`: `HeroRoller` (the
+  landing hero's `RollerCompact`, with `LANDING_PRESETS` and the auto-cycle),
+  `ModifierRoller` (a modifier page's `RollerCompact`, with that modifier's
+  canonical keys and examples), `NotationRoller` (inline `RollerMini` for MDX)
+  and `AppRoller` (the app's `RollerMax`). `rollers.css` maps the package's
+  `--rsui-*` tokens onto the theme's `--rs-*`. Tests are `__tests__/rollers.test.tsx`
   and mount through happy-dom, which `bunfig.toml` preloads for every site test.
-- `NotationRoller/` — wraps `dice-ui`'s roller with the StackBlitz action and
-  the floating result overlay
-- `HeroRoller/` — the landing hero's live roller (notation field, token breakdown,
-  rolled result with every step, example presets), in the roller's colour
-- `HeroInteractive.tsx` — the clickable tagline, which spins `HeroRoller`'s presets
 - `PipMark.astro` — the pip mark, outline or knockout, in a product's pattern (R by default)
 - `ProductHero.astro` — a product's hero: lockup, name in its colour, pitch, install, facts
 - `ErrorBoundary/` — React error boundary

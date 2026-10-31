@@ -33,6 +33,19 @@
       "project": ["src/**/*.ts", "examples/**/*.ts", "__tests__/**/*.ts"],
       "includeEntryExports": true
     },
+    "packages/ui": {
+      "entry": [
+        "src/roller-max.tsx",
+        "src/roller-compact.tsx",
+        "src/roller-mini.tsx",
+        "src/keys.ts",
+        "src/presets.ts",
+        "scripts/*.ts",
+        "__tests__/**/*.{ts,tsx}"
+      ],
+      "project": ["src/**/*.{ts,tsx}", "scripts/*.ts", "__tests__/**/*.{ts,tsx}"],
+      "includeEntryExports": true
+    },
     "apps/api": {
       "entry": ["src/index.ts"],
       "project": ["src/**/*.ts"]

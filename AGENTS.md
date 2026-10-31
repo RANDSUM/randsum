@@ -9,10 +9,11 @@ Bun workspace monorepo for a dice rolling ecosystem targeting tabletop RPGs. All
 - **`@randsum/roller`** (`packages/roller/`): zero-dependency dice engine with built-in notation parsing and validation. Every other package depends on it via `workspace:~`.
 - **`@randsum/games`** (`packages/games/`): code-generated game interpretations as subpath exports: `blades`, `daggerheart`, `fate`, `fifth` (D&D 5e), `pbta`, `root-rpg`, `salvageunion`, plus `schema` (the codegen/validation API).
 - **`@randsum/mcp`** (`packages/mcp/`): MCP server exposing `roll`, `validate` and `roll_game`.
+- **`@randsum/ui`** (`packages/ui/`): React roller components in three sizes, as narrow subpath exports: `roller-max`, `roller-compact`, `roller-mini`, `keys`, `presets`, `styles.css`. Depends on roller; React is a peer.
 - **`@randsum/notation-spec`** (`packages/notation-spec/`): the RANDSUM Dice Notation spec, its conformance vectors (JSON) and the `rdn-conformance` runner. Source of truth for all three; mirrored to github.com/RANDSUM/notation-spec.
 - **`@randsum/api`** (`apps/api/`, private): Cloudflare Worker at api.randsum.dev serving the `/v1` REST API and `/mcp`, the hosted `@randsum/mcp` behind the Claude connector.
 - **`@randsum/discord-bot`** (`apps/discord-bot/`, private): Discord bot, a Cloudflare Worker at bot.randsum.dev.
-- **`@randsum/site`** (`apps/site/`, private): Astro + Starlight docs site at randsum.dev. It also serves the notation spec at `/spec` and the installable Roller app at `/app`, and owns the web-only React dice components in `src/components/dice-ui/`.
+- **`@randsum/site`** (`apps/site/`, private): Astro + Starlight docs site at randsum.dev. It also serves the notation spec at `/spec` and the installable Roller app at `/app`. Its rollers are `@randsum/ui` components, wrapped in `src/components/rollers/`.
 - **Claude Code plugin** (`plugins/randsum/`): the `randsum` plugin that the root `.claude-plugin/marketplace.json` publishes. Four skills, a `/roll` mod in `hooks/` (it rolls with a committed bundle of roller's `roll()`, rebuilt by `bun run plugin:roller`), and its own `.mcp.json`, which connects only the hosted MCP at `https://api.randsum.dev/mcp`. The root `.mcp.json` holds the maintainers' ops servers and never ships.
 
 Game packages never depend on each other, only on `@randsum/roller`.
@@ -68,7 +69,7 @@ Publishable packages produce ESM only: `dist/<entry>.js` plus `dist/<entry>.d.ts
 
 ## Releases
 
-Releases are automated with changesets and npm Trusted Publishing. Your part is one step: add a changeset with `bun run changeset` when a published package (`roller`, `games`, `mcp`) changes. `roller` and `games` are linked and version together; `bun run check:changesets` fails when a changeset releases roller or games without also releasing mcp, which bundles them.
+Releases are automated with changesets and npm Trusted Publishing. Your part is one step: add a changeset with `bun run changeset` when a published package (`roller`, `games`, `mcp`, `ui`) changes. `roller` and `games` are linked and version together; `bun run check:changesets` fails when a changeset releases roller or games without also releasing mcp, which bundles them.
 
 Never run `npm publish` or `bun publish` yourself: npm would ship the literal `workspace:~` range. Publishing goes only through `scripts/publish.ts`. The release workflow is described in `CONTRIBUTING.md`.
 

@@ -34,6 +34,8 @@ This repository contains multiple packages and applications for dice rolling and
   - `@randsum/games/root-rpg` - Root RPG
   - `@randsum/games/salvageunion` - Salvage Union
 
+- **[@randsum/ui](packages/ui)** - React roller components in three sizes (max, compact, mini), with narrow subpath imports
+
 ### Applications (private)
 
 - **[@randsum/discord-bot](apps/discord-bot)** - Discord bot for dice rolling
