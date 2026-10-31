@@ -38,6 +38,8 @@ const PUBLISH_ORDER: readonly string[] = [
   'packages/roller',
   'packages/games',
   'packages/mcp',
+  // React components over roller; nothing depends on it.
+  'packages/ui',
   // Depends on roller only for its tests and reference adapter, so its place is free.
   'packages/notation-spec'
 ]

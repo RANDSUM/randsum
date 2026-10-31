@@ -121,13 +121,13 @@ body:has(.landing) .content-panel:has(.landing-title-slot) {
   color: var(--sl-color-white);
 }
 
-/* The live roller's frame; the roller itself is components/HeroRoller */
+/* The live roller: a title row over the @randsum/ui Compact panel
+   (components/rollers/HeroRoller), which draws its own frame */
 .hero-roller {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
   min-width: 0;
-  padding: 1.25rem;
-  border: var(--rs-border);
-  border-radius: var(--rs-radius-lg);
-  background: var(--sl-color-bg-nav);
 }
 
 .hero-roller-top {
@@ -136,7 +136,6 @@ body:has(.landing) .content-panel:has(.landing-title-slot) {
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 0.5rem;
-  margin-bottom: 1rem;
 }
 
 .hero-roller .hero-roller-title {

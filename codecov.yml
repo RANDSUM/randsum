@@ -20,6 +20,10 @@ flags:
     paths:
       - packages/games/
     carryforward: true
+  ui:
+    paths:
+      - packages/ui/
+    carryforward: true
 
 comment:
   layout: 'reach,diff,flags,files'

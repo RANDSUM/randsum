@@ -20,6 +20,7 @@ jobs:
       roller: ${{ steps.filter.outputs.roller }}
       games: ${{ steps.filter.outputs.games }}
       mcp: ${{ steps.filter.outputs.mcp }}
+      ui: ${{ steps.filter.outputs.ui }}
       notation-spec: ${{ steps.filter.outputs.notation-spec }}
       site: ${{ steps.filter.outputs.site }}
       skill: ${{ steps.filter.outputs.skill }}
@@ -59,6 +60,10 @@ jobs:
             games:
               - 'packages/roller/**'
               - 'packages/games/**'
+              - '.github/workflows/ci.yml'
+            ui:
+              - 'packages/roller/**'
+              - 'packages/ui/**'
               - '.github/workflows/ci.yml'
             mcp:
               - 'packages/roller/**'
@@ -122,6 +127,7 @@ jobs:
             {"pkg":"roller","coverage":"roller","size":true},
             {"pkg":"games","coverage":"games","size":true},
             {"pkg":"mcp"},
+            {"pkg":"ui","coverage":"ui","size":true},
             {"pkg":"notation-spec"},
             {"pkg":"discord-bot"},
             {"pkg":"api"},

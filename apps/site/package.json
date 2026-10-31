@@ -21,6 +21,7 @@
     "@astrojs/starlight": "0.42.7",
     "@randsum/notation-spec": "workspace:~",
     "@randsum/roller": "workspace:~",
+    "@randsum/ui": "workspace:~",
     "@stackblitz/sdk": "~1.11.0",
     "astro": "7.4.4",
     "astro-expressive-code": "0.44.3",

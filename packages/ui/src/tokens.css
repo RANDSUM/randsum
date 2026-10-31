@@ -1,0 +1,44 @@
+/* The only file in @randsum/ui that spells a raw value. Every token sits at
+   zero specificity, so a host page restyles the rollers with a plain
+   `.rsui { --rsui-accent: … }` rule. Colours follow the page's color-scheme. */
+:where(.rsui) {
+  --rsui-accent: #ef656b;
+  --rsui-on-accent: #18181b;
+  --rsui-bg: light-dark(#ffffff, #18181b);
+  --rsui-surface: light-dark(#fafafa, #111113);
+  --rsui-raised: light-dark(#ffffff, #232326);
+  --rsui-subtle: light-dark(#f4f4f5, #27272a);
+  --rsui-border: light-dark(#d4d4d8, #3f3f46);
+  --rsui-border-strong: light-dark(#71717a, #a1a1aa);
+  --rsui-ink: light-dark(#18181b, #fafafa);
+  --rsui-muted: light-dark(#52525b, #a1a1aa);
+  --rsui-faint: light-dark(#71717a, #8b8b94);
+  --rsui-valid: light-dark(#15803d, #4ade80);
+  --rsui-invalid: light-dark(#b91c1c, #f87171);
+  --rsui-disabled-bg: light-dark(#e4e4e7, #2e2e33);
+  --rsui-disabled-ink: light-dark(#71717a, #8b8b94);
+  --rsui-tip-bg: light-dark(#18181b, #fafafa);
+  --rsui-tip-ink: light-dark(#fafafa, #18181b);
+  --rsui-shadow-pop: 0 8px 24px light-dark(#18181b1f, #00000066);
+  --rsui-focus-ring: 0 0 0 3px color-mix(in srgb, var(--rsui-accent) 45%, transparent);
+
+  --rsui-font: system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --rsui-font-mono: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  --rsui-text-xs: 0.8125rem;
+  --rsui-text-sm: 0.875rem;
+  --rsui-text-base: 1rem;
+  --rsui-text-md: 1.125rem;
+  --rsui-text-lg: 1.375rem;
+  --rsui-text-input: 1.5rem;
+  --rsui-total-compact: 4.5rem;
+  --rsui-total-max: 6.5rem;
+  --rsui-weight-regular: 400;
+  --rsui-weight-medium: 500;
+  --rsui-weight-semibold: 600;
+  --rsui-weight-bold: 700;
+  --rsui-weight-heavy: 800;
+  --rsui-radius-sm: 6px;
+  --rsui-radius-md: 8px;
+  --rsui-radius-lg: 12px;
+  --rsui-radius-xl: 16px;
+}
