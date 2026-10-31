@@ -33,6 +33,24 @@ const specUrl = new URL(isLatest ? '/spec/' : `/spec/v/${version}/`, Astro.site)
 // Starlight's Pagefind index skips pages without data-pagefind-body. Opt in
 // the canonical page only, so search lists each version once.
 const isCanonical = Astro.url.pathname.replace(/\/?$/, '/') === new URL(specUrl).pathname
+const description =
+  'The formal specification for RANDSUM Dice Notation — a human-readable syntax for dice rolls in tabletop RPGs. Defines modifiers, execution pipeline, conformance levels, and special dice types.'
+// The spec's own header line ("**Date:** 2026-03-21") dates the version
+const published = /\*\*Date:\*\*\s*(\d{4}-\d{2}-\d{2})/.exec(specMarkdown)?.[1]
+const jsonLd = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'TechArticle',
+  headline: pageTitle,
+  name: `RANDSUM Dice Notation ${version}`,
+  description,
+  url: specUrl,
+  version,
+  ...(published ? { datePublished: published } : {}),
+  inLanguage: 'en',
+  image: 'https://randsum.dev/og/spec.png',
+  author: { '@type': 'Person', name: 'Alex Jarvis' },
+  publisher: { '@type': 'Organization', name: 'RANDSUM', url: 'https://randsum.dev/' }
+})
 ---
 
 <!doctype html>
@@ -44,25 +62,17 @@ const isCanonical = Astro.url.pathname.replace(/\/?$/, '/') === new URL(specUrl)
     <link rel="icon" href="/favicon.ico" sizes="32x32">
     <link rel="icon" href="/favicon.svg" type="image/svg+xml">
     <link rel="canonical" href={specUrl}>
-    <meta
-      name="description"
-      content="The formal specification for RANDSUM Dice Notation — a human-readable syntax for dice rolls in tabletop RPGs. Defines modifiers, execution pipeline, conformance levels, and special dice types."
-    >
+    <meta name="description" content={description}>
     <meta property="og:title" content={pageTitle}>
-    <meta
-      property="og:description"
-      content="The formal specification for RANDSUM Dice Notation — a human-readable syntax for dice rolls in tabletop RPGs. Defines modifiers, execution pipeline, conformance levels, and special dice types."
-    >
+    <meta property="og:description" content={description}>
     <meta property="og:image" content="https://randsum.dev/og/spec.png">
     <meta property="og:url" content={specUrl}>
     <meta property="og:type" content="article">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content={pageTitle}>
-    <meta
-      name="twitter:description"
-      content="The formal specification for RANDSUM Dice Notation — a human-readable syntax for dice rolls in tabletop RPGs. Defines modifiers, execution pipeline, conformance levels, and special dice types."
-    >
+    <meta name="twitter:description" content={description}>
     <meta name="twitter:image" content="https://randsum.dev/og/spec.png">
+    <script type="application/ld+json" set:html={jsonLd} />
     <Font cssVariable="--font-gabarito" preload />
     <Font cssVariable="--font-jetbrains-mono" />
     <script is:inline>

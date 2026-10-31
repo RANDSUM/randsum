@@ -1,7 +1,6 @@
 ---
 // The top of randsum.dev: the promise on the left, the live roller on the right,
 // so the first thing a visitor can do is roll.
-import { ClickableTagline } from '../HeroInteractive'
 import { HeroRoller } from '../HeroRoller/HeroRoller'
 import PipMark from '../PipMark.astro'
 import Button from '../ui/Button.astro'
@@ -21,7 +20,10 @@ const proof = [
         <PipMark variant="knockout" size={18} />
         The TypeScript dice engine
       </p>
-      <ClickableTagline client:load />
+      <h1 id="hero-title" class="clickable-tagline">
+        Throw Dice, <br>
+        Not Exceptions.
+      </h1>
       <p class="hero-subtitle">
         Parse and roll any dice notation, from <code>1d20+5</code> to exploding, rerolling,
         drop-lowest pools, and get every step back as typed data. Zero dependencies, with ready-made
@@ -74,3 +76,12 @@ const proof = [
     ))}
   </dl>
 </section>
+
+<script>
+// The tagline's easter egg: a click fires 'die-rolled', which HeroRoller answers
+// by spinning through its presets. A plain h1 and a listener, so the tagline
+// needs no React island.
+document.getElementById('hero-title')?.addEventListener('click', () => {
+  window.dispatchEvent(new CustomEvent('die-rolled'))
+})
+</script>
