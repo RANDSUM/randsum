@@ -27,7 +27,8 @@ export const PRODUCT_LABELS: Readonly<Record<Product, string>> = {
 }
 
 // Each product's pattern on the die's 3x3 face, centres on a 22 pitch. The
-// roller keeps the brand's R; the rest draw what the product does.
+// roller keeps the brand's R; the rest spell their initial where it reads at
+// favicon size, and draw what the product does where it would not.
 const [L, M, H] = [28, 50, 72] as const
 type Pip = readonly [number, number]
 export const PIPS: Readonly<Record<Product, readonly Pip[]>> = {
@@ -47,11 +48,12 @@ export const PIPS: Readonly<Record<Product, readonly Pip[]>> = {
     [H, M],
     [M, H]
   ],
-  // Two lines of text
+  // Lines of text, the middle one short
   spec: [
     [L, L],
     [M, L],
     [H, L],
+    [L, M],
     [L, H],
     [M, H]
   ],
@@ -61,21 +63,22 @@ export const PIPS: Readonly<Record<Product, readonly Pip[]>> = {
     [M, M],
     [L, H]
   ],
-  // A bot's face
+  // D
   discord: [
     [L, L],
-    [H, L],
+    [M, L],
+    [L, M],
+    [H, M],
     [L, H],
-    [M, H],
-    [H, H]
+    [M, H]
   ],
-  // A plus: an add-on
+  // P: the R without its leg
   plugin: [
+    [L, L],
     [M, L],
     [L, M],
     [M, M],
-    [H, M],
-    [M, H]
+    [L, H]
   ],
   // An app icon on a home screen
   app: [

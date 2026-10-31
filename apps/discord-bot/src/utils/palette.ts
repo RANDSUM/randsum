@@ -101,7 +101,7 @@ export const FATE = {
 } as const
 
 /** `/roll` and the informational commands. The discord bot's product colour on randsum.dev, not an outcome. */
-export const BRAND = 0x00b4ca
+export const BRAND = 0x5865f2
 
 /**
  * Errors. Deliberately distinct from every failure accent above: the embed
