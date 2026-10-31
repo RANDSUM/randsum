@@ -256,6 +256,19 @@ jobs:
           fi
           bun run --filter @randsum/site deploy:notation
 
+      # app.randsum.dev is the installable Roller: static assets in dist-app/,
+      # which the site build above writes (scripts/build-app.ts). Its custom
+      # domain route creates the hostname's DNS record on the first deploy.
+      - name: Deploy app.randsum.dev
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: |
+          if [ -z "$CLOUDFLARE_API_TOKEN" ]; then
+            echo "::error::CLOUDFLARE_API_TOKEN is not set — cannot deploy."
+            exit 1
+          fi
+          bun run --filter @randsum/site deploy:app
+
   bot:
     name: bot.randsum.dev
     needs: plan

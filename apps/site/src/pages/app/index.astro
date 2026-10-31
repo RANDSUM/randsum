@@ -1,234 +1,254 @@
 ---
-// The installable roller. Not a Starlight page: it is a full-screen app with
-// its own manifest (public/app/manifest.webmanifest) and an offline service
-// worker (public/app/sw.js), both scoped to /app/.
-import { Font } from 'astro:assets'
-import PipMark from '../../components/PipMark.astro'
-import { RollerApp } from '../../components/roller-app/RollerApp'
-import '../../styles/theme.css'
+// The Roller app's product page. The app itself lives at app.randsum.dev
+// (wrangler.app.jsonc, built from src/pages/app-shell/); this page describes
+// it, opens with the app's ProductHero (HERO_PAGES in utils/product.ts) and
+// sends people there.
+import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro'
+import Button from '../../components/ui/Button.astro'
+import Section from '../../components/ui/Section.astro'
+import { APP_URL } from '../../utils/product'
 
-const title = 'RANDSUM Roller'
+const title = 'Dice Roller App'
 const description =
-  'A dice roller for your phone. Type any dice notation or tap the dice, see every step of the roll, and install it to roll offline.'
-const url = new URL('/app/', Astro.site).href
+  'A free dice roller for your phone and desktop. Type any dice notation or tap the dice, see every step of the roll, keep your recent rolls, and install it to roll offline. No account, no ads.'
+const image = 'https://randsum.dev/app/roller-phone-dark.png'
+
+const features = [
+  {
+    title: 'Any dice notation',
+    body: 'Type 4d6L, 1d20+5, 2d8!, 4dF or anything else in RANDSUM notation, and the roller checks it as you type.'
+  },
+  {
+    title: 'Or just tap the dice',
+    body: 'Dice keys build the roll for you: tap d20 twice for 2d20, then add a bonus, drop the lowest or explode.'
+  },
+  {
+    title: 'Every step shown',
+    body: 'See each die, what was rerolled, dropped or exploded, and how the total was reached.'
+  },
+  {
+    title: 'Your recent rolls',
+    body: 'The last rolls stay beside the roller, so you can check what you rolled or roll it again.'
+  },
+  {
+    title: 'Rolls offline',
+    body: 'Install it to your home screen and it keeps rolling at the table with no signal.'
+  },
+  {
+    title: 'No account, no tracking',
+    body: 'Nothing to sign up for. History stays on your device, and the app is free and open source.'
+  }
+]
+
+const installSteps = [
+  {
+    platform: 'iPhone and iPad',
+    steps: 'Open the app in Safari, tap Share, then Add to Home Screen.'
+  },
+  {
+    platform: 'Android',
+    steps:
+      'Open the app in Chrome and tap Install app in its header, or Install app in the browser menu.'
+  },
+  {
+    platform: 'Desktop',
+    steps: 'In Chrome or Edge, click the install icon at the end of the address bar.'
+  }
+]
+
+const jsonLd = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  name: 'RANDSUM Roller',
+  url: APP_URL,
+  description,
+  applicationCategory: 'GameApplication',
+  applicationSubCategory: 'Dice roller',
+  operatingSystem: 'Any (installable web app)',
+  browserRequirements: 'Requires a modern browser with JavaScript',
+  isAccessibleForFree: true,
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+  screenshot: image,
+  image,
+  author: { '@type': 'Organization', name: 'RANDSUM', url: 'https://randsum.dev/' }
+})
 ---
 
-<!doctype html>
-<html lang="en" data-product="app">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-    <title>{title}</title>
-    <meta name="description" content={description}>
-    <link rel="canonical" href={url}>
-    <link rel="manifest" href="/app/manifest.webmanifest">
-    <link rel="icon" href="/favicon.ico" sizes="32x32">
-    <link rel="icon" href="/app/icon.svg" type="image/svg+xml">
-    <link rel="apple-touch-icon" href="/app/apple-touch-icon.png">
-    <meta name="theme-color" content="">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-title" content="Roller">
-    <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta property="og:title" content={title}>
-    <meta property="og:description" content={description}>
-    <meta property="og:image" content="https://randsum.dev/og-image.png">
-    <meta property="og:url" content={url}>
-    <meta name="twitter:card" content="summary_large_image">
-    <Font cssVariable="--font-gabarito" preload />
-    <Font cssVariable="--font-jetbrains-mono" />
-    <script is:inline>
-    // Same key as Starlight's theme picker, so one choice holds across the site.
-    // The status bar takes the page background once the theme is known.
-    const saved = (() => {
-      try {
-        return localStorage.getItem('starlight-theme')
-      } catch {
-        return null
-      }
-    })()
-    const scheme =
-      saved === 'light' || saved === 'dark'
-        ? saved
-        : matchMedia('(prefers-color-scheme: light)').matches
-          ? 'light'
-          : 'dark'
-    document.documentElement.dataset.theme = scheme
-    addEventListener('DOMContentLoaded', () => {
-      const meta = document.querySelector('meta[name="theme-color"]')
-      if (meta) meta.setAttribute('content', getComputedStyle(document.body).backgroundColor)
-    })
-    </script>
-  </head>
-  <body>
-    <header class="app-bar">
-      <a href="/app/" class="app-title" aria-label="RANDSUM Roller">
-        <PipMark variant="knockout" size={28} class="app-mark" />
-        <span class="app-wordmark" translate="no">RANDSUM</span>
-        <span class="app-product">app</span>
-      </a>
-      <div class="app-actions">
-        <button type="button" class="app-link app-install" hidden>Install app</button>
-        <a href="/" class="app-link">Docs</a>
+<StarlightPage
+  frontmatter={{
+    title,
+    description,
+    template: 'splash',
+    head: [
+      { tag: 'meta', attrs: { property: 'og:title', content: 'RANDSUM Roller' } },
+      { tag: 'meta', attrs: { property: 'og:description', content: description } },
+      { tag: 'meta', attrs: { property: 'og:image', content: image } },
+      { tag: 'meta', attrs: { name: 'twitter:image', content: image } },
+      { tag: 'meta', attrs: { name: 'twitter:card', content: 'summary_large_image' } },
+      { tag: 'script', attrs: { type: 'application/ld+json' }, content: jsonLd }
+    ]
+  }}
+  hasSidebar={false}
+>
+  <div class="app-page">
+    <p class="app-moved" data-app-moved hidden>
+      The Roller moved to <a href={APP_URL}>app.randsum.dev</a>. Opening it now.
+    </p>
+
+    <Section
+      id="screens"
+      title="Built for the table"
+      lede="One screen: the roll you are building, its result step by step, and your last rolls."
+    >
+      <div class="screens">
+        <figure>
+          <img
+            src="/app/roller-phone-dark.png"
+            alt="The Roller on a phone in dark mode, showing a 4d6L roll and its steps"
+            width="390"
+            height="844"
+            loading="lazy"
+          >
+        </figure>
+        <figure>
+          <img
+            src="/app/roller-phone-light.png"
+            alt="The Roller on a phone in light mode, with the dice keys and recent rolls"
+            width="390"
+            height="844"
+            loading="lazy"
+          >
+        </figure>
       </div>
-    </header>
-    <main class="app-main">
-      <RollerApp client:load />
-    </main>
-    <script>
-    // Install: the browser offers its prompt once the page qualifies as an app;
-    // keep it and show the header button until the user takes it.
-    interface InstallPrompt extends Event {
-      prompt: () => Promise<void>
-    }
-    const installButton = document.querySelector<HTMLButtonElement>('.app-install')
-    const pending: { prompt: InstallPrompt | undefined } = { prompt: undefined }
-    addEventListener('beforeinstallprompt', event => {
-      if (!('prompt' in event)) return
-      event.preventDefault()
-      pending.prompt = event as InstallPrompt
-      if (installButton) installButton.hidden = false
-    })
-    addEventListener('appinstalled', () => {
-      pending.prompt = undefined
-      if (installButton) installButton.hidden = true
-    })
-    installButton?.addEventListener('click', () => {
-      void pending.prompt?.prompt().finally(() => {
-        pending.prompt = undefined
-        installButton.hidden = true
-      })
-    })
-    </script>
-    <script>
-    // Offline: the worker caches this page and its assets on first visit.
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker
-        .register('/app/sw.js', { scope: '/app/' })
-        .then(() => navigator.serviceWorker.ready)
-        .then(registration => {
-          // The first visit loads before the worker controls the page, so hand it
-          // every same-origin asset this page used.
-          const urls = performance
-            .getEntriesByType('resource')
-            .map(entry => entry.name)
-            .filter(name => new URL(name).origin === location.origin)
-          registration.active?.postMessage({ type: 'cache', urls: [location.pathname, ...urls] })
-        })
-        .catch(() => {
-          // No worker (private mode, old browser): the page still works online
-        })
-    }
-    </script>
-  </body>
-</html>
+    </Section>
 
-<style is:global>
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
+    <Section id="features" title="What it does">
+      <ul class="features">
+        {features.map(feature => (
+          <li>
+            <h3>{feature.title}</h3>
+            <p>{feature.body}</p>
+          </li>
+        ))}
+      </ul>
+    </Section>
+
+    <Section
+      id="install"
+      title="Install it"
+      lede="The Roller is a web app. Install it once and it opens like any other app, offline too."
+    >
+      <ol class="install">
+        {installSteps.map(step => (
+          <li>
+            <h3>{step.platform}</h3>
+            <p>{step.steps}</p>
+          </li>
+        ))}
+      </ol>
+    </Section>
+
+    <Section
+      id="notation"
+      title="Powered by the RANDSUM roller"
+      lede="The app rolls with @randsum/roller, the same engine behind the API, the Discord bot and the plugin, so a roll means the same thing everywhere."
+    >
+      <div class="actions">
+        <Button href="/notation/getting-started/" variant="secondary">Learn the notation</Button>
+        <Button href="/roller/introduction/" variant="secondary">About the roller</Button>
+      </div>
+    </Section>
+
+    <Section
+      id="open"
+      title="Start rolling"
+      lede="Free, in your browser, at app.randsum.dev. randsum.io gets you there too."
+    >
+      <div class="actions">
+        <Button href={APP_URL} variant="product" product="app">Open the app</Button>
+      </div>
+    </Section>
+  </div>
+</StarlightPage>
+
+<script>
+// Someone who installed the Roller back when it lived here opens this page from
+// their home screen; send them on to the app instead of a product page.
+if (matchMedia('(display-mode: standalone)').matches) {
+  const notice = document.querySelector<HTMLElement>('[data-app-moved]')
+  if (notice) notice.hidden = false
+  location.replace('https://app.randsum.dev/')
+}
+</script>
+
+<style>
+.app-page {
+  padding-bottom: 4rem;
 }
 
-html {
-  color-scheme: light dark;
-  height: 100%;
-  -webkit-tap-highlight-color: transparent;
+.app-moved {
+  padding: 0.75rem 1rem;
+  border: var(--rs-border);
+  border-radius: var(--rs-radius-md);
+  background: var(--rs-accent-low);
 }
 
-html[data-theme='light'] {
-  color-scheme: light;
-}
-
-html[data-theme='dark'] {
-  color-scheme: dark;
-}
-
-body {
+.screens {
   display: flex;
-  flex-direction: column;
-  height: 100dvh;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1.5rem;
+}
+
+.screens figure {
+  flex: 0 1 18rem;
   margin: 0;
-  overflow: hidden;
-  background: var(--rs-bg);
-  color: var(--rs-fg);
-  font-family: var(--rs-font-sans);
-  line-height: var(--rs-leading-body);
 }
 
-.app-bar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+.screens img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: var(--rs-border);
+  border-radius: var(--rs-radius-lg);
+}
+
+.features,
+.install {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
   gap: 1rem;
-  padding: calc(0.625rem + env(safe-area-inset-top)) 1rem 0.625rem;
-  border-bottom: var(--rs-border);
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
-.app-title {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  color: var(--rs-fg);
-  text-decoration: none;
+.features li,
+.install li {
+  margin: 0;
+  padding: 1.25rem;
+  border: var(--rs-border);
+  border-radius: var(--rs-radius-lg);
 }
 
-.app-mark {
-  color: var(--product-app-fill);
-  flex: none;
-}
-
-.app-wordmark {
-  font-size: var(--rs-text-md);
-  font-weight: var(--rs-weight-heavy);
-  letter-spacing: var(--rs-tracking-wordmark);
-}
-
-.app-product {
-  color: var(--rs-accent);
-  font-size: var(--rs-text-md);
-  font-weight: var(--rs-weight-bold);
-  letter-spacing: var(--rs-tracking-heading);
-}
-
-.app-actions {
-  display: flex;
-  align-items: center;
-  gap: 0.25rem;
-}
-
-.app-link {
-  padding: 0.375rem 0.625rem;
-  border-radius: var(--rs-radius-sm);
-  color: var(--rs-gray-2);
-  font-size: var(--rs-text-sm);
-  font-weight: var(--rs-weight-medium);
-  text-decoration: none;
-}
-
-.app-install {
-  border: none;
-  background: none;
-  color: var(--rs-accent);
-  font-family: var(--rs-font-sans);
+.features h3,
+.install h3 {
+  margin: 0 0 0.375rem;
+  font-size: var(--rs-text-base);
   font-weight: var(--rs-weight-semibold);
-  cursor: pointer;
-}
-
-.app-link:hover {
-  background: var(--rs-gray-6);
   color: var(--rs-fg);
 }
 
-.app-link:focus-visible,
-.app-title:focus-visible {
-  outline: none;
-  box-shadow: var(--rs-focus-ring);
+.features p,
+.install p {
+  margin: 0;
+  font-size: var(--rs-text-sm);
+  color: var(--rs-gray-2);
 }
 
-.app-main {
+.actions {
   display: flex;
-  flex: 1;
-  min-height: 0;
+  flex-wrap: wrap;
+  gap: 0.75rem;
 }
 </style>
