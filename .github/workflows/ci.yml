@@ -70,6 +70,11 @@ jobs:
               # the reference adapter.
               - 'packages/notation-spec/**'
               - 'packages/roller/**'
+              # The mirror tree and the check that proves it before a sync.
+              - 'scripts/sync-notation-spec.ts'
+              - 'scripts/check-notation-mirror.ts'
+              - 'scripts/notation-spec-mirror/**'
+              - '.bun-version'
               - '.github/workflows/ci.yml'
             site:
               - 'packages/**'
@@ -168,6 +173,12 @@ jobs:
         env:
           PKG: ${{ matrix.pkg }}
         run: bun run --filter "@randsum/$PKG" check
+      - name: Check the notation-spec mirror
+        # The mirror's own CI (bun install, bun run check) on the tree the sync
+        # would push, so main never syncs a commit the mirror's required
+        # `check` fails.
+        if: matrix.pkg == 'notation-spec'
+        run: bun run check:notation-mirror
       - name: Upload coverage to Codecov
         if: matrix.coverage && hashFiles(format('packages/{0}/coverage/lcov.info', matrix.pkg)) != ''
         uses: codecov/codecov-action@303a32d7a59b442fa8d48b6a1cc6825c09c847a5 # v7.1.1
