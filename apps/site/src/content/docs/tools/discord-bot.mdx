@@ -4,16 +4,29 @@ description: Add a free dice bot to your Discord server. Roll any notation, or D
 ---
 
 import CodeExample from '../../../components/live-repl/CodeExample.astro'
-
-See the [Discord bot page](/discord/) for screenshots and quick setup.
+import Button from '../../../components/ui/Button.astro'
+import Card from '../../../components/ui/Card.astro'
+import CardGrid from '../../../components/ui/CardGrid.astro'
+import DiscordGlyph from '../../../components/ui/DiscordGlyph.astro'
+import { DISCORD_INSTALL_URL } from '../../../utils/product'
 
 The **RANDSUM Discord Bot** is a Discord application for rolling dice in chat. It runs as a Cloudflare Worker that answers Discord's slash commands, and shows every step of each roll. It has a command for every RANDSUM game except Salvage Union, which the official SURef bot handles.
+
+## What a roll looks like
+
+Each reply breaks the roll down step by step, coloured by outcome.
+
+![The bot's reply to /roll 10d20, totalling 100](/discord-ss-roll-10d20.png)
+
+![The bot's reply to /roll 2d12+1](/discord-ss-roll-2d12.png)
 
 ## Add to your server
 
 Add the bot to any Discord server with one click:
 
-[Add RANDSUM to Discord](https://discord.com/oauth2/authorize?client_id=1290434147159904276&permissions=274877906944&scope=bot%20applications.commands)
+<div class="not-content">
+  <Button href={DISCORD_INSTALL_URL} variant="product" product="discord"><DiscordGlyph /> Add to Discord</Button>
+</div>
 
 No configuration is required after adding.
 
@@ -96,14 +109,28 @@ Lists all available RANDSUM slash commands with descriptions.
 
 ## Game Support
 
-The following game packages have dedicated slash commands:
+Six games have their own slash command, each resolving the roll by that game's rules:
 
-- **@randsum/games/fifth** -- `/fifth` for D&D 5th Edition rolls
-- **@randsum/games/blades** -- `/blades` for Blades in the Dark action rolls
-- **@randsum/games/daggerheart** -- `/dh` for Daggerheart hope and fear dice
-- **@randsum/games/fate** -- `/fate` for Fate Core rolls against the ladder
-- **@randsum/games/pbta** -- `/pbta` for Powered by the Apocalypse moves
-- **@randsum/games/root-rpg** -- `/root` for Root RPG mechanics
+<CardGrid>
+  <Card href="/games/fifth/" eyebrow="/fifth" title="D&D 5th Edition" accent="var(--game-fifth)">
+    d20 + modifier with advantage or disadvantage. Natural 20s and 1s stand out.
+  </Card>
+  <Card href="/games/blades/" eyebrow="/blades" title="Blades in the Dark" accent="var(--game-blades)">
+    Action dice pool: critical, success, partial or failure.
+  </Card>
+  <Card href="/games/daggerheart/" eyebrow="/dh" title="Daggerheart" accent="var(--game-daggerheart)">
+    Hope and fear dice with modifiers and amplification.
+  </Card>
+  <Card href="/games/fate/" eyebrow="/fate" title="Fate Core" accent="var(--game-fate)">
+    4dF + skill on the Fate ladder, with shifts against opposition.
+  </Card>
+  <Card href="/games/pbta/" eyebrow="/pbta" title="Powered by the Apocalypse" accent="var(--game-pbta)">
+    2d6 + stat. Miss, weak hit or strong hit for any PbtA game.
+  </Card>
+  <Card href="/games/root-rpg/" eyebrow="/root" title="Root RPG" accent="var(--game-root-rpg)">
+    2d6 + bonus. Strong hit, weak hit or miss.
+  </Card>
+</CardGrid>
 
 Salvage Union is served by the [SURef bot](https://salvageunion.io/discord) instead; `/salvageunion` points there. The `@randsum/games/salvageunion` package is still published and usable in your own code.
 

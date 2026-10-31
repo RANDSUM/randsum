@@ -35,6 +35,10 @@
 /getting-started/game-packages/    /games/introduction/                301
 /getting-started/game-packages     /games/introduction/                301
 
+# The standalone Discord page, merged into the bot's docs
+/discord/                          /tools/discord-bot/                 301
+/discord                           /tools/discord-bot/                 301
+
 # Retired @randsum/cli docs -> its successor
 /tools/cli/                        /tools/mcp/                         301
 /tools/cli                         /tools/mcp/                         301

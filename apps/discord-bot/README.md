@@ -142,7 +142,7 @@ src/
 2. Export a `Command` object literal with `data` (SlashCommandBuilder) and a `buildView(context)`
    renderer that returns Components V2 containers — usually via `rollContainer()` in `src/commands/lib/`
 3. Add the import and entry to `src/commands/index.ts` — the command barrel is the single source of truth (both `src/worker/index.ts` and `src/deploy-commands.ts` import from it)
-4. List it on the public pages: `apps/site/src/pages/discord.astro`, `apps/site/src/content/docs/tools/discord-bot.mdx`, `LISTING.md` and this README (`__tests__/public-copy.test.ts` checks)
+4. List it on the public pages: `apps/site/src/content/docs/tools/discord-bot.mdx`, `LISTING.md` and this README (`__tests__/public-copy.test.ts` checks)
 5. Merge — the deploy job registers it (see [Slash Commands](#slash-commands))
 
 ### Testing

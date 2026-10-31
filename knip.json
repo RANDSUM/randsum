@@ -37,7 +37,7 @@
       "project": ["src/**/*.ts"]
     },
     "apps/site": {
-      "entry": ["scripts/*.ts"],
+      "entry": ["scripts/*.ts", "src/routeData.ts"],
       "ignoreDependencies": ["@astrojs/ts-content-mapper", "satteri"]
     }
   },

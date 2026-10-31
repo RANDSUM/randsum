@@ -65,7 +65,7 @@ Game commands import `roll()` from the matching `@randsum/games/<shortcode>` sub
 
 1. Create `src/commands/<name>.ts` exporting a `Command` object.
 2. Add it to `src/commands/index.ts`. The barrel is the only file that needs to change.
-3. List it on the public pages: `apps/site/src/pages/discord.astro`, `apps/site/src/content/docs/tools/discord-bot.mdx`, `LISTING.md` and `README.md`. `__tests__/public-copy.test.ts` fails until every page names it.
+3. List it on the public pages: `apps/site/src/content/docs/tools/discord-bot.mdx`, `LISTING.md` and `README.md`. `__tests__/public-copy.test.ts` fails until every page names it.
 4. Merging registers it globally. While developing, run `bun run deploy-commands` with `DISCORD_GUILD_ID` set.
 
 ## Testing

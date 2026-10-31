@@ -157,7 +157,7 @@ steps — see [`docs/operations.md`](docs/operations.md).
 
 RANDSUM is actively evolving. Track in-flight epics on the [public project board](https://github.com/orgs/RANDSUM/projects/2/views/1) — published packages, upcoming game systems (Pathfinder 2e, Ironsworn), the typed notation template literal layer, and the dice mechanic spec format are all queued there.
 
-- **Discord:** [randsum.dev/discord](https://randsum.dev/discord/) — questions, feedback, game requests
+- **Discord bot:** [randsum.dev/tools/discord-bot](https://randsum.dev/tools/discord-bot/)
 - **Issues & ideas:** [GitHub Issues](https://github.com/RANDSUM/randsum/issues)
 - **Open PRs:** see [`CONTRIBUTING.md`](CONTRIBUTING.md) for the dev loop
 

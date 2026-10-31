@@ -9,7 +9,6 @@ const PREFIXES: readonly (readonly [string, Product])[] = [
   ['/spec', 'spec'],
   ['/api/', 'api'],
   ['/tools/discord-bot', 'discord'],
-  ['/discord', 'discord'],
   // The plugin product is every agent surface: skills, the MCP server, the connector
   ['/tools/agents', 'plugin'],
   ['/tools/mcp', 'plugin'],
@@ -213,7 +212,6 @@ const HERO_PAGES: Readonly<Record<string, Product>> = {
   '/api/introduction/': 'api',
   '/tools/discord-bot/': 'discord',
   '/tools/claude-code-plugin/': 'plugin',
-  '/discord/': 'discord',
   '/app/': 'app'
 }
 

@@ -82,9 +82,6 @@ const jsonLd = JSON.stringify({
     head: [
       { tag: 'meta', attrs: { property: 'og:title', content: 'RANDSUM Roller' } },
       { tag: 'meta', attrs: { property: 'og:description', content: description } },
-      { tag: 'meta', attrs: { property: 'og:image', content: image } },
-      { tag: 'meta', attrs: { name: 'twitter:image', content: image } },
-      { tag: 'meta', attrs: { name: 'twitter:card', content: 'summary_large_image' } },
       { tag: 'script', attrs: { type: 'application/ld+json' }, content: jsonLd }
     ]
   }}

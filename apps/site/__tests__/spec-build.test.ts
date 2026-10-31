@@ -28,19 +28,17 @@ describe.skipIf(root === '' || versioned === '')('built /spec pages', () => {
   })
 
   // The root and the latest version page render the same spec, so both name
-  // the versioned URL as canonical and both carry Appendix H.
+  // /spec/ as canonical and both carry Appendix H.
   test.each([
     ['/spec/', root],
     ['/spec/v/0.9.0/', versioned]
-  ])('%s is canonical to /spec/v/0.9.0/ and carries Appendix H', (_, html) => {
-    expect(html.includes('<link rel="canonical" href="https://randsum.dev/spec/v/0.9.0/">')).toBe(
-      true
-    )
+  ])('%s is canonical to /spec/ and carries Appendix H', (_, html) => {
+    expect(html.includes('<link rel="canonical" href="https://randsum.dev/spec/">')).toBe(true)
     expect(html.includes('id="appendix-h"')).toBe(true)
   })
 
   test('only the canonical page is in the search index', () => {
-    expect(root.includes('data-pagefind-body')).toBe(false)
-    expect(versioned.includes('data-pagefind-body')).toBe(true)
+    expect(root.includes('data-pagefind-body')).toBe(true)
+    expect(versioned.includes('data-pagefind-body')).toBe(false)
   })
 })
