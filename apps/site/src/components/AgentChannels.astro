@@ -15,7 +15,7 @@ import { AGENT_CHANNELS } from '../utils/agents'
       style={`--p: var(--product-${channel.product}-fill); --p-text: var(--product-${channel.product})`}
     >
       <p class="agent-channel-for">
-        <PipMark variant="knockout" size={18} />
+        <PipMark variant="knockout" product={channel.product} size={18} />
         {channel.worksWith}
       </p>
       <h3>{channel.name}</h3>

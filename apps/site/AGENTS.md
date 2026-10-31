@@ -22,9 +22,10 @@ Private app, deploys to Cloudflare Workers once CI is green on `main` via
 - **`@randsum/roller`** — workspace-linked, powers the live notation components
 - Fonts (Gabarito for text and headings, JetBrains Mono for code)
   via Astro's Google font provider, loaded by the `<Font />` tags in `Head.astro`
-- Brand: the pip R mark (`src/components/PipMark.astro`, outline and knockout) and a
-  product family. Chrome is neutral; `src/utils/product.ts` maps a path to its product
-  (roller, games, spec, api, discord, plugin, app), `Head.astro` stamps `<html data-product>`,
+- Brand: the pip mark (`src/components/PipMark.astro`, outline and knockout) and a
+  product family. The roller's die spells R, the family mark; every other product has its own
+  pip pattern (`PIPS` in `src/utils/product.ts`), so pass `product` wherever a die stands
+  for one. Chrome is neutral; `src/utils/product.ts` maps a path to its product (roller, games, spec, api, discord, plugin, app), `Head.astro` stamps `<html data-product>`,
   and `theme.css` turns that into the page's accent (`--product-*`)
 - Social cards: `public/og-image.png` is the family card; each product has
   `public/og/<product>.png`, and `src/routeData.ts` (Starlight route middleware) points a
@@ -190,7 +191,7 @@ Interactive / shared components:
 - `HeroRoller/` — the landing hero's live roller (notation field, token breakdown,
   rolled result with every step, example presets), in the roller's colour
 - `HeroInteractive.tsx` — the clickable tagline, which spins `HeroRoller`'s presets
-- `PipMark.astro` — the pip R mark, outline or knockout
+- `PipMark.astro` — the pip mark, outline or knockout, in a product's pattern (R by default)
 - `ProductHero.astro` — a product's hero: lockup, name in its colour, pitch, install, facts
 - `ErrorBoundary/` — React error boundary
 

@@ -6,7 +6,7 @@ const product = productForPath(Astro.url.pathname)
 ---
 
 <a href={siteTitleHref} class="site-title-link" data-pip-roll>
-  <PipMark size={30} class="site-title-mark" />
+  <PipMark size={30} product={product ?? 'roller'} class="site-title-mark" />
   <span class="site-title-text" translate="no">RANDSUM</span>
   {product && <span class="site-title-product">{PRODUCT_LABELS[product]}</span>}
 </a>
@@ -14,7 +14,8 @@ const product = productForPath(Astro.url.pathname)
 <script>
 // Hover the mark: the die tumbles through four random d6 faces (1 to 6 pips),
 // holding each for DWELL ms, then lands back on R. Pips a face does not use
-// shrink away at the centre.
+// shrink away at the centre. A product's mark can have fewer than six pips, so
+// spare pips wait at the centre with no radius until a face needs them.
 const DWELL = 300
 const ROLLS = 4
 const [L, M, H] = [28, 50, 72] as const
@@ -58,7 +59,16 @@ const pickFaces = (): readonly number[] =>
     return [...acc, pool[Math.floor(Math.random() * pool.length)] ?? 0]
   }, [])
 for (const link of document.querySelectorAll<HTMLAnchorElement>('[data-pip-roll]')) {
-  const circles = [...link.querySelectorAll<SVGCircleElement>('circle')]
+  const found = [...link.querySelectorAll<SVGCircleElement>('circle')]
+  const spares = Array.from({ length: Math.max(0, 6 - found.length) }, () => {
+    const spare = found[0]?.cloneNode() as SVGCircleElement | undefined
+    spare?.setAttribute('cx', String(M))
+    spare?.setAttribute('cy', String(M))
+    spare?.setAttribute('r', '0')
+    if (spare) found[0]?.parentNode?.appendChild(spare)
+    return spare
+  })
+  const circles = [...found, ...spares.filter(c => c !== undefined)]
   const home = circles.map(
     c =>
       [c.getAttribute('cx') ?? '', c.getAttribute('cy') ?? '', c.getAttribute('r') ?? ''] as const
@@ -70,7 +80,7 @@ for (const link of document.querySelectorAll<HTMLAnchorElement>('[data-pip-roll]
       const cell = cells[i]
       c.setAttribute('cx', String(cell?.[0] ?? M))
       c.setAttribute('cy', String(cell?.[1] ?? M))
-      c.setAttribute('r', cell ? (home[i]?.[2] ?? '8') : '0')
+      c.setAttribute('r', cell ? '8' : '0')
     })
   }
   link.addEventListener('mouseenter', () => {

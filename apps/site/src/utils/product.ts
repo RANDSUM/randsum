@@ -1,5 +1,5 @@
-// The product a page belongs to. Each product wears the pip R die in its own
-// colour; theme.css turns <html data-product> into that page's accent.
+// The product a page belongs to. Each product wears the pip die in its own
+// colour and its own pattern; theme.css turns <html data-product> into that page's accent.
 export type Product = 'roller' | 'games' | 'spec' | 'api' | 'discord' | 'plugin' | 'app'
 
 const PREFIXES: readonly (readonly [string, Product])[] = [
@@ -24,6 +24,70 @@ export const PRODUCT_LABELS: Readonly<Record<Product, string>> = {
   discord: 'discord bot',
   plugin: 'plugin',
   app: 'app'
+}
+
+// Each product's pattern on the die's 3x3 face, centres on a 22 pitch. The
+// roller keeps the brand's R; the rest draw what the product does.
+const [L, M, H] = [28, 50, 72] as const
+type Pip = readonly [number, number]
+export const PIPS: Readonly<Record<Product, readonly Pip[]>> = {
+  // R
+  roller: [
+    [L, L],
+    [M, L],
+    [L, M],
+    [M, M],
+    [L, H],
+    [H, H]
+  ],
+  // A gem, the d8's diamond
+  games: [
+    [M, L],
+    [L, M],
+    [H, M],
+    [M, H]
+  ],
+  // Two lines of text
+  spec: [
+    [L, L],
+    [M, L],
+    [H, L],
+    [L, H],
+    [M, H]
+  ],
+  // A > prompt
+  api: [
+    [L, L],
+    [M, M],
+    [L, H]
+  ],
+  // A bot's face
+  discord: [
+    [L, L],
+    [H, L],
+    [L, H],
+    [M, H],
+    [H, H]
+  ],
+  // A plus: an add-on
+  plugin: [
+    [M, L],
+    [L, M],
+    [M, M],
+    [H, M],
+    [M, H]
+  ],
+  // An app icon on a home screen
+  app: [
+    [L, L],
+    [M, L],
+    [H, L],
+    [L, M],
+    [H, M],
+    [L, H],
+    [M, H],
+    [H, H]
+  ]
 }
 
 export function productForPath(pathname: string): Product | undefined {

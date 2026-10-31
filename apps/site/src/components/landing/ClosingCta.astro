@@ -10,7 +10,7 @@ import { PRODUCT_LABELS, PRODUCTS } from '../../utils/product'
     {PRODUCTS.map(product => (
       <li style={`--p: var(--product-${product.id}-fill)`}>
         <a href={product.href} title={product.tagline}>
-          <PipMark variant="knockout" size={36} />
+          <PipMark variant="knockout" product={product.id} size={36} />
           <span>{PRODUCT_LABELS[product.id]}</span>
         </a>
       </li>
