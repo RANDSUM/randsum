@@ -112,7 +112,7 @@ jobs:
             {"pkg":"mcp"},
             {"pkg":"discord-bot"},
             {"pkg":"api"},
-            {"pkg":"site","node":"22"}
+            {"pkg":"site","node":"24"}
           ]'
           changed='${{ toJSON(steps.filter.outputs) }}'
           include=$(jq -cn --argjson all "$all" --argjson changed "$changed" \
@@ -140,7 +140,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: ./.github/actions/bun-setup
         with:
-          # site pins node 22 so CI builds it on a fixed runtime rather
+          # site pins node 24 so CI builds it on a fixed runtime rather
           # than drifting with the runner default; other legs pass '',
           # which bun-setup treats as "skip node setup".
           node-version: ${{ matrix.node || '' }}
