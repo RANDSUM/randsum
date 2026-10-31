@@ -1,11 +1,8 @@
-interface StackBlitzProject {
-  readonly title: string
-  readonly description: string
-  readonly template: string
-  readonly files: Readonly<Record<string, string>>
-}
+import sdk from '@stackblitz/sdk'
+import type { Project } from '@stackblitz/sdk'
 
-export function buildStackBlitzProject(notation: string): StackBlitzProject {
+// A runnable Node project that rolls one notation string with @randsum/roller
+export function buildStackBlitzProject(notation: string): Project {
   const safe = JSON.stringify(notation)
   const code = `import { roll } from '@randsum/roller'
 
@@ -21,6 +18,7 @@ console.log('Rolls:   ', result.rolls)
       name: 'randsum-playground',
       version: '1.0.0',
       private: true,
+      type: 'module',
       scripts: { start: 'tsx index.ts' },
       dependencies: { '@randsum/roller': 'latest', tsx: 'latest' }
     },
@@ -29,7 +27,7 @@ console.log('Rolls:   ', result.rolls)
   )
 
   return {
-    title: `RANDSUM \u2014 ${notation}`,
+    title: `RANDSUM — ${notation}`,
     description: `Rolling ${notation} with @randsum/roller`,
     template: 'node',
     files: {
@@ -37,4 +35,13 @@ console.log('Rolls:   ', result.rolls)
       'package.json': packageJson
     }
   }
+}
+
+// StackBlitz's /run endpoint only accepts a POSTed form; a GET with the files
+// in the query string lands on its homepage. The SDK posts the form for us.
+export function openNotationInStackBlitz(notation: string): void {
+  sdk.openProject(buildStackBlitzProject(notation), {
+    newWindow: true,
+    openFile: 'index.ts'
+  })
 }
