@@ -129,7 +129,7 @@ body:has(.landing) .content-panel:has(#_top) {
   color: var(--sl-color-white);
 }
 
-/* The live roller, framed like the mockup's "Try it" panel */
+/* The live roller's frame; the roller itself is components/HeroRoller */
 .hero-roller {
   min-width: 0;
   padding: 1.25rem;
@@ -140,20 +140,46 @@ body:has(.landing) .content-panel:has(#_top) {
 
 .hero-roller-top {
   display: flex;
+  align-items: center;
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 0.5rem;
   margin-bottom: 1rem;
-  font-size: var(--rs-text-xs);
-  color: var(--sl-color-gray-3);
 }
 
-.hero-roller-top b {
+.hero-roller .hero-roller-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0;
+  font-family: var(--rs-font-sans);
+  font-size: var(--rs-text-sm);
+  font-weight: var(--rs-weight-semibold);
+  letter-spacing: 0;
+  line-height: var(--rs-leading-snug);
+  color: var(--rs-fg);
+}
+
+.hero-roller-title .pip-mark {
+  color: var(--product-roller-fill);
+}
+
+.hero-roller-title code {
+  padding: 0;
+  border: none;
+  background: none;
   font-family: var(--rs-font-mono);
+  font-size: var(--rs-text-sm);
   font-weight: var(--rs-weight-medium);
   color: var(--product-roller);
 }
 
+.hero-roller-note {
+  font-size: var(--rs-text-xs);
+  color: var(--sl-color-gray-3);
+}
+
+/* Chips, used by the game schema viewer */
 .hero-chips {
   display: flex;
   flex-wrap: wrap;
