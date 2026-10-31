@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { roll } from '@randsum/roller/roll'
 import { isDiceNotation } from '@randsum/roller/validate'
 import { NotationDescription, NotationRoller, RollResultDisplay } from '../dice-ui'
@@ -49,6 +49,7 @@ export function RollerApp(): React.JSX.Element {
   const [notation, setNotation] = useState('1d20')
   const [result, setResult] = useState<RollResult | undefined>(undefined)
   const [history, setHistory] = useState<readonly HistoryEntry[]>([])
+  const historyRef = useRef<HTMLDialogElement>(null)
 
   useEffect(() => {
     setHistory(loadHistory())
@@ -88,65 +89,25 @@ export function RollerApp(): React.JSX.Element {
 
   return (
     <div className="ra-app">
-      <div className="ra-scroll">
-        <section className="ra-stage" aria-label="Result">
-          {result === undefined ? (
-            <div className="ra-empty">
-              <p className="ra-empty-title">Pick some dice, or type any roll.</p>
-              <p className="ra-empty-hint">
-                Tap a die to add it, then roll. Try <code>4d6L</code> or <code>2d20L+5</code>.
-              </p>
-            </div>
-          ) : (
-            <div className="ra-result" key={history[0]?.id}>
-              <p className="ra-total" aria-live="polite">
-                {result.total}
-              </p>
-              <div className="ra-steps">
-                <RollResultDisplay records={result.records} notation={result.notation} />
-              </div>
-            </div>
-          )}
-        </section>
-
-        <aside
-          className={['ra-history', history.length === 0 ? 'ra-history--empty' : '']
-            .filter(Boolean)
-            .join(' ')}
-          aria-label="Recent rolls"
-        >
-          <div className="ra-history-head">
-            <h2>Recent rolls</h2>
-            {history.length > 0 && (
-              <button type="button" className="ra-text-button" onClick={clearHistory}>
-                Clear
-              </button>
-            )}
+      <section className="ra-stage" aria-label="Result">
+        {result === undefined ? (
+          <div className="ra-empty">
+            <p className="ra-empty-title">Pick some dice, or type any roll.</p>
+            <p className="ra-empty-hint">
+              Tap a die to add it, then roll. Try <code>4d6L</code> or <code>2d20L+5</code>.
+            </p>
           </div>
-          {history.length === 0 ? (
-            <p className="ra-history-hint">Your rolls land here. Tap one to roll it again.</p>
-          ) : (
-            <ol>
-              {history.map(entry => (
-                <li key={entry.id}>
-                  <button
-                    type="button"
-                    className="ra-history-item"
-                    onClick={() => {
-                      rollAgain(entry.notation)
-                    }}
-                    aria-label={`Roll ${entry.notation} again (last total ${entry.total})`}
-                  >
-                    <span className="ra-history-notation">{entry.notation}</span>
-                    <span className="ra-history-desc">{entry.description}</span>
-                    <span className="ra-history-total">{entry.total}</span>
-                  </button>
-                </li>
-              ))}
-            </ol>
-          )}
-        </aside>
-      </div>
+        ) : (
+          <div className="ra-result" key={history[0]?.id}>
+            <p className="ra-total" aria-live="polite">
+              {result.total}
+            </p>
+            <div className="ra-steps">
+              <RollResultDisplay records={result.records} notation={result.notation} />
+            </div>
+          </div>
+        )}
+      </section>
 
       <section className="ra-dock" aria-label="Build a roll">
         <NotationDescription className="ra-description" notation={notation} />
@@ -226,10 +187,76 @@ export function RollerApp(): React.JSX.Element {
           className="ra-roller"
           notation={notation}
           showDescription={false}
+          inputActions={
+            <button
+              type="button"
+              className="ra-history-link"
+              aria-haspopup="dialog"
+              onClick={() => {
+                historyRef.current?.showModal()
+                // Start on Done, not Clear, so a stray Enter can't wipe history
+                historyRef.current?.querySelector<HTMLButtonElement>('.ra-history-close')?.focus()
+              }}
+            >
+              History
+            </button>
+          }
           onChange={setNotation}
           onRoll={record}
         />
       </section>
+      <dialog
+        ref={historyRef}
+        className="ra-history"
+        aria-labelledby="ra-history-title"
+        onClick={event => {
+          // A click on the backdrop lands on the dialog itself
+          if (event.target === event.currentTarget) event.currentTarget.close()
+        }}
+      >
+        <div className="ra-history-head">
+          <h2 id="ra-history-title">History</h2>
+          <div className="ra-history-actions">
+            {history.length > 0 && (
+              <button type="button" className="ra-text-button" onClick={clearHistory}>
+                Clear
+              </button>
+            )}
+            <button
+              type="button"
+              className="ra-text-button ra-history-close"
+              onClick={() => {
+                historyRef.current?.close()
+              }}
+            >
+              Done
+            </button>
+          </div>
+        </div>
+        {history.length === 0 ? (
+          <p className="ra-history-hint">Your rolls land here. Tap one to roll it again.</p>
+        ) : (
+          <ol>
+            {history.map(entry => (
+              <li key={entry.id}>
+                <button
+                  type="button"
+                  className="ra-history-item"
+                  onClick={() => {
+                    historyRef.current?.close()
+                    rollAgain(entry.notation)
+                  }}
+                  aria-label={`Roll ${entry.notation} again (last total ${entry.total})`}
+                >
+                  <span className="ra-history-notation">{entry.notation}</span>
+                  <span className="ra-history-desc">{entry.description}</span>
+                  <span className="ra-history-total">{entry.total}</span>
+                </button>
+              </li>
+            ))}
+          </ol>
+        )}
+      </dialog>
     </div>
   )
 }

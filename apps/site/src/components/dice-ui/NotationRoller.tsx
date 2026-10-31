@@ -18,6 +18,8 @@ export interface NotationRollerProps {
   readonly renderActions?: (notation: string) => React.ReactNode
   /** Set false to render the description elsewhere with NotationDescription. */
   readonly showDescription?: boolean
+  /** Controls inside the input row, ahead of the Roll button */
+  readonly inputActions?: React.ReactNode
   /** Fires with roll result data when a roll completes. */
   readonly onRoll?: (result: RollResult) => void
 }
@@ -30,6 +32,7 @@ export function NotationRoller({
   resetToken,
   renderActions,
   showDescription = true,
+  inputActions,
   onRoll
 }: NotationRollerProps = {}): React.JSX.Element {
   const theme = useTheme()
@@ -156,6 +159,7 @@ export function NotationRoller({
           </div>
 
           <div className="du-notation-roller-buttons">
+            {inputActions}
             <button
               className="du-notation-roller-roll-btn"
               onClick={e => {
