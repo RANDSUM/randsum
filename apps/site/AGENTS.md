@@ -73,19 +73,32 @@ Every page is built from tokens and shared components, and tools hold them there
 
 ## Notation Spec (`/spec`)
 
-The RANDSUM Dice Notation spec is served from this app at `/spec` but is
-**not** a Starlight page (ADR-015): `src/pages/spec/` are plain Astro pages
+The RANDSUM Dice Notation spec is served at its own host, `notation.randsum.dev`,
+but built by this app. It is **not** a Starlight page (ADR-015): `src/pages/spec/` are plain Astro pages
 that render `src/spec/SpecLayout.astro`, which has its own header, sidebar,
 scroll-spy and share actions in vanilla `<script>` blocks (ADR-017), and the
 spec's product colour as its accent. Never import `StarlightPage` there, and keep `src/spec/spec.css`
 imported only by `SpecLayout`, since its resets are global to the page.
 
+- Hosting: Astro builds the pages under `/spec/`; `scripts/build-notation.ts`
+  (the last step of `bun run build`) lifts `dist/spec/` to the root of
+  `dist-notation/`, adds `/_astro/`, the favicons, `robots.txt` and
+  `sitemap.xml`, and deletes `dist/spec/`. `wrangler.notation.jsonc` serves
+  `dist-notation/` as static assets from the `randsum-rdn` Worker, which holds the
+  hostname's Custom Domain (`docs/operations.md`). randsum.dev's
+  `public/_redirects` 301s `/spec`, `/spec/*` and `/conformance/*` there.
+- Links: a spec page links within the spec by its path on that host through
+  `specPath()` (which adds `/spec` under `astro dev` only), names full URLs with
+  `specUrl()`, and links to the rest of the site with `SITE_ORIGIN`, all from
+  `src/spec/urls.ts`. Never write `/spec/` into a spec page's links, and never a
+  bare `/` for a site page: neither exists on the spec's host.
+  `__tests__/spec-build.test.ts` checks the built output.
 - Versions live in `packages/notation-spec/spec/` (the `specs` collection's glob
   loader reads that directory; the package is the spec's source of truth). `v0.9.0.md`
-  has ID `0.9.0` and is served at `/spec/v/0.9.0/`; `/spec/` renders the latest
-  inline, not as a redirect (ADR-016). Both name `/spec/` as canonical, only
-  `/spec/` opts into the Pagefind index, and `astro.config.mjs` keeps
-  `/spec/v/<latest>/` out of the sitemap. Older versions are canonical to themselves.
+  has ID `0.9.0` and is served at `/v/0.9.0/`; `/` renders the latest
+  inline, not as a redirect (ADR-016). Both name `https://notation.randsum.dev/` as
+  canonical, only `/` opts into the Pagefind index, and the spec host's
+  `sitemap.xml` leaves out `/v/<latest>/`. Older versions are canonical to themselves.
 - `ModifierReference.astro` builds Appendix H from `@randsum/roller/docs`, so it
   renders only on the latest version.
 - The page follows formal-spec conventions (W3C/IETF), not the site's
@@ -98,22 +111,18 @@ imported only by `SpecLayout`, since its resets are global to the page.
   matter (title, version, revision, status, date, editor, all validated by
   `content.config.ts`) back on the Markdown for `llms-full.txt`.
 - Conformance badges: `src/pages/spec/badges/[version]/[badge].ts` serves a
-  shields-style SVG per level at `/spec/badges/v<version>/level-<n>.svg`,
-  drawn by `src/spec/badges.ts` in theme colours. `/spec/conformance/`
-  explains how to claim a level and gives the embed snippets.
-- `/spec/llms.txt` and `/spec/llms-full.txt` are built from the same entry.
+  shields-style SVG per level at `/badges/v<version>/level-<n>.svg`,
+  drawn by `src/spec/badges.ts` in theme colours. `/conformance/`
+  (`src/pages/spec/conformance/index.astro`) explains how to claim a level and
+  gives the embed snippets.
+- `/llms.txt` and `/llms-full.txt` on the spec's host are built from the same entry.
 - Code blocks go through Starlight's Expressive Code, which reads a few
   `--sl-color-*` names; `spec.css` maps them onto the spec's tokens.
-- The theme script shares Starlight's `starlight-theme` key, so one choice
-  holds across the site.
+- The theme script shares Starlight's `starlight-theme` key, but localStorage is
+  per host, so the spec's host keeps its own choice.
 - Conformance vectors: `packages/notation-spec/vectors/v0.9.0.json` is the
-  source of truth. `src/pages/conformance/[file].ts` serves it verbatim at
+  source of truth. `src/pages/spec/conformance/[file].ts` serves it verbatim at
   `/conformance/v0.9.0.json`, with its schema at `/conformance/conformance.schema.json`.
-- The spec moved here from `notation.randsum.dev`, which now only 301s:
-  `/conformance/*` keeps its path, everything else maps to `/spec/*`. The
-  redirect is `worker/notation-redirect.ts`, deployed from
-  `wrangler.notation.jsonc` to the old `randsum-rdn` Worker, which keeps the
-  hostname's Custom Domain (`docs/operations.md`).
 
 ## Roller app (app.randsum.dev)
 

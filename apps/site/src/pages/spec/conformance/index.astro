@@ -1,16 +1,16 @@
 ---
 // How an implementation advertises its RDN conformance level (spec §10.6,
 // §10.7): the badge for each level, with Markdown and HTML to paste.
-import { getLatestVersion, getVersions } from '../../spec/versions'
-import { LEVELS } from '../../spec/badges'
+import { getLatestVersion, getVersions } from '../../../spec/versions'
+import { LEVELS } from '../../../spec/badges'
 import CONFORMANCE_FILE from '@randsum/notation-spec/vectors/v0.9.0.json'
-import SpecLayout from '../../spec/SpecLayout.astro'
-import SpecContent from '../../spec/components/SpecContent.astro'
+import SpecLayout from '../../../spec/SpecLayout.astro'
+import SpecContent from '../../../spec/components/SpecContent.astro'
+import { specPath, specUrl as notationUrl } from '../../../spec/urls'
 
 const version = await getLatestVersion()
 const versions = await getVersions()
-const site = Astro.site ?? new URL('https://randsum.dev')
-const specUrl = new URL('/spec/', site).href
+const specUrl = notationUrl('/')
 const levelsUrl = `${specUrl}#10-conformance-levels`
 const required = [
   CONFORMANCE_FILE.conformanceLevels.level1_core,
@@ -26,8 +26,8 @@ const SUMMARY: Record<number, string> = {
   4: 'Every feature: zero-bias, geometric and draw dice, explode sequences, wild die, margin of success, repeat.'
 }
 const badges = LEVELS.map(level => {
-  const path = `/spec/badges/v${version}/level-${level.level}.svg`
-  const src = new URL(path, site).href
+  const path = specPath(`/badges/v${version}/level-${level.level}.svg`)
+  const src = notationUrl(`/badges/v${version}/level-${level.level}.svg`)
   const alt = `RDN ${version} Level ${level.level}: ${level.name}`
   return {
     ...level,
@@ -46,7 +46,7 @@ const badges = LEVELS.map(level => {
   version={version}
   versions={versions}
   isLatest={true}
-  canonicalPath="/spec/conformance/"
+  canonicalPath="/conformance/"
   description="Badges for implementations of the RANDSUM Dice Notation spec: one per conformance level, with Markdown and HTML to paste into a README."
 >
   <div slot="sidebar" class="sidebar-inner">
@@ -87,8 +87,8 @@ const badges = LEVELS.map(level => {
         Implement every feature of the level and of the levels below it, as listed in Table 10.1.
       </li>
       <li>
-        Run the <a href={`/conformance/v${version}.json`}>conformance vectors</a> for that level,
-        including all {errorCount} error vectors, and pass every one (Section 11.3).
+        Run the <a href={specPath(`/conformance/v${version}.json`)}>conformance vectors</a> for that
+        level, including all {errorCount} error vectors, and pass every one (Section 11.3).
       </li>
       <li>
         State the claim with the version and level, for example

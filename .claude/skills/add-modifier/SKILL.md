@@ -24,7 +24,7 @@ Confirm all of the following before writing code. If any are missing, ask:
 
 ## Classify
 
-Use the spec's derivation status (Primitive / Alias / Macro — https://randsum.dev/spec/, source `packages/notation-spec/spec/v0.9.0.md`):
+Use the spec's derivation status (Primitive / Alias / Macro — https://notation.randsum.dev/, source `packages/notation-spec/spec/v0.9.0.md`):
 
 - **Primitive** — irreducible behavior. Gets its own `apply`.
 - **Alias** — same behavior as an existing primitive at a different priority or with a trivial transform. Reuse an existing behavior factory instead of duplicating logic: `createScaleBehavior` (`modifiers/shared/scale.ts`) or `createAccumulatingExplosionBehavior` (`modifiers/shared/explosion.ts`). `minus` and `multiplyTotal` are both `createScaleBehavior` with a different operation.
@@ -122,7 +122,7 @@ Minimum bar: notation → options, options → notation (round-trip), one behavi
 
 ## Spec and public docs
 
-- Document the notation in the spec at `packages/notation-spec/spec/v0.9.0.md` (served at https://randsum.dev/spec/): taxonomy table, priority table, syntax section. Add a new `vX.Y.Z.md` only for a version bump; otherwise edit in place.
+- Document the notation in the spec at `packages/notation-spec/spec/v0.9.0.md` (served at https://notation.randsum.dev/): taxonomy table, priority table, syntax section. Add a new `vX.Y.Z.md` only for a version bump; otherwise edit in place.
 - Update `llms.txt` at the repo root if the public notation surface materially changes.
 
 ## Verification (in order)

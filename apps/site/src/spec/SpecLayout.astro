@@ -6,6 +6,7 @@ import SkipLink from './components/SkipLink.astro'
 import ShareActions from './components/ShareActions.astro'
 import MobileMenu from './components/MobileMenu.astro'
 import KofiButton from '../components/KofiButton.astro'
+import { builtPath, specUrl as notationUrl } from './urls'
 import './spec.css'
 
 import type { Heading } from './sections'
@@ -19,7 +20,7 @@ interface Props {
   headings?: Heading[]
   /** The version's date (ISO), from its front matter */
   published?: string
-  /** A page beside the spec itself (/spec/conformance/) names its own address */
+  /** A page beside the spec itself (/conformance/) names its own path on the spec host */
   canonicalPath?: string
   description?: string
 }
@@ -36,15 +37,15 @@ const {
   description = 'The formal specification for RANDSUM Dice Notation — a human-readable syntax for dice rolls in tabletop RPGs. Defines modifiers, execution pipeline, conformance levels, and special dice types.'
 } = Astro.props
 const pageTitle = isLatest ? `${title}` : `${title} — ${version}`
-// /spec/ and /spec/v/<latest>/ render the same version (ADR-016 keeps both,
-// with no redirect), so both name /spec/ as canonical: links and rankings stay
-// on the address people share when a new version ships. Older versions are
-// canonical to themselves.
-const specUrl = new URL(canonicalPath ?? (isLatest ? '/spec/' : `/spec/v/${version}/`), Astro.site)
-  .href
+// / and /v/<latest>/ render the same version (ADR-016 keeps both, with no
+// redirect), so both name / as canonical: links and rankings stay on the
+// address people share when a new version ships. Older versions are canonical
+// to themselves. Every canonical URL is on notation.randsum.dev (./urls.ts).
+const canonical = canonicalPath ?? (isLatest ? '/' : `/v/${version}/`)
+const specUrl = notationUrl(canonical)
 // Starlight's Pagefind index skips pages without data-pagefind-body. Opt in
 // the canonical page only, so search lists each version once.
-const isCanonical = Astro.url.pathname.replace(/\/?$/, '/') === new URL(specUrl).pathname
+const isCanonical = Astro.url.pathname.replace(/\/?$/, '/') === builtPath(canonical)
 const jsonLd = JSON.stringify({
   '@context': 'https://schema.org',
   '@type': 'TechArticle',

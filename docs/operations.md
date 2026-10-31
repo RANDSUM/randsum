@@ -87,37 +87,33 @@ bun run --filter '@randsum/roller' build
 bun run --filter '@randsum/games' build
 bun run site:build
 bun run --filter @randsum/site deploy
-bun run --filter @randsum/site deploy:notation   # notation.randsum.dev 301s
+bun run --filter @randsum/site deploy:notation   # notation.randsum.dev (the spec)
 ```
 
-### notation.randsum.dev — redirect only
+### notation.randsum.dev — the spec's host
 
-The spec moved into `apps/site` at `/spec`. `notation.randsum.dev` must keep
-answering with a 301, because the spec (v0.9.0, section "Document
-Information") and every conformance file's `$id` name it. The redirect is code:
-`apps/site/worker/notation-redirect.ts`, deployed by the site job from
-`apps/site/wrangler.notation.jsonc` right after the site itself.
+The notation spec is served at `notation.randsum.dev`. Astro builds its pages
+under `/spec/` with the site; `apps/site/scripts/build-notation.ts` lifts them
+into `apps/site/dist-notation/` (the last step of the site's `build`), and the
+site job deploys that directory from `apps/site/wrangler.notation.jsonc`, static
+assets only, right after the site itself. randsum.dev keeps no copy:
+`apps/site/public/_redirects` sends `/spec`, `/spec/*` and `/conformance/*`
+there with a 301, path kept.
 
-| Path on notation.randsum.dev | 301 to |
-| --- | --- |
-| `/conformance/*` | `https://randsum.dev/conformance/*` (the `$id` path is kept) |
-| `/robots.txt`, `/favicon.ico`, `/sitemap-index.xml`, `/sitemap-0.xml` | the same file on `https://randsum.dev` |
-| anything else | `https://randsum.dev/spec<path>` |
+The config deploys to the **existing `randsum-rdn` Worker**, the one that has
+always served this host. Its `notation.randsum.dev` Custom Domain lives on that
+Worker rather than in any config file, so a new deploy under the same name keeps
+the hostname and its DNS record. Do not delete the `randsum-rdn` Worker and do
+not detach its custom domain.
 
-The query string is kept on every redirect, and `apps/site/__tests__/notation-redirect.test.ts`
-pins the table.
-
-The config deploys to the **existing `randsum-rdn` Worker**, the one that
-served the old rdn site. Its `notation.randsum.dev` Custom Domain lives on that
-Worker rather than in any config file, so a new script under the same name
-keeps the hostname and its DNS record. Do not delete the `randsum-rdn` Worker
-and do not detach its custom domain: that is what keeps the redirect reachable.
-
-Both of these must print a 301 with the shown `location`:
+After a deploy, the first two must print 200 and the last two a 301 with the
+shown `location`:
 
 ```bash
-curl -sI https://notation.randsum.dev/v/0.9.0/ | grep -i -E '^(HTTP|location)'                 # 301 → https://randsum.dev/spec/v/0.9.0/
-curl -sI https://notation.randsum.dev/conformance/v0.9.0.json | grep -i -E '^(HTTP|location)'  # 301 → https://randsum.dev/conformance/v0.9.0.json
+curl -sI https://notation.randsum.dev/ | grep -i -E '^HTTP'                                    # 200
+curl -sI https://notation.randsum.dev/conformance/v0.9.0.json | grep -i -E '^HTTP'             # 200
+curl -sI https://randsum.dev/spec/v/0.9.0/ | grep -i -E '^(HTTP|location)'                     # 301 → https://notation.randsum.dev/v/0.9.0/
+curl -sI https://randsum.dev/conformance/v0.9.0.json | grep -i -E '^(HTTP|location)'           # 301 → https://notation.randsum.dev/conformance/v0.9.0.json
 ```
 
 ### Deploying when no deploy ran

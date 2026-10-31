@@ -4,7 +4,7 @@ The RANDSUM Dice Notation Specification (every file in this `spec/` directory) i
 
 You may share and adapt the specification for any purpose, including commercially, provided you give appropriate credit, link to the licence, and indicate if you made changes. Credit it as:
 
-> RANDSUM Dice Notation Specification, https://randsum.dev/spec/, licensed under CC BY 4.0.
+> RANDSUM Dice Notation Specification, https://notation.randsum.dev/, licensed under CC BY 4.0.
 
 Full legal code: https://creativecommons.org/licenses/by/4.0/legalcode
 

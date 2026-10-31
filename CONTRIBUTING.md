@@ -96,5 +96,5 @@ Releases are automated via [changesets](https://github.com/changesets/changesets
 
 - [GitHub Issues](https://github.com/RANDSUM/randsum/issues) -- bugs and feature requests
 - [Project Board](https://github.com/orgs/RANDSUM/projects/2/views/1) -- roadmap and priorities
-- [RANDSUM Dice Notation (RDN) Specification](https://randsum.dev/spec/) -- the formal spec for dice notation syntax
+- [RANDSUM Dice Notation (RDN) Specification](https://notation.randsum.dev/) -- the formal spec for dice notation syntax
 - [Architecture Decisions](docs/adr/) -- key design decisions and rationale

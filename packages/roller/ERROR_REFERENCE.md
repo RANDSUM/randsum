@@ -376,6 +376,6 @@ function getUserFriendlyError(error: Error): string {
 
 ## Related Documentation
 
-- [RANDSUM Dice Notation Specification](https://randsum.dev/spec/) - Complete notation reference
+- [RANDSUM Dice Notation Specification](https://notation.randsum.dev/) - Complete notation reference
 - [Type Definitions](src/types/index.ts) - TypeScript type definitions
 - [Error Classes](src/errors.ts) - Error class implementations

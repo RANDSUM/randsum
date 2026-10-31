@@ -184,9 +184,9 @@ export async function runConformance(
 export function badgeMarkdown(specVersion: string, level: number): string {
   const name = LEVELS[level - 1]?.name
   if (name === undefined) throw new RangeError(`There is no conformance level ${level}`)
-  const src = `https://randsum.dev/spec/badges/v${specVersion}/level-${level}.svg`
+  const src = `https://notation.randsum.dev/badges/v${specVersion}/level-${level}.svg`
   const alt = `RDN ${specVersion} Level ${level}: ${name}`
-  return `[![${alt}](${src})](https://randsum.dev/spec/#10-conformance-levels)`
+  return `[![${alt}](${src})](https://notation.randsum.dev/#10-conformance-levels)`
 }
 
 /** A plain-text summary of a report. */

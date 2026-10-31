@@ -107,3 +107,4 @@ packages/games/.test-tmp/
 # Wrangler local state (dev sessions, cached bindings) — never committed.
 .wrangler/
 apps/site/dist-app
+apps/site/dist-notation
