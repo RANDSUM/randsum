@@ -56,10 +56,10 @@ html {
   --sl-line-height: 1.5;
   --sl-text-code: var(--rs-text-xs);
 
-  /* Layout */
-  --sidebar-width: 220px;
-  --aside-width: 160px;
-  --content-max-width: 720px;
+  /* Layout: a contents column and one measure of text, as W3C and IETF
+     documents set theirs */
+  --sidebar-width: 17rem;
+  --content-max-width: 46rem;
 }
 
 :root[data-theme='light'] {
@@ -70,9 +70,16 @@ html {
 body {
   background: var(--bg);
   color: var(--text-primary);
-  font-family: var(--font-gabarito), system-ui, sans-serif;
+  font-family: var(--rs-font-sans);
   font-size: var(--rs-text-sm);
-  line-height: 1.7;
+  line-height: var(--rs-leading-body);
+}
+
+/* A spec shows the characters to type: >= stays >=, never a ≥ ligature */
+code,
+pre,
+.expressive-code {
+  font-variant-ligatures: none;
 }
 
 /* === Focus === */
@@ -103,11 +110,10 @@ body {
   outline-offset: 2px;
 }
 
-/* === Three-Column Layout === */
+/* === Layout: contents beside the document === */
 .spec-layout {
   display: grid;
-  grid-template-columns: var(--sidebar-width) 1fr var(--aside-width);
-  grid-template-rows: auto 1fr;
+  grid-template-columns: var(--sidebar-width) minmax(0, 1fr);
   min-height: 100vh;
 }
 
@@ -116,33 +122,15 @@ body {
   top: 0;
   height: 100vh;
   overflow-y: auto;
-  padding: 1.5rem 1rem;
+  padding: 2rem 1.25rem 2rem 1.5rem;
+  border-right: var(--rs-border);
 }
 
 .spec-content {
   width: 100%;
+  max-width: calc(var(--content-max-width) + 7rem);
   min-width: 0;
-  padding: 2rem 2.5rem;
-  overflow-x: hidden;
-}
-
-.spec-aside {
-  position: sticky;
-  top: 0;
-  height: 100vh;
-  overflow-y: auto;
-  padding: 1.5rem 1rem;
-}
-
-/* === Responsive === */
-@media (max-width: 1279px) {
-  .spec-layout {
-    grid-template-columns: var(--sidebar-width) 1fr;
-  }
-
-  .spec-aside {
-    display: none;
-  }
+  padding: 3rem 3.5rem 4rem;
 }
 
 @media (max-width: 1023px) {
@@ -153,44 +141,34 @@ body {
   .spec-sidebar {
     display: none;
   }
+
+  .spec-content {
+    padding: 2rem 1.25rem 3rem;
+  }
 }
 
 /* === Typography helpers === */
 .label {
-  font-family: var(--font-gabarito), system-ui, sans-serif;
+  font-family: var(--rs-font-sans);
   font-size: var(--rs-text-2xs);
 }
 
-/* === SidebarNav === */
+.secno {
+  font-variant-numeric: tabular-nums;
+}
+
+/* === SidebarNav: the contents === */
 .sidebar-inner {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1.25rem;
 }
 
-.sidebar-version {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-}
-
-.sidebar-version-badge {
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-  font-size: var(--rs-text-xs);
-  color: var(--text-secondary);
-}
-
-.sidebar-latest-badge {
-  display: inline-block;
-  padding: 0.1rem 0.4rem;
-  font-size: var(--rs-text-2xs);
-  font-family: var(--font-gabarito), system-ui, sans-serif;
-  background: var(--accent-tint);
-  color: var(--accent);
-  border: 1px solid var(--accent-border);
-  border-radius: var(--rs-radius-xs);
+.sidebar-title {
+  font-family: var(--rs-font-heading);
+  font-size: var(--rs-text-sm);
+  font-weight: var(--rs-weight-bold);
+  color: var(--text-primary);
 }
 
 .sidebar-group {
@@ -201,7 +179,8 @@ body {
 
 .sidebar-group-label {
   display: block;
-  margin-bottom: 0.35rem;
+  margin-bottom: 0.25rem;
+  font-size: var(--rs-text-2xs);
   color: var(--text-muted);
 }
 
@@ -211,25 +190,33 @@ body {
   margin: 0;
   display: flex;
   flex-direction: column;
-  gap: 0.1rem;
 }
 
 .sidebar-link {
-  display: block;
-  padding: 0.3rem 0.5rem;
-  font-family: var(--font-gabarito), system-ui, sans-serif;
+  display: grid;
+  grid-template-columns: 2.25rem 1fr;
+  gap: 0.25rem;
+  padding: 0.2rem 0 0.2rem 0.6rem;
   font-size: var(--rs-text-xs);
+  line-height: var(--rs-leading-snug);
   color: var(--text-secondary);
   text-decoration: none;
-  border-radius: var(--rs-radius-xs);
+  border-left: 2px solid transparent;
   transition:
-    color 0.15s ease,
-    background 0.15s ease;
+    color var(--rs-duration) var(--rs-ease),
+    border-color var(--rs-duration) var(--rs-ease);
+}
+
+.sidebar-link .secno {
+  color: var(--text-muted);
+}
+
+.sidebar-link > span:only-child {
+  grid-column: 1 / -1;
 }
 
 .sidebar-link:hover {
   color: var(--text-primary);
-  background: var(--surface);
 }
 
 .sidebar-link:focus-visible {
@@ -240,33 +227,30 @@ body {
 .sidebar-link.active,
 .sidebar-link[aria-current='true'] {
   color: var(--accent);
-  background: var(--accent-tint);
+  border-left-color: var(--accent);
 }
 
-/* === HeroHeader === */
+/* === The bar above the document: the product, not the page title === */
 .spec-hero {
-  position: relative;
   border-bottom: var(--rs-border);
-  padding: 2.5rem 2rem 2rem;
+  padding: 0.75rem 1.5rem;
 }
 
 .spec-hero-inner {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
-  gap: 2rem;
-  max-width: calc(var(--sidebar-width) + var(--content-max-width) + var(--aside-width));
+  gap: 1rem;
 }
 
 .spec-hero-brand {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  margin-bottom: 0.75rem;
   color: var(--text-primary);
   text-decoration: none;
   font-family: var(--rs-font-heading);
-  font-size: var(--rs-text-base);
+  font-size: var(--rs-text-sm);
 }
 
 .spec-hero-mark {
@@ -283,26 +267,7 @@ body {
   color: var(--accent);
 }
 
-.spec-hero-title {
-  font-family: var(--rs-font-heading);
-  font-size: var(--rs-text-2xl);
-  font-weight: var(--rs-weight-bold);
-  color: var(--text-primary);
-  line-height: 1.2;
-  margin-bottom: 0.75rem;
-}
-
-.spec-hero-subtitle {
-  font-size: var(--rs-text-sm);
-  color: var(--text-secondary);
-  max-width: 480px;
-  margin-bottom: 0.5rem;
-}
-
 .spec-hero-actions {
-  position: absolute;
-  top: 1.5rem;
-  right: 1.5rem;
   display: flex;
   align-items: center;
   gap: 0.75rem;
@@ -313,7 +278,7 @@ body {
   align-items: center;
   color: var(--text-muted);
   text-decoration: none;
-  transition: color 0.15s ease;
+  transition: color var(--rs-duration) var(--rs-ease);
 }
 
 .spec-hero-github:hover {
@@ -738,187 +703,299 @@ body.mobile-menu-open {
 }
 
 /* === SpecContent: Rendered Markdown Styles === */
-.spec-content-body {
+/* === The document header === */
+.spec-head {
+  margin-bottom: 2.5rem;
   max-width: var(--content-max-width);
-  overflow-wrap: break-word;
-  word-break: break-word;
 }
 
-/* --- Headings --- */
-.spec-content-body h2 {
-  font-family: var(--rs-font-heading);
-  font-size: var(--rs-text-lg);
-  font-weight: var(--rs-weight-bold);
-  color: var(--text-primary);
-  margin-top: 3rem;
-  margin-bottom: 1.25rem;
-  padding-bottom: 0.75rem;
-  border-bottom: var(--rs-border);
-}
-
-.spec-content-body h2:first-child {
-  margin-top: 0;
-}
-
-.spec-content-body h3 {
-  font-family: var(--rs-font-heading);
-  font-size: var(--rs-text-md);
-  font-weight: var(--rs-weight-semibold);
-  color: var(--text-primary);
-  margin-top: 2rem;
-  margin-bottom: 0.75rem;
-}
-
-.spec-content-body h4 {
-  font-family: var(--rs-font-heading);
-  font-size: var(--rs-text-base);
-  font-weight: var(--rs-weight-semibold);
-  color: var(--text-primary);
-  margin-top: 1.5rem;
+.spec-head-series {
+  font-size: var(--rs-text-xs);
+  color: var(--text-muted);
   margin-bottom: 0.5rem;
 }
 
-/* --- Paragraphs --- */
-.spec-content-body p {
-  margin-bottom: 1rem;
+.spec-head-title {
+  font-family: var(--rs-font-heading);
+  font-size: var(--rs-text-2xl);
+  font-weight: var(--rs-weight-bold);
+  letter-spacing: var(--rs-tracking-heading);
+  line-height: var(--rs-leading-snug);
+  color: var(--text-primary);
 }
 
-/* --- Links --- */
-.spec-content-body a {
+.spec-head-status {
+  margin: 0.5rem 0 1.75rem;
+  font-size: var(--rs-text-md);
+  color: var(--accent);
+}
+
+.spec-head-meta {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  column-gap: 1.5rem;
+  row-gap: 0.35rem;
+  font-size: var(--rs-text-sm);
+}
+
+.spec-head-meta dt {
+  grid-column: 1;
+  font-weight: var(--rs-weight-semibold);
+  color: var(--text-primary);
+}
+
+.spec-head-meta dd {
+  grid-column: 2;
+  margin: 0;
+  color: var(--text-secondary);
+  overflow-wrap: anywhere;
+}
+
+.spec-head-meta a,
+.spec-toc a {
   color: var(--accent);
   text-decoration: none;
 }
 
-.spec-content-body a:hover {
+.spec-head-meta a:hover,
+.spec-toc a:hover {
   text-decoration: underline;
-  color: var(--accent-light);
 }
 
-/* --- Horizontal Rules (section dividers) --- */
+@media (max-width: 639px) {
+  .spec-head-meta {
+    grid-template-columns: 1fr;
+  }
+
+  .spec-head-meta dt,
+  .spec-head-meta dd {
+    grid-column: 1;
+  }
+
+  .spec-head-meta dd {
+    margin-bottom: 0.5rem;
+  }
+}
+
+/* === Table of contents === */
+.spec-toc {
+  max-width: var(--content-max-width);
+  margin-bottom: 3rem;
+}
+
+.spec-toc-title {
+  font-family: var(--rs-font-heading);
+  font-size: var(--rs-text-lg);
+  font-weight: var(--rs-weight-bold);
+  margin-bottom: 0.75rem;
+}
+
+.spec-toc-list,
+.spec-toc-list ol {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.spec-toc-list > li {
+  margin-top: 0.4rem;
+}
+
+.spec-toc-list ol {
+  padding-left: 2.75rem;
+}
+
+.spec-toc-list a {
+  display: inline-flex;
+  gap: 0.5rem;
+  font-size: var(--rs-text-sm);
+}
+
+.spec-toc-list ol a {
+  font-size: var(--rs-text-xs);
+}
+
+.spec-toc .secno {
+  min-width: 2.25rem;
+  color: var(--text-secondary);
+}
+
+/* === The document body: a serif text face, as a formal document === */
+.spec-content-body {
+  max-width: var(--content-max-width);
+  font-family: var(--rs-font-serif);
+  font-size: var(--rs-text-base);
+  line-height: var(--rs-leading-body);
+  color: var(--text-primary);
+}
+
+.spec-content-body h2,
+.spec-content-body h3,
+.spec-content-body h4,
+.spec-content-body h5 {
+  position: relative;
+  font-family: var(--rs-font-heading);
+  line-height: var(--rs-leading-snug);
+  color: var(--text-primary);
+  scroll-margin-top: 1.5rem;
+}
+
+.spec-content-body h2 {
+  margin: 3.5rem 0 1rem;
+  font-size: var(--rs-text-xl);
+  font-weight: var(--rs-weight-bold);
+  letter-spacing: var(--rs-tracking-tight);
+}
+
+.spec-content-body h3 {
+  margin: 2.5rem 0 0.75rem;
+  font-size: var(--rs-text-lg);
+  font-weight: var(--rs-weight-semibold);
+}
+
+.spec-content-body h4 {
+  margin: 2rem 0 0.5rem;
+  font-size: var(--rs-text-md);
+  font-weight: var(--rs-weight-semibold);
+}
+
+.spec-content-body h5 {
+  margin: 1.5rem 0 0.5rem;
+  font-size: var(--rs-text-base);
+  font-weight: var(--rs-weight-semibold);
+}
+
+.spec-content-body .secno {
+  margin-right: 0.35em;
+  color: var(--accent);
+}
+
+/* The section sign W3C documents hang in the margin beside a heading */
+.spec-content-body .self-link {
+  position: absolute;
+  left: -1.5em;
+  width: 1.25em;
+  text-align: center;
+  color: var(--text-muted);
+  text-decoration: none;
+  opacity: 0;
+  transition: opacity var(--rs-duration) var(--rs-ease);
+}
+
+.spec-content-body :is(h2, h3, h4, h5):hover .self-link,
+.spec-content-body .self-link:focus-visible {
+  opacity: 1;
+}
+
+.spec-content-body p {
+  margin-bottom: 1rem;
+}
+
+.spec-content-body a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.15em;
+}
+
+.spec-content-body a:hover {
+  text-decoration-thickness: 2px;
+}
+
+/* BCP 14 keywords, set in small capitals as W3C documents set them */
+.spec-content-body em.rfc2119 {
+  font-style: normal;
+  font-weight: var(--rs-weight-semibold);
+  font-variant: small-caps;
+  text-transform: lowercase;
+}
+
+.spec-content-body p.informative {
+  font-style: italic;
+  color: var(--text-secondary);
+}
+
 .spec-content-body hr {
-  border: none;
-  height: 1px;
-  background: var(--rs-gray-5);
-  margin: 2.5rem 0;
+  display: none;
 }
 
-/* --- Tables --- */
 .spec-content-body .table-wrap {
   overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-  margin-bottom: 1.5rem;
-  border: 1px solid var(--border);
-  border-radius: var(--rs-radius-sm);
+  margin: 1.25rem 0 1.5rem;
 }
 
 .spec-content-body table {
   width: 100%;
-  border-collapse: separate;
-  border-spacing: 0;
+  border-collapse: collapse;
+  font-family: var(--rs-font-sans);
   font-size: var(--rs-text-sm);
-  line-height: 1.6;
-  border: none;
-  border-radius: 0;
-  overflow: hidden;
-}
-
-/* When table is NOT wrapped, preserve old styling */
-.spec-content-body > table {
-  margin-bottom: 1.5rem;
-  border: 1px solid var(--border);
-  border-radius: var(--rs-radius-sm);
+  line-height: var(--rs-leading-snug);
 }
 
 .spec-content-body thead th {
-  background: var(--accent);
-  color: var(--rs-on-accent);
-  font-family: var(--font-jetbrains-mono), monospace;
-  font-size: var(--rs-text-xs);
-  font-weight: var(--rs-weight-semibold);
+  padding: 0.5rem 0.75rem 0.5rem 0;
   text-align: left;
-  padding: 0.6rem 0.75rem;
-  white-space: nowrap;
+  vertical-align: bottom;
+  font-weight: var(--rs-weight-semibold);
+  color: var(--text-primary);
+  border-bottom: 2px solid var(--text-primary);
 }
 
 .spec-content-body tbody td {
-  padding: 0.5rem 0.75rem;
-  border-top: 1px solid var(--border);
+  padding: 0.45rem 0.75rem 0.45rem 0;
   vertical-align: top;
-}
-
-.spec-content-body tbody tr:nth-child(odd) {
-  background: var(--surface);
-}
-
-.spec-content-body tbody tr:nth-child(even) {
-  background: var(--bg);
-}
-
-/* --- Blockquotes / Callout Boxes --- */
-.spec-content-body blockquote {
-  border-left: 3px solid var(--accent);
-  background: var(--accent-tint);
-  padding: 0.75rem 1rem;
-  margin-bottom: 1.25rem;
-  border-radius: 0 var(--rs-radius-sm) var(--rs-radius-sm) 0;
   color: var(--text-secondary);
+  border-bottom: var(--rs-border);
 }
 
-.spec-content-body blockquote p {
-  margin-bottom: 0.5rem;
+.spec-content-body blockquote {
+  margin: 1.25rem 0;
+  padding: 0.75rem 1rem;
+  border-left: 3px solid var(--rs-gray-4);
+  color: var(--text-secondary);
 }
 
 .spec-content-body blockquote p:last-child {
   margin-bottom: 0;
 }
 
-/* --- Inline Code --- */
+.spec-content-body blockquote.note {
+  border-left-color: var(--accent);
+  background: var(--accent-tint);
+}
+
+.spec-content-body blockquote.note strong:first-child {
+  color: var(--accent);
+}
+
 .spec-content-body code {
-  font-family: var(--font-jetbrains-mono), monospace;
-  font-size: var(--rs-text-xs);
+  font-family: var(--rs-font-mono);
+  font-size: 0.875em;
+  padding: 0.05em 0.3em;
   background: var(--surface);
-  border: 1px solid var(--border);
-  padding: 0.15rem 0.35rem;
   border-radius: var(--rs-radius-xs);
 }
 
-/* --- Code Blocks --- */
 .spec-content-body pre {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--rs-radius-sm);
+  margin: 1.25rem 0;
   padding: 1rem 1.25rem;
-  margin-bottom: 1.5rem;
   overflow-x: auto;
-  line-height: 1.5;
+  background: var(--surface);
+  border: var(--rs-border);
+  border-radius: var(--rs-radius-sm);
+  line-height: var(--rs-leading-snug);
 }
 
 .spec-content-body pre code {
-  background: none;
-  border: none;
   padding: 0;
-  border-radius: 0;
+  background: none;
   font-size: var(--rs-text-xs);
 }
 
-/* --- Lists --- */
 .spec-content-body ul,
 .spec-content-body ol {
-  margin-bottom: 1rem;
+  margin: 0 0 1rem;
   padding-left: 1.5rem;
-}
-
-.spec-content-body ul {
-  list-style-type: disc;
-}
-
-.spec-content-body ul li::marker {
-  color: var(--accent);
-}
-
-.spec-content-body ol li::marker {
-  color: var(--accent);
-  font-weight: var(--rs-weight-semibold);
 }
 
 .spec-content-body li {
@@ -927,120 +1004,25 @@ body.mobile-menu-open {
 
 .spec-content-body li > ul,
 .spec-content-body li > ol {
-  margin-top: 0.35rem;
-  margin-bottom: 0.35rem;
+  margin: 0.35rem 0 0;
 }
 
-/* --- Definition Lists (Glossary) --- */
-.spec-content-body dl {
-  margin-bottom: 1.25rem;
-}
-
-.spec-content-body dt {
-  font-weight: var(--rs-weight-bold);
-  color: var(--text-primary);
-  margin-top: 0.75rem;
-}
-
-.spec-content-body dd {
-  margin-left: 1.5rem;
-  color: var(--text-secondary);
-  margin-bottom: 0.5rem;
-}
-
-/* --- Strong and Emphasis --- */
 .spec-content-body strong {
-  font-weight: var(--rs-weight-bold);
+  font-weight: var(--rs-weight-semibold);
   color: var(--text-primary);
 }
 
-/* === Property Cards (grouped **Label:** value paragraphs) === */
+/* A modifier's record (Notation, Options, Effect...): a definition block */
 .prop-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--rs-radius-sm);
-  padding: 0.75rem 1rem;
-  margin-bottom: 1.25rem;
+  margin: 1rem 0 1.5rem;
+  padding: 0.25rem 0 0.25rem 1rem;
+  border-left: 2px solid var(--border);
 }
 
 .prop-card p {
-  margin-bottom: 0.5rem;
-  padding-bottom: 0.5rem;
-  border-bottom: 1px solid var(--border);
-  font-size: var(--rs-text-sm);
-  line-height: 1.6;
+  margin-bottom: 0.6rem;
 }
 
 .prop-card p:last-child {
-  border-bottom: none;
   margin-bottom: 0;
-  padding-bottom: 0;
-}
-
-.prop-card p > strong:first-child {
-  color: var(--accent);
-  font-weight: var(--rs-weight-semibold);
-  font-size: var(--rs-text-2xs);
-  margin-right: 0.5rem;
-}
-
-/* === OnThisPage (right TOC) === */
-.toc-inner {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
-.toc-title {
-  color: var(--text-muted);
-}
-
-.toc-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0.15rem;
-}
-
-.toc-item {
-  border-left: 2px solid transparent;
-  transition: border-color 0.15s ease;
-}
-
-.toc-item.toc-depth-3 {
-  padding-left: 0;
-}
-
-.toc-item.toc-depth-4 {
-  padding-left: 0.75rem;
-}
-
-.toc-item:has(.toc-link.active) {
-  border-left-color: var(--accent);
-}
-
-.toc-link {
-  display: block;
-  padding: 0.2rem 0.5rem;
-  font-family: var(--font-gabarito), system-ui, sans-serif;
-  font-size: var(--rs-text-2xs);
-  color: var(--text-secondary);
-  text-decoration: none;
-  line-height: 1.4;
-  transition: color 0.15s ease;
-}
-
-.toc-link:hover {
-  color: var(--accent-light);
-}
-
-.toc-link:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 1px;
-}
-
-.toc-link.active {
-  color: var(--accent);
 }

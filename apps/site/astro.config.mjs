@@ -38,6 +38,15 @@ export default defineConfig({
       provider: fontProviders.google(),
       weights: [400, 500, 600, 700],
       styles: ['normal']
+    },
+    // The notation spec's body face, and only the spec's: a formal document
+    // reads apart from the product pages (src/spec/SpecLayout.astro)
+    {
+      name: 'Source Serif 4',
+      cssVariable: '--font-source-serif',
+      provider: fontProviders.google(),
+      weights: [400, 600],
+      styles: ['normal', 'italic']
     }
   ],
   site: 'https://randsum.dev',

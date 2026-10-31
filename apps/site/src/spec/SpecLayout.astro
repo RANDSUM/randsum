@@ -8,11 +8,7 @@ import MobileMenu from './components/MobileMenu.astro'
 import KofiButton from '../components/KofiButton.astro'
 import './spec.css'
 
-interface Heading {
-  depth: number
-  slug: string
-  text: string
-}
+import type { Heading } from './sections'
 
 interface Props {
   title: string
@@ -21,22 +17,34 @@ interface Props {
   isLatest: boolean
   specMarkdown?: string
   headings?: Heading[]
+  /** The version's date (ISO), from its front matter */
+  published?: string
+  /** A page beside the spec itself (/spec/conformance/) names its own address */
+  canonicalPath?: string
+  description?: string
 }
 
-const { title, version, versions, isLatest, specMarkdown = '', headings = [] } = Astro.props
+const {
+  title,
+  version,
+  versions,
+  isLatest,
+  specMarkdown = '',
+  headings = [],
+  published,
+  canonicalPath,
+  description = 'The formal specification for RANDSUM Dice Notation — a human-readable syntax for dice rolls in tabletop RPGs. Defines modifiers, execution pipeline, conformance levels, and special dice types.'
+} = Astro.props
 const pageTitle = isLatest ? `${title}` : `${title} — ${version}`
 // /spec/ and /spec/v/<latest>/ render the same version (ADR-016 keeps both,
 // with no redirect), so both name /spec/ as canonical: links and rankings stay
 // on the address people share when a new version ships. Older versions are
 // canonical to themselves.
-const specUrl = new URL(isLatest ? '/spec/' : `/spec/v/${version}/`, Astro.site).href
+const specUrl = new URL(canonicalPath ?? (isLatest ? '/spec/' : `/spec/v/${version}/`), Astro.site)
+  .href
 // Starlight's Pagefind index skips pages without data-pagefind-body. Opt in
 // the canonical page only, so search lists each version once.
 const isCanonical = Astro.url.pathname.replace(/\/?$/, '/') === new URL(specUrl).pathname
-const description =
-  'The formal specification for RANDSUM Dice Notation — a human-readable syntax for dice rolls in tabletop RPGs. Defines modifiers, execution pipeline, conformance levels, and special dice types.'
-// The spec's own header line ("**Date:** 2026-03-21") dates the version
-const published = /\*\*Date:\*\*\s*(\d{4}-\d{2}-\d{2})/.exec(specMarkdown)?.[1]
 const jsonLd = JSON.stringify({
   '@context': 'https://schema.org',
   '@type': 'TechArticle',
@@ -75,6 +83,7 @@ const jsonLd = JSON.stringify({
     <script type="application/ld+json" set:html={jsonLd} />
     <Font cssVariable="--font-gabarito" preload />
     <Font cssVariable="--font-jetbrains-mono" />
+    <Font cssVariable="--font-source-serif" preload />
     <script is:inline>
     // Apply the theme before render to prevent a flash: a saved choice wins,
     // otherwise follow the OS. Same key and data-theme as Starlight's picker,
@@ -107,9 +116,7 @@ const jsonLd = JSON.stringify({
     <VersionBanner isLatest={isLatest} />
     <div class="spec-layout">
       <nav class="spec-sidebar" aria-label="Spec sections">
-        <slot name="sidebar">
-          <p class="label" style="color: var(--text-muted);">Sidebar</p>
-        </slot>
+        <slot name="sidebar" />
       </nav>
       <main
         id="main-content"
@@ -118,11 +125,6 @@ const jsonLd = JSON.stringify({
       >
         <slot name="content" />
       </main>
-      <aside class="spec-aside" aria-label="In this section">
-        <slot name="aside">
-          <p class="label" style="color: var(--text-muted);">On this page</p>
-        </slot>
-      </aside>
     </div>
     {specMarkdown && <ShareActions specMarkdown={specMarkdown} specUrl={specUrl} />}
     <footer class="spec-footer">

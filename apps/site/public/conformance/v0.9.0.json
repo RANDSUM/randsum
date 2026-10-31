@@ -1,19 +1,17 @@
 {
-  "$id": "https://notation.randsum.dev/conformance/v0.9.0.json",
+  "$id": "https://randsum.dev/conformance/v0.9.0.json",
   "specVersion": "0.9.0",
   "generatedFrom": "packages/roller/spec/vectors.ts",
   "conformanceLevels": {
     "level1_core": [1, 2, 3, 10, 11, 14, 15, 16, 19, 20, 26, 27],
-    "level2_vtt": [
-      1, 2, 3, 7, 9, 10, 11, 12, 13, 14, 15, 16, 18, 19, 20, 21, 22, 25, 26, 27, 35, 40, 43, 45
-    ],
+    "level2_vtt": [1, 2, 3, 9, 10, 11, 12, 13, 14, 15, 16, 18, 19, 20, 21, 22, 26, 27, 43, 45, 55],
     "level3_extended": [
-      1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 18, 19, 20, 21, 22, 23, 25, 26, 27, 31,
-      34, 35, 36, 37, 40, 41, 43, 44, 45, 49, 50
+      1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 24, 25, 26, 27,
+      31, 35, 36, 37, 40, 41, 42, 43, 44, 45, 49, 50, 55
     ],
     "level4_full": [
-      1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 18, 19, 20, 21, 22, 23, 25, 26, 27, 31,
-      32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 49, 50, 51
+      1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26,
+      27, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 49, 50, 51, 55
     ],
     "errorCases": [28, 29, 30, 46, 47, 48, 52, 53, 54]
   },
@@ -86,7 +84,7 @@
       "expectedPool": [5, 3, 5, 5],
       "expectedTotal": 18,
       "section": "6.4.2",
-      "conformanceLevel": 2
+      "conformanceLevel": 3
     },
     {
       "id": 8,
@@ -248,7 +246,7 @@
       "expectedPool": [18],
       "expectedTotal": 3,
       "section": "6.7.5",
-      "conformanceLevel": 3
+      "conformanceLevel": 4
     },
     {
       "id": 24,
@@ -258,7 +256,7 @@
       "expectedPool": [1, 2, 3, 5],
       "expectedTotal": 11,
       "section": "6.8.1",
-      "conformanceLevel": 2
+      "conformanceLevel": 3
     },
     {
       "id": 25,
@@ -268,7 +266,7 @@
       "expectedPool": [4, 5],
       "expectedTotal": 12,
       "section": "6.8.2",
-      "conformanceLevel": 2
+      "conformanceLevel": 3
     },
     {
       "id": 26,
@@ -353,7 +351,7 @@
       "expectedPool": [0],
       "expectedTotal": 0,
       "section": "4.5.3",
-      "conformanceLevel": 3
+      "conformanceLevel": 4
     },
     {
       "id": 35,
@@ -364,7 +362,7 @@
       "expectedPool": [3, 4, 5],
       "expectedTotal": 12,
       "section": "6.5.3",
-      "conformanceLevel": 2
+      "conformanceLevel": 3
     },
     {
       "id": 36,
@@ -402,10 +400,10 @@
       "id": 39,
       "notation": "3d6!s{4,6,8}",
       "category": "extended_coverage",
-      "seedRolls": [4, 2, 5],
-      "sequenceRolls": [6],
-      "expectedPool": [4, 2, 5, 6],
-      "expectedTotal": 17,
+      "seedRolls": [6, 2, 5],
+      "sequenceRolls": [3],
+      "expectedPool": [6, 2, 5, 3],
+      "expectedTotal": 16,
       "section": "6.5.7",
       "conformanceLevel": 4
     },
@@ -417,7 +415,7 @@
       "expectedPool": [3, 5],
       "expectedTotal": 0,
       "section": "6.6.6",
-      "conformanceLevel": 2
+      "conformanceLevel": 3
     },
     {
       "id": 41,
@@ -437,7 +435,7 @@
       "expectedPool": [5, 5, 5],
       "expectedTotal": 17,
       "section": "6.9",
-      "conformanceLevel": 4,
+      "conformanceLevel": 3,
       "note": "Cap (10) runs before explode (50), drop (65) and plus (90): [5, 1, 5, 5] leaves no 6 to explode, then drop lowest and add 2."
     },
     {

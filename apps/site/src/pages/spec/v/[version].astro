@@ -1,10 +1,14 @@
 ---
 import { getCollection, render } from 'astro:content'
 import { isLatestVersion, getVersions } from '../../../spec/versions'
+import { specMarkdown } from '../../../spec/document'
+import { specHtml } from '../../../spec/specHtml'
+import { withAppendixH } from '../../../spec/sections'
 import SpecLayout from '../../../spec/SpecLayout.astro'
+import SpecHead from '../../../spec/components/SpecHead.astro'
+import SpecToc from '../../../spec/components/SpecToc.astro'
 import SpecContent from '../../../spec/components/SpecContent.astro'
 import SidebarNav from '../../../spec/components/SidebarNav.astro'
-import OnThisPage from '../../../spec/components/OnThisPage.astro'
 import ModifierReference from '../../../spec/components/ModifierReference.astro'
 
 export async function getStaticPaths() {
@@ -17,31 +21,28 @@ export async function getStaticPaths() {
 
 const { entry } = Astro.props
 const { version } = Astro.params
-const { Content, headings } = await render(entry)
+const { headings: markdownHeadings } = await render(entry)
+const html = specHtml(entry.rendered?.html ?? '')
 const latest = await isLatestVersion(version)
 const allVersions = await getVersions()
+// Appendix H is generated from today's roller, so only the latest version has it.
+const headings = latest ? withAppendixH(markdownHeadings) : markdownHeadings
 ---
 
 <SpecLayout
-  title="RANDSUM Dice Notation Specification"
+  title={entry.data.title}
   version={version}
   versions={allVersions}
   isLatest={latest}
-  specMarkdown={entry.body ?? ''}
+  specMarkdown={specMarkdown(entry)}
   headings={headings}
+  published={entry.data.date}
 >
-  <SidebarNav slot="sidebar" headings={headings} version={version} isLatest={latest} />
+  <SidebarNav slot="sidebar" headings={headings} />
+  <SpecHead slot="content" entry={entry} versions={allVersions} />
+  <SpecToc slot="content" headings={headings} />
   <SpecContent slot="content">
-    {!latest && (
-      <p style="margin-bottom: 1.5rem;">
-        <a href="/spec/" style="color: var(--accent);">
-          &larr; Back to latest
-        </a>
-      </p>
-    )}
-    <Content />
-    {/* Generated from today's roller, so it describes only the latest version. */}
+    <Fragment set:html={html} />
     {latest && <ModifierReference />}
   </SpecContent>
-  <OnThisPage slot="aside" headings={headings} />
 </SpecLayout>

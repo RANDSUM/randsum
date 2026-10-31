@@ -17,6 +17,18 @@ if (specBody) {
   }
 }
 
+// A section sign beside each heading links to it, as in W3C documents
+for (const heading of Array.from(
+  document.querySelectorAll<HTMLHeadingElement>('.spec-content-body :is(h2, h3, h4, h5)[id]')
+)) {
+  const link = document.createElement('a')
+  link.className = 'self-link'
+  link.href = `#${heading.id}`
+  link.setAttribute('aria-label', 'Link to this section')
+  link.textContent = '§'
+  heading.prepend(link)
+}
+
 // Group consecutive "**Label:** value" paragraphs into styled property cards.
 // These are <p> elements whose first child is a <strong> ending with ":"
 const body = document.querySelector('.spec-content-body')
@@ -30,7 +42,9 @@ if (body) {
     if (!isProp(p)) return acc
     const prev = paragraphs[i - 1]
     const last = acc.at(-1)
-    if (last && prev !== undefined && isProp(prev)) last.push(p)
+    // Only paragraphs that sit side by side: a table between them ends the run
+    if (last && prev !== undefined && isProp(prev) && p.previousElementSibling === prev)
+      last.push(p)
     else acc.push([p])
     return acc
   }, [])

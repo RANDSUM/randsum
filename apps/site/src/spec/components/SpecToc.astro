@@ -1,0 +1,52 @@
+---
+// The table of contents a formal spec carries after its header: every section
+// and subsection, numbered.
+import { type Heading, navNumber, splitSectionNumber } from '../sections'
+
+interface Props {
+  headings: Heading[]
+}
+
+const { headings } = Astro.props
+const tree = headings
+  .filter(h => h.depth === 2 || h.depth === 3)
+  .reduce<{ heading: Heading; children: Heading[] }[]>((acc, h) => {
+    if (h.depth === 2) acc.push({ heading: h, children: [] })
+    else acc.at(-1)?.children.push(h)
+    return acc
+  }, [])
+---
+
+<nav class="spec-toc" aria-labelledby="spec-toc-title">
+  <h2 class="spec-toc-title" id="spec-toc-title">Table of Contents</h2>
+  <ol class="spec-toc-list">
+    {tree.map(({ heading, children }) => {
+      const { number, title } = splitSectionNumber(heading.text)
+      return (
+        <li>
+          <a href={`#${heading.slug}`}>
+            {number !== undefined && <span class="secno">{navNumber(number)}</span>}
+            {title}
+          </a>
+          {children.length > 0 && (
+            <ol>
+              {children.map(child => {
+                const sub = splitSectionNumber(child.text)
+                return (
+                  <li>
+                    <a href={`#${child.slug}`}>
+                      {sub.number !== undefined && (
+                        <span class="secno">{navNumber(sub.number)}</span>
+                      )}
+                      {sub.title}
+                    </a>
+                  </li>
+                )
+              })}
+            </ol>
+          )}
+        </li>
+      )
+    })}
+  </ol>
+</nav>
