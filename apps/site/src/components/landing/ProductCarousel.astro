@@ -28,7 +28,7 @@ import { PRODUCT_LABELS, PRODUCTS } from '../../utils/product'
           class="carousel-tab"
           style={`--p: var(--product-${product.id}-fill); --p-text: var(--product-${product.id})`}
         >
-          <PipMark variant="knockout" size={20} />
+          <PipMark variant="knockout" product={product.id} size={20} />
           <span class="carousel-tab-text">
             <span class="carousel-tab-name">{PRODUCT_LABELS[product.id]}</span>
             <span class="carousel-tab-line">{product.tagline}</span>
@@ -49,7 +49,7 @@ import { PRODUCT_LABELS, PRODUCTS } from '../../utils/product'
           >
             <div class="carousel-copy">
               <p class="carousel-name">
-                <PipMark variant="knockout" size={22} />
+                <PipMark variant="knockout" product={product.id} size={22} />
                 {PRODUCT_LABELS[product.id]}
               </p>
               <h3>{product.tagline}</h3>
