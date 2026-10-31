@@ -54,7 +54,7 @@ Every page is built from tokens and shared components, and tools hold them there
 - **Components** (`src/components/ui/`): `Button` (primary, secondary, or a
   product's colour), `Section` (heading, lede, actions slot; `product` adds
   that product's die-and-name lockup, `layout="split"` puts the header beside
-  the content), `Card` (with a `mark` slot) and `CardGrid`, `CodePanel`
+  the content), `Card` and `CardGrid`, `CodePanel`
   (Expressive Code with wrapping), `CodeFrame` (a named file with an action on
   its header bar) and `DiscordGlyph`.
   `ProductHero` and `ProductCarousel` render from `PRODUCTS` in `src/utils/product.ts`.
