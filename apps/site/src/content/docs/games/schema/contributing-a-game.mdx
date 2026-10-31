@@ -108,7 +108,7 @@ bun install`} />
     <CodeExample code={`bun run --filter @randsum/games gen`} />
 
     This creates `packages/games/src/<shortcode>.generated.ts`. The generated file:
-    - Imports `roll as executeRoll` from `@randsum/roller`
+    - Imports `roll as executeRoll` from `@randsum/roller/roll`
     - Exports a typed `roll()` function specific to your game
     - Exports `GameRollResult` and `RollRecord` types
     - Bakes outcome tables directly into the code (no runtime fetching)
@@ -125,10 +125,6 @@ bun install`} />
       "import": {
         "types": "./dist/<shortcode>.generated.d.ts",
         "default": "./dist/<shortcode>.generated.js"
-      },
-      "require": {
-        "types": "./dist/<shortcode>.generated.d.cts",
-        "default": "./dist/<shortcode>.generated.cjs"
       }
     }`} />
 

@@ -1,5 +1,5 @@
 ---
-title: "@randsum/roller"
+title: "@randsum/roller: TypeScript Dice Roller"
 description: TypeScript dice engine with advanced notation, modifiers, and full input validation. Works in Node.js, Bun, Deno, and browsers.
 head:
   - tag: script
@@ -65,7 +65,7 @@ console.log(result.total) // 1-20`} />
 
 ### Notation string
 
-Pass a [Randsum Dice Notation](/notation/randsum-dice-notation/) string for complex rolls.
+Pass a [RANDSUM Dice Notation](/notation/randsum-dice-notation/) string for complex rolls.
 
 <CodeExample code={`import { roll } from '@randsum/roller'
 
@@ -126,7 +126,7 @@ console.log(result.total) // d20 + 5 + 2d6`} />
 | `[text]` | Annotation/label | `2d6[fire]` |
 | `xN` | Repeat notation | `4d6Lx6` |
 
-See the full [Randsum Dice Notation Spec](/notation/randsum-dice-notation/) for reroll conditions, caps, replacements, success counting, and multipliers.
+See the full [Notation Syntax Guide](/notation/randsum-dice-notation/) for reroll conditions, caps, replacements, success counting, and multipliers.
 
 ## Learn more
 

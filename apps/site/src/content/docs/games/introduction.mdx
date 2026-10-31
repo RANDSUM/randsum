@@ -1,6 +1,6 @@
 ---
-title: "@randsum/games"
-description: Game-specific dice rolling for Salvage Union, D&D 5e, Blades in the Dark, PbtA, Daggerheart, and Root RPG. Typed results with validated input.
+title: "@randsum/games: Tabletop RPG Dice Rules"
+description: Typed, rule-aware dice rolls for D&D 5e, Blades in the Dark, Daggerheart, Fate Core, PbtA, Root RPG and Salvage Union, generated from open .randsum.json specs.
 head:
   - tag: script
     attrs:
@@ -20,7 +20,7 @@ head:
 import { Card, CardGrid, Aside } from '@astrojs/starlight/components'
 import CodeExample from '../../../components/live-repl/CodeExample.astro'
 
-Roll dice for Salvage Union, D&D, Blades in the Dark, PbtA, and more with typed, game-specific functions. Each game package validates input, rolls using the core engine, and interprets the result according to that system's rules.
+Roll dice for D&D 5e, Blades in the Dark, Daggerheart, Fate Core, PbtA, Root RPG and Salvage Union with typed, game-specific functions. Each game package validates input, rolls using the core engine, and interprets the result according to that system's rules.
 
 All game packages are powered by `@randsum/roller`, which implements the full [RANDSUM Dice Notation (RDN) Specification](/spec/).
 
@@ -51,6 +51,11 @@ All game packages are powered by `@randsum/roller`, which implements the full [R
     `@randsum/games/daggerheart` -- Hope and fear dice with amplification and advantage/disadvantage.
 
     [View documentation](/games/daggerheart/)
+  </Card>
+  <Card title="Fate Core" icon="seti:favicon">
+    `@randsum/games/fate` -- 4dF plus a skill rating, read off the Fate ladder from Terrible to Legendary.
+
+    [View documentation](/games/fate/)
   </Card>
   <Card title="Root RPG" icon="seti:favicon">
     `@randsum/games/root-rpg` -- 2d6+bonus with Strong Hit, Weak Hit, and Miss outcomes.

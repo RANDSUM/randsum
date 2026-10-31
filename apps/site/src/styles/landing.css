@@ -3,8 +3,8 @@
  * Every other section keeps its rules in its own <style> block.
  */
 
-/* The splash page renders its own hero, so Starlight's title is hidden */
-body:has(.landing) .content-panel:has(#_top) {
+/* The splash page renders its own hero, so Starlight's empty title panel is hidden */
+body:has(.landing) .content-panel:has(.landing-title-slot) {
   display: none !important;
 }
 

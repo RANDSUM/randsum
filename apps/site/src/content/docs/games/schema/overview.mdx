@@ -1,6 +1,6 @@
 ---
 title: Schema Overview
-description: How .randsum.json specs define game mechanics declaratively. Games are data, not code.
+description: "How .randsum.json specs describe a game's dice mechanics as data: pools, tables, outcomes and inputs, compiled into a typed roller by @randsum/games."
 ---
 
 import CodeExample from '../../../../components/live-repl/CodeExample.astro'
@@ -22,7 +22,7 @@ A `.randsum.json` file defines:
 - **Outcomes** — how to interpret a roll result (table lookup, range matching, pool conditions)
 - **Inputs** — what the caller provides (action rating, modifier, advantage mode) with types and validation
 - **Roll** — how to assemble the dice, apply modifiers, resolve the total, and determine the outcome
-- **Conditional overrides** — alternate behavior based on input values (e.g., 0-dice desperate pools in Blades)
+- **Conditional overrides** — alternate behavior based on input values (e.g., zero-dice rolls in Blades)
 
 ## Example: Salvage Union
 

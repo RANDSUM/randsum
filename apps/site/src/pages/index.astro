@@ -22,6 +22,7 @@ const description =
     description,
     template: 'splash',
     head: [
+      { tag: 'meta', attrs: { property: 'og:type', content: 'website' } },
       {
         tag: 'script',
         attrs: { type: 'application/ld+json' },
@@ -41,7 +42,8 @@ const description =
               '@id': 'https://randsum.dev/#organization',
               name: 'RANDSUM',
               url: 'https://randsum.dev/',
-              logo: 'https://randsum.dev/favicon.svg',
+              // Google wants a raster logo for Organization; it does not read SVG here
+              logo: 'https://randsum.dev/randsum-logo.png',
               sameAs: ['https://github.com/RANDSUM/randsum', 'https://www.npmjs.com/org/randsum']
             },
             {

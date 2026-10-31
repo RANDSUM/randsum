@@ -151,7 +151,7 @@ export const PRODUCTS: readonly ProductInfo[] = [
     snippet: { lang: 'text', code: '/roll notation:4d6L+2\n/blades dice:3' },
     facts: [
       { value: '0', label: 'setup after adding it' },
-      { value: '7', label: 'games with their own command' }
+      { value: '6', label: 'games with their own command' }
     ],
     actions: [
       { label: 'Add to Discord', href: DISCORD_INSTALL_URL },
@@ -169,7 +169,7 @@ export const PRODUCTS: readonly ProductInfo[] = [
       code: '/plugin marketplace add RANDSUM/randsum\n/plugin install randsum@randsum'
     },
     facts: [
-      { value: '3', label: 'skills' },
+      { value: '4', label: 'skills' },
       { value: '3', label: 'MCP tools' },
       { value: '1', label: 'connector URL for Claude' }
     ],

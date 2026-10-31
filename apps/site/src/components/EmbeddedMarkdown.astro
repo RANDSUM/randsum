@@ -1,0 +1,20 @@
+---
+// Renders a Markdown file imported from elsewhere in the repo (a plugin skill, say)
+// inside a docs page, shifting its headings down so its own `# Title` does not become
+// a second h1 on the page.
+interface Props {
+  // The imported file's `compiledContent`
+  readonly content: () => string | Promise<string>
+  // Levels to shift each heading by; 2 nests the file's h1 under the page's h2
+  readonly shift?: number
+}
+
+const { content, shift = 2 } = Astro.props
+const html = (await content()).replace(
+  /<(\/?)h([1-6])\b/g,
+  (_match: string, slash: string, level: string) =>
+    `<${slash}h${Math.min(6, Number(level) + shift)}`
+)
+---
+
+<Fragment set:html={html} />

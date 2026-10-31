@@ -1,4 +1,4 @@
-# Randsum Dice Notation
+# RANDSUM Dice Notation
 
 ## Table of Contents
 
