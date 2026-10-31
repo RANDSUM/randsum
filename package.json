@@ -42,7 +42,7 @@
     "plugin:roller": "bun scripts/build-plugin-roller.ts",
     "check:plugin-roller": "bun scripts/build-plugin-roller.ts --check",
     "check:notation-mirror": "bun scripts/check-notation-mirror.ts",
-    "build": "bun run --filter '@randsum/mcp...' --filter '@randsum/notation-spec...' build",
+    "build": "bun run --filter '@randsum/mcp...' --filter '@randsum/notation-spec...' --filter '@randsum/ui...' build",
     "test": "bun run --filter '*' test",
     "test:coverage": "bun test --coverage --coverage-reporter=lcov --coverage-dir=./coverage",
     "lint": "biome lint .",

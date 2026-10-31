@@ -1,0 +1,62 @@
+/* The @randsum/ui rollers wear the site theme: each --rsui-* token is mapped
+   onto the matching --rs-* token from theme.css. The accent is the Roller's
+   colour, and the App's inside the installable app. */
+.rsui {
+  --rsui-accent: var(--product-roller-fill);
+  --rsui-on-accent: var(--rs-ink);
+  --rsui-bg: var(--rs-bg);
+  --rsui-surface: var(--rs-code-bg);
+  --rsui-raised: var(--rs-bg);
+  --rsui-subtle: var(--rs-gray-6);
+  --rsui-border: var(--rs-gray-5);
+  --rsui-border-strong: var(--rs-gray-3);
+  --rsui-ink: var(--rs-fg);
+  --rsui-muted: var(--rs-gray-2);
+  --rsui-faint: var(--rs-gray-3);
+  --rsui-valid: var(--rs-success);
+  --rsui-invalid: var(--rs-error);
+  --rsui-disabled-bg: var(--rs-gray-5);
+  --rsui-disabled-ink: var(--rs-gray-3);
+  --rsui-tip-bg: var(--rs-fg);
+  --rsui-tip-ink: var(--rs-bg);
+  --rsui-shadow-pop: var(--rs-shadow-overlay);
+  --rsui-font: var(--rs-font-sans);
+  --rsui-font-mono: var(--rs-font-mono);
+  --rsui-radius-sm: var(--rs-radius-sm);
+  --rsui-radius-md: var(--rs-radius-md);
+  --rsui-radius-lg: var(--rs-radius-lg);
+  --rsui-weight-regular: var(--rs-weight-regular);
+  --rsui-weight-medium: var(--rs-weight-medium);
+  --rsui-weight-semibold: var(--rs-weight-semibold);
+  --rsui-weight-bold: var(--rs-weight-bold);
+  --rsui-weight-heavy: var(--rs-weight-heavy);
+}
+
+html[data-product='app'] .rsui {
+  --rsui-accent: var(--product-app-fill);
+}
+
+/* Starlight styles bare links and lists inside docs content; the rollers are
+   rendered with .not-content, and their footer action is a plain text button. */
+.site-roller-action {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--rs-gray-2);
+  font: inherit;
+  cursor: pointer;
+}
+
+.site-roller-action:hover {
+  color: var(--rs-fg);
+}
+
+/* The installable app: Max fills the page under the app bar */
+.app-roller {
+  flex: 1;
+  width: 100%;
+  max-width: 72rem;
+  margin-inline: auto;
+  padding: 1rem;
+  align-content: start;
+}

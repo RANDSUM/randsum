@@ -7,7 +7,7 @@
 // randsum.dev's dist, so it is never served on the docs host.
 import { Font } from 'astro:assets'
 import PipMark from '../../components/PipMark.astro'
-import { RollerApp } from '../../components/roller-app/RollerApp'
+import { AppRoller } from '../../components/rollers/AppRoller'
 import '../../styles/theme.css'
 
 const title = 'RANDSUM Roller'
@@ -76,7 +76,7 @@ const url = 'https://app.randsum.dev/'
       </div>
     </header>
     <main class="app-main">
-      <RollerApp client:load />
+      <AppRoller client:load />
     </main>
     <script>
     // Install: the browser offers its prompt once the page qualifies as an app;

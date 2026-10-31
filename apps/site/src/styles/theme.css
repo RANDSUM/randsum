@@ -2,8 +2,8 @@
  * The RANDSUM theme: the only file that may spell a colour.
  *
  * randsum.dev loads it first through Starlight's customCss, and custom.css maps
- * Starlight's --sl-color-* onto it. The dice UI in components/dice-ui/ reads it
- * directly. The /spec pages' spec.css @imports it and aliases its own
+ * Starlight's --sl-color-* onto it. components/rollers/rollers.css maps
+ * @randsum/ui's --rsui-* tokens onto it. The /spec pages' spec.css @imports it and aliases its own
  * --bg/--surface/--text-* names to it.
  *
  * Every mode-dependent colour is written once as light-dark(light, dark). The

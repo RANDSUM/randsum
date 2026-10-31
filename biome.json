@@ -134,7 +134,12 @@
       }
     },
     {
-      "includes": ["**/*.css", "**/*.astro", "!apps/site/src/styles/theme.css"],
+      "includes": [
+        "**/*.css",
+        "**/*.astro",
+        "!apps/site/src/styles/theme.css",
+        "!packages/ui/src/tokens.css"
+      ],
       "plugins": [
         "./biome-plugins/no-raw-color.grit",
         "./biome-plugins/no-raw-type.grit",
