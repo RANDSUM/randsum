@@ -49,6 +49,7 @@
       "dependencies": {
         "@astrojs/react": "7.1.2",
         "@astrojs/starlight": "0.42.7",
+        "@randsum/notation-spec": "workspace:~",
         "@randsum/roller": "workspace:~",
         "@stackblitz/sdk": "~1.11.0",
         "astro": "7.4.4",
@@ -94,6 +95,16 @@
       },
       "devDependencies": {
         "@randsum/games": "workspace:~",
+        "@randsum/roller": "workspace:~",
+      },
+    },
+    "packages/notation-spec": {
+      "name": "@randsum/notation-spec",
+      "version": "0.1.0",
+      "bin": {
+        "rdn-conformance": "dist/cli.js",
+      },
+      "devDependencies": {
         "@randsum/roller": "workspace:~",
       },
     },
@@ -597,6 +608,8 @@
     "@randsum/games": ["@randsum/games@workspace:packages/games"],
 
     "@randsum/mcp": ["@randsum/mcp@workspace:packages/mcp"],
+
+    "@randsum/notation-spec": ["@randsum/notation-spec@workspace:packages/notation-spec"],
 
     "@randsum/roller": ["@randsum/roller@workspace:packages/roller"],
 

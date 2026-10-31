@@ -1,0 +1,68 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://randsum.dev/conformance/conformance.schema.json",
+  "title": "RDN conformance vectors",
+  "description": "A set of RANDSUM Dice Notation conformance test vectors (spec Section 11.3).",
+  "type": "object",
+  "required": ["specVersion", "conformanceLevels", "vectors"],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": { "type": "string" },
+    "$id": { "type": "string", "format": "uri" },
+    "specVersion": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$" },
+    "conformanceLevels": {
+      "description": "The vector ids each level requires. A level includes every lower level; error cases are required at every level.",
+      "type": "object",
+      "required": ["level1_core", "level2_vtt", "level3_extended", "level4_full", "errorCases"],
+      "additionalProperties": false,
+      "properties": {
+        "level1_core": { "$ref": "#/$defs/ids" },
+        "level2_vtt": { "$ref": "#/$defs/ids" },
+        "level3_extended": { "$ref": "#/$defs/ids" },
+        "level4_full": { "$ref": "#/$defs/ids" },
+        "errorCases": { "$ref": "#/$defs/ids" }
+      }
+    },
+    "vectors": { "type": "array", "items": { "$ref": "#/$defs/vector" } }
+  },
+  "$defs": {
+    "ids": { "type": "array", "items": { "type": "integer", "minimum": 1 }, "uniqueItems": true },
+    "rolls": { "type": "array", "items": { "type": "integer" } },
+    "vector": {
+      "type": "object",
+      "required": ["id", "notation", "category", "section", "conformanceLevel"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "integer", "minimum": 1 },
+        "notation": { "type": "string", "minLength": 1 },
+        "category": { "type": "string" },
+        "section": { "type": "string" },
+        "conformanceLevel": { "type": "integer", "minimum": 1, "maximum": 4 },
+        "seedRolls": { "$ref": "#/$defs/rolls", "type": "array" },
+        "rerollRolls": { "$ref": "#/$defs/rolls", "type": "array" },
+        "explodeRolls": { "$ref": "#/$defs/rolls", "type": "array" },
+        "compoundRolls": { "$ref": "#/$defs/rolls", "type": "array" },
+        "penetrateRolls": { "$ref": "#/$defs/rolls", "type": "array" },
+        "sequenceRolls": { "$ref": "#/$defs/rolls", "type": "array" },
+        "expectedPool": {
+          "type": ["array", "null"],
+          "items": { "type": ["integer", "string"] }
+        },
+        "expectedTotal": { "type": ["number", "null"] },
+        "expectedError": { "const": true, "type": "boolean" },
+        "errorDescription": { "type": "string" },
+        "note": { "type": "string" },
+        "unseeded": {
+          "description": "What the result must satisfy when the implementation cannot replay seedRolls: the expected pool size, every value one of faces, and no repeats when distinct.",
+          "type": "object",
+          "required": ["faces"],
+          "additionalProperties": false,
+          "properties": {
+            "faces": { "type": "array", "items": { "type": ["integer", "string"] } },
+            "distinct": { "type": "boolean" }
+          }
+        }
+      }
+    }
+  }
+}

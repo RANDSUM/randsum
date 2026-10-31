@@ -2,14 +2,17 @@ import { describe, expect, test } from 'bun:test'
 import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { CONFORMANCE_FILE } from '../../../packages/roller/spec/vectors'
+import CONFORMANCE_FILE from '@randsum/notation-spec/vectors/v0.9.0.json'
 import { LEVELS, badgeSvg, themeColour } from '../src/spec/badges'
 import { sectionGroups, splitSectionNumber, withAppendixH } from '../src/spec/sections'
 import { specHtml } from '../src/spec/specHtml'
 
 const siteDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const theme = fs.readFileSync(path.join(siteDir, 'src/styles/theme.css'), 'utf-8')
-const spec = fs.readFileSync(path.join(siteDir, 'src/content/specs/v0.9.0.md'), 'utf-8')
+const spec = fs.readFileSync(
+  path.join(siteDir, '../../packages/notation-spec/spec/v0.9.0.md'),
+  'utf-8'
+)
 
 describe('section numbers', () => {
   test.each([

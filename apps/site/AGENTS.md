@@ -80,7 +80,8 @@ scroll-spy and share actions in vanilla `<script>` blocks (ADR-017), and the
 spec's product colour as its accent. Never import `StarlightPage` there, and keep `src/spec/spec.css`
 imported only by `SpecLayout`, since its resets are global to the page.
 
-- Versions live in `src/content/specs/` (the `specs` collection). `v0.9.0.md`
+- Versions live in `packages/notation-spec/spec/` (the `specs` collection's glob
+  loader reads that directory; the package is the spec's source of truth). `v0.9.0.md`
   has ID `0.9.0` and is served at `/spec/v/0.9.0/`; `/spec/` renders the latest
   inline, not as a redirect (ADR-016). Both name `/spec/` as canonical, only
   `/spec/` opts into the Pagefind index, and `astro.config.mjs` keeps
@@ -105,11 +106,9 @@ imported only by `SpecLayout`, since its resets are global to the page.
   `--sl-color-*` names; `spec.css` maps them onto the spec's tokens.
 - The theme script shares Starlight's `starlight-theme` key, so one choice
   holds across the site.
-- Conformance vectors: `packages/roller/spec/vectors.ts` is the source of
-  truth (beside the roller test that runs them). `bun run conformance:gen`
-  writes `public/conformance/v0.9.0.json`, served at `/conformance/v0.9.0.json`;
-  `conformance:check` (pre-push and the site's `check`) fails if
-  `public/conformance/` differs from what `conformance:gen` would write.
+- Conformance vectors: `packages/notation-spec/vectors/v0.9.0.json` is the
+  source of truth. `src/pages/conformance/[file].ts` serves it verbatim at
+  `/conformance/v0.9.0.json`, with its schema at `/conformance/conformance.schema.json`.
 - The spec moved here from `notation.randsum.dev`, which now only 301s:
   `/conformance/*` keeps its path, everything else maps to `/spec/*`. The
   redirect is `worker/notation-redirect.ts`, deployed from
@@ -229,7 +228,5 @@ bun run dev        # Dev server (localhost:4321)
 bun run build      # Production build
 bun run preview    # Preview production build
 bun run typecheck  # astro sync, then tsc with the .astro content mapper
-bun run check      # build + typecheck + test + conformance:check
-bun run conformance:gen    # Regenerate public/conformance/v0.9.0.json
-bun run conformance:check  # fail if public/conformance/ differs from what conformance:gen writes
+bun run check      # build + typecheck + test
 ```

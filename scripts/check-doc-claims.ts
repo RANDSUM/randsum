@@ -293,7 +293,21 @@ const checkPaths = (line: string, ctx: Context): readonly string[] => {
   return [...fromLinks, ...fromTokens]
 }
 
-const PACKAGE_REF = /@randsum\/([a-z0-9][a-z0-9-]*)(\/[a-z0-9][\w.-]*)?/g
+const PACKAGE_REF = /@randsum\/([a-z0-9][a-z0-9-]*)(\/[a-z0-9][\w.-]*(?:\/[\w.-]*[\w-])*)?/g
+
+/** Whether a subpath is one of the exports, including a `./dir/*.json` pattern. */
+const exported = (exports: ReadonlySet<string>, subpath: string): boolean =>
+  exports.has(subpath) ||
+  [...exports].some(
+    key =>
+      key.includes('*') &&
+      new RegExp(
+        `^${key
+          .split('*')
+          .map(part => part.replace(/[.+?^${}()|[\]\\]/g, '\\$&'))
+          .join('[^/]+')}$`
+      ).test(subpath)
+  )
 
 const checkImports = (line: string): readonly string[] =>
   [...line.matchAll(PACKAGE_REF)].flatMap(match => {
@@ -308,7 +322,7 @@ const checkImports = (line: string): readonly string[] =>
         ? []
         : [`\`@randsum/${name}\` is not a workspace package`]
     }
-    if (sub === undefined || manifest.exports.has(`.${sub}`)) return []
+    if (sub === undefined || exported(manifest.exports, `.${sub}`)) return []
     return [
       `\`@randsum/${name}${sub}\` is not in ${manifest.name}'s exports (${[...manifest.exports].join(', ')})`
     ]

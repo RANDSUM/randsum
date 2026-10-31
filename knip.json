@@ -28,6 +28,11 @@
       "project": ["src/**/*.ts", "__tests__/**/*.ts"],
       "includeEntryExports": true
     },
+    "packages/notation-spec": {
+      "entry": ["src/index.ts", "src/cli.ts", "examples/**/*.ts", "__tests__/**/*.test.ts"],
+      "project": ["src/**/*.ts", "examples/**/*.ts", "__tests__/**/*.ts"],
+      "includeEntryExports": true
+    },
     "apps/api": {
       "entry": ["src/index.ts"],
       "project": ["src/**/*.ts"]
