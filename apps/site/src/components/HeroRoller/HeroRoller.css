@@ -105,7 +105,9 @@
 
 /* ===== What the notation means ===== */
 .hr-meaning {
-  min-height: 1.75rem;
+  display: flex;
+  align-items: center;
+  height: 2.25rem;
   font-size: var(--rs-text-xs);
 }
 
@@ -119,15 +121,20 @@
 
 .hr-tokens {
   display: flex;
-  flex-wrap: wrap;
   gap: 0.375rem;
+  /* One line, so a long notation scrolls sideways instead of growing the card */
+  min-width: 0;
+  overflow-x: auto;
+  scrollbar-width: thin;
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
 .hr-tokens > li {
+  flex-shrink: 0;
   margin: 0;
+  white-space: nowrap;
 }
 
 .hr-token {
@@ -166,7 +173,8 @@
   display: grid;
   grid-template-columns: auto minmax(0, 1fr);
   gap: 1.25rem;
-  min-height: 8.5rem;
+  /* One height for every roll, so the card never jumps; long traces scroll */
+  height: 15rem;
   padding: 1rem 1.25rem;
   border: var(--rs-border);
   border-radius: var(--rs-radius-md);
@@ -247,8 +255,8 @@
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
-  max-height: 16rem;
   min-width: 0;
+  min-height: 0;
   overflow-y: auto;
 }
 
@@ -368,24 +376,23 @@
 /* ===== Examples ===== */
 .hr-footer {
   display: flex;
-  flex-wrap: wrap;
-  align-items: flex-end;
-  gap: 0.75rem;
+  flex-direction: column;
+  gap: 0.625rem;
 }
 
 .hr-presets {
-  display: flex;
-  flex: 1 1 20rem;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(6.75rem, 1fr));
   gap: 0.375rem;
 }
 
 .hr-preset {
   appearance: none;
-  display: inline-flex;
+  display: flex;
   align-items: center;
-  height: 1.875rem;
-  padding: 0 0.625rem;
+  justify-content: center;
+  height: 2rem;
+  padding: 0 0.5rem;
   border: var(--rs-border);
   border-radius: var(--rs-radius-sm);
   background: transparent;
@@ -417,7 +424,7 @@
   display: inline-flex;
   align-items: center;
   gap: 0.3rem;
-  margin-left: auto;
+  align-self: flex-end;
   padding: 0.25rem 0;
   border: none;
   background: none;
@@ -449,6 +456,7 @@
 @container (max-width: 36rem) {
   .hr-result {
     grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr);
     gap: 0.875rem;
   }
 
