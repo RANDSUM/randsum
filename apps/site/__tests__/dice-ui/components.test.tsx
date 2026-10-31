@@ -100,6 +100,17 @@ describe('NotationRoller', () => {
     expect(screen.getByText('Invalid notation')).toBeDefined()
   })
 
+  test('disables the roll button and says why when notation parses but cannot roll', () => {
+    render(<NotationRoller defaultNotation="1d20L" />)
+    expect(screen.getByLabelText('Roll the dice')).toHaveProperty('disabled', true)
+    expect(screen.getByText('Cannot drop 1 dice from a pool of 1')).toBeDefined()
+  })
+
+  test('showDescription={false} leaves the description out', () => {
+    render(<NotationRoller defaultNotation="" showDescription={false} />)
+    expect(screen.queryByText('Try: 4d6L, 1d20+5, 2d8!')).toBeNull()
+  })
+
   test('controlled notation prop drives the input value', () => {
     const { rerender } = render(<NotationRoller notation="1d4" />)
     expect(screen.getByLabelText('Dice notation')).toHaveProperty('value', '1d4')

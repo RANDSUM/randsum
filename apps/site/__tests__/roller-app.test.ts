@@ -1,5 +1,6 @@
 import { describe, expect, test } from 'bun:test'
 import { isDiceNotation } from '@randsum/roller/validate'
+import { checkNotation } from '../src/components/dice-ui/NotationDescription'
 import { addDie, adjustConstant, toggleModifier } from '../src/components/roller-app/notationEdits'
 
 describe('roller app keys', () => {
@@ -10,6 +11,13 @@ describe('roller app keys', () => {
     expect(addDie('2d20', 6)).toBe('2d20+1d6')
     expect(addDie('2d20+1d6', 6)).toBe('2d20+2d6')
     expect(addDie('1d20+5', 20)).toBe('1d20+5+1d20')
+  })
+
+  test('a die grows a pool that already has modifiers', () => {
+    expect(addDie('4d6L', 6)).toBe('5d6L')
+    expect(addDie('1d20!', 20)).toBe('2d20!')
+    expect(addDie('3d6R{<3}', 6)).toBe('4d6R{<3}')
+    expect(addDie('4d6L', 20)).toBe('4d6L+1d20')
   })
 
   test('the constant steps up and down and disappears at zero', () => {
@@ -26,6 +34,30 @@ describe('roller app keys', () => {
     expect(toggleModifier('4d6L', 'L')).toBe('4d6')
     expect(toggleModifier('2d20+5', 'L')).toBe('2d20L+5')
     expect(toggleModifier('2d6+3', '!')).toBe('2d6!+3')
+  })
+
+  test('a drop on a single die rolls two, so it never drops the only die', () => {
+    expect(toggleModifier('1d20', 'L')).toBe('2d20L')
+    expect(toggleModifier('d20', 'H')).toBe('2d20H')
+    expect(toggleModifier('1d20+5', 'L')).toBe('2d20L+5')
+    expect(toggleModifier('1d20!', 'L')).toBe('2d20!L')
+    expect(toggleModifier('1d20', '!')).toBe('1d20!')
+  })
+
+  test('every modifier key on the starting roll builds a roll that rolls', () => {
+    for (const modifier of ['L', 'H', '!']) {
+      expect(checkNotation(toggleModifier('1d20', modifier))).toEqual({ kind: 'valid' })
+    }
+  })
+
+  test('notation that parses but cannot roll reports why', () => {
+    expect(isDiceNotation('1d20L')).toBe(true)
+    expect(checkNotation('1d20L')).toEqual({
+      kind: 'invalid',
+      message: 'Cannot drop 1 dice from a pool of 1'
+    })
+    expect(checkNotation('')).toEqual({ kind: 'empty' })
+    expect(checkNotation('zzz')).toEqual({ kind: 'invalid', message: 'Invalid notation' })
   })
 
   test('every key builds notation the roller accepts', () => {
