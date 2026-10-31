@@ -16,11 +16,8 @@
 /_astro/*
   Cache-Control: public, max-age=31536000, immutable
 
-# The roller app's service worker must be revalidated on every visit, or a
-# deploy would never reach installed copies.
+# The roller app moved to app.randsum.dev. This sw.js only retires the worker
+# old installs registered here, so it must be revalidated on every visit or
+# those installs would never pick it up.
 /app/sw.js
   Cache-Control: no-cache
-  Service-Worker-Allowed: /app/
-
-/app/manifest.webmanifest
-  Content-Type: application/manifest+json; charset=utf-8

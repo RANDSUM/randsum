@@ -98,16 +98,30 @@ imported only by `SpecLayout`, since its resets are global to the page.
   `wrangler.notation.jsonc` to the old `randsum-rdn` Worker, which keeps the
   hostname's Custom Domain (`docs/operations.md`).
 
-## Roller app (`/app`)
+## Roller app (app.randsum.dev)
 
-`src/pages/app/index.astro` is the installable roller, the "app" product
-(lime). Like `/spec` it is not a Starlight page: a full-screen shell around
-`components/roller-app/RollerApp.tsx`, which reuses `dice-ui`'s
-`NotationRoller` and `RollResultDisplay` and keeps history in localStorage.
-`public/app/` holds its manifest, icons and `sw.js`, a service worker scoped
-to `/app/` that caches the page and its `/_astro/` assets for offline use
-(`_headers` keeps `sw.js` uncached). Bump `CACHE` in `sw.js` only to force old
-entries out; fingerprinted assets refresh on their own.
+The installable roller, the "app" product (lime), is served from its own
+host, `app.randsum.dev`, by `wrangler.app.jsonc` (the `randsum-app` Worker,
+static assets only). `randsum.dev/app/` (`src/pages/app/index.astro`) is its
+product page: a Starlight splash page that opens with the app's `ProductHero`.
+
+- The shell is `src/pages/app-shell/index.astro`. Like `/spec` it is not a
+  Starlight page: a full-screen shell around `components/roller-app/RollerApp.tsx`,
+  which reuses `dice-ui`'s `NotationRoller` and `RollResultDisplay` and keeps
+  history in localStorage. Its links are absolute to the app host's root.
+- `bun run build` is `astro build` then `scripts/build-app.ts`, which writes
+  `dist-app/`: the shell as `index.html`, `app-public/` (manifest, icons,
+  `_headers`, `sw.js`), `dist/_astro/` and the favicon. It then deletes
+  `dist/app-shell/`, and the sitemap filters it, so randsum.dev never serves it.
+- `app-public/sw.js` is scoped to `/` and caches the page and its `/_astro/`
+  assets for offline use. Bump `CACHE` only to force old entries out;
+  fingerprinted assets refresh on their own.
+- `public/app/sw.js` on randsum.dev only retires the worker that installs from
+  the old `randsum.dev/app/` registered: it clears their caches and
+  unregisters. The product page sends a standalone (installed) window on to
+  `app.randsum.dev`. Keep both while old installs may still open.
+- `public/app/roller-phone-{dark,light}.png` are the product page's screenshots
+  of the real app at 390x844 @2x; retake them when the app's look changes.
 
 ## Content Structure
 

@@ -1,0 +1,32 @@
+{
+  // Cloudflare Worker for app.randsum.dev: the installable RANDSUM Roller.
+  //
+  // Static assets only, no script, so every request is served free from the
+  // assets binding. `bun run build` writes dist-app/ (scripts/build-app.ts):
+  // the app shell Astro builds with the site, lifted to the root, plus the
+  // manifest, service worker and icons from app-public/. randsum.dev/app/ is
+  // the app's product page.
+  //
+  // The custom domain route creates app.randsum.dev's DNS record and
+  // certificate on the first deploy, as apps/api does for api.randsum.dev.
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "randsum-app",
+  "compatibility_date": "2026-07-13",
+  "assets": {
+    "directory": "./dist-app",
+    // One page: any unknown path (an old bookmark, a redirect that kept its
+    // path) opens the app rather than a bare 404.
+    "not_found_handling": "single-page-application"
+  },
+  "routes": [
+    {
+      "pattern": "app.randsum.dev",
+      "custom_domain": true
+    }
+  ],
+  "workers_dev": false,
+  "preview_urls": false,
+  "observability": {
+    "enabled": true
+  }
+}
