@@ -52,7 +52,7 @@ Salvage Union is handled by the [SURef bot](https://salvageunion.io/discord); `/
 
 ### Links
 
-- Landing page: https://randsum.dev/discord
+- Landing page: https://randsum.dev/tools/discord-bot/
 - Documentation: https://randsum.dev/tools/discord-bot/
 - Source code: https://github.com/RANDSUM/randsum/tree/main/apps/discord-bot
 - Add to server: https://discord.com/oauth2/authorize?client_id=1290434147159904276&permissions=274877906944&scope=bot%20applications.commands

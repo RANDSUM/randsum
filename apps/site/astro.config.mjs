@@ -57,6 +57,7 @@ export default defineConfig({
     starlight({
       title: 'RANDSUM',
       favicon: '/favicon.svg',
+      routeMiddleware: './src/routeData.ts',
       head: [
         {
           tag: 'meta',

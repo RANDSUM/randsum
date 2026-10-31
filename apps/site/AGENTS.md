@@ -26,6 +26,9 @@ Private app, deploys to Cloudflare Workers once CI is green on `main` via
   product family. Chrome is neutral; `src/utils/product.ts` maps a path to its product
   (roller, games, spec, api, discord, plugin, app), `Head.astro` stamps `<html data-product>`,
   and `theme.css` turns that into the page's accent (`--product-*`)
+- Social cards: `public/og-image.png` is the family card; each product has
+  `public/og/<product>.png`, and `src/routeData.ts` (Starlight route middleware) points a
+  product's pages at its card. `SpecLayout`, outside Starlight, sets its own.
 
 > **`typescript` is `7.1.0-beta` here, not the root `catalog:` (7.0.2).** `astro check` refuses
 > TypeScript 7, so `typecheck` runs `tsc --noEmit --runExternalCode` with
