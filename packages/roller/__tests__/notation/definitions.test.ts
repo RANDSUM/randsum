@@ -550,12 +550,12 @@ describe('rerollSchema', () => {
       ])
     })
 
-    test('describes reroll once (max 1)', () => {
-      expect(rerollSchema.toDescription({ exact: [1], max: 1 })).toEqual(['Reroll once 1'])
+    test('describes reroll once', () => {
+      expect(rerollSchema.toDescription({ exact: [1], once: true })).toEqual(['Reroll once 1'])
     })
 
     test('describes reroll once with comparison', () => {
-      expect(rerollSchema.toDescription({ lessThan: 3, max: 1 })).toEqual([
+      expect(rerollSchema.toDescription({ lessThan: 3, once: true })).toEqual([
         'Reroll once less than 3'
       ])
     })
@@ -564,54 +564,54 @@ describe('rerollSchema', () => {
   describe('reroll once (ro) parsing', () => {
     test('parses ro{1} (reroll once exact 1)', () => {
       expect(rerollSchema.parse('ro{1}')).toEqual({
-        reroll: { exact: [1], max: 1 }
+        reroll: { exact: [1], once: true }
       })
     })
 
     test('parses RO{<3} (reroll once less than, uppercase)', () => {
       expect(rerollSchema.parse('RO{<3}')).toEqual({
-        reroll: { lessThan: 3, max: 1 }
+        reroll: { lessThan: 3, once: true }
       })
     })
 
     test('parses Ro{>5} (reroll once greater than, mixed case)', () => {
       expect(rerollSchema.parse('Ro{>5}')).toEqual({
-        reroll: { greaterThan: 5, max: 1 }
+        reroll: { greaterThan: 5, once: true }
       })
     })
 
     test('parses rO{>=4} (reroll once greater than or equal)', () => {
       expect(rerollSchema.parse('rO{>=4}')).toEqual({
-        reroll: { greaterThanOrEqual: 4, max: 1 }
+        reroll: { greaterThanOrEqual: 4, once: true }
       })
     })
 
     test('parses ro{<=2} (reroll once less than or equal)', () => {
       expect(rerollSchema.parse('ro{<=2}')).toEqual({
-        reroll: { lessThanOrEqual: 2, max: 1 }
+        reroll: { lessThanOrEqual: 2, once: true }
       })
     })
 
     test('parses ro{=5} (reroll once exact with = prefix)', () => {
       expect(rerollSchema.parse('ro{=5}')).toEqual({
-        reroll: { exact: [5], max: 1 }
+        reroll: { exact: [5], once: true }
       })
     })
 
     test('parses ro{1,2} (reroll once multiple exact values)', () => {
       expect(rerollSchema.parse('ro{1,2}')).toEqual({
-        reroll: { exact: [1, 2], max: 1 }
+        reroll: { exact: [1, 2], once: true }
       })
     })
   })
 
   describe('reroll once (ro) toNotation', () => {
-    test('formats max 1 as ro notation', () => {
-      expect(rerollSchema.toNotation({ exact: [1], max: 1 })).toBe('ro{1}')
+    test('formats once as ro notation', () => {
+      expect(rerollSchema.toNotation({ exact: [1], once: true })).toBe('ro{1}')
     })
 
-    test('formats max 1 with comparison as ro notation', () => {
-      expect(rerollSchema.toNotation({ lessThan: 3, max: 1 })).toBe('ro{<3}')
+    test('formats once with comparison as ro notation', () => {
+      expect(rerollSchema.toNotation({ lessThan: 3, once: true })).toBe('ro{<3}')
     })
 
     test('formats max > 1 as R notation (not ro)', () => {

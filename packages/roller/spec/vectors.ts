@@ -564,6 +564,54 @@ const VECTORS: readonly ConformanceVector[] = [
     section: '8.3',
     conformanceLevel: 2,
     note: '`!` followed by `R{...}` is Explode then Reroll, not Reduction (`!r` takes no condition block). Reroll (40) runs before explode (50).'
+  },
+  {
+    id: 56,
+    notation: '3d6!',
+    category: 'stage2_modifiers',
+    seedRolls: [6, 4, 6],
+    explodeRolls: [6, 2, 3],
+    expectedPool: [6, 4, 6, 6, 2, 3],
+    expectedTotal: 27,
+    section: '6.5.6',
+    conformanceLevel: 2,
+    note: 'Explosions chain: the first 6 explodes into a 6, which explodes into a 2; the second 6 explodes into a 3.'
+  },
+  {
+    id: 57,
+    notation: '2d6!!',
+    category: 'extended_coverage',
+    seedRolls: [6, 1],
+    compoundRolls: [6, 6, 2],
+    expectedPool: [20, 1],
+    expectedTotal: 21,
+    section: '6.5.8',
+    conformanceLevel: 3,
+    note: 'Bare `!!` keeps adding while the added roll is a maximum.'
+  },
+  {
+    id: 58,
+    notation: '2d6!p',
+    category: 'extended_coverage',
+    seedRolls: [6, 1],
+    penetrateRolls: [6, 6, 1],
+    expectedPool: [16, 1],
+    expectedTotal: 17,
+    section: '6.5.9',
+    conformanceLevel: 3,
+    note: 'Each added roll counts one less, so the final 1 adds nothing; the chain continues on the roll before the subtraction.'
+  },
+  {
+    id: 59,
+    notation: '4d6ro{1}',
+    category: 'extended_coverage',
+    seedRolls: [1, 1, 3, 4],
+    rerollRolls: [1, 2],
+    expectedPool: [1, 2, 3, 4],
+    expectedTotal: 10,
+    section: '6.7.3',
+    conformanceLevel: 2,
+    note: 'Every matching die is rerolled once, and a reroll that matches again stands.'
   }
 ]
 

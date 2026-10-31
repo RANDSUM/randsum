@@ -15,7 +15,7 @@ describe('section numbers', () => {
   test.each([
     ['6.4.2 Cap', '6.4.2', 'Cap'],
     ['1. Introduction', '1.', 'Introduction'],
-    ['G.14 Conformance Level Cross-Index', 'G.14', 'Conformance Level Cross-Index'],
+    ['G.15 Conformance Level Cross-Index', 'G.15', 'Conformance Level Cross-Index'],
     ['Appendix A: Priority Table', 'Appendix A', 'Priority Table'],
     ['Abstract', undefined, 'Abstract']
   ])('%s', (text, number, title) => {
@@ -72,9 +72,9 @@ describe('formal markup', () => {
   })
 })
 
-// Appendix G.14 is prose in the spec; the levels are derived from the vectors.
+// Appendix G.15 is prose in the spec; the levels are derived from the vectors.
 // They must name the same ids, or an implementer passes the wrong set.
-describe('Appendix G.14 matches the vectors', () => {
+describe('Appendix G.15 matches the vectors', () => {
   const ranges = (ids: readonly number[]): string =>
     ids
       .reduce<number[][]>((acc, id) => {

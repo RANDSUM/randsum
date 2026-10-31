@@ -12,7 +12,7 @@ function rerollSingle(
   rollOne: () => number,
   attempt = 0
 ): number {
-  if (attempt >= MAX_REROLL_ATTEMPTS) {
+  if (attempt >= (options.once ? 1 : MAX_REROLL_ATTEMPTS)) {
     return roll
   }
 

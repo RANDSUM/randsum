@@ -253,13 +253,13 @@ Roll additional dice when a die shows its maximum value.
 
 | Notation | Description |
 |---|---|
-| `!` | Explode: one additional die per max result (single pass) |
+| `!` | Explode: an additional die per max result, and again while new dice explode |
 
 <NotationRoller defaultNotation="4d20!" client:only="react" />
 
-When a die shows its maximum value, it "explodes" — one new die is rolled and added to the result. This is a single pass: the newly added dice are not checked for further explosions. For recursive explosions, use compound (`!!`) or penetrate (`!p`).
+When a die shows its maximum value, it "explodes": a new die is rolled and added to the result. A new die that also shows its maximum explodes again, up to 1000 new dice per original die.
 
-**Example:** `3d6!` rolls `[6, 4, 6]`. The two 6s explode, adding `[5, 3]`. Final result: `[6, 4, 6, 5, 3]` = 24.
+**Example:** `3d6!` rolls `[6, 4, 6]`. The first 6 explodes into a 6, which explodes into a 2; the second 6 explodes into a 3. Final result: `[6, 4, 6, 6, 2, 3]` = 27.
 
 ## Compound
 
@@ -267,7 +267,7 @@ Exploding dice that add to the triggering die instead of creating new dice.
 
 | Notation | Description |
 |---|---|
-| `!!` | Compound once per die |
+| `!!` | Compound while the added roll is also a max (capped at 1000) |
 | `!!N` | Compound with max depth N |
 | `!!0` | Compound unlimited (capped at 1000) |
 
@@ -286,7 +286,7 @@ Exploding dice where each subsequent explosion subtracts 1 (Hackmaster-style).
 
 | Notation | Description |
 |---|---|
-| `!p` | Penetrate once per die |
+| `!p` | Penetrate while the added roll is also a max (capped at 1000) |
 | `!pN` | Penetrate with max depth N |
 | `!p0` | Penetrate unlimited (capped at 1000) |
 

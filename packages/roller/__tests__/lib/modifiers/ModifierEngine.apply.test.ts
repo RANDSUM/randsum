@@ -374,13 +374,13 @@ describe('applyModifier', () => {
       expect(result.rolls).toEqual([5, 3, 4])
     })
 
-    test('minimum penetrated value is 1', () => {
+    test('a penetrating 1 adds nothing', () => {
       const rollsOne = (): number => 1
       const ctx: ModifierContext = { rollOne: rollsOne, parameters: { sides: 6, quantity: 1 } }
       const result = applyModifier('penetrate', true, [6], ctx)
 
-      // The 6 penetrates: 6 + max(1, 1 - 1) = 6 + 1 = 7 (not 6 + 0)
-      expect(result.rolls).toEqual([7])
+      // The 6 penetrates: 6 + (1 - 1) = 6
+      expect(result.rolls).toEqual([6])
     })
 
     test('throws error when context is incomplete', () => {
