@@ -31,7 +31,13 @@ export const capModifier: ModifierDefinition<ComparisonOptions> = {
       return afterLowCap
     })
 
-    return { rolls: newRolls }
+    // Clamping swaps a die for its bound one for one, so the trace can show 8 → 7
+    const replacements = rolls.flatMap((roll, i) => {
+      const to = newRolls[i]
+      return to !== undefined && to !== roll ? [{ from: roll, to }] : []
+    })
+
+    return { rolls: newRolls, replacements }
   },
 
   validate: _options => {

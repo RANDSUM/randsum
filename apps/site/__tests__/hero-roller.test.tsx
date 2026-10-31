@@ -54,4 +54,19 @@ describe('HeroRoller', () => {
     const labels = [...document.querySelectorAll('.hr-step-label')].map(el => el.textContent)
     expect(labels).toEqual(['1d4', '1d6', '1d8', '1d10', '1d12', '1d20'])
   })
+
+  test('a capped die shows as old value to new value', () => {
+    render(<HeroRoller />)
+    const input = screen.getByLabelText('Dice notation')
+    // Every d8 is under 9, so the floor lifts all four
+    fireEvent.change(input, { target: { value: '4d8C{<9}' } })
+    act(() => {
+      fireEvent.submit(input)
+    })
+    const capStep = [...document.querySelectorAll('.hr-step')].find(el =>
+      el.textContent?.startsWith('Cap')
+    )
+    expect(capStep?.querySelectorAll('.hr-swap')).toHaveLength(4)
+    expect(capStep?.querySelectorAll('.hr-dice > .hr-die--removed')).toHaveLength(0)
+  })
 })
