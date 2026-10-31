@@ -1,5 +1,5 @@
-// The product a page belongs to. Each product wears the pip R die in its own
-// colour; theme.css turns <html data-product> into that page's accent.
+// The product a page belongs to. Each product wears the pip die in its own
+// colour and its own pattern; theme.css turns <html data-product> into that page's accent.
 export type Product = 'roller' | 'games' | 'spec' | 'api' | 'discord' | 'plugin' | 'app'
 
 const PREFIXES: readonly (readonly [string, Product])[] = [
@@ -24,6 +24,73 @@ export const PRODUCT_LABELS: Readonly<Record<Product, string>> = {
   discord: 'discord bot',
   plugin: 'plugin',
   app: 'app'
+}
+
+// Each product's pattern on the die's 3x3 face, centres on a 22 pitch. The
+// roller keeps the brand's R; the rest spell their initial where it reads at
+// favicon size, and draw what the product does where it would not.
+const [L, M, H] = [28, 50, 72] as const
+type Pip = readonly [number, number]
+export const PIPS: Readonly<Record<Product, readonly Pip[]>> = {
+  // R
+  roller: [
+    [L, L],
+    [M, L],
+    [L, M],
+    [M, M],
+    [L, H],
+    [H, H]
+  ],
+  // A gem, the d8's diamond
+  games: [
+    [M, L],
+    [L, M],
+    [H, M],
+    [M, H]
+  ],
+  // Lines of text, the middle one short
+  spec: [
+    [L, L],
+    [M, L],
+    [H, L],
+    [L, M],
+    [L, H],
+    [M, H]
+  ],
+  // A > prompt
+  api: [
+    [L, L],
+    [M, M],
+    [L, H]
+  ],
+  // D
+  discord: [
+    [L, L],
+    [M, L],
+    [L, M],
+    [H, M],
+    [L, H],
+    [M, H]
+  ],
+  // P: the R without its leg
+  plugin: [
+    [L, L],
+    [M, L],
+    [L, M],
+    [M, M],
+    [L, H]
+  ],
+  // An app icon on a home screen
+  app: [
+    [L, L],
+    [M, L],
+    [H, L],
+    [L, M],
+    [H, M],
+    [L, H],
+    [M, H],
+    [H, H]
+  ]
 }
 
 export function productForPath(pathname: string): Product | undefined {

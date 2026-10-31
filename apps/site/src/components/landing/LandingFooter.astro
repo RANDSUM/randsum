@@ -43,7 +43,7 @@ const year = new Date().getFullYear()
           {PRODUCTS.map(product => (
             <li style={`--p: var(--product-${product.id}-fill)`}>
               <a href={product.href} class="footer-product">
-                <PipMark variant="knockout" size={14} />
+                <PipMark variant="knockout" product={product.id} size={14} />
                 {PRODUCT_LABELS[product.id]}
               </a>
             </li>

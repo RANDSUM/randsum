@@ -15,7 +15,7 @@ import { gamePackages } from '../../utils/packageData'
     {gamePackages.map(pkg => (
       <li style={`--g: var(--game-${pkg.id})`}>
         <a href={`/games/${pkg.id}/`} class="game">
-          <PipMark variant="knockout" size={28} />
+          <PipMark variant="knockout" product="games" size={28} />
           <span class="game-name">{pkg.displayName}</span>
           <span class="game-desc">{pkg.description}</span>
           <code class="game-import">{pkg.npmPackage}</code>
@@ -24,7 +24,7 @@ import { gamePackages } from '../../utils/packageData'
     ))}
     <li>
       <a href="/games/schema/contributing-a-game/" class="game game--yours">
-        <PipMark variant="outline" size={28} />
+        <PipMark variant="outline" product="games" size={28} />
         <span class="game-name">Your game here</span>
         <span class="game-desc">
           Write your system's rules as a .randsum.json spec and contribute it, or keep it in your
