@@ -1,8 +1,7 @@
 ---
-// Every game @randsum/games ships, each wearing its own colour, and a way to add yours.
+// Every game @randsum/games ships, as cells in one panel like the carousel's:
+// each game's die in its own colour, what it resolves, and the subpath to import.
 import PipMark from '../PipMark.astro'
-import Card from '../ui/Card.astro'
-import CardGrid from '../ui/CardGrid.astro'
 import Section from '../ui/Section.astro'
 import { gamePackages } from '../../utils/packageData'
 ---
@@ -12,25 +11,123 @@ import { gamePackages } from '../../utils/packageData'
   title="Ready for your table"
   lede="Each game resolves a roll by its own rules: hits and misses, hope and fear, the Fate ladder. Import one subpath and roll."
 >
-  <CardGrid>
+  <ul class="games">
     {gamePackages.map(pkg => (
-      <Card
-        href={`/games/${pkg.id}/`}
-        title={pkg.displayName}
-        eyebrow={pkg.npmPackage}
-        accent={`var(--game-${pkg.id})`}
-      >
-        <PipMark slot="mark" variant="knockout" size={18} />
-        {pkg.description}
-      </Card>
+      <li style={`--g: var(--game-${pkg.id})`}>
+        <a href={`/games/${pkg.id}/`} class="game">
+          <PipMark variant="knockout" size={28} />
+          <span class="game-name">{pkg.displayName}</span>
+          <span class="game-desc">{pkg.description}</span>
+          <code class="game-import">{pkg.npmPackage}</code>
+        </a>
+      </li>
     ))}
-    <Card
-      href="/games/schema/contributing-a-game/"
-      title="Your game here"
-      eyebrow="a .randsum.json spec"
-    >
-      <PipMark slot="mark" variant="outline" size={18} />
-      Write your system's rules as a spec and contribute it, or keep it in your own project.
-    </Card>
-  </CardGrid>
+    <li>
+      <a href="/games/schema/contributing-a-game/" class="game game--yours">
+        <PipMark variant="outline" size={28} />
+        <span class="game-name">Your game here</span>
+        <span class="game-desc">
+          Write your system's rules as a .randsum.json spec and contribute it, or keep it in your
+          own project.
+        </span>
+        <span class="game-import">Write a game spec</span>
+      </a>
+    </li>
+  </ul>
 </Section>
+
+<style>
+/* One bordered panel; the 1px gap over a border-coloured ground draws the rules between cells */
+.games {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1px;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  border: var(--rs-border);
+  border-radius: var(--rs-radius-lg);
+  background: var(--rs-gray-5);
+  list-style: none;
+}
+
+.games li {
+  display: flex;
+  margin: 0;
+}
+
+.game {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.5rem;
+  padding: 1.5rem 1.25rem 1.25rem;
+  background: var(--rs-bg);
+  color: var(--rs-fg);
+  text-decoration: none;
+  transition: background-color var(--rs-duration) var(--rs-ease);
+}
+
+.game:hover {
+  background: color-mix(in srgb, var(--g, var(--rs-gray-4)) 8%, var(--rs-bg));
+}
+
+.game:focus-visible {
+  /* Drawn inside the cell, since the panel clips anything outside it */
+  outline: 2px solid var(--rs-accent);
+  outline-offset: -2px;
+}
+
+.game :global(.pip-mark) {
+  margin-bottom: 0.25rem;
+  color: var(--g, var(--rs-gray-3));
+}
+
+.game-name {
+  font-family: var(--rs-font-heading);
+  font-size: var(--rs-text-md);
+  font-weight: var(--rs-weight-bold);
+  letter-spacing: var(--rs-tracking-tight);
+  line-height: var(--rs-leading-snug);
+}
+
+.game-desc {
+  flex: 1;
+  font-size: var(--rs-text-sm);
+  line-height: var(--rs-leading-body);
+  color: var(--rs-gray-2);
+}
+
+.games .game-import {
+  margin-top: 0.5rem;
+  padding: 0;
+  border: none;
+  background: none;
+  font-family: var(--rs-font-mono);
+  font-size: var(--rs-text-2xs);
+  color: var(--rs-gray-3);
+  transition: color var(--rs-duration) var(--rs-ease);
+}
+
+.game:hover .game-import {
+  color: var(--rs-fg);
+}
+
+.game--yours .game-import {
+  font-family: var(--rs-font-sans);
+  font-weight: var(--rs-weight-semibold);
+}
+
+@media (max-width: 1000px) {
+  .games {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 560px) {
+  .games {
+    grid-template-columns: 1fr;
+  }
+}
+</style>
