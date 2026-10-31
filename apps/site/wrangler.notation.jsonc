@@ -1,18 +1,23 @@
 {
-  // Cloudflare Worker for notation.randsum.dev: a redirect, nothing else.
+  // Cloudflare Worker for notation.randsum.dev: the RANDSUM Dice Notation spec.
   //
-  // The spec now lives at randsum.dev/spec (apps/site/src/pages/spec). The old
-  // host keeps answering with a 301 from worker/notation-redirect.ts, so the
-  // redirect is versioned here rather than living only in the zone.
+  // Static assets only, no script. `bun run build` writes dist-notation/
+  // (scripts/build-notation.ts): the spec pages Astro builds under /spec/,
+  // lifted to the root, with their badges, conformance vectors and assets.
+  // randsum.dev/spec/* and /conformance/* 301 here (public/_redirects).
   //
-  // `name` is deliberately the Worker that served the old rdn site. Its
+  // `name` is deliberately the Worker that has always served this host. Its
   // notation.randsum.dev Custom Domain lives on the Worker, not in this file,
-  // so deploying this script under that name keeps the hostname and its DNS
-  // record: there is no detach, no placeholder record and no gap.
+  // so deploying under that name keeps the hostname and its DNS record.
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "randsum-rdn",
-  "main": "./worker/notation-redirect.ts",
   "compatibility_date": "2026-07-13",
+  "assets": {
+    "directory": "./dist-notation",
+    "not_found_handling": "404-page"
+  },
+  "workers_dev": false,
+  "preview_urls": false,
   "observability": {
     "enabled": true
   }

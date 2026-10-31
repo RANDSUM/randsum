@@ -3,6 +3,7 @@
 // title, status and date, then the addresses and contacts as a definition list.
 import type { CollectionEntry } from 'astro:content'
 import { longDate, versionLabel } from '../document'
+import { specPath, specUrl } from '../urls'
 
 interface Props {
   entry: CollectionEntry<'specs'>
@@ -12,8 +13,8 @@ interface Props {
 const { entry, versions } = Astro.props
 const { title, version, status, date, editor } = entry.data
 const previous = versions.filter(v => v !== version).reverse()
-const thisVersion = new URL(`/spec/v/${version}/`, Astro.site).href
-const latest = new URL('/spec/', Astro.site).href
+const thisVersion = specUrl(`/v/${version}/`)
+const latest = specUrl('/')
 ---
 
 <header class="spec-head">
@@ -32,7 +33,7 @@ const latest = new URL('/spec/', Astro.site).href
         <dt>Previous versions</dt>
         {previous.map(v => (
           <dd>
-            <a href={`/spec/v/${v}/`}>{v}</a>
+            <a href={specPath(`/v/${v}/`)}>{v}</a>
           </dd>
         ))}
       </>
@@ -46,15 +47,17 @@ const latest = new URL('/spec/', Astro.site).href
     </dd>
     <dt>Test suite</dt>
     <dd>
-      <a href={`/conformance/v${version}.json`}>Conformance vectors for {version} (JSON)</a>
+      <a href={specPath(`/conformance/v${version}.json`)}
+        >Conformance vectors for {version} (JSON)</a
+      >
     </dd>
     <dt>Reference implementation</dt>
     <dd>
       <a href="https://www.npmjs.com/package/@randsum/roller"><code>@randsum/roller</code></a>
     </dd>
     <dt>Conformance badges</dt>
-    <dd><a href="/spec/conformance/">Levels and badges for implementations</a></dd>
+    <dd><a href={specPath('/conformance/')}>Levels and badges for implementations</a></dd>
     <dt>Also available as</dt>
-    <dd><a href="/spec/llms-full.txt">Plain-text Markdown</a></dd>
+    <dd><a href={specPath('/llms-full.txt')}>Plain-text Markdown</a></dd>
   </dl>
 </header>

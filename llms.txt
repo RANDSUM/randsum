@@ -45,8 +45,8 @@ roll("2d6+3[fire]") // Annotation
 
 ## Specification
 
-- [RDN specification](https://randsum.dev/spec/): taxonomy, execution pipeline, conformance levels, syntax
-- [RDN specification, full text](https://randsum.dev/spec/llms-full.txt): the whole spec as plain text
+- [RDN specification](https://notation.randsum.dev/): taxonomy, execution pipeline, conformance levels, syntax
+- [RDN specification, full text](https://notation.randsum.dev/llms-full.txt): the whole spec as plain text
 - [Games meta-schema](https://randsum.dev/schemas/v1/randsum.json): JSON Schema for `*.randsum.json` game specs; reference it from a `"$schema"` key for editor completion
 
 ## Optional

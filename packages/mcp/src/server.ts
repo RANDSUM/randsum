@@ -139,7 +139,7 @@ const rollGameInput = z
 
 /** Sent to clients on initialize; most hosts put it in the model's context. */
 const SERVER_INSTRUCTIONS =
-  'RANDSUM rolls tabletop RPG dice with a real random number generator. Call a tool for every roll the user asks for; never invent dice results. Use `roll_game` when the user names a supported game (D&D 5e is `fifth`), `roll` for plain notation such as "4d6L" or "2d20L+5", and `validate` to explain or repair notation. Notation reference: https://randsum.dev/spec/'
+  'RANDSUM rolls tabletop RPG dice with a real random number generator. Call a tool for every roll the user asks for; never invent dice results. Use `roll_game` when the user names a supported game (D&D 5e is `fifth`), `roll` for plain notation such as "4d6L" or "2d20L+5", and `validate` to explain or repair notation. Notation reference: https://notation.randsum.dev/'
 
 /**
  * Every tool only computes: it reads no state, changes nothing, and reaches no

@@ -64,7 +64,7 @@ export const register: Register = on => {
     } catch (error) {
       const reason = error instanceof Error ? error.message : String(error)
       return {
-        text: `Could not roll ${asked}: ${reason}\nNotation reference: https://randsum.dev/spec/`
+        text: `Could not roll ${asked}: ${reason}\nNotation reference: https://notation.randsum.dev/`
       }
     }
   })

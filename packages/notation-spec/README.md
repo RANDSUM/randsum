@@ -2,10 +2,10 @@
 
 The specification of the RANDSUM Dice Notation (RDN), a format for dice rolls in tabletop games (`4d6L`, `1d20+5`, `3d6!{>5}`), with its conformance test vectors and a runner that proves which conformance level an implementation reaches.
 
-- **Read it:** https://randsum.dev/spec/
-- **Version:** 0.9.0, revision 3 (draft community specification)
+- **Read it:** https://notation.randsum.dev/
+- **Version:** 0.9.0, revision 4 (draft community specification)
 - **Vectors:** [`vectors/v0.9.0.json`](vectors/v0.9.0.json), described by [`schema/conformance.schema.json`](schema/conformance.schema.json)
-- **Badges:** https://randsum.dev/spec/conformance/
+- **Badges:** https://notation.randsum.dev/conformance/
 
 | Path | What it is | Licence |
 | --- | --- | --- |
@@ -38,7 +38,7 @@ Conformance comes in four levels, each a superset of the one before (spec Sectio
    RDN 0.9.0 Level 4 (Full) conformant.
 
    Badge:
-     [![RDN 0.9.0 Level 4: Full](https://randsum.dev/spec/badges/v0.9.0/level-4.svg)](https://randsum.dev/spec/#10-conformance-levels)
+     [![RDN 0.9.0 Level 4: Full](https://notation.randsum.dev/badges/v0.9.0/level-4.svg)](https://notation.randsum.dev/#10-conformance-levels)
    ```
 
    It exits 0 when the `--level` you asked for (default 1) is reached, so it can gate CI.
@@ -87,11 +87,11 @@ console.log(formatReport(report))
 
 ## Claiming a level
 
-Once a level passes, say so in the form "RDN 0.9.0 Level N (Name) conformant" and show that level's badge, linked to the spec. Every badge, with Markdown and HTML to paste, is at https://randsum.dev/spec/conformance/.
+Once a level passes, say so in the form "RDN 0.9.0 Level N (Name) conformant" and show that level's badge, linked to the spec. Every badge, with Markdown and HTML to paste, is at https://notation.randsum.dev/conformance/.
 
 ## Versions and changes
 
-The specification follows semantic versioning. While it is a draft, a revision corrects a version in place; a conformance claim names the version, not the revision. Each revision is tagged here as `v<version>-rev.<n>` (for example `v0.9.0-rev.3`) and listed in the spec's Section 1.5 and in [`CHANGELOG.md`](CHANGELOG.md).
+The specification follows semantic versioning. While it is a draft, a revision corrects a version in place; a conformance claim names the version, not the revision. Each revision is tagged here as `v<version>-rev.<n>` (for example `v0.9.0-rev.4`) and listed in the spec's Section 1.5 and in [`CHANGELOG.md`](CHANGELOG.md).
 
 ## Feedback and contributing
 

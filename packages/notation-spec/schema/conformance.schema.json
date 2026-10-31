@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://randsum.dev/conformance/conformance.schema.json",
+  "$id": "https://notation.randsum.dev/conformance/conformance.schema.json",
   "title": "RDN conformance vectors",
   "description": "A set of RANDSUM Dice Notation conformance test vectors (spec Section 11.3).",
   "type": "object",

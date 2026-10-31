@@ -18,7 +18,7 @@ describe('rdn-conformance', () => {
   test('proves Level 4 for the reference adapter', () => {
     const { code, out } = run('--level', '4', '--', 'bun', 'examples/randsum-roller/adapter.ts')
     expect(out).toContain('RDN 0.9.0 Level 4 (Full) conformant.')
-    expect(out).toContain('https://randsum.dev/spec/badges/v0.9.0/level-4.svg')
+    expect(out).toContain('https://notation.randsum.dev/badges/v0.9.0/level-4.svg')
     expect(code).toBe(0)
   })
 

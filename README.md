@@ -14,7 +14,7 @@
 
 </div>
 
-**[RDN v0.9.0 Level 3 (Extended) Conformant](https://randsum.dev/spec/)** — Level 4 (Full) is partial: conformance vector 39 (`!s{}`) is a known gap
+**[RDN v0.9.0 Level 3 (Extended) Conformant](https://notation.randsum.dev/)** — Level 4 (Full) is partial: conformance vector 39 (`!s{}`) is a known gap
 
 Built on **[the Butter Stack](https://alxjrvs.github.io/butter/)** — Bun · Unified workspace · TypeScript · TanStack · Edge-deployed · React.
 
@@ -37,7 +37,7 @@ This repository contains multiple packages and applications for dice rolling and
 ### Applications (private)
 
 - **[@randsum/discord-bot](apps/discord-bot)** - Discord bot for dice rolling
-- **[@randsum/site](apps/site)** - Documentation site built with Astro + Starlight ([randsum.dev](https://randsum.dev)), including the RANDSUM Dice Notation specification ([randsum.dev/spec](https://randsum.dev/spec/))
+- **[@randsum/site](apps/site)** - Documentation site built with Astro + Starlight ([randsum.dev](https://randsum.dev)), including the RANDSUM Dice Notation specification ([notation.randsum.dev](https://notation.randsum.dev/))
 
 ### For AI agents
 
@@ -139,7 +139,7 @@ Bun automatically handles inter-package dependencies through workspace linking, 
 
 ### Key Resources
 
-- [RANDSUM Dice Notation (RDN) Specification](https://randsum.dev/spec/) - Formal spec for dice notation syntax
+- [RANDSUM Dice Notation (RDN) Specification](https://notation.randsum.dev/) - Formal spec for dice notation syntax
 - [Documentation](https://randsum.dev)
 - [Sophie's Dice Notation](https://sophiehoulden.com/dice/documentation/notation.html) - a great dice notation guide that helped me along the way
 - [\_why's poignant guide to ruby](https://poignant.guide/) - \_why not?

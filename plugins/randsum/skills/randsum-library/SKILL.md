@@ -50,7 +50,7 @@ result.rolls[0].label         // 'fire' from '2d6[fire]'
 
 `4d6Lx6` repeats a roll: `result.rolls` has six records, one per ability score, and `total` sums them, so read each record's `total`.
 
-Notation is a superset of common VTT syntax: `L`/`H` drop, `K`/`kl` keep, `R{<3}` reroll, `!` explode, `S{7}` count successes, `C{>18}` cap, `4dF` Fate dice, `d%`. The full grammar is at https://randsum.dev/spec/; the plugin's `dice-rolling` skill has a quick reference.
+Notation is a superset of common VTT syntax: `L`/`H` drop, `K`/`kl` keep, `R{<3}` reroll, `!` explode, `S{7}` count successes, `C{>18}` cap, `4dF` Fate dice, `d%`. The full grammar is at https://notation.randsum.dev/; the plugin's `dice-rolling` skill has a quick reference.
 
 ## User-typed notation
 

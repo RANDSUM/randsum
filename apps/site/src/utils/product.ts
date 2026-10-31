@@ -173,7 +173,7 @@ export const PRODUCTS: readonly ProductInfo[] = [
     tagline: 'An open standard for dice notation',
     summary:
       'RANDSUM Dice Notation: one grammar, a fixed modifier order, and conformance levels any roller can implement.',
-    href: '/spec/',
+    href: 'https://notation.randsum.dev/',
     snippet: {
       lang: 'text',
       code: '4d6R{1}L+2\n\nroll 4d6 → reroll 1s → drop lowest → add 2'
@@ -184,7 +184,7 @@ export const PRODUCTS: readonly ProductInfo[] = [
       { value: '3', label: 'pipeline stages' }
     ],
     actions: [
-      { label: 'Read the spec', href: '/spec/' },
+      { label: 'Read the spec', href: 'https://notation.randsum.dev/' },
       { label: 'Getting started', href: '/notation/getting-started/' }
     ]
   },

@@ -76,7 +76,7 @@ Never run `npm publish` or `bun publish` yourself: npm would ship the literal `w
 
 - **Code-generated games**: each game is a `.randsum.json` spec compiled by `packages/games/codegen.ts` into `packages/games/src/<game>.generated.ts`. Edit the spec, then `bun run --filter @randsum/games gen`; never edit generated files.
 - **Modifier registry**: `MODIFIER_SCHEMAS` in `packages/roller/src/notation/definitions/index.ts` is the single source of truth for which modifiers exist and their execution order. Each modifier is split into a schema (`src/notation/definitions/<mod>.ts`) and a behavior (`src/modifiers/<mod>.ts`). See `packages/roller/AGENTS.md`.
-- **Notation spec**: https://randsum.dev/spec/ is the formal specification (taxonomy, pipeline, conformance, syntax). Its source is `packages/notation-spec/spec/`; the conformance vectors are `packages/notation-spec/vectors/`.
+- **Notation spec**: https://notation.randsum.dev/ is the formal specification (taxonomy, pipeline, conformance, syntax). Its source is `packages/notation-spec/spec/`; the conformance vectors are `packages/notation-spec/vectors/`.
 
 ```typescript
 roll(20) // Number: 1d20

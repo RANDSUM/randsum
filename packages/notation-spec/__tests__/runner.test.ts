@@ -99,7 +99,7 @@ describe('runConformance', () => {
 describe('badges', () => {
   test('match the badges /spec/conformance/ serves', () => {
     expect(badgeMarkdown('0.9.0', 2)).toBe(
-      '[![RDN 0.9.0 Level 2: VTT Baseline](https://randsum.dev/spec/badges/v0.9.0/level-2.svg)](https://randsum.dev/spec/#10-conformance-levels)'
+      '[![RDN 0.9.0 Level 2: VTT Baseline](https://notation.randsum.dev/badges/v0.9.0/level-2.svg)](https://notation.randsum.dev/#10-conformance-levels)'
     )
     expect(LEVELS.map(l => l.name)).toEqual(['Core', 'VTT Baseline', 'Extended', 'Full'])
   })

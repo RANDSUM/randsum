@@ -42,3 +42,9 @@
 # Retired @randsum/cli docs -> its successor
 /tools/cli/                        /tools/mcp/                         301
 /tools/cli                         /tools/mcp/                         301
+
+# The notation spec's home is its own host, notation.randsum.dev
+# (scripts/build-notation.ts); its badges and conformance files moved with it.
+/spec                              https://notation.randsum.dev/                  301
+/spec/*                            https://notation.randsum.dev/:splat            301
+/conformance/*                     https://notation.randsum.dev/conformance/:splat 301

@@ -217,7 +217,7 @@ describe('the file is the source of truth', () => {
 
   test('$id is where randsum.dev serves it', () => {
     expect(CONFORMANCE_FILE.$id).toBe(
-      `https://randsum.dev/conformance/v${CONFORMANCE_FILE.specVersion}.json`
+      `https://notation.randsum.dev/conformance/v${CONFORMANCE_FILE.specVersion}.json`
     )
   })
 

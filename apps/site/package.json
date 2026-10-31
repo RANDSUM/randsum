@@ -29,7 +29,7 @@
   },
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build && bun scripts/build-app.ts",
+    "build": "astro build && bun scripts/build-app.ts && bun scripts/build-notation.ts",
     "preview": "astro preview",
     "deploy": "wrangler deploy -c wrangler.jsonc",
     "deploy:notation": "wrangler deploy -c wrangler.notation.jsonc",

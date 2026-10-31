@@ -1,6 +1,6 @@
 {
-  "$schema": "https://randsum.dev/conformance/conformance.schema.json",
-  "$id": "https://randsum.dev/conformance/v0.9.0.json",
+  "$schema": "https://notation.randsum.dev/conformance/conformance.schema.json",
+  "$id": "https://notation.randsum.dev/conformance/v0.9.0.json",
   "specVersion": "0.9.0",
   "conformanceLevels": {
     "level1_core": [1, 2, 3, 10, 11, 14, 15, 16, 19, 20, 26, 27],

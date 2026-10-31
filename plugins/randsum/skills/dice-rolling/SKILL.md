@@ -109,4 +109,4 @@ Case-insensitive. `NdS` rolls N dice with S sides; `d20` means `1d20`.
 | `2d6+3[fire]` | Label a group |
 | `1d20+2d6+5` | Several groups, one total |
 
-Conditions: `>N`, `<N`, `>=N`, `<=N`, `=N` or a bare `N` (exact). Modifiers run in a fixed order whatever order they are written in; [references/NOTATION.md](references/NOTATION.md) has the order and every modifier in full, and https://randsum.dev/spec/ is the specification.
+Conditions: `>N`, `<N`, `>=N`, `<=N`, `=N` or a bare `N` (exact). Modifiers run in a fixed order whatever order they are written in; [references/NOTATION.md](references/NOTATION.md) has the order and every modifier in full, and https://notation.randsum.dev/ is the specification.

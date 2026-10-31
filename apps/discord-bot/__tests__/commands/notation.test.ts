@@ -34,7 +34,7 @@ describe('notationCommand', () => {
   })
 
   test('links out to the notation site', () => {
-    expect(textOf(view)).toContain('https://randsum.dev/spec/')
+    expect(textOf(view)).toContain('https://notation.randsum.dev/')
   })
 
   test('a page says where it is in the sequence', () => {

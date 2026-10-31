@@ -73,3 +73,7 @@ The spec now lives in `apps/site`:
 - ADR-011: Playground Layout Design — prior decision to use a custom layout for `apps/playground/`, establishing the precedent of non-Starlight apps in this monorepo
 - ADR-012: Playground App Infrastructure — further context on how non-Starlight apps are structured
 - `apps/site/` — the main site that uses Starlight, and since the addendum also hosts the spec at `/spec`
+
+## Addendum (2026-10-31): the spec returns to notation.randsum.dev
+
+The spec is served at `notation.randsum.dev` again, as its own host, while `apps/site` keeps building it. The pages still build under `/spec/` with the site; `apps/site/scripts/build-notation.ts` lifts them to the root of `dist-notation/`, which the `randsum-rdn` Worker serves as static assets, and randsum.dev's `_redirects` send `/spec/*` and `/conformance/*` there. One build, one layout and one theme are kept; only the address changes, so the spec has a home of its own beside its standalone repository (github.com/RANDSUM/notation-spec). Spec pages link through `src/spec/urls.ts`.

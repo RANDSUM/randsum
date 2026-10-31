@@ -47,7 +47,7 @@ Every package depends only on packages above it in the tree. Games never depend 
   <Card title="RANDSUM Dice Notation" icon="document">
     The formal specification for the notation: one grammar, a fixed modifier order, and four conformance levels any roller can implement.
 
-    [Read the spec](/spec/)
+    [Read the spec](https://notation.randsum.dev/)
   </Card>
 </CardGrid>
 
@@ -92,7 +92,7 @@ Most developers should start with `@randsum/roller`. It includes the full notati
 
 ## Design principles
 
-- **RDN conformant**: `@randsum/roller` implements the [RANDSUM Dice Notation (RDN) Specification](/spec/) at Level 3 (Extended) conformance
+- **RDN conformant**: `@randsum/roller` implements the [RANDSUM Dice Notation (RDN) Specification](https://notation.randsum.dev/) at Level 3 (Extended) conformance
 - **Zero core dependencies**: `@randsum/roller` has no runtime dependencies and includes the full notation parser and validator
 - **Throws on invalid input**: `roll()` throws typed errors on bad input (`ValidationError`, `ModifierError`, or `NotationParseError`); validate user-provided strings with `isDiceNotation()` or `validateNotation()` before rolling
 - **Games are code-generated**: every game is a `.randsum.json` spec compiled into TypeScript by the games package's codegen

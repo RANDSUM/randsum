@@ -21,7 +21,7 @@ export function longDate(isoDate: string): string {
 /**
  * The spec as one Markdown document: the header the page renders from the
  * front matter, then the body. Copy Markdown, Open in Claude and
- * /spec/llms-full.txt share it, so the text people paste names its version.
+ * /llms-full.txt (on notation.randsum.dev) share it, so the text people paste names its version.
  */
 export function specMarkdown(entry: SpecEntry): string {
   const { title, status, date, editor } = entry.data
