@@ -60,7 +60,7 @@ export const GAME_SCHEMAS: readonly GameSchemaSample[] = [
   },
   "roll": {
     "inputs": {
-      "rating": { "type": "integer", "minimum": 0, "maximum": 4, "default": 1 }
+      "rating": { "type": "integer", "minimum": 0, "maximum": 10, "default": 1 }
     },
     "dice": { "pool": { "$ref": "#/pools/actionDice" }, "quantity": { "$input": "rating" } },
     "modify": [{ "keepHighest": 1 }],
@@ -104,16 +104,16 @@ export const GAME_SCHEMAS: readonly GameSchemaSample[] = [
   "shortcode": "pbta",
   "roll": {
     "inputs": {
-      "stat": { "type": "integer", "minimum": -3, "maximum": 4, "default": 0 }
+      "stat": { "type": "integer", "minimum": -3, "maximum": 5 }
     },
     "dice": { "pool": { "sides": 6 }, "quantity": 2 },
     "resolve": "sum",
     "modify": [{ "add": { "$input": "stat" } }],
     "outcome": {
       "ranges": [
-        { "min": 10, "max": 15, "result": "Strong Hit" },
-        { "min": 7, "max": 9, "result": "Weak Hit" },
-        { "min": -1, "max": 6, "result": "Miss" }
+        { "min": 10, "result": "strong_hit" },
+        { "min": 7, "max": 9, "result": "weak_hit" },
+        { "max": 6, "result": "miss" }
       ]
     }
   }

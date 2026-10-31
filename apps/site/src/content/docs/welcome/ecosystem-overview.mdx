@@ -1,79 +1,100 @@
 ---
 title: Ecosystem Overview
-description: How RANDSUM packages relate to each other and where to start.
+description: How the RANDSUM roller, games, notation spec, API, Discord bot, agent plugin and Roller app fit together, and which one to start with.
 ---
 
 import { Card, CardGrid } from '@astrojs/starlight/components'
 
-RANDSUM is a monorepo with three layers: a dice engine (with built-in notation parsing), and game-specific packages. Every package is TypeScript-first, ships ESM with full type declarations, and is published to npm under `@randsum`.
+RANDSUM is one dice engine with several ways in. Two npm packages hold the code, an open spec defines the notation, and the API, Discord bot, agent plugin and Roller app put the same engine in front of people who are not writing TypeScript. Every package ships ESM with full type declarations and is published to npm under `@randsum`.
 
 ## Dependency diagram
 
 ```
-@randsum/roller              (zero dependencies — includes notation)
+@randsum/roller              (zero dependencies, includes the notation parser)
   |
-  +-- @randsum/games         (TTRPG game packages)
+  +-- @randsum/games         (one package, a subpath per game)
   |     +-- /blades            (Blades in the Dark)
   |     +-- /daggerheart       (Daggerheart)
+  |     +-- /fate              (Fate Core)
   |     +-- /fifth             (D&D 5e)
   |     +-- /pbta              (Powered by the Apocalypse)
   |     +-- /root-rpg          (Root RPG)
   |     +-- /salvageunion      (Salvage Union)
+  |
+  +-- @randsum/mcp           (MCP server: roll, validate, roll_game)
 ```
 
-Every package depends only on packages above it in the tree. Game packages never depend on each other.
+Every package depends only on packages above it in the tree. Games never depend on each other.
 
-## Packages by layer
-
-### Core: Roller
+## The packages
 
 <CardGrid>
   <Card title="@randsum/roller" icon="rocket">
-    The zero-dependency dice rolling engine with built-in notation parsing and validation. Accepts numbers, notation strings, or options objects and returns typed roll results with full modifier support. Includes `isDiceNotation`, `notation`, `validateNotation`, `notationToOptions`, `optionsToNotation`, `tokenize`, and more — most projects only need this package.
+    The zero-dependency dice engine with built-in notation parsing and validation. Accepts numbers, notation strings, or options objects and returns typed results with every modifier step. Also exports `isDiceNotation`, `validateNotation`, `notationToOptions`, `optionsToNotation`, `tokenize` and more, so most projects only need this package.
 
     [Learn more](/roller/introduction/)
   </Card>
-</CardGrid>
-
-### Game packages
-
-<CardGrid>
   <Card title="@randsum/games" icon="seti:favicon">
-    Code-generated TTRPG game packages, each available as a subpath export. Every game wraps `@randsum/roller` with game-specific dice pools, modifiers, and outcome interpretation -- generated from `.randsum.json` specs.
+    Ready-made rules for seven tabletop games, each a subpath export. Every game is generated from an open `.randsum.json` spec and wraps `@randsum/roller` with that system's dice pools, modifiers and outcomes.
 
     [Learn more](/games/introduction/)
   </Card>
 </CardGrid>
 
-Currently supported games: **Blades in the Dark**, **D&D 5e**, **Daggerheart**, **Powered by the Apocalypse**, **Root RPG**, and **Salvage Union**.
-
-### Tools
+## The spec
 
 <CardGrid>
-  <Card title="Discord Bot" icon="discord">
-    Roll dice directly in Discord with slash commands. Supports all game packages with rich embeds.
+  <Card title="RANDSUM Dice Notation" icon="document">
+    The formal specification for the notation: one grammar, a fixed modifier order, and four conformance levels any roller can implement.
+
+    [Read the spec](/spec/)
+  </Card>
+</CardGrid>
+
+## Without writing code
+
+<CardGrid>
+  <Card title="RANDSUM API" icon="rocket">
+    A free, keyless REST API at `api.randsum.dev`: roll notation, roll for any supported game, or draw random integers, from any language.
+
+    [Learn more](/api/introduction/)
+  </Card>
+  <Card title="Discord bot" icon="discord">
+    Slash commands for any notation and for six of the games, with every step of the roll shown in the reply.
 
     [Learn more](/tools/discord-bot/)
+  </Card>
+  <Card title="Plugin and connector" icon="setting">
+    Real dice for Claude and other agents: a Claude Code plugin with skills and a `/roll` command, and the hosted MCP server as a Claude connector.
+
+    [Learn more](/tools/agents/)
+  </Card>
+  <Card title="Roller app" icon="random">
+    An installable dice roller for your phone that shows every step and rolls offline.
+
+    [Learn more](/app/)
   </Card>
 </CardGrid>
 
 ## Where to start
 
-Pick the package that matches your use case:
+Pick the one that matches your use case:
 
 | Use case | Install | Start here |
 |---|---|---|
 | **Roll dice in any JS/TS project** | `bun add @randsum/roller` | [Roller Getting Started](/roller/getting-started/) |
-| **Parse or validate notation strings** | `bun add @randsum/roller` | [Roller Getting Started](/roller/getting-started/) |
+| **Parse or validate notation strings** | `bun add @randsum/roller` | [Notation Getting Started](/notation/getting-started/) |
 | **Build a TTRPG app with game-specific mechanics** | `bun add @randsum/games` | [Games Getting Started](/games/getting-started/) |
+| **Roll from another language or a no-code tool** | nothing | [RANDSUM API](/api/introduction/) |
+| **Give an AI agent dice** | the plugin or connector | [Dice for AI Agents](/tools/agents/) |
 
-Most developers should start with `@randsum/roller`. It includes the full notation parser and validator along with all rolling functionality and types, so most projects only need one install. Notation functions like `isDiceNotation`, `validateNotation`, `notationToOptions`, `optionsToNotation`, `tokenize`, and others are all exported directly from `@randsum/roller`.
+Most developers should start with `@randsum/roller`. It includes the full notation parser and validator along with all rolling functionality and types.
 
 ## Design principles
 
-- **RDN conformant** -- `@randsum/roller` implements the [RANDSUM Dice Notation (RDN) Specification](/spec/) at Level 3 (Extended) conformance, the formal standard for dice notation syntax in tabletop RPGs
-- **Zero core dependencies** -- `@randsum/roller` has no runtime dependencies and includes the full notation parser and validator
-- **Throws on invalid input** -- `roll()` throws typed errors on bad input (`ValidationError`, `ModifierError`, or `NotationParseError`); validate user-provided strings with `isDiceNotation()` or `validateNotation()` before rolling
-- **Game packages are code-generated** -- every game is defined as a `.randsum.json` spec and transformed into TypeScript by an internal codegen pipeline
-- **Strict TypeScript** -- `isolatedDeclarations`, `exactOptionalPropertyTypes`, `noUncheckedIndexedAccess`, no `any`
-- **Bundle size enforced** -- every roller and games entry point has a size budget checked in CI by size-limit; the budgets live in each package's size-limit config (`packages/roller/package.json`, `packages/games/.size-limit.ts`)
+- **RDN conformant**: `@randsum/roller` implements the [RANDSUM Dice Notation (RDN) Specification](/spec/) at Level 3 (Extended) conformance
+- **Zero core dependencies**: `@randsum/roller` has no runtime dependencies and includes the full notation parser and validator
+- **Throws on invalid input**: `roll()` throws typed errors on bad input (`ValidationError`, `ModifierError`, or `NotationParseError`); validate user-provided strings with `isDiceNotation()` or `validateNotation()` before rolling
+- **Games are code-generated**: every game is a `.randsum.json` spec compiled into TypeScript by the games package's codegen
+- **Strict TypeScript**: `isolatedDeclarations`, `exactOptionalPropertyTypes`, `noUncheckedIndexedAccess`, no `any`
+- **Bundle size enforced**: every roller and games entry point has a size budget checked in CI by size-limit; the budgets live in each package's size-limit config (`packages/roller/package.json`, `packages/games/.size-limit.ts`)

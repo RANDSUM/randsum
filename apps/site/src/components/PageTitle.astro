@@ -1,10 +1,19 @@
 ---
 // A product's front page opens with its hero; every other page keeps Starlight's title.
+// The landing page's tagline is its only h1, so its title slot stays empty (landing.css
+// hides the panel) and the skip link lands on the hero instead.
 import Default from '@astrojs/starlight/components/PageTitle.astro'
 import ProductHero from './ProductHero.astro'
 import { heroProductForPath } from '../utils/product'
 
+const isLanding = Astro.url.pathname === '/'
 const product = heroProductForPath(Astro.url.pathname)
 ---
 
-{product ? <ProductHero product={product} /> : <Default />}
+{isLanding ? (
+  <span class="landing-title-slot" hidden />
+) : product ? (
+  <ProductHero product={product} />
+) : (
+  <Default />
+)}

@@ -1,13 +1,13 @@
 ---
-title: RANDSUM Discord Dice Bot — D&D, Blades, PbtA & More
-description: Add a dice rolling bot to your Discord server. Supports RANDSUM notation, D&D 5e, Blades in the Dark, Daggerheart, Fate Core, PbtA, and Root RPG with full roll breakdowns.
+title: Discord Dice Bot for D&D, Blades, PbtA and More
+description: Add a free dice bot to your Discord server. Roll any notation, or D&D 5e, Blades in the Dark, Daggerheart, Fate Core, PbtA and Root RPG, with every step shown.
 ---
 
 import CodeExample from '../../../components/live-repl/CodeExample.astro'
 
-See the [Discord Bot landing page](/discord) for screenshots and quick setup.
+See the [Discord bot page](/discord/) for screenshots and quick setup.
 
-The **RANDSUM Discord Bot** is a Discord application for rolling dice in chat. It runs as a Cloudflare Worker that answers Discord's slash commands, and provides detailed roll breakdowns and full support for all RANDSUM game packages.
+The **RANDSUM Discord Bot** is a Discord application for rolling dice in chat. It runs as a Cloudflare Worker that answers Discord's slash commands, and shows every step of each roll. It has a command for every RANDSUM game except Salvage Union, which the official SURef bot handles.
 
 ## Add to your server
 
@@ -33,7 +33,7 @@ Roll Blades in the Dark action rolls. Takes the number of dice in your pool and 
 
 <CodeExample lang="bash" code={`/blades dice:3
 /blades dice:2
-/blades dice:0   # Desperate position (rolls 2d6, takes lowest)`} />
+/blades dice:0   # Zero dice: rolls 2d6 and keeps the lowest`} />
 
 ### `/fifth`
 
