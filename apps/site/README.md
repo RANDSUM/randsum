@@ -43,9 +43,8 @@ with its own layout (`src/spec/`). All other docs are Starlight pages under
 
 ## Deployment
 
-Deployed automatically to Cloudflare Workers once CI is green on `main` (static
-assets plus the `/api/roll` Worker in `worker/`, from
-`.github/workflows/deploy-cloudflare.yml`).
+Deployed automatically to Cloudflare Workers once CI is green on `main` as an
+assets-only Worker (`.github/workflows/deploy-cloudflare.yml`).
 
 ## More
 

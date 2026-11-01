@@ -248,9 +248,8 @@ jobs:
           fi
           bun run --filter @randsum/site deploy:notation
 
-      # The site's `deploy` script ships apps/site/wrangler.jsonc: static assets
-      # from dist plus the /api/roll Worker in apps/site/worker, which wrangler
-      # bundles itself, like the bot.
+      # The site's `deploy` script ships apps/site/wrangler.jsonc: an assets-only
+      # Worker serving dist, with redirects from dist/_redirects.
       - name: Deploy
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}

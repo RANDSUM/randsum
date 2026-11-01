@@ -1,27 +1,24 @@
 {
   // Cloudflare Workers deployment for randsum.dev.
   //
-  // The site is plain `output: 'static'` Astro with no adapter.
-  // The one dynamic route, `/api/roll`, is a small hand-written Worker in
-  // `worker/`. `run_worker_first` sends only `/api/*` to it; everything else is
-  // served straight from the assets binding, which is free and unbilled.
+  // The site is plain `output: 'static'` Astro with no adapter, deployed as an
+  // assets-only Worker: there is no script, so every request is served from
+  // static assets, which is free and unbilled. Redirects, including the retired
+  // `/api/roll` (now a 308 to api.randsum.dev/v1/roll), live in public/_redirects.
   //
   // This file is the deployable config: `wrangler deploy -c apps/site/wrangler.jsonc`.
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "randsum-site",
-  "main": "./worker/index.ts",
   // Deliberately not "today". A compatibility date newer than the workerd
   // bundled with the locally installed wrangler makes `wrangler dev` refuse to
   // start ("requires compatibility date X, but the newest date supported by
   // this server binary is Y") — so dating this to the future costs the ability
-  // to run the Worker locally, which is the only way to test it before DNS
-  // moves. Cloudflare's own servers would accept a newer date; local ones will
+  // to run the site locally under wrangler, the only way to check
+  // public/_redirects and _headers. Cloudflare's own servers would accept a newer date; local ones will
   // not. Raise it deliberately, alongside a wrangler upgrade, never by reflex.
   "compatibility_date": "2026-07-13",
   "assets": {
     "directory": "./dist",
-    "binding": "ASSETS",
-    "run_worker_first": ["/api/*"],
     // Astro's own 404 page rather than Cloudflare's bare platform error.
     "not_found_handling": "404-page"
   },
@@ -30,11 +27,5 @@
   // URLs: full copies of the site on hostnames nobody links to. The custom
   // domains (apex and www) are attached on the Worker in the dashboard.
   "workers_dev": false,
-  "preview_urls": false,
-  "observability": {
-    // On by default for new Workers, but declared explicitly: this is the only
-    // thing that makes `/api/roll` failures visible at all, and an implicit
-    // default is exactly the kind of thing that silently flips off later.
-    "enabled": true
-  }
+  "preview_urls": false
 }

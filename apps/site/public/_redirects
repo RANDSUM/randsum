@@ -1,4 +1,4 @@
-# Legacy 301 redirects for old URL shapes, served by Workers Static Assets.
+# Legacy redirects for old URL shapes, served by Workers Static Assets.
 #
 # Each path is listed with and without its trailing slash, because matching is
 # exact. Workers Static Assets issues 307 for its own trailing-slash handling,
@@ -6,6 +6,12 @@
 # expected and is a different mechanism from these 301s.
 #
 # `astro dev` does not read this file; check redirects with `wrangler dev`.
+
+# The legacy roll endpoint, retired 2026-11-01 for the RANDSUM API. 308 keeps the
+# method and body, so a POST of {"notation": "4d6L"} still rolls; the response
+# is the /v1 shape.
+/api/roll/                         https://api.randsum.dev/v1/roll     308
+/api/roll                          https://api.randsum.dev/v1/roll     308
 
 # Old package URLs -> new game/tool pages
 /packages/fifth/                   /games/fifth/                       301
