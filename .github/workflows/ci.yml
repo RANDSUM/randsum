@@ -269,7 +269,7 @@ jobs:
       # Strict, so a warning fails CI too: Anthropic's plugin directory runs the
       # same checks (and more) on every version it ingests from main.
       - name: Verify plugin
-        run: claude plugin validate --strict --profile directory plugins/randsum
+        run: claude plugin validate --strict plugins/randsum
       # Hooks modules are early access; this pinned build runs them only when asked.
       - name: Test the plugin's /roll mod
         run: claude plugin test plugins/randsum
