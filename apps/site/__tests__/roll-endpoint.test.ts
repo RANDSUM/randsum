@@ -2,6 +2,7 @@ import { describe, expect, test } from 'bun:test'
 import {
   type RollErrorBody,
   type RollSuccessBody,
+  SUCCESSOR_URL,
   USAGE_PAYLOAD,
   evaluateBody,
   evaluateNotation
@@ -121,6 +122,17 @@ describe('worker', () => {
     const response = await call('/api/roll', { method: 'OPTIONS' })
     expect(response.status).toBe(204)
     expect(response.headers.get('Access-Control-Allow-Methods')).toContain('POST')
+  })
+
+  test('every response announces the deprecation and its successor', async () => {
+    for (const init of [{ method: 'GET' }, { method: 'OPTIONS' }, { method: 'DELETE' }]) {
+      const response = await call('/api/roll', init)
+      expect(response.headers.get('Deprecation')).toBe('@1793491200')
+      expect(response.headers.get('Sunset')).toBe('Mon, 01 Feb 2027 00:00:00 GMT')
+      expect(response.headers.get('Link')).toBe(`<${SUCCESSOR_URL}>; rel="successor-version"`)
+    }
+    expect(USAGE_PAYLOAD.deprecated).toBe(true)
+    expect(USAGE_PAYLOAD.successor).toBe(SUCCESSOR_URL)
   })
 
   test('unsupported methods get a 405', async () => {

@@ -13,7 +13,27 @@ const MAX_BODY_BYTES = 4096
 const CORS_HEADERS: Readonly<Record<string, string>> = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type'
+  'Access-Control-Allow-Headers': 'Content-Type',
+  'Access-Control-Expose-Headers': 'Deprecation, Sunset, Link'
+}
+
+/** Where callers should move to: the RANDSUM API's roll endpoint. */
+export const SUCCESSOR_URL = 'https://api.randsum.dev/v1/roll'
+
+/**
+ * Deprecated since 2026-11-01 (RFC 9745 `Deprecation`), retired on the
+ * `Sunset` date (RFC 8594), after which this route redirects to
+ * {@link SUCCESSOR_URL}. Sent on every response.
+ */
+export const DEPRECATION_HEADERS: Readonly<Record<string, string>> = {
+  Deprecation: '@1793491200',
+  Sunset: 'Mon, 01 Feb 2027 00:00:00 GMT',
+  Link: `<${SUCCESSOR_URL}>; rel="successor-version"`
+}
+
+const RESPONSE_HEADERS: Readonly<Record<string, string>> = {
+  ...CORS_HEADERS,
+  ...DEPRECATION_HEADERS
 }
 
 export interface RollSuccessBody {
@@ -123,6 +143,9 @@ function parseJson(
 
 export const USAGE_PAYLOAD = {
   endpoint: '/api/roll',
+  deprecated: true,
+  sunset: '2027-02-01',
+  successor: SUCCESSOR_URL,
   description: 'Roll RANDSUM dice notation. POST JSON to evaluate a roll.',
   method: 'POST',
   request: { notation: 'string — RANDSUM dice notation, e.g. "4d6L"' },
@@ -140,7 +163,7 @@ export const USAGE_PAYLOAD = {
 function jsonResponse(body: unknown, status: number): Response {
   return new Response(JSON.stringify(body), {
     status,
-    headers: { 'Content-Type': 'application/json', ...CORS_HEADERS }
+    headers: { 'Content-Type': 'application/json', ...RESPONSE_HEADERS }
   })
 }
 
@@ -151,7 +174,7 @@ function jsonResponse(body: unknown, status: number): Response {
 export async function handleRoll(request: Request): Promise<Response> {
   switch (request.method) {
     case 'OPTIONS':
-      return new Response(null, { status: 204, headers: CORS_HEADERS })
+      return new Response(null, { status: 204, headers: RESPONSE_HEADERS })
     case 'GET':
     case 'HEAD':
       return jsonResponse(USAGE_PAYLOAD, 200)
@@ -162,7 +185,7 @@ export async function handleRoll(request: Request): Promise<Response> {
     default:
       return new Response(null, {
         status: 405,
-        headers: { Allow: 'GET, HEAD, POST, OPTIONS', ...CORS_HEADERS }
+        headers: { Allow: 'GET, HEAD, POST, OPTIONS', ...RESPONSE_HEADERS }
       })
   }
 }

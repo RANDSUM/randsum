@@ -44,9 +44,14 @@ validation while authoring a game spec:
 
 ## `POST randsum.dev/api/roll`
 
-The original single endpoint, still served by the site. New integrations should
-use [`/v1/roll`](/api/rolling/) on the RANDSUM API, which adds seeds, per-pool results and
-`GET`. This one evaluates [RANDSUM dice notation](https://notation.randsum.dev/) with the same
+:::caution[Deprecated]
+This endpoint is deprecated and sunsets on 1 February 2027. After that it redirects to
+[`/v1/roll`](/api/rolling/) on the RANDSUM API, which returns a different response shape.
+Every response carries `Deprecation`, `Sunset` and `Link: rel="successor-version"` headers.
+:::
+
+The original single endpoint, still served by the site until the sunset date. Use
+[`/v1/roll`](/api/rolling/), which adds seeds, per-pool results and `GET`. This one evaluates [RANDSUM dice notation](https://notation.randsum.dev/) with the same
 `roll()` engine as `@randsum/roller`.
 
 ### Request
