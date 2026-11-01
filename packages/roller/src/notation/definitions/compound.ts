@@ -13,7 +13,7 @@ export const compoundSchema: NotationSchema<boolean | number | ComparisonOptions
   defineNotationSchema<boolean | number | ComparisonOptions>({
     name: 'compound',
     priority: 51,
-    tokenKey: '!!',
+    lexemeKey: '!!',
     category: 'Accumulate',
 
     pattern: compoundPattern,

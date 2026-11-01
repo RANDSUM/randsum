@@ -3,7 +3,7 @@
 All notation processing runs through **one cursor-based lexer** in `lexer/`. Every public surface is a thin view over it: there is no regex system per surface, and no second parser that builds options. Do not add one.
 
 - **`lexer/specs.ts`** is the single token inventory. `POOL_SPECS` (die-type heads) and `MODIFIER_SPECS` (category + schema + sticky matcher per modifier) derive from `MODIFIER_SCHEMAS` plus the `S{..}` / `F{..}` / `ms{..}` sugar, sorted by schema priority, so the schemas stay the semantic source of truth.
-- **`lexer/scan.ts`**: `scan(input)` is a pure left-to-right lexical pass producing positioned `LexToken`s (pool / modifier / annotation / repeat / unknown). It enforces no structure; it is exactly what `tokenize` exposes.
+- **`lexer/scan.ts`**: `scan(input)` is a pure left-to-right lexical pass producing positioned `Lexeme`s (pool / modifier / annotation / repeat / unknown). It enforces no structure; it is exactly what `tokenize` exposes.
 - **`lexer/parse.ts`**: `parseNotation(input)` layers grammar over the token stream (begins with a pool, no unknown tokens, positive-integer magnitudes, at most one Count-family modifier, 1000-char limit) and returns a typed pool AST plus the error position.
 
 The public surfaces are views of that one pass:

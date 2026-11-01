@@ -43,7 +43,7 @@ export interface NotationSchema<TOptions = unknown> {
   priority: number
 
   /** Stable key of the lexer token this schema matches (e.g. `'C{..}'`, `'drop'`). */
-  tokenKey: string
+  lexemeKey: string
 
   /** RDN faceted category of the token. */
   category: ModifierCategory

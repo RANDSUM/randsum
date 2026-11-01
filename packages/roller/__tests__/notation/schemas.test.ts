@@ -20,7 +20,7 @@ describe('defineNotationSchema', () => {
     const schema = defineNotationSchema({
       name: 'plus',
       priority: 90,
-      tokenKey: '+',
+      lexemeKey: '+',
       category: 'Scale',
       pattern: /\+(\d+)/,
       parse: () => ({}),

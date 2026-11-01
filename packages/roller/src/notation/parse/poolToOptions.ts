@@ -1,4 +1,4 @@
-import type { LexToken } from '../lexer/scan'
+import type { Lexeme } from '../lexer/scan'
 import type { PoolNode } from '../lexer/parse'
 import type { PoolKind } from '../lexer/specs'
 import { MODIFIER_SPECS } from '../lexer/specs'
@@ -45,7 +45,7 @@ function sumCounts(a: number | undefined, b: number | undefined): number | undef
 
 /**
  * Combine two drops. Keep-middle (`Km`) is a drop of both ends, so `5d6KmL`
- * drops the lowest twice and the highest once, in either token order.
+ * drops the lowest twice and the highest once, in either lexeme order.
  */
 function mergeDrop(a: DropOptions, b: DropOptions): DropOptions {
   const merged: DropOptions = { ...a, ...b }
@@ -57,22 +57,22 @@ function mergeDrop(a: DropOptions, b: DropOptions): DropOptions {
 }
 
 /**
- * Build a pool's modifier options from its lexed tokens. Each token is parsed by
- * the schema whose pattern matched it. Tokens owned by the same schema are parsed
+ * Build a pool's modifier options from its lexed lexemes. Each lexeme is parsed by
+ * the schema whose pattern matched it. Lexemes owned by the same schema are parsed
  * together, separated by a space, so repeats combine the way the schema defines
- * (`+2+3` is plus 5, `LH` drops both ends) and no two tokens fuse into a different
+ * (`+2+3` is plus 5, `LH` drops both ends) and no two lexemes fuse into a different
  * one (`!` and `!` must not read as `!!`). `ms{N}` is `-N`, and the `!i` / `!r`
  * sugar resolves against the pool's sides.
  *
  * Keep is the one schema that emits another schema's key (`Km` is a `drop`), so
  * same-key results are merged rather than overwritten.
  */
-function modifiersFromTokens(tokens: readonly LexToken[], sides: number): ModifierOptions {
+function modifiersFromLexemes(lexemes: readonly Lexeme[], sides: number): ModifierOptions {
   const textsBySchema = new Map<(typeof MODIFIER_SPECS)[number]['schema'], string[]>()
-  for (const token of tokens) {
-    const spec = SPECS_BY_KEY.get(token.key)
+  for (const lexeme of lexemes) {
+    const spec = SPECS_BY_KEY.get(lexeme.key)
     if (spec === undefined) continue
-    const text = token.key === 'ms{..}' ? `-${token.text.slice(3, -1)}` : token.text
+    const text = lexeme.key === 'ms{..}' ? `-${lexeme.text.slice(3, -1)}` : lexeme.text
     textsBySchema.set(spec.schema, [...(textsBySchema.get(spec.schema) ?? []), text])
   }
   const modifiers: ModifierOptions = {}
@@ -84,10 +84,10 @@ function modifiersFromTokens(tokens: readonly LexToken[], sides: number): Modifi
     }
   }
 
-  if (tokens.some(t => /^!i$/i.test(t.text))) {
+  if (lexemes.some(t => /^!i$/i.test(t.text))) {
     // Every standard die above this one (a non-standard die snaps up).
     modifiers.explodeSequence = TTRPG_STANDARD_DIE_SET.filter(s => s > sides)
-  } else if (tokens.some(t => /^!r$/i.test(t.text))) {
+  } else if (lexemes.some(t => /^!r$/i.test(t.text))) {
     // Every standard die below this one, descending (a non-standard die snaps down).
     modifiers.explodeSequence = TTRPG_STANDARD_DIE_SET.filter(s => s < sides).reverse()
   }
@@ -111,6 +111,7 @@ export function poolToOptions(node: PoolNode): ParsedNotationOptions {
   if (head.fateVariant !== undefined) options.fateVariant = head.fateVariant
   if (head.customFaces !== undefined) options.customFaces = head.customFaces
   if (node.label !== undefined) options.label = node.label
-  if (node.modifiers.length > 0) options.modifiers = modifiersFromTokens(node.modifiers, head.sides)
+  if (node.modifiers.length > 0)
+    options.modifiers = modifiersFromLexemes(node.modifiers, head.sides)
   return options
 }

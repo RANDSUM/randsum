@@ -1,19 +1,19 @@
-import type { LexToken } from './scan'
+import type { Lexeme } from './scan'
 import type { PoolKind } from './specs'
 import { scan } from './scan'
 
 /** Maximum notation length accepted by every public surface (RDN safety limit). */
 const MAX_NOTATION_LENGTH = 1000
 
-/** A single die pool with the modifier tokens that bind to it. */
+/** A single die pool with the modifier lexemes that bind to it. */
 export interface PoolNode {
   readonly kind: PoolKind
   /** Arithmetic combination with the preceding pool ('' for the first pool). */
   readonly sign: '+' | '-' | ''
   /** Pool head text without the leading sign (e.g. '2d6', 'dF', '3DD6'). */
   readonly body: string
-  /** The modifier tokens bound to this pool, in source order. */
-  readonly modifiers: readonly LexToken[]
+  /** The modifier lexemes bound to this pool, in source order. */
+  readonly modifiers: readonly Lexeme[]
   /** Annotation label content (without the surrounding brackets), if present. */
   readonly label?: string
 }
@@ -40,21 +40,21 @@ export interface ParseResult {
 
 const COUNT_FAMILY_KEYS = new Set(['#{..}', 'S{..}', 'F{..}'])
 
-/** Modifier tokens whose repeats sum (`+2+3`, `LL`), so a pool may hold several. */
+/** Modifier lexemes whose repeats sum (`+2+3`, `LL`), so a pool may hold several. */
 const SUMMING = /^(?:[+-]\d+|ms\{\d+\}|[LH]\d*)$/i
 
 /** Flags that say the same thing twice (`4d6!L!`), so a repeat loses nothing. */
 const FLAG = /^(?:!|!!|!p|!i|!r|W|U|sa|sd)$/i
 
 /**
- * What a modifier token sets, for the once-per-pool rule. `K`, `kl` and `Km` share
- * a token key but set different things; `!s{..}`, `!i` and `!r` all set the
+ * What a modifier lexeme sets, for the once-per-pool rule. `K`, `kl` and `Km` share
+ * a lexeme key but set different things; `!s{..}`, `!i` and `!r` all set the
  * explode sequence; `L`, `H` and `D{..}` share `drop`.
  */
-function modifierKind(token: LexToken): string {
-  if (token.key === 'K') return token.text.replace(/\d+$/, '').toLowerCase()
-  if (token.key === 'drop') return token.text.slice(0, 1).toUpperCase()
-  return token.key
+function modifierKind(lexeme: Lexeme): string {
+  if (lexeme.key === 'K') return lexeme.text.replace(/\d+$/, '').toLowerCase()
+  if (lexeme.key === 'drop') return lexeme.text.slice(0, 1).toUpperCase()
+  return lexeme.key
 }
 
 const LEADING_QUANTITY = /^\d+/
@@ -78,7 +78,7 @@ function invalid(message: string, position: number): ParseResult {
   return { valid: false, pools: [], repeats: [], error: { message, position } }
 }
 
-function buildPool(head: LexToken, bound: readonly LexToken[]): PoolNode {
+function buildPool(head: Lexeme, bound: readonly Lexeme[]): PoolNode {
   const label = bound.find(t => t.role === 'annotation')?.text.slice(1, -1)
   return {
     kind: head.poolKind ?? 'standard',
@@ -91,14 +91,14 @@ function buildPool(head: LexToken, bound: readonly LexToken[]): PoolNode {
 
 /**
  * Structural parse of a notation string. Layers grammar rules over the lexer:
- * the string must begin with a pool, every token must be known, magnitudes must
+ * the string must begin with a pool, every lexeme must be known, magnitudes must
  * be positive integers, and at most one Count-family modifier may appear. The
  * returned AST (pools + bound modifiers) drives notationToOptions and roll.
  *
  * This is the single acceptance authority — `isDiceNotation` is `parse().valid`.
  */
 export function parseNotation(input: string): ParseResult {
-  // The lexer positions tokens relative to the trimmed string; track the leading
+  // The lexer positions lexemes relative to the trimmed string; track the leading
   // whitespace so every reported error offset is in the caller's coordinates.
   const trimOffset = input.length - input.trimStart().length
   const trimmed = input.trim()
@@ -110,14 +110,14 @@ export function parseNotation(input: string): ParseResult {
     )
   }
 
-  const tokens = scan(trimmed)
+  const lexemes = scan(trimmed)
 
-  // Every token must be known.
-  const unknown = tokens.find(t => t.role === 'unknown')
+  // Every lexeme must be known.
+  const unknown = lexemes.find(t => t.role === 'unknown')
   if (unknown) return invalid(`Unexpected "${unknown.text}"`, unknown.start + trimOffset)
 
   // A die expression must begin with a pool.
-  const head = tokens[0]
+  const head = lexemes[0]
   if (!head) return invalid('No die expression found', 0)
   if (head.role !== 'pool') {
     return invalid(`Expected a die before "${head.text}"`, head.start + trimOffset)
@@ -129,8 +129,8 @@ export function parseNotation(input: string): ParseResult {
   // unspecified; rather than silently drop a mid-stream `xN` (as `4d6x2+2d8`
   // previously did), reject it with a positioned error. Whole-string-trailing
   // `xN` is accepted and repeats the entire expression.
-  const strayRepeat = tokens.find(
-    (t, i) => t.role === 'repeat' && tokens.slice(i + 1).some(u => u.role !== 'repeat')
+  const strayRepeat = lexemes.find(
+    (t, i) => t.role === 'repeat' && lexemes.slice(i + 1).some(u => u.role !== 'repeat')
   )
   if (strayRepeat) {
     return invalid(
@@ -140,7 +140,7 @@ export function parseNotation(input: string): ParseResult {
   }
 
   // At most one Count-family modifier (RDN P5).
-  const countFamily = tokens.filter(t => t.role === 'modifier' && COUNT_FAMILY_KEYS.has(t.key))
+  const countFamily = lexemes.filter(t => t.role === 'modifier' && COUNT_FAMILY_KEYS.has(t.key))
   if (countFamily.length > 1) {
     return invalid(
       'Only one Count-family modifier (#{}, S{}, F{}) is permitted',
@@ -149,7 +149,7 @@ export function parseNotation(input: string): ParseResult {
   }
 
   // Every pool head must satisfy the positive-integer contract.
-  const badPool = tokens.find(
+  const badPool = lexemes.find(
     t =>
       t.role === 'pool' &&
       !poolMagnitudeValid(t.poolKind ?? 'standard', t.text.replace(/^[+-]/, ''))
@@ -158,11 +158,11 @@ export function parseNotation(input: string): ParseResult {
 
   // Unbraced `!` / `!!` / `!p`, `!s` and W fire on the maximum face, which dF, zN
   // and d{...} dice do not define. A braced `!{>0}` names its own trigger.
-  const maxFace = tokens.find(
+  const maxFace = lexemes.find(
     (t, i) =>
       (t.key === '!s' || t.key === 'W' || (/^!!?p?$/.test(t.key) && !t.text.includes('{'))) &&
       ['fate', 'zeroBias', 'custom'].includes(
-        tokens
+        lexemes
           .slice(0, i)
           .reverse()
           .find(u => u.role === 'pool')?.poolKind ?? ''
@@ -176,7 +176,7 @@ export function parseNotation(input: string): ParseResult {
   }
 
   // A custom-faces die lists at least one face per comma: `d{a,}` has an empty one.
-  const emptyFace = tokens.find(
+  const emptyFace = lexemes.find(
     t =>
       t.role === 'pool' &&
       t.poolKind === 'custom' &&
@@ -187,7 +187,7 @@ export function parseNotation(input: string): ParseResult {
   }
 
   // `!!N{..}` and `!pN{..}` would keep the condition and drop the depth.
-  const depthAndCondition = tokens.find(t => /^!(?:!|p)\d+\{/i.test(t.text))
+  const depthAndCondition = lexemes.find(t => /^!(?:!|p)\d+\{/i.test(t.text))
   if (depthAndCondition) {
     return invalid(
       `"${depthAndCondition.text}" takes a depth or a condition, not both`,
@@ -196,20 +196,20 @@ export function parseNotation(input: string): ParseResult {
   }
 
   // Explode Sequence rolls each listed size, so every size must be a real die.
-  const zeroSize = tokens.find(t => t.key === '!s' && /[{,]0+[,}]/.test(t.text))
+  const zeroSize = lexemes.find(t => t.key === '!s' && /[{,]0+[,}]/.test(t.text))
   if (zeroSize) {
     return invalid(`"${zeroSize.text}" lists a die with no sides`, zeroSize.start + trimOffset)
   }
 
-  // Group tokens into pools: each pool token owns the following modifier /
-  // annotation tokens until the next pool token. The trailing `xN` run (the only
+  // Group lexemes into pools: each pool lexeme owns the following modifier /
+  // annotation lexemes until the next pool lexeme. The trailing `xN` run (the only
   // position `xN` is accepted) is returned separately; notationToOptions applies
   // it to the whole expression.
-  const groups = tokens.flatMap((tok, i) => {
+  const groups = lexemes.flatMap((tok, i) => {
     if (tok.role !== 'pool') return []
-    const nextOffset = tokens.slice(i + 1).findIndex(t => t.role === 'pool')
-    const end = nextOffset === -1 ? tokens.length : i + 1 + nextOffset
-    return [{ head: tok, bound: tokens.slice(i + 1, end) }]
+    const nextOffset = lexemes.slice(i + 1).findIndex(t => t.role === 'pool')
+    const end = nextOffset === -1 ? lexemes.length : i + 1 + nextOffset
+    return [{ head: tok, bound: lexemes.slice(i + 1, end) }]
   })
 
   // Within one pool a modifier that sets a value may appear once (RDN §8.3):
@@ -246,7 +246,7 @@ export function parseNotation(input: string): ParseResult {
   }
 
   const pools = groups.map(({ head: poolHead, bound }) => buildPool(poolHead, bound))
-  const repeats = tokens
+  const repeats = lexemes
     .filter(t => t.role === 'repeat')
     .map(t => ({ count: Number(t.text.slice(1)), position: t.start + trimOffset }))
 

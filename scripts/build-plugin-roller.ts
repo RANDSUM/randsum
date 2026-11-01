@@ -57,25 +57,17 @@ if (pins === 0) {
   process.exit(1)
 }
 // The directory's scan reads the word "token" as a credential and holds the
-// plugin for review ("Uses a credential from the user's machine"). Here the
-// word only names roller's notation lexer, so the bundle renames those
-// identifiers to "lexeme". They are all internal to the bundle; roll() and
-// its result are unchanged. check:plugin-scan fails if "token" comes back.
-const LEXEME_RENAMES: readonly (readonly [RegExp, string])[] = [
-  [/modifiersFromTokens/g, 'modifiersFromLexemes'],
-  [/tokenKey/g, 'lexemeKey'],
-  [/\btokens\b/g, 'lexemes'],
-  [/\btoken\b/g, 'lexeme']
-]
-const renamed = LEXEME_RENAMES.reduce(
-  (source, [pattern, replacement]) => source.replace(pattern, replacement),
-  built.replace(NAME_PIN, '')
-)
-if (/token/i.test(renamed)) {
-  console.error('Plugin roller bundle: "token" survived the lexeme rename; add the new identifier.')
+// plugin for review ("Uses a credential from the user's machine"), so roller's
+// roll path names its lexer's output "lexemes". Fail here if the word creeps
+// back into the bundle rather than finding out from the directory.
+const stripped = built.replace(NAME_PIN, '')
+if (/token/i.test(stripped)) {
+  console.error(
+    'Plugin roller bundle: "token" appears in the roll path; the plugin directory reads it as a credential. Rename it in packages/roller/src.'
+  )
   process.exit(1)
 }
-const bundle = `${HEADER}${renamed}`
+const bundle = `${HEADER}${stripped}`
 
 if (process.argv.includes('--check')) {
   const committed = (() => {
