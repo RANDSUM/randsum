@@ -77,3 +77,31 @@ describe('modifiersOf - stateful regex safety', () => {
     })
   })
 })
+
+describe('applyModifier error propagation', () => {
+  test('a ModifierError from apply() keeps its message and context', () => {
+    const ctx: ModifierContext = { rollOne: () => 1, parameters: { sides: 6, quantity: 2 } }
+    const caught = (() => {
+      try {
+        applyModifier('unique', true, [1, 1], ctx)
+        return undefined
+      } catch (error) {
+        return error
+      }
+    })()
+    expect(caught).toBeInstanceOf(ModifierError)
+    expect((caught as ModifierError).message).toBe(
+      'Modifier error for "unique": Could not find a unique value after 99 attempts'
+    )
+  })
+
+  test('a non-RANDSUM error is a bug and propagates unchanged', () => {
+    const ctx: ModifierContext = {
+      rollOne: () => {
+        throw new TypeError('boom')
+      },
+      parameters: { sides: 6, quantity: 1 }
+    }
+    expect(() => applyModifier('reroll', { exact: [1] }, [1], ctx)).toThrow(TypeError)
+  })
+})

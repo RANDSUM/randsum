@@ -54,33 +54,18 @@ export function applyModifier(
     throw new ModifierError(name, `randomFn function required for ${name} modifier`)
   }
 
+  // A modifier throws ModifierError (with context) for bad input; anything else
+  // is a bug and propagates unchanged rather than being reported as user error.
   const initialRolls = [...rolls]
+  const applied = modifier.apply(rolls, options, ctx)
+  const log =
+    modifier.mutatesRolls === false
+      ? createArithmeticLog(name, options)
+      : createModifierLog(name, options, initialRolls, applied.rolls, applied.replacements)
 
-  try {
-    const applied = modifier.apply(rolls, options, ctx)
-    const log =
-      modifier.mutatesRolls === false
-        ? createArithmeticLog(name, options)
-        : createModifierLog(name, options, initialRolls, applied.rolls, applied.replacements)
-
-    if (applied.transformTotal) {
-      return {
-        rolls: applied.rolls,
-        log,
-        transformTotal: applied.transformTotal
-      }
-    }
-
-    return {
-      rolls: applied.rolls,
-      log
-    }
-  } catch (error) {
-    if (error instanceof Error) {
-      throw new ModifierError(name, error.message)
-    }
-    throw new ModifierError(name, `Unknown error: ${String(error)}`)
-  }
+  return applied.transformTotal
+    ? { rolls: applied.rolls, log, transformTotal: applied.transformTotal }
+    : { rolls: applied.rolls, log }
 }
 
 /**
