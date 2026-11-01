@@ -125,6 +125,10 @@ export type RandomFn = () => number
  * Configuration options for roll execution.
  */
 export interface RollConfig {
-  /** Custom random function (default: Math.random) */
+  /**
+   * Custom random function (default: Math.random). Every call must return a
+   * number in [0, 1), as Math.random does. The roller does not check: a value
+   * outside that range yields faces the die does not have (a d6 showing 31).
+   */
   randomFn?: RandomFn
 }
