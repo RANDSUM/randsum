@@ -3,13 +3,10 @@
 // READMEs, where no stylesheet reaches, so its colours are read out of
 // theme.css at build time rather than written here.
 import { PIPS } from '../utils/product'
+import { LEVELS } from '@randsum/notation-spec'
 
-export const LEVELS = [
-  { level: 1, name: 'Core' },
-  { level: 2, name: 'VTT Baseline' },
-  { level: 3, name: 'Extended' },
-  { level: 4, name: 'Full' }
-] as const
+// The level names are the notation-spec package's (spec Section 10).
+export { LEVELS }
 
 export type Level = (typeof LEVELS)[number]
 

@@ -6,11 +6,11 @@ import type { NotationSchema } from '../notation/schema'
  */
 export interface ModifierContext {
   /** Function to roll a single die */
-  rollOne?: () => number
+  readonly rollOne: () => number
   /** Roll parameters (sides, quantity) */
-  parameters?: RequiredNumericRollParameters
+  readonly parameters: RequiredNumericRollParameters
   /** Raw random function for modifiers that need to roll dice of different sizes */
-  randomFn?: () => number
+  readonly randomFn: () => number
 }
 
 /**
@@ -19,88 +19,6 @@ export interface ModifierContext {
  */
 export interface ModifierValidationContext extends RequiredNumericRollParameters {
   faces?: readonly number[]
-}
-
-/**
- * Context with required rollOne function.
- * Use this type when a modifier has `requiresRollFn: true`.
- */
-export interface ContextWithRollFn extends ModifierContext {
-  rollOne: () => number
-}
-
-/**
- * Context with required parameters.
- * Use this type when a modifier has `requiresParameters: true`.
- */
-export interface ContextWithParameters extends ModifierContext {
-  parameters: RequiredNumericRollParameters
-}
-
-/**
- * Context with both required rollOne and parameters.
- * Use this type when a modifier has both `requiresRollFn: true` and `requiresParameters: true`.
- */
-export interface RequiredModifierContext extends ModifierContext {
-  rollOne: () => number
-  parameters: RequiredNumericRollParameters
-}
-
-/**
- * Asserts that the context has the required rollOne function.
- * Use when the modifier definition has `requiresRollFn: true`.
- *
- * This function performs both compile-time type narrowing and runtime validation.
- * If rollOne is missing, it indicates a bug in the modifier system (the registry
- * should have validated requirements before calling the modifier's apply function).
- *
- * @param ctx - The modifier context
- * @returns Context with rollOne guaranteed to exist
- * @throws Error if rollOne is not defined (indicates internal bug)
- */
-export function assertRollFn(ctx: ModifierContext): ContextWithRollFn {
-  if (ctx.rollOne === undefined) {
-    throw new Error('Internal error: rollOne function required but not provided')
-  }
-  return ctx as ContextWithRollFn
-}
-
-/**
- * Asserts that the context has the required parameters.
- * Use when the modifier definition has `requiresParameters: true`.
- *
- * This function performs both compile-time type narrowing and runtime validation.
- * If parameters is missing, it indicates a bug in the modifier system.
- *
- * @param ctx - The modifier context
- * @returns Context with parameters guaranteed to exist
- * @throws Error if parameters is not defined (indicates internal bug)
- */
-export function assertParameters(ctx: ModifierContext): ContextWithParameters {
-  if (ctx.parameters === undefined) {
-    throw new Error('Internal error: parameters required but not provided')
-  }
-  return ctx as ContextWithParameters
-}
-
-/**
- * Asserts that the context has both required rollOne and parameters.
- * Use when the modifier definition has both requirements.
- *
- * This function performs both compile-time type narrowing and runtime validation.
- *
- * @param ctx - The modifier context
- * @returns Context with both rollOne and parameters guaranteed to exist
- * @throws Error if either requirement is not defined (indicates internal bug)
- */
-export function assertRequiredContext(ctx: ModifierContext): RequiredModifierContext {
-  if (ctx.rollOne === undefined) {
-    throw new Error('Internal error: rollOne function required but not provided')
-  }
-  if (ctx.parameters === undefined) {
-    throw new Error('Internal error: parameters required but not provided')
-  }
-  return ctx as RequiredModifierContext
 }
 
 /**
@@ -151,21 +69,15 @@ export interface ModifierBehavior<TOptions = unknown> {
   validate?(options: TOptions, rollContext: ModifierValidationContext): void
 
   /**
-   * Whether this modifier requires the rollOne function.
-   * If true, ctx.rollOne must be provided when applying.
+   * Whether this modifier rolls new dice (spec 3.3 stage metadata: a Stage 1
+   * modifier never does). The pipeline always supplies ctx.rollOne.
    */
   requiresRollFn?: boolean
 
-  /**
-   * Whether this modifier requires roll parameters (sides, quantity).
-   * If true, ctx.parameters must be provided when applying.
-   */
+  /** Whether this modifier reads the pool's sides and quantity from ctx.parameters. */
   requiresParameters?: boolean
 
-  /**
-   * Whether this modifier requires the raw randomFn for rolling dice of arbitrary sizes.
-   * If true, ctx.randomFn must be provided when applying.
-   */
+  /** Whether this modifier rolls dice of other sizes with ctx.randomFn. */
   requiresRandomFn?: boolean
 
   /**

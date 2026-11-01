@@ -28,12 +28,12 @@ Conformance comes in four levels, each a superset of the one before (spec Sectio
 3. The runner prints each level's result, the failing vectors and why, and the badge for the highest level reached:
 
    ```
-   RDN 0.9.0 conformance: 59/59 vectors pass
+   RDN 0.9.0 conformance: 61/61 vectors pass
 
-     Level 1 (Core)           pass   21 vectors
-     Level 2 (VTT Baseline)   pass   32 vectors
-     Level 3 (Extended)       pass   52 vectors
-     Level 4 (Full)           pass   59 vectors
+     Level 1 (Core)           pass   23 vectors
+     Level 2 (VTT Baseline)   pass   34 vectors
+     Level 3 (Extended)       pass   54 vectors
+     Level 4 (Full)           pass   61 vectors
 
    RDN 0.9.0 Level 4 (Full) conformant.
 

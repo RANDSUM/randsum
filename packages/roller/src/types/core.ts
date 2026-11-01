@@ -79,8 +79,8 @@ export type DrawDieNotation =
   | `${number}${'dd' | 'DD' | 'Dd' | 'dD'}${number}`
 
 /**
- * Geometric die notation — roll until first 1, count attempts.
- * `g6` rolls a d6 again on each 6 and sums every roll.
+ * Geometric die notation: roll dN again while it shows N, summing every roll.
+ * `g6` rolls a d6, and again on each 6; the result is the sum of the rolls.
  * Supports quantity prefix: `3g6` performs 3 independent geometric rolls.
  *
  * Case-insensitive: g6 and G6 are equivalent.
@@ -125,6 +125,10 @@ export type RandomFn = () => number
  * Configuration options for roll execution.
  */
 export interface RollConfig {
-  /** Custom random function (default: Math.random) */
+  /**
+   * Custom random function (default: Math.random). Every call must return a
+   * number in [0, 1), as Math.random does. The roller does not check: a value
+   * outside that range yields faces the die does not have (a d6 showing 31).
+   */
   randomFn?: RandomFn
 }

@@ -56,6 +56,11 @@ export interface ErrorContext {
  * any subclass.
  */
 export class RandsumError<Code extends string = string> extends Error {
+  // Minified builds rename the class; keep RandsumError.name (and constructor.name) readable.
+  static {
+    Object.defineProperty(this, 'name', { value: 'RandsumError' })
+  }
+
   public readonly code: Code
   public readonly context: ErrorContext | undefined
 
@@ -71,6 +76,11 @@ export class RandsumError<Code extends string = string> extends Error {
  * Error thrown when a string is not valid dice notation.
  */
 export class NotationParseError extends RandsumError<ErrorCode> {
+  // Minified builds rename the class; keep NotationParseError.name (and constructor.name) readable.
+  static {
+    Object.defineProperty(this, 'name', { value: 'NotationParseError' })
+  }
+
   public readonly suggestion: string | undefined
 
   constructor(notation: string, reason: string, suggestion?: string, context?: ErrorContext) {
@@ -86,6 +96,11 @@ export class NotationParseError extends RandsumError<ErrorCode> {
 }
 
 export class ModifierError extends RandsumError<ErrorCode> {
+  // Minified builds rename the class; keep ModifierError.name (and constructor.name) readable.
+  static {
+    Object.defineProperty(this, 'name', { value: 'ModifierError' })
+  }
+
   constructor(modifierType: string, reason: string, context?: ErrorContext) {
     super(`Modifier error for "${modifierType}": ${reason}`, ERROR_CODES.MODIFIER_ERROR, context)
     this.name = 'ModifierError'
@@ -93,6 +108,11 @@ export class ModifierError extends RandsumError<ErrorCode> {
 }
 
 export class ValidationError extends RandsumError<ErrorCode> {
+  // Minified builds rename the class; keep ValidationError.name (and constructor.name) readable.
+  static {
+    Object.defineProperty(this, 'name', { value: 'ValidationError' })
+  }
+
   constructor(message: string, context?: ErrorContext) {
     super(`Validation error: ${message}`, ERROR_CODES.VALIDATION_ERROR, context)
     this.name = 'ValidationError'
@@ -100,6 +120,11 @@ export class ValidationError extends RandsumError<ErrorCode> {
 }
 
 export class RollError extends RandsumError<ErrorCode> {
+  // Minified builds rename the class; keep RollError.name (and constructor.name) readable.
+  static {
+    Object.defineProperty(this, 'name', { value: 'RollError' })
+  }
+
   constructor(message: string, context?: ErrorContext) {
     super(message, ERROR_CODES.ROLL_ERROR, context)
     this.name = 'RollError'

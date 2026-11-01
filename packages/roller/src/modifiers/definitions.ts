@@ -21,7 +21,8 @@ import { sortModifier } from './sort'
 import { uniqueModifier } from './unique'
 import { wildDieModifier } from './wildDie'
 
-const MODIFIERS_BY_NAME: Readonly<Record<keyof ModifierOptions, ModifierDefinition>> = {
+/** Every modifier definition, keyed by its option name. */
+export const MODIFIERS_BY_NAME: Readonly<Record<keyof ModifierOptions, ModifierDefinition>> = {
   cap: capModifier,
   compound: compoundModifier,
   count: countModifier,

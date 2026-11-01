@@ -3,8 +3,7 @@ import { applyModifier } from '../../../src/modifiers/registry'
 import { RANDSUM_MODIFIERS } from '../../../src/modifiers'
 import { modifiersOf } from '../../support/modifiersOf'
 import { ModifierError } from '../../../src/errors'
-import type { ModifierContext } from '../../../src/modifiers/schema'
-import type { ModifierOptions } from '../../../src/types'
+import { contextOf } from '../../support/modifierContext'
 
 describe('RANDSUM_MODIFIERS definition contract', () => {
   test('registers exactly 19 modifiers', () => {
@@ -24,35 +23,7 @@ describe('RANDSUM_MODIFIERS definition contract', () => {
   })
 })
 
-describe('applyModifier error cases', () => {
-  test('throws ModifierError when modifier requires rollFn but none provided', () => {
-    // reroll requires rollFn — no registry mutation needed
-    const ctx: ModifierContext = { parameters: { sides: 6, quantity: 4 } }
-
-    expect(() => {
-      applyModifier('reroll', { exact: [1] }, [1, 2, 3, 4], ctx)
-    }).toThrow(ModifierError)
-  })
-
-  test('throws ModifierError when modifier requires parameters but none provided', () => {
-    // unique requires parameters for validation — no registry mutation needed
-    const rollOne = (): number => 5
-    const ctx: ModifierContext = { rollOne }
-
-    expect(() => {
-      applyModifier('unique', true, [1, 1, 2, 3], ctx)
-    }).toThrow(ModifierError)
-  })
-
-  test('throws ModifierError for unknown modifier type', () => {
-    expect(() => {
-      applyModifier('nonexistent' as keyof ModifierOptions, {}, [1, 2, 3], {
-        rollOne: (): number => 5,
-        parameters: { sides: 6, quantity: 4 }
-      })
-    }).toThrow(ModifierError)
-  })
-})
+describe('applyModifier error cases', () => {})
 
 describe('modifiersOf - stateful regex safety', () => {
   test('returns identical results on repeated calls with same notation', () => {
@@ -75,5 +46,43 @@ describe('modifiersOf - stateful regex safety', () => {
       expect(resultB.drop).toBeDefined()
       expect(resultB.reroll).toBeUndefined()
     })
+  })
+})
+
+describe('applyModifier error propagation', () => {
+  test('a ModifierError from apply() keeps its message and context', () => {
+    const ctx = contextOf({ rollOne: () => 1, parameters: { sides: 6, quantity: 2 } })
+    const caught = (() => {
+      try {
+        applyModifier('unique', true, [1, 1], ctx)
+        return undefined
+      } catch (error) {
+        return error
+      }
+    })()
+    expect(caught).toBeInstanceOf(ModifierError)
+    expect((caught as ModifierError).message).toBe(
+      'Modifier error for "unique": Could not find a unique value after 99 attempts'
+    )
+  })
+
+  test('a non-RANDSUM error is a bug and propagates unchanged', () => {
+    const ctx = contextOf({
+      rollOne: () => {
+        throw new TypeError('boom')
+      },
+      parameters: { sides: 6, quantity: 1 }
+    })
+    expect(() => applyModifier('reroll', { exact: [1] }, [1], ctx)).toThrow(TypeError)
+  })
+})
+
+// Spec 3.3: stage boundaries are structural. Stage 1 (priority < 40) never rolls
+// new dice; Stage 3 (priority >= 80) never changes the pool, except Sort, the
+// presentation directive that may reorder it (spec 6.6.1).
+describe('modifier stage metadata', () => {
+  test.each(RANDSUM_MODIFIERS.map(m => [m.name, m] as const))('%s respects its stage', (_, m) => {
+    if (m.priority < 40) expect(m.requiresRollFn).not.toBe(true)
+    if (m.priority >= 80 && m.name !== 'sort') expect(m.mutatesRolls).toBe(false)
   })
 })

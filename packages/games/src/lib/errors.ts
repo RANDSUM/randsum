@@ -10,6 +10,11 @@ export type SchemaErrorCode =
   | 'EXTERNAL_REF_FAILED'
 
 export class SchemaError extends RandsumError<SchemaErrorCode> {
+  // Minified builds rename the class; keep SchemaError.name (and constructor.name) readable.
+  static {
+    Object.defineProperty(this, 'name', { value: 'SchemaError' })
+  }
+
   constructor(message: string, code: SchemaErrorCode) {
     super(message, code)
     this.name = 'SchemaError'

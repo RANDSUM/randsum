@@ -1,14 +1,14 @@
 import { describe, expect, test } from 'bun:test'
-import type { ModifierContext } from '../../../src/modifiers/schema'
+import { contextOf } from '../../support/modifierContext'
 import { applyAllModifiers, applyModifier } from '../../../src/modifiers/registry'
 import { explodeModifier } from '../../../src/modifiers/explode'
 import { keepModifier } from '../../../src/modifiers/keep'
 
 const mockRollOne = (): number => Math.floor(Math.random() * 6) + 1
-const mockContext: ModifierContext = {
+const mockContext = contextOf({
   rollOne: mockRollOne,
   parameters: { sides: 6, quantity: 4 }
-}
+})
 
 describe('applyModifier', () => {
   describe('arithmetic modifiers', () => {
@@ -187,7 +187,7 @@ describe('applyModifier', () => {
   describe('reroll modifier', () => {
     test('rerolls exact values', () => {
       const fixedRollOne = (): number => 5
-      const ctx: ModifierContext = { rollOne: fixedRollOne, parameters: { sides: 6, quantity: 4 } }
+      const ctx = contextOf({ rollOne: fixedRollOne, parameters: { sides: 6, quantity: 4 } })
       const result = applyModifier('reroll', { exact: [1] }, [1, 6, 1, 4], ctx)
 
       expect(result.rolls).toEqual([5, 6, 5, 4])
@@ -197,7 +197,7 @@ describe('applyModifier', () => {
 
     test('rerolls values greater than threshold', () => {
       const fixedRollOne = (): number => 4
-      const ctx: ModifierContext = { rollOne: fixedRollOne, parameters: { sides: 6, quantity: 4 } }
+      const ctx = contextOf({ rollOne: fixedRollOne, parameters: { sides: 6, quantity: 4 } })
       const result = applyModifier('reroll', { greaterThan: 5 }, [1, 6, 3, 6], ctx)
 
       expect(result.rolls).toEqual([1, 4, 3, 4])
@@ -209,39 +209,25 @@ describe('applyModifier', () => {
         counter.value++
         return counter.value <= 2 ? 1 : 5 // First 2 calls return 1, then 5
       }
-      const ctx: ModifierContext = {
+      const ctx = contextOf({
         rollOne: limitedRollOne,
         parameters: { sides: 6, quantity: 4 }
-      }
+      })
       const result = applyModifier('reroll', { exact: [1], max: 2 }, [1, 1, 1, 1], ctx)
 
       expect(result.rolls).toEqual([5, 5, 1, 1]) // Only first 2 get rerolled to completion
-    })
-
-    test('throws error when rollOne is missing', () => {
-      const ctx: ModifierContext = { parameters: { sides: 6, quantity: 4 } }
-      expect(() => {
-        applyModifier('reroll', { exact: [1] }, [1, 2, 3], ctx)
-      }).toThrow('rollOne function required for reroll modifier')
     })
   })
 
   describe('explode modifier', () => {
     test('adds additional rolls for maximum values', () => {
       const fixedRollOne = (): number => 2
-      const ctx: ModifierContext = { rollOne: fixedRollOne, parameters: { sides: 6, quantity: 4 } }
+      const ctx = contextOf({ rollOne: fixedRollOne, parameters: { sides: 6, quantity: 4 } })
       const result = applyModifier('explode', true, [6, 3, 6, 4], ctx)
 
       expect(result.rolls).toEqual([6, 3, 6, 4, 2, 2]) // Two 6s exploded
       expect(result.log).not.toBeNull()
       expect(result.log?.modifier).toBe('explode')
-    })
-
-    test('throws error when context is incomplete', () => {
-      const ctx: ModifierContext = {}
-      expect(() => {
-        applyModifier('explode', true, [6, 3, 4], ctx)
-      }).toThrow('rollOne function required for explode modifier')
     })
   })
 
@@ -252,7 +238,7 @@ describe('applyModifier', () => {
         counter.value++
         return counter.value === 1 ? 2 : 5 // First call returns 2, then 5
       }
-      const ctx: ModifierContext = { rollOne: uniqueRollOne, parameters: { sides: 6, quantity: 4 } }
+      const ctx = contextOf({ rollOne: uniqueRollOne, parameters: { sides: 6, quantity: 4 } })
       const result = applyModifier('unique', true, [1, 3, 1, 4], ctx)
 
       expect(result.rolls).toEqual([1, 3, 2, 4])
@@ -260,24 +246,24 @@ describe('applyModifier', () => {
     })
 
     test('allows specified values to be duplicated', () => {
-      const ctx: ModifierContext = { rollOne: mockRollOne, parameters: { sides: 6, quantity: 4 } }
+      const ctx = contextOf({ rollOne: mockRollOne, parameters: { sides: 6, quantity: 4 } })
       const result = applyModifier('unique', { notUnique: [1] }, [1, 3, 1, 4], ctx)
 
       expect(result.rolls).toEqual([1, 3, 1, 4]) // 1s are allowed to duplicate
     })
 
-    test('throws when more rolls than sides', () => {
-      const ctx: ModifierContext = { rollOne: mockRollOne, parameters: { sides: 6, quantity: 7 } }
-      expect(() => {
-        applyModifier('unique', true, [1, 2, 3, 4, 5, 6, 1], ctx)
-      }).toThrow('Cannot have more rolls than sides when unique is enabled')
+    test('keeps a reroll that lands on an exempt value', () => {
+      const ctx = contextOf({ rollOne: () => 1, parameters: { sides: 2, quantity: 3 } })
+      const result = applyModifier('unique', { notUnique: [1] }, [2, 2, 1], ctx)
+
+      expect(result.rolls).toEqual([2, 1, 1])
     })
   })
 
   describe('compound modifier', () => {
     test('adds rerolled value to triggering die', () => {
       const fixedRollOne = (): number => 3
-      const ctx: ModifierContext = { rollOne: fixedRollOne, parameters: { sides: 6, quantity: 3 } }
+      const ctx = contextOf({ rollOne: fixedRollOne, parameters: { sides: 6, quantity: 3 } })
       const result = applyModifier('compound', true, [6, 3, 4], ctx)
 
       // The 6 compounds to 6 + 3 = 9
@@ -292,10 +278,10 @@ describe('applyModifier', () => {
         counter.value++
         return counter.value === 1 ? 6 : 2 // First roll is 6 (compounds again), second is 2
       }
-      const ctx: ModifierContext = {
+      const ctx = contextOf({
         rollOne: sequenceRollOne,
         parameters: { sides: 6, quantity: 2 }
-      }
+      })
       const result = applyModifier('compound', 5, [6, 4], ctx)
 
       // The 6 compounds: 6 + 6 + 2 = 14
@@ -304,7 +290,7 @@ describe('applyModifier', () => {
 
     test('respects max depth limit', () => {
       const alwaysMaxRoll = (): number => 6
-      const ctx: ModifierContext = { rollOne: alwaysMaxRoll, parameters: { sides: 6, quantity: 1 } }
+      const ctx = contextOf({ rollOne: alwaysMaxRoll, parameters: { sides: 6, quantity: 1 } })
       const result = applyModifier('compound', 2, [6], ctx)
 
       // Depth 2: 6 + 6 + 6 = 18 (stops after 2 compounds)
@@ -313,25 +299,18 @@ describe('applyModifier', () => {
 
     test('does not compound non-max values', () => {
       const fixedRollOne = (): number => 6
-      const ctx: ModifierContext = { rollOne: fixedRollOne, parameters: { sides: 6, quantity: 3 } }
+      const ctx = contextOf({ rollOne: fixedRollOne, parameters: { sides: 6, quantity: 3 } })
       const result = applyModifier('compound', true, [5, 3, 4], ctx)
 
       // No dice show max (6), so no compounding
       expect(result.rolls).toEqual([5, 3, 4])
-    })
-
-    test('throws error when context is incomplete', () => {
-      const ctx: ModifierContext = {}
-      expect(() => {
-        applyModifier('compound', true, [6, 3, 4], ctx)
-      }).toThrow('rollOne function required for compound modifier')
     })
   })
 
   describe('penetrate modifier', () => {
     test('adds rerolled value minus 1 to triggering die', () => {
       const fixedRollOne = (): number => 4
-      const ctx: ModifierContext = { rollOne: fixedRollOne, parameters: { sides: 6, quantity: 3 } }
+      const ctx = contextOf({ rollOne: fixedRollOne, parameters: { sides: 6, quantity: 3 } })
       const result = applyModifier('penetrate', true, [6, 3, 4], ctx)
 
       // The 6 penetrates: 6 + (4 - 1) = 9
@@ -346,10 +325,10 @@ describe('applyModifier', () => {
         counter.value++
         return counter.value === 1 ? 6 : 3 // First roll is 6 (penetrates again), second is 3
       }
-      const ctx: ModifierContext = {
+      const ctx = contextOf({
         rollOne: sequenceRollOne,
         parameters: { sides: 6, quantity: 2 }
-      }
+      })
       const result = applyModifier('penetrate', 5, [6, 4], ctx)
 
       // The 6 penetrates: 6 + (6 - 1) + (3 - 1) = 6 + 5 + 2 = 13
@@ -358,7 +337,7 @@ describe('applyModifier', () => {
 
     test('respects max depth limit', () => {
       const alwaysMaxRoll = (): number => 6
-      const ctx: ModifierContext = { rollOne: alwaysMaxRoll, parameters: { sides: 6, quantity: 1 } }
+      const ctx = contextOf({ rollOne: alwaysMaxRoll, parameters: { sides: 6, quantity: 1 } })
       const result = applyModifier('penetrate', 2, [6], ctx)
 
       // Depth 2: 6 + (6-1) + (6-1) = 6 + 5 + 5 = 16
@@ -367,7 +346,7 @@ describe('applyModifier', () => {
 
     test('does not penetrate non-max values', () => {
       const fixedRollOne = (): number => 6
-      const ctx: ModifierContext = { rollOne: fixedRollOne, parameters: { sides: 6, quantity: 3 } }
+      const ctx = contextOf({ rollOne: fixedRollOne, parameters: { sides: 6, quantity: 3 } })
       const result = applyModifier('penetrate', true, [5, 3, 4], ctx)
 
       // No dice show max (6), so no penetrating
@@ -376,18 +355,11 @@ describe('applyModifier', () => {
 
     test('a penetrating 1 adds nothing', () => {
       const rollsOne = (): number => 1
-      const ctx: ModifierContext = { rollOne: rollsOne, parameters: { sides: 6, quantity: 1 } }
+      const ctx = contextOf({ rollOne: rollsOne, parameters: { sides: 6, quantity: 1 } })
       const result = applyModifier('penetrate', true, [6], ctx)
 
       // The 6 penetrates: 6 + (1 - 1) = 6
       expect(result.rolls).toEqual([6])
-    })
-
-    test('throws error when context is incomplete', () => {
-      const ctx: ModifierContext = {}
-      expect(() => {
-        applyModifier('penetrate', true, [6, 3, 4], ctx)
-      }).toThrow('rollOne function required for penetrate modifier')
     })
   })
 
@@ -493,7 +465,7 @@ describe('applyModifier - multiply modifiers', () => {
 })
 
 describe('applyModifier - count modifier', () => {
-  const ctx: ModifierContext = { parameters: { sides: 10, quantity: 5 } }
+  const ctx = contextOf({ parameters: { sides: 10, quantity: 5 } })
 
   test('counts dice above threshold', () => {
     const result = applyModifier('count', { greaterThanOrEqual: 7 }, [5, 7, 8, 3, 10], ctx)
@@ -552,7 +524,7 @@ describe('applyModifier - count modifier', () => {
 describe('applyAllModifiers', () => {
   test('applies multiple modifiers in priority order', () => {
     const fixedRollOne = (): number => 5
-    const ctx: ModifierContext = { rollOne: fixedRollOne, parameters: { sides: 6, quantity: 4 } }
+    const ctx = contextOf({ rollOne: fixedRollOne, parameters: { sides: 6, quantity: 4 } })
 
     const result = applyAllModifiers({ drop: { lowest: 1 }, plus: 3 }, [1, 3, 4, 5], ctx)
 
@@ -567,7 +539,7 @@ describe('applyAllModifiers', () => {
 
   test('applies modifiers in priority order (reroll before drop)', () => {
     const fixedRollOne = (): number => 5
-    const ctx: ModifierContext = { rollOne: fixedRollOne, parameters: { sides: 6, quantity: 4 } }
+    const ctx = contextOf({ rollOne: fixedRollOne, parameters: { sides: 6, quantity: 4 } })
 
     const result = applyAllModifiers(
       { reroll: { exact: [1] }, drop: { lowest: 1 } },
@@ -582,7 +554,7 @@ describe('applyAllModifiers', () => {
   })
 
   test('collects totalTransformers from multiple modifiers', () => {
-    const ctx: ModifierContext = { parameters: { sides: 6, quantity: 2 } }
+    const ctx = contextOf({ parameters: { sides: 6, quantity: 2 } })
 
     const result = applyAllModifiers({ plus: 2, multiply: 3 }, [3, 4], ctx)
 
@@ -592,7 +564,7 @@ describe('applyAllModifiers', () => {
   })
 
   test('handles empty modifiers object', () => {
-    const ctx: ModifierContext = { parameters: { sides: 6, quantity: 3 } }
+    const ctx = contextOf({ parameters: { sides: 6, quantity: 3 } })
 
     const result = applyAllModifiers({}, [1, 2, 3], ctx)
 

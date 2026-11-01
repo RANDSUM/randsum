@@ -131,7 +131,7 @@ import {
 } from "@randsum/games/schema"
 ```
 
-It also exports the spec types (`RandSumSpec`, `ValidationResult`, `ValidationError`,
+It also exports the spec types (`RandSumSpec`, `ValidationResult`, `SpecValidationIssue`,
 `SchemaErrorCode`, and the spec-section types).
 
 ## Documentation

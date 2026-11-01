@@ -397,6 +397,16 @@ export function generateRollParts(
     parts.push(`export function ${key}(${param}): ${returnType} {`)
   }
 
+  // Untyped callers can pass a bare value where an object is expected (root-rpg's
+  // roll(2)); reading fields off it would silently fall back to defaults.
+  const notObject = `typeof input !== 'object' || input === null`
+  const objectCheck = optional && !overload ? `input !== undefined && (${notObject})` : notObject
+  const accepted = overload ? `a ${overload.baseType} or an input object` : 'an input object'
+  const objectMessage = JSON.stringify(`${specName} roll() takes ${accepted}, received: `)
+  parts.push(
+    `  if (${objectCheck}) throw new SchemaError(${objectMessage} + String(input), 'INVALID_INPUT_TYPE')`
+  )
+
   parts.push(...generateFunctionBody(rollDef, optional, specName, prefixedResultName))
   parts.push(`}`)
   parts.push(``)

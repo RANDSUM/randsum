@@ -139,12 +139,14 @@
       "peerDependencies": {
         "@lit-labs/ssr": ">=3",
         "react": ">=18",
+        "react-native": ">=0.76",
         "svelte": ">=5",
         "vue": ">=3.3",
       },
       "optionalPeers": [
         "@lit-labs/ssr",
         "react",
+        "react-native",
         "svelte",
         "vue",
       ],

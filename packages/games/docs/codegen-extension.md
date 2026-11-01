@@ -58,7 +58,7 @@ All paths are relative to `packages/games/`.
 |------|------|
 | `randsum.json` | Ajv meta-schema. Declared `$id`: `https://randsum.dev/schemas/v1/randsum.json`. Single source of truth for spec shape. |
 | `src/lib/types.ts` | TypeScript mirror of the meta-schema (`RandSumSpec`, `RollDefinition`, `ResolveOperation`, …). |
-| `src/lib/validator.ts` | Ajv compile-time validator (~27 lines). Returns structured `ValidationError[]`. |
+| `src/lib/validator.ts` | Ajv compile-time validator (~27 lines). Returns structured `SpecValidationIssue[]`. |
 | `src/lib/externalRefResolver.ts` | Resolves HTTP `$ref` URLs *before* validation/normalization. |
 | `src/lib/normalizedTypes.ts` | IR types (`NormalizedSpec`, `NormalizedRollDefinition`, `NormalizedResolveOperation`, `NormalizedOutcome`, `NormalizedDetailsFieldDef`). ~130 lines — read this first. |
 | `src/lib/normalizer.ts` | Pure function `normalizeSpec(spec: RandSumSpec): NormalizedSpec`. Resolves every `$ref`, collapses sugar, tags discriminated unions with `kind`. |
@@ -462,7 +462,7 @@ Errors flow back to the spec author through three gates. Pick the right one.
 ### Gate 1 — Ajv schema validation (compile-time, cheapest)
 
 `src/lib/validator.ts` compiles `randsum.json` once at module load. Any
-violation produces a `ValidationError[]` with instance paths:
+violation produces a `SpecValidationIssue[]` with instance paths:
 
 ```ts
 const ajv = new Ajv({ allErrors: true })

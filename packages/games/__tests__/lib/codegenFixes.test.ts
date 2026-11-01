@@ -268,3 +268,23 @@ describe('#995: string enum validation', () => {
     expect(() => loaded['roll']!()).not.toThrow()
   })
 })
+
+describe('markDice and keepMarked', () => {
+  test('codegen rejects them instead of rolling without the filter', async () => {
+    const spec = {
+      $schema: 'https://randsum.dev/schemas/v1/randsum.json',
+      name: 'Marked',
+      shortcode: 'marked',
+      game_url: 'https://example.com',
+      roll: {
+        dice: { pool: { sides: 6 }, quantity: 3 },
+        modify: [
+          { markDice: { operator: '>=' as const, value: 4, flag: 'hit' } },
+          { keepMarked: 'hit' }
+        ],
+        resolve: 'sum' as const
+      }
+    }
+    await expect(generateCode(spec)).rejects.toThrow('markDice and keepMarked are not supported')
+  })
+})

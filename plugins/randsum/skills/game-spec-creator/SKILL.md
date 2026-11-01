@@ -90,7 +90,7 @@ Array of modifier operations applied to individual dice before resolving:
 ]
 ```
 
-Available: `keepHighest`, `keepLowest`, `add`, `cap`. The schema also accepts `markDice`/`keepMarked`, but codegen does not apply them yet, so don't rely on them.
+Available: `keepHighest`, `keepLowest`, `add`, `cap`. The schema also accepts `markDice`/`keepMarked`, but codegen rejects them (`SchemaError` `INVALID_SPEC`), so don't use them.
 
 ### Resolve
 
