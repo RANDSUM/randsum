@@ -33,7 +33,7 @@ head:
 ---
 
 import CodeExample from '../../../components/live-repl/CodeExample.astro'
-import { NotationRoller } from '../../../components/rollers/NotationRoller'
+import NotationRoller from '../../../components/rollers/NotationRoller.astro'
 
 Roll dice with a single function call — numbers, notation strings, or options objects. `@randsum/roller` is the core engine that powers the entire RANDSUM ecosystem: full TypeScript types, strict input validation, and zero dependencies — notation parsing is built in.
 
@@ -78,7 +78,7 @@ const attack = roll('2d20K+5')
 // Exploding d6s with rerolls below 3
 const wild = roll('4d6R{<3}!')`} />
 
-<NotationRoller defaultNotation="4d6L" client:only="react" />
+<NotationRoller defaultNotation="4d6L" />
 
 ### Options object
 

@@ -1,7 +1,9 @@
 ---
 // The top of randsum.dev: the promise on the left, the live roller on the right,
 // so the first thing a visitor can do is roll.
-import { HeroRoller } from '../rollers/HeroRoller'
+import { APP_URL } from '../rollers/links'
+import { HeroRoller, LANDING_PRESETS } from '../rollers/HeroRoller'
+import ServerRoller from '../rollers/ServerRoller.astro'
 import PipMark from '../PipMark.astro'
 import Button from '../ui/Button.astro'
 
@@ -64,7 +66,15 @@ const proof = [
         </h2>
         <span class="hero-roller-note">Runs in your browser</span>
       </div>
-      <HeroRoller client:only="react" />
+      <HeroRoller client:only="react">
+        <ServerRoller
+          slot="fallback"
+          size="compact"
+          notation={LANDING_PRESETS[0]?.notation ?? '4d6L'}
+          presets={LANDING_PRESETS}
+          appLink={APP_URL}
+        />
+      </HeroRoller>
     </div>
   </div>
   <dl class="hero-proof">

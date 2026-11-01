@@ -1,7 +1,10 @@
-/* The @randsum/ui rollers wear the site theme: each --rsui-* token is mapped
-   onto the matching --rs-* token from theme.css. The accent is the Roller's
-   colour, and the App's inside the installable app. */
-.rsui {
+/* The @randsum/ui elements wear the site theme: each --rsui-* token is mapped
+   onto the matching --rs-* token from theme.css. Tokens inherit through the
+   elements' Shadow DOM, so they are set on the element or a wrapper around
+   its parts. The accent is the Roller's colour, and the App's inside the
+   installable app. */
+randsum-roller,
+.site-rsui {
   --rsui-accent: var(--product-roller-fill);
   --rsui-on-accent: var(--rs-ink);
   --rsui-bg: var(--rs-bg);
@@ -32,12 +35,12 @@
   --rsui-weight-heavy: var(--rs-weight-heavy);
 }
 
-html[data-product='app'] .rsui {
+html[data-product='app'] :where(randsum-roller, .site-rsui) {
   --rsui-accent: var(--product-app-fill);
 }
 
 /* The UI demos, in the docs and on the landing page, wear the UI product's colour */
-.ui-demo .rsui {
+.ui-demo :is(randsum-roller, .site-rsui) {
   --rsui-accent: var(--product-ui-fill);
 }
 
@@ -74,4 +77,15 @@ html[data-product='app'] .rsui {
 .ui-demo-parts {
   display: grid;
   gap: 1rem;
+}
+
+.ui-demo-row {
+  display: flex;
+  gap: 0.5rem;
+  align-items: stretch;
+}
+
+.ui-demo-grow {
+  flex: 1;
+  min-width: 0;
 }

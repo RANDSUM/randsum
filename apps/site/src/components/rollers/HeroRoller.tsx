@@ -1,14 +1,13 @@
-// The landing page's roller: RollerCompact with the landing presets (the only
+// The landing page's roller: the compact Roller with the landing presets (the only
 // roller that gets them), rolled on arrival and re-rolled every few seconds
 // until the visitor takes over. Clicking the tagline spins the presets like a
 // slot machine.
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { RollerCompact } from '@randsum/ui/roller-compact'
+import { Roller } from '@randsum/ui/react/roller'
 import type { Preset } from '@randsum/ui/presets'
 import { roll } from '@randsum/roller/roll'
 import { APP_URL } from './links'
 import { StackBlitzAction } from './StackBlitzAction'
-import '@randsum/ui/styles.css'
 import './rollers.css'
 
 export const LANDING_PRESETS: readonly Preset[] = [
@@ -90,7 +89,8 @@ export function HeroRoller(): React.JSX.Element {
   }, [show])
 
   return (
-    <RollerCompact
+    <Roller
+      size="compact"
       className="hero-roller-panel"
       notation={notation}
       onChange={next => {

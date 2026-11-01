@@ -1,0 +1,32 @@
+---
+// The roller on each modifier's section of the docs. The React island adds
+// the StackBlitz action; until it mounts, the same roller is server-rendered
+// in its place, so the section never opens on an empty box.
+import { modifierKeys } from '@randsum/ui/keys'
+import type { ModifierName } from '@randsum/ui/keys'
+import { modifierPresets } from '@randsum/ui/presets'
+import { APP_URL } from './links'
+import { ModifierRollerIsland } from './ModifierRollerIsland'
+import ServerRoller from './ServerRoller.astro'
+
+interface Props {
+  readonly modifier: ModifierName
+  readonly defaultNotation: string
+}
+
+const { modifier, defaultNotation } = Astro.props
+---
+
+<ModifierRollerIsland modifier={modifier} defaultNotation={defaultNotation} client:only="react">
+  <ServerRoller
+    slot="fallback"
+    class="not-content"
+    size="compact"
+    notation={defaultNotation}
+    keys={modifierKeys(modifier)}
+    presets={modifierPresets(modifier)}
+    presetsLabel="Examples"
+    presetsLayout="list"
+    appLink={APP_URL}
+  />
+</ModifierRollerIsland>

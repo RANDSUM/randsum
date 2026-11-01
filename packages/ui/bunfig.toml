@@ -1,4 +1,4 @@
 [test]
-# A happy-dom global environment, so the component tests can mount React with
-# @testing-library/react under bun:test.
+# A happy-dom global environment, so the tests can mount the custom elements
+# and the React and Vue wrappers under bun:test.
 preload = ["./__tests__/happydom.setup.ts"]

@@ -1,56 +1,85 @@
 ---
-title: "@randsum/ui: React Dice Roller Components"
-description: The RANDSUM dice roller as React components in three sizes, plus every part they are built from, each importable on its own.
+title: "@randsum/ui: Dice Roller Web Components"
+description: The RANDSUM dice roller as Web Components, one element in three sizes plus every part it is built from, with React and Vue wrappers. Each is importable on its own.
 ---
 
 import { UiDemo } from '../../../components/rollers/UiDemo'
+import ServerRoller from '../../../components/rollers/ServerRoller.astro'
 
-**`@randsum/ui`** is the RANDSUM roller as React components. The same
-components run the [Roller app](/app/), the landing page and every roller in
-these docs.
+**`@randsum/ui`** is the RANDSUM roller as Web Components (custom elements).
+The same elements run the [Roller app](/app/), the landing page and every
+roller in these docs.
 
-It ships three sizes and every part they are built from. Each one is its own
-module, the way lodash ships one module per function: import a single
-component and your bundle gets that component and nothing else.
+A custom element works in any page: plain HTML, htmx, Astro, or any framework.
+`@randsum/ui` also ships thin wrappers for React and Vue, and types for
+Svelte. Each element and wrapper is its own module, the way lodash ships one
+module per function, so importing one component bundles that component and
+nothing else.
 
 ```bash
-npm install @randsum/ui @randsum/roller react react-dom
+npm install @randsum/ui
 ```
 
-## Three sizes
+```html
+<script type="module">
+  import '@randsum/ui/roller'
+</script>
+
+<randsum-roller size="mini" notation="4d6L"></randsum-roller>
+```
+
+## One roller, three sizes
+
+`<randsum-roller>` takes a `size`.
 
 **Mini** is one row for docs, READMEs and chat. Hover or focus Roll to read
 the roll in English.
 
-<UiDemo size="mini" client:only="react" />
+<ServerRoller class="not-content ui-demo" size="mini" notation="4d6L" />
 
-**Compact** is a panel: the builder on one side and the result on the other,
-or stacked in a narrow column.
+**Compact**, the default, is a panel: the builder on one side and the result
+on the other, or stacked in a narrow column.
 
-<UiDemo size="compact" client:only="react" />
+<ServerRoller class="not-content ui-demo" size="compact" notation="2d20H+5" />
 
 **Max** is the whole roller, with a readout, recent rolls and history.
 
-<UiDemo size="max" client:only="react" />
+<ServerRoller class="not-content ui-demo" size="max" notation="4d6L" history={false} />
 
 ## Or build your own
 
-Every part is an import of its own. `useRoller` holds the state, and each part
-reads it.
+Every part is an element of its own. Put them in a `<randsum-scope>` and they
+share one roller, with no script:
 
-<UiDemo size="parts" client:only="react" />
+```html
+<script type="module">
+  import '@randsum/ui/scope'
+  import '@randsum/ui/notation-field'
+  import '@randsum/ui/roll-button'
+  import '@randsum/ui/readout'
+</script>
+
+<randsum-scope notation="2d6+1">
+  <randsum-notation-field></randsum-notation-field>
+  <randsum-roll-button></randsum-roll-button>
+  <randsum-readout></randsum-readout>
+</randsum-scope>
+```
+
+In React, `useRoller` holds the state and each part takes it as `roller`:
+
+<UiDemo client:only="react" />
 
 ```tsx
-import { useRoller } from '@randsum/ui/use-roller'
-import { NotationField } from '@randsum/ui/notation-field'
-import { RollButton } from '@randsum/ui/roll-button'
-import { Readout } from '@randsum/ui/readout'
-import '@randsum/ui/styles.css'
+import { useRoller } from '@randsum/ui/react/use-roller'
+import { NotationField } from '@randsum/ui/react/notation-field'
+import { RollButton } from '@randsum/ui/react/roll-button'
+import { Readout } from '@randsum/ui/react/readout'
 
 export function MyRoller() {
   const roller = useRoller({ defaultNotation: '2d6+1' })
   return (
-    <div className="rsui">
+    <div>
       <NotationField roller={roller} />
       <RollButton roller={roller} />
       <Readout roller={roller} />
@@ -61,5 +90,5 @@ export function MyRoller() {
 
 ## Next
 
-- [Getting started](/ui/getting-started/): install, styles and the props every size takes
+- [Getting started](/ui/getting-started/): HTML, React, Vue, Svelte and htmx, theming, and every property
 - [Components](/ui/components/): every entry, what it renders and its props

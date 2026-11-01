@@ -1,11 +1,8 @@
 {
   "name": "@randsum/ui",
-  "description": "React dice roller components for the RANDSUM ecosystem, in three sizes, with narrow imports",
+  "description": "Dice roller Web Components for the RANDSUM ecosystem: one element in three sizes, its parts, and React and Vue wrappers",
   "version": "0.0.0",
   "type": "module",
-  "sideEffects": [
-    "**/*.css"
-  ],
   "private": false,
   "files": [
     "dist",
@@ -50,6 +47,60 @@
         "default": "./dist/presets.js"
       }
     },
+    "./react/key-pad": {
+      "import": {
+        "types": "./dist/react/key-pad.d.ts",
+        "default": "./dist/react/key-pad.js"
+      }
+    },
+    "./react/notation-field": {
+      "import": {
+        "types": "./dist/react/notation-field.d.ts",
+        "default": "./dist/react/notation-field.js"
+      }
+    },
+    "./react/preset-list": {
+      "import": {
+        "types": "./dist/react/preset-list.d.ts",
+        "default": "./dist/react/preset-list.js"
+      }
+    },
+    "./react/readout": {
+      "import": {
+        "types": "./dist/react/readout.d.ts",
+        "default": "./dist/react/readout.js"
+      }
+    },
+    "./react/roll-button": {
+      "import": {
+        "types": "./dist/react/roll-button.d.ts",
+        "default": "./dist/react/roll-button.js"
+      }
+    },
+    "./react/roll-steps": {
+      "import": {
+        "types": "./dist/react/roll-steps.d.ts",
+        "default": "./dist/react/roll-steps.js"
+      }
+    },
+    "./react/roller": {
+      "import": {
+        "types": "./dist/react/roller.d.ts",
+        "default": "./dist/react/roller.js"
+      }
+    },
+    "./react/status-line": {
+      "import": {
+        "types": "./dist/react/status-line.d.ts",
+        "default": "./dist/react/status-line.js"
+      }
+    },
+    "./react/use-roller": {
+      "import": {
+        "types": "./dist/react/use-roller.d.ts",
+        "default": "./dist/react/use-roller.js"
+      }
+    },
     "./readout": {
       "import": {
         "types": "./dist/readout.d.ts",
@@ -68,22 +119,28 @@
         "default": "./dist/roll-steps.js"
       }
     },
-    "./roller-compact": {
+    "./roller": {
       "import": {
-        "types": "./dist/roller-compact.d.ts",
-        "default": "./dist/roller-compact.js"
+        "types": "./dist/roller.d.ts",
+        "default": "./dist/roller.js"
       }
     },
-    "./roller-max": {
+    "./roller-state": {
       "import": {
-        "types": "./dist/roller-max.d.ts",
-        "default": "./dist/roller-max.js"
+        "types": "./dist/roller-state.d.ts",
+        "default": "./dist/roller-state.js"
       }
     },
-    "./roller-mini": {
+    "./scope": {
       "import": {
-        "types": "./dist/roller-mini.d.ts",
-        "default": "./dist/roller-mini.js"
+        "types": "./dist/scope.d.ts",
+        "default": "./dist/scope.js"
+      }
+    },
+    "./ssr": {
+      "import": {
+        "types": "./dist/ssr.d.ts",
+        "default": "./dist/ssr.js"
       }
     },
     "./status-line": {
@@ -92,13 +149,66 @@
         "default": "./dist/status-line.js"
       }
     },
-    "./use-roller": {
+    "./svelte": {
       "import": {
-        "types": "./dist/use-roller.d.ts",
-        "default": "./dist/use-roller.js"
+        "types": "./dist/svelte.d.ts",
+        "default": "./dist/svelte.js"
       }
     },
-    "./styles.css": "./dist/styles.css",
+    "./vue/key-pad": {
+      "import": {
+        "types": "./dist/vue/key-pad.d.ts",
+        "default": "./dist/vue/key-pad.js"
+      }
+    },
+    "./vue/notation-field": {
+      "import": {
+        "types": "./dist/vue/notation-field.d.ts",
+        "default": "./dist/vue/notation-field.js"
+      }
+    },
+    "./vue/preset-list": {
+      "import": {
+        "types": "./dist/vue/preset-list.d.ts",
+        "default": "./dist/vue/preset-list.js"
+      }
+    },
+    "./vue/readout": {
+      "import": {
+        "types": "./dist/vue/readout.d.ts",
+        "default": "./dist/vue/readout.js"
+      }
+    },
+    "./vue/roll-button": {
+      "import": {
+        "types": "./dist/vue/roll-button.d.ts",
+        "default": "./dist/vue/roll-button.js"
+      }
+    },
+    "./vue/roll-steps": {
+      "import": {
+        "types": "./dist/vue/roll-steps.d.ts",
+        "default": "./dist/vue/roll-steps.js"
+      }
+    },
+    "./vue/roller": {
+      "import": {
+        "types": "./dist/vue/roller.d.ts",
+        "default": "./dist/vue/roller.js"
+      }
+    },
+    "./vue/status-line": {
+      "import": {
+        "types": "./dist/vue/status-line.d.ts",
+        "default": "./dist/vue/status-line.js"
+      }
+    },
+    "./vue/use-roller": {
+      "import": {
+        "types": "./dist/vue/use-roller.d.ts",
+        "default": "./dist/vue/use-roller.js"
+      }
+    },
     "./package.json": "./package.json"
   },
   "author": {
@@ -121,6 +231,11 @@
     "dice",
     "roller",
     "react",
+    "svelte",
+    "vue",
+    "lit",
+    "custom-elements",
+    "web-components",
     "components",
     "rpg",
     "ttrpg",
@@ -129,24 +244,45 @@
     "randsum"
   ],
   "dependencies": {
-    "@randsum/roller": "workspace:~"
+    "@randsum/roller": "workspace:~",
+    "lit": "3.3.3"
   },
   "peerDependencies": {
-    "react": ">=18"
+    "@lit-labs/ssr": ">=3",
+    "react": ">=18",
+    "svelte": ">=5",
+    "vue": ">=3.3"
+  },
+  "peerDependenciesMeta": {
+    "@lit-labs/ssr": {
+      "optional": true
+    },
+    "react": {
+      "optional": true
+    },
+    "svelte": {
+      "optional": true
+    },
+    "vue": {
+      "optional": true
+    }
   },
   "devDependencies": {
     "@happy-dom/global-registrator": "21.0.4",
+    "@lit-labs/ssr": "3.3.1",
     "@testing-library/dom": "10.4.1",
     "@testing-library/react": "16.3.2",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
     "react": "catalog:",
-    "react-dom": "catalog:"
+    "react-dom": "catalog:",
+    "svelte": "5.57.3",
+    "vue": "3.5.44"
   },
   "scripts": {
     "dev": "bunup --watch",
     "prepublishOnly": "bun ../../scripts/ensure-bun-publish.ts && bun run build",
-    "build": "bunup && bun scripts/build-css.ts",
+    "build": "bun -e \"require('node:fs').rmSync('dist', { recursive: true, force: true })\" && bunup && bun scripts/tag-types.ts",
     "test": "bun test --coverage --coverage-reporter=lcov --coverage-dir=./coverage",
     "typecheck": "tsc --noEmit",
     "size": "size-limit",
@@ -159,7 +295,7 @@
     },
     {
       "path": "dist/key-pad.js",
-      "limit": "0.5 KB"
+      "limit": "11 KB"
     },
     {
       "path": "dist/keys.js",
@@ -167,47 +303,119 @@
     },
     {
       "path": "dist/notation-field.js",
-      "limit": "5.5 KB"
+      "limit": "16.5 KB"
     },
     {
       "path": "dist/preset-list.js",
-      "limit": "0.5 KB"
+      "limit": "11 KB"
     },
     {
       "path": "dist/presets.js",
       "limit": "5.5 KB"
     },
     {
+      "path": "dist/react/key-pad.js",
+      "limit": "11.5 KB"
+    },
+    {
+      "path": "dist/react/notation-field.js",
+      "limit": "17 KB"
+    },
+    {
+      "path": "dist/react/preset-list.js",
+      "limit": "11.25 KB"
+    },
+    {
+      "path": "dist/react/readout.js",
+      "limit": "11.75 KB"
+    },
+    {
+      "path": "dist/react/roll-button.js",
+      "limit": "10.25 KB"
+    },
+    {
+      "path": "dist/react/roll-steps.js",
+      "limit": "11.5 KB"
+    },
+    {
+      "path": "dist/react/roller.js",
+      "limit": "34 KB"
+    },
+    {
+      "path": "dist/react/status-line.js",
+      "limit": "10.25 KB"
+    },
+    {
+      "path": "dist/react/use-roller.js",
+      "limit": "14 KB"
+    },
+    {
       "path": "dist/readout.js",
-      "limit": "2 KB"
+      "limit": "11.5 KB"
     },
     {
       "path": "dist/roll-button.js",
-      "limit": "0.5 KB"
+      "limit": "10 KB"
     },
     {
       "path": "dist/roll-steps.js",
-      "limit": "1.75 KB"
+      "limit": "11 KB"
     },
     {
-      "path": "dist/roller-compact.js",
-      "limit": "21.5 KB"
+      "path": "dist/roller.js",
+      "limit": "33.5 KB"
     },
     {
-      "path": "dist/roller-max.js",
-      "limit": "22 KB"
+      "path": "dist/roller-state.js",
+      "limit": "13.5 KB"
     },
     {
-      "path": "dist/roller-mini.js",
-      "limit": "21.5 KB"
+      "path": "dist/scope.js",
+      "limit": "22.75 KB"
     },
     {
       "path": "dist/status-line.js",
-      "limit": "0.5 KB"
+      "limit": "10 KB"
     },
     {
-      "path": "dist/use-roller.js",
-      "limit": "13.5 KB"
+      "path": "dist/svelte.js",
+      "limit": "0.25 KB"
+    },
+    {
+      "path": "dist/vue/key-pad.js",
+      "limit": "11.25 KB"
+    },
+    {
+      "path": "dist/vue/notation-field.js",
+      "limit": "16.75 KB"
+    },
+    {
+      "path": "dist/vue/preset-list.js",
+      "limit": "11.25 KB"
+    },
+    {
+      "path": "dist/vue/readout.js",
+      "limit": "11.5 KB"
+    },
+    {
+      "path": "dist/vue/roll-button.js",
+      "limit": "10.25 KB"
+    },
+    {
+      "path": "dist/vue/roll-steps.js",
+      "limit": "11.25 KB"
+    },
+    {
+      "path": "dist/vue/roller.js",
+      "limit": "33.75 KB"
+    },
+    {
+      "path": "dist/vue/status-line.js",
+      "limit": "10.25 KB"
+    },
+    {
+      "path": "dist/vue/use-roller.js",
+      "limit": "13.75 KB"
     }
   ]
 }

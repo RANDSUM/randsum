@@ -3,18 +3,22 @@ import { readFileSync, readdirSync } from 'node:fs'
 import { join } from 'node:path'
 import pkg from '../package.json'
 
-// Every file directly in src/ is a public entry, one per component or helper,
-// the way lodash ships one module per function. src/internal/ is not.
+// Every file directly in src/, src/react/ and src/vue/ is a public entry, one
+// per element, wrapper or helper, the way lodash ships one module per
+// function. src/internal/ is not.
 const SRC = join(import.meta.dir, '..', 'src')
-const entries = readdirSync(SRC)
-  .filter(file => /\.tsx?$/.test(file))
-  .map(file => file.replace(/\.tsx?$/, ''))
+const entries = ['', 'react/', 'vue/']
+  .flatMap(dir =>
+    readdirSync(join(SRC, dir))
+      .filter(file => /\.ts$/.test(file))
+      .map(file => `${dir}${file.replace(/\.ts$/, '')}`)
+  )
   .sort()
 
 describe('entries', () => {
   test('every src file has its own subpath export', () => {
     const exported = Object.keys(pkg.exports)
-      .filter(key => key !== './styles.css' && key !== './package.json')
+      .filter(key => key !== './package.json')
       .map(key => key.slice(2))
       .sort()
     expect(exported).toEqual(entries)
@@ -22,13 +26,14 @@ describe('entries', () => {
 
   test('every src file is a build entry', () => {
     const config = readFileSync(join(import.meta.dir, '..', 'bunup.config.ts'), 'utf8')
-    const built = [...config.matchAll(/'src\/([\w-]+)\.tsx?'/g)].map(([, name]) => name).sort()
+    const built = [...config.matchAll(/'src\/([\w/-]+)\.ts'/g)].map(([, name]) => name).sort()
     expect(built).toEqual(entries)
   })
 
-  test('every entry has a size limit', () => {
+  // ssr runs on the server, where bundle size is not what is being guarded
+  test('every browser entry has a size limit', () => {
     const limited = pkg['size-limit'].map(({ path }) => path.slice(5, -3)).sort()
-    expect(limited).toEqual(entries)
+    expect(limited).toEqual(entries.filter(entry => entry !== 'ssr'))
   })
 
   test('there is no root entry', () => {

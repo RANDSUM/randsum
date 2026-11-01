@@ -21,7 +21,7 @@ RANDSUM is one dice engine with several ways in. Two npm packages hold the code,
   |     +-- /root-rpg          (Root RPG)
   |     +-- /salvageunion      (Salvage Union)
   |
-  +-- @randsum/ui            (React roller components, one import each)
+  +-- @randsum/ui            (roller Web Components, one import each)
   |
   +-- @randsum/mcp           (MCP server: roll, validate, roll_game)
 ```
@@ -41,8 +41,8 @@ Every package depends only on packages above it in the tree. Games never depend 
 
     [Learn more](/games/introduction/)
   </Card>
-  <Card title="@randsum/ui" icon="seti:react">
-    The roller as React components in three sizes, Max, Compact and Mini, plus every part they are built from. Each component is its own import, so a page ships only what it uses.
+  <Card title="@randsum/ui" icon="seti:html">
+    The roller as Web Components: one element in three sizes, Max, Compact and Mini, plus every part it is built from, with React and Vue wrappers. Each component is its own import, so a page ships only what it uses.
 
     [Learn more](/ui/introduction/)
   </Card>
@@ -92,7 +92,7 @@ Pick the one that matches your use case:
 | **Roll dice in any JS/TS project** | `bun add @randsum/roller` | [Roller Getting Started](/roller/getting-started/) |
 | **Parse or validate notation strings** | `bun add @randsum/roller` | [Notation Getting Started](/notation/getting-started/) |
 | **Build a TTRPG app with game-specific mechanics** | `bun add @randsum/games` | [Games Getting Started](/games/getting-started/) |
-| **Put a dice roller in a React app** | `bun add @randsum/ui` | [UI Getting Started](/ui/getting-started/) |
+| **Put a dice roller in any web app** | `bun add @randsum/ui` | [UI Getting Started](/ui/getting-started/) |
 | **Roll from another language or a no-code tool** | nothing | [RANDSUM API](/api/introduction/) |
 | **Give an AI agent dice** | the plugin or connector | [Dice for AI Agents](/tools/agents/) |
 
