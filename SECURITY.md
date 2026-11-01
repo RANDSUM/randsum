@@ -2,13 +2,15 @@
 
 ## Supported Versions
 
-RANDSUM is now distributed as scoped packages under `@randsum/*`. The legacy unscoped `randsum` package (1.x–3.x) is no longer maintained.
+RANDSUM ships as scoped packages under `@randsum/*`. Version 5.0.0 of the roller and games is a fresh release line; only the versions below receive fixes.
 
-| Package           | Supported version | Notes                                                    |
-| ----------------- | ----------------- | -------------------------------------------------------- |
-| `@randsum/roller` | 2.x               | Core dice engine. Patches land on the latest minor       |
-| `@randsum/games`  | 3.x               | Game packages. Version-linked with roller (shared bumps) |
-| `randsum` (≤ 3.x) | :x:               | Legacy monolithic package, unsupported                   |
+| Package                  | Supported version | Notes                                               |
+| ------------------------ | ----------------- | --------------------------------------------------- |
+| `@randsum/roller`        | 5.x               | Core dice engine. Version-linked with games         |
+| `@randsum/games`         | 5.x               | Game interpretations. Version-linked with roller    |
+| `@randsum/mcp`           | 2.x               | MCP server; bundles roller and games                |
+| `@randsum/ui`            | 0.x               | Roller Web Components                               |
+| `@randsum/notation-spec` | 0.1.x             | Notation spec, conformance vectors and runner       |
 
 Security patches land on the latest minor of each supported major; older minors are not backported.
 

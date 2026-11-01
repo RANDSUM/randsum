@@ -11,8 +11,8 @@ import { curatedLlmsTxt } from './src/integrations/curated-llms-txt'
 // https://astro.build/config
 export default defineConfig({
   base: '/',
-  // Legacy 301 redirects for old URL shapes live in `public/_redirects`, which
-  // Workers Static Assets serves as real 301s. Astro's own `redirects` option
+  // Redirects live in `public/_redirects`, which Workers Static Assets serves
+  // as real 301s. Astro's own `redirects` option
   // would only emit meta-refresh pages without an adapter.
   fonts: [
     {

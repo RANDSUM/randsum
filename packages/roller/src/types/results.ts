@@ -1,4 +1,5 @@
-import type { DiceNotation, RollArgument, RollOptions } from './core'
+import type { DiceNotation, RollOptions } from '../notation/types'
+import type { RollArgument } from './core'
 import type { NumericRollBonus } from './modifiers'
 
 /**

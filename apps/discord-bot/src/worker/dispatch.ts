@@ -71,7 +71,7 @@ function resolveDisplayName(payload: APIInteraction): string {
  * Wrap a rendered view in a Components V2 interaction response.
  *
  * `IsComponentsV2` is what switches Discord from the embed layout to the
- * component tree; without it the `components` array is read as legacy action
+ * component tree; without it the `components` array is read as classic action
  * rows and a container is rejected. It composes with `Ephemeral` as a normal
  * bit flag — 32768 | 64 — so the `hidden` option keeps working unchanged.
  */

@@ -19,8 +19,7 @@ It documents how each surface is hosted, deployed, rolled back, and recovered.
 DNS for `randsum.dev` is on Cloudflare (nameservers
 `davina`/`rajeev`.ns.cloudflare.com; registrar moving from Hover to Cloudflare
 Registrar, transfer started 2026-10-30), and every Cloudflare surface above
-serves from a Worker with a custom domain. `/api/roll` runs as a Worker
-route on the apex.
+serves from a Worker with a custom domain.
 
 > Config sources: `apps/site/wrangler.jsonc`, `apps/site/wrangler.notation.jsonc`
 > (the spec at `notation.randsum.dev`, static assets deployed to the `randsum-rdn` Worker),
@@ -54,10 +53,9 @@ also writes the notation spec (`dist-notation/`) and the Roller app
 (`dist-app/`); randsum.dev 301s `/spec` and `/conformance/` to
 `notation.randsum.dev` (see below).
 
-- **site** — `output: 'static'`, no adapter, plus one hand-written Worker
-  (`apps/site/worker/index.ts`) for `/api/roll`. `assets.run_worker_first`
-  sends only `/api/*` to it; everything else is served from assets. Legacy
-  301s live in `apps/site/public/_redirects`. Deploy `apps/site/wrangler.jsonc`.
+- **site** — `output: 'static'`, no adapter, deployed as an assets-only Worker
+  (no script). Redirects live in `apps/site/public/_redirects`. Deploy
+  `apps/site/wrangler.jsonc`.
 - The trigger is `workflow_run` on CI: nothing deploys unless CI concluded
   `success` for a push to `main`, and the jobs check out the commit CI tested.
   The `plan` job diffs that commit against the commit the last successful
@@ -193,9 +191,8 @@ reversible — rolling back does not delete newer versions.
   Assets hardcodes it and `html_handling` cannot change it. This is not a
   regression to chase: pages emit `<link rel="canonical">` and the sitemap uses
   the trailing-slash form, so the canonical URL is declared explicitly. The
-  site's own legacy redirects are still 301 — they come from
-  `apps/site/public/_redirects` (Workers Static Assets `_redirects` rules), a
-  different mechanism from the hardcoded trailing-slash 307.
+  `/spec` redirects in `apps/site/public/_redirects` are 301s, a different
+  mechanism from the hardcoded trailing-slash 307.
 
 ---
 

@@ -1,10 +1,9 @@
 ---
 title: Hosted Schema
-description: The RANDSUM games meta-schema hosted at its canonical $id, plus the original randsum.dev/api/roll endpoint. The full HTTP API lives at api.randsum.dev.
+description: The RANDSUM games meta-schema hosted at its canonical $id. The HTTP API lives at api.randsum.dev.
 ---
 
-This page covers the games meta-schema that randsum.dev hosts, and the
-original single roll endpoint on the site. For rolling dice, game systems and
+This page covers the games meta-schema that randsum.dev hosts. For rolling dice, game systems and
 random numbers over HTTP, use the [RANDSUM API](/api/introduction/) at
 `https://api.randsum.dev/v1`.
 
@@ -41,78 +40,3 @@ validation while authoring a game spec:
   }
 }
 ```
-
-## `POST randsum.dev/api/roll`
-
-:::caution[Deprecated]
-This endpoint is deprecated and sunsets on 1 February 2027. After that it redirects to
-[`/v1/roll`](/api/rolling/) on the RANDSUM API, which returns a different response shape.
-Every response carries `Deprecation`, `Sunset` and `Link: rel="successor-version"` headers.
-:::
-
-The original single endpoint, still served by the site until the sunset date. Use
-[`/v1/roll`](/api/rolling/), which adds seeds, per-pool results and `GET`. This one evaluates [RANDSUM dice notation](https://notation.randsum.dev/) with the same
-`roll()` engine as `@randsum/roller`.
-
-### Request
-
-`POST` JSON with a single `notation` field:
-
-```bash
-curl -X POST https://randsum.dev/api/roll \
-  -H "Content-Type: application/json" \
-  -d '{"notation":"4d6L"}'
-```
-
-### Response: `200 OK`
-
-```json
-{
-  "notation": "4d6L",
-  "total": 12,
-  "rolls": [3, 4, 5],
-  "description": "Roll 4 6-sided dice; Drop lowest"
-}
-```
-
-| Field         | Type       | Description                                  |
-| ------------- | ---------- | -------------------------------------------- |
-| `notation`    | `string`   | The notation that was rolled                 |
-| `total`       | `number`   | Combined total of all rolls                  |
-| `rolls`       | `number[]` | Individual die values after modifiers        |
-| `description` | `string`   | Human-readable description of the roll        |
-
-### Errors: `400 Bad Request`
-
-Invalid notation returns the roller's own error message, plus a `suggestion`
-when a likely fix can be inferred (the same hint powered by `suggestNotationFix`):
-
-```bash
-curl -X POST https://randsum.dev/api/roll \
-  -H "Content-Type: application/json" \
-  -d '{"notation":"1d6+"}'
-```
-
-```json
-{
-  "error": "Invalid dice notation: \"1d6+\"",
-  "suggestion": "1d6"
-}
-```
-
-Notation longer than 1000 characters is rejected before parsing, and oversized
-request bodies return `413 Payload Too Large`.
-
-### Usage: `GET /api/roll`
-
-A plain `GET` returns a JSON description of the contract, handy for quick
-discovery:
-
-```bash
-curl https://randsum.dev/api/roll
-```
-
-### CORS
-
-Every response includes `Access-Control-Allow-Origin: *`, so the endpoint is
-callable directly from browser front-ends.

@@ -1,8 +1,5 @@
 import type { DiceNotation, RollOptions } from '../notation/types'
 
-// Re-export notation types for backward compatibility
-export type { DiceNotation, RollOptions } from '../notation/types'
-
 /**
  * RollOptions with required numeric fields.
  * Used internally when sides must be numeric and quantity is known.
