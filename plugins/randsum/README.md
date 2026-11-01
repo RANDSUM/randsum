@@ -35,7 +35,11 @@ What are the odds of rolling 15 or more on 3d6?
 
 - **One MCP server**, the hosted RANDSUM server at `https://api.randsum.dev/mcp`, declared in [`.mcp.json`](./.mcp.json). It needs no account or key. Its tools are read-only: they compute a roll from the notation and parameters Claude sends and return it.
 - **The HTTP API fallback.** If that server is not connected, the `dice-rolling` skill may call the same service's HTTP API at `https://api.randsum.dev/v1` with the same notation and parameters. With a shell but no network, the skill tells Claude to roll with a one-line local random number command (`node -e` with `crypto.randomInt`) and say so.
-- **`/roll`** (Claude Code only) is a mod in [`hooks/`](./hooks): [`register.ts`](./hooks/register.ts) rolls on your machine with [`roller.generated.js`](./hooks/roller.generated.js), the open-source `@randsum/roller` engine bundled into the plugin. It makes no network call. It shows the result, pins it as the plugin's status line, and tells Claude you rolled it.
+- **`/roll`** (Claude Code only) is a mod: [`hooks/hooks.json`](./hooks/hooks.json) names one hooks module, [`register.ts`](./hooks/register.ts), and it hooks exactly two events.
+    - `session.start`: registers the `/roll` slash command (`$.command.register`). Nothing else runs at session start.
+    - `command.run` for `/roll` only: rolls the notation you typed with [`roller.generated.js`](./hooks/roller.generated.js), the open-source `@randsum/roller` engine bundled into the plugin, using your machine's cryptographic random number generator. It prints the result, sets the plugin's status line to the last roll (`$.ui.status`), and adds one note to Claude's context saying you rolled it and what came up.
+
+    The hook makes no network call, reads and writes no files, runs no shell commands, reads no credentials or environment variables, and touches no other tool calls.
 
 The plugin sends nothing anywhere else, reads no files or credentials, and changes no settings.
 
