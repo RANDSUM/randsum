@@ -12,7 +12,7 @@ import type { RandsumChangeEvent, RandsumRollEvent } from './internal/element'
 import type { PresetsLayout } from './internal/parts/preset-list'
 import type { Key } from './keys'
 import type { Preset } from './presets'
-import type { RollerOrientation, RollerSize } from './roller'
+import type { RollerSize } from './roller'
 import type { RollerState } from './roller-state'
 
 export type { RandsumChangeEvent, RandsumRollEvent } from './internal/element'
@@ -34,7 +34,6 @@ export interface RandsumRollerAttributes extends HTMLAttributes<HTMLElement>, Ra
   readonly presetsLabel?: string
   readonly presetsLayout?: PresetsLayout
   readonly placeholder?: string
-  readonly orientation?: RollerOrientation
   readonly appLink?: string
   readonly history?: boolean
   readonly storageKey?: string

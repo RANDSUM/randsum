@@ -2,8 +2,9 @@
 //
 //   <randsum-roller size="mini" notation="4d6L"></randsum-roller>
 //
-// size="mini" is one row; "compact" (the default) is a panel with the readout
-// beside or above the builder; "max" adds recent rolls and a History dialog.
+// size="mini" is the field and Roll, with the keys and the total a row below;
+// "compact" (the default) is a panel with the readout beside or above the
+// builder; "max" adds recent rolls and a History dialog.
 // It fires randsum-change on every edit and randsum-roll after every roll.
 import { html, LitElement, nothing } from 'lit'
 import type { CSSResultGroup, PropertyDeclarations, PropertyValues, TemplateResult } from 'lit'
@@ -17,7 +18,6 @@ import { presetList } from './internal/parts/preset-list'
 import type { PresetsLayout } from './internal/parts/preset-list'
 import { readout } from './internal/parts/readout'
 import { rollButton } from './internal/parts/roll-button'
-import { rollSteps } from './internal/parts/roll-steps'
 import { statusLine } from './internal/parts/status-line'
 import { sheet } from './internal/styles'
 import { DEFAULT_KEYS } from './keys'
@@ -33,7 +33,6 @@ export type { Preset } from './presets'
 export type { RollerState } from './roller-state'
 
 export type RollerSize = 'max' | 'compact' | 'mini'
-export type RollerOrientation = 'auto' | 'landscape' | 'portrait'
 
 export interface HistoryEntry {
   readonly id: number
@@ -95,7 +94,6 @@ export class RandsumRoller extends LitElement {
     presetsLabel: { attribute: 'presets-label' },
     presetsLayout: { attribute: 'presets-layout' },
     placeholder: {},
-    orientation: {},
     appLink: { attribute: 'app-link' },
     history: { converter: trueUnlessFalse },
     storageKey: { attribute: 'storage-key' },
@@ -103,7 +101,8 @@ export class RandsumRoller extends LitElement {
     _open: { state: true },
     _tab: { state: true },
     _history: { state: true },
-    _footer: { state: true }
+    _footer: { state: true },
+    _closed: { state: true }
   }
 
   /** 'mini', 'compact' (the default) or 'max'. */
@@ -117,8 +116,6 @@ export class RandsumRoller extends LitElement {
   /** Compact: 'chips' (the default) or 'list', which shows each description. */
   declare presetsLayout: PresetsLayout
   declare placeholder: string | undefined
-  /** Compact: the readout beside the builder, above it, or by width ('auto'). */
-  declare orientation: RollerOrientation
   /** Mini and Compact: a link to the full roller. */
   declare appLink: string | undefined
   /** Max: recent rolls and a History dialog. Defaults to true. */
@@ -132,6 +129,7 @@ export class RandsumRoller extends LitElement {
   declare _tab: 'keys' | 'presets'
   declare _history: readonly HistoryEntry[]
   declare _footer: boolean
+  declare _closed: RollResult | null
 
   /** The state the roller renders from. */
   readonly state: RollerState = new RollerState()
@@ -143,13 +141,13 @@ export class RandsumRoller extends LitElement {
     this.presets = []
     this.presetsLabel = 'Presets'
     this.presetsLayout = 'chips'
-    this.orientation = 'auto'
     this.history = true
     this.historyLimit = 50
     this._open = false
     this._tab = 'keys'
     this._history = []
     this._footer = false
+    this._closed = null
     this.state.subscribe(event => {
       if (event.type === 'roll') this.#record(event.result)
       announce(this, event)
@@ -237,6 +235,29 @@ export class RandsumRoller extends LitElement {
     document.removeEventListener('keydown', this.#onKey)
   }
 
+  // Mini and compact show the last roll over the page until it is closed or
+  // the notation changes, so a roll never moves or resizes anything
+  #card(className: string): TemplateResult | typeof nothing {
+    const { result, notation } = this.state
+    if (result === null || result === this._closed || result.notation !== notation) return nothing
+    const actions = html`<span class="rsui-card-actions">
+      <button type="button" class="rsui-quiet-button" @click=${() => this.state.choose(result)}>
+        Roll again
+      </button>
+      <button
+        type="button"
+        class="rsui-quiet-button"
+        aria-label="Close result"
+        @click=${() => {
+          this._closed = result
+        }}
+      >
+        Close
+      </button>
+    </span>`
+    return html`<div class=${className}>${readout(this.state, actions)}</div>`
+  }
+
   #mini(): TemplateResult {
     const { state } = this
     const { result } = state
@@ -244,6 +265,10 @@ export class RandsumRoller extends LitElement {
     const hasPresets = this.presets.length > 0
     return html`<div class="rsui rsui-mini">
       <div class="rsui-mini-row">
+        ${notationField(state, { statusId: 'status', placeholder: this.placeholder })}
+        ${rollButton(state, { tip: true })}
+      </div>
+      <div class="rsui-mini-foot">
         <span class="rsui-anchor">
           <button
             type="button"
@@ -274,28 +299,6 @@ export class RandsumRoller extends LitElement {
               : nothing
           }
         </span>
-        ${notationField(state, { statusId: 'status', placeholder: this.placeholder })}
-        ${rollButton(state, { tip: true })}
-        ${
-          result === null
-            ? nothing
-            : html`<span class="rsui-anchor rsui-mini-total-wrap">
-              <button
-                type="button"
-                class="rsui-mini-total"
-                data-stale=${fresh ? nothing : ''}
-                aria-describedby="detail"
-                aria-label=${`Total ${result.total}`}
-              >
-                ${result.total}
-              </button>
-              <span id="detail" class="rsui-pop rsui-pop--detail" role="tooltip"
-                >${rollSteps(result.records)}</span
-              >
-            </span>`
-        }
-      </div>
-      <div class="rsui-mini-foot">
         ${statusLine(state.check, {
           id: 'status',
           hint: 'Type notation, or open the dice keys.',
@@ -307,6 +310,7 @@ export class RandsumRoller extends LitElement {
             : html`<a class="rsui-app-link" href=${this.appLink}>Open in the Roller</a>`
         }
       </div>
+      ${this.#card('rsui-pop rsui-pop--result')}
     </div>`
   }
 
@@ -328,14 +332,13 @@ export class RandsumRoller extends LitElement {
       >
         ${label}
       </button>`
-    return html`<div class="rsui rsui-compact" data-orientation=${this.orientation}>
+    return html`<div class="rsui rsui-compact">
       <div class="rsui-compact-body">
-        ${readout(state)}
+        <div class="rsui-row">
+          ${notationField(state, { statusId: 'status', placeholder: this.placeholder })}
+          ${rollButton(state)}
+        </div>
         <div class="rsui-compact-builder">
-          <div class="rsui-row">
-            ${notationField(state, { statusId: 'status', placeholder: this.placeholder })}
-            ${rollButton(state)}
-          </div>
           ${statusLine(state.check, { id: 'status' })}
           ${
             hasPresets
@@ -356,6 +359,7 @@ export class RandsumRoller extends LitElement {
                 : keyPad(state, this.keys)
             }
           </div>
+          ${this.#card('rsui-result-layer')}
         </div>
       </div>
       <div class="rsui-compact-footer" ?hidden=${this.appLink === undefined && !this._footer}>

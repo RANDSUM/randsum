@@ -3,13 +3,14 @@
 //
 //   <Roller size="compact" defaultNotation="4d6L" onRoll={r => …} />
 //
-// "mini" is one row with the keys a tap away; "compact" (the default) is a
-// panel with the readout beside or above the builder; "max" adds recent rolls
+// Mini and compact keep the field and Roll on top and never move: mini shows
+// a roll in a modal card, compact lays it over the keys, and either goes when
+// closed or when the notation changes. "max" keeps a readout, recent rolls
 // and a History sheet.
 import type React from 'react'
 import { createElement as h, useCallback, useEffect, useRef, useState } from 'react'
 import { Linking, Modal, Pressable, ScrollView, Text, View } from 'react-native'
-import type { LayoutChangeEvent, StyleProp, ViewStyle } from 'react-native'
+import type { StyleProp, ViewStyle } from 'react-native'
 import type { RollResult } from '../check'
 import { EMPTY_HISTORY } from '../internal/copy'
 import { useStyles } from '../internal/native/styles'
@@ -25,7 +26,6 @@ import { NotationField } from './notation-field'
 import { PresetList } from './preset-list'
 import { Readout } from './readout'
 import { RollButton } from './roll-button'
-import { RollSteps } from './roll-steps'
 import { StatusLine } from './status-line'
 
 export type { RollResult } from '../check'
@@ -34,7 +34,6 @@ export type { Key } from '../keys'
 export type { Preset } from '../presets'
 
 export type RollerSize = 'max' | 'compact' | 'mini'
-export type RollerOrientation = 'auto' | 'landscape' | 'portrait'
 
 export interface HistoryEntry {
   readonly id: number
@@ -65,8 +64,6 @@ export interface RollerProps {
   /** Compact: 'chips' (the default) or 'list', which shows each description. */
   readonly presetsLayout?: PresetsLayout
   readonly placeholder?: string
-  /** Compact: the readout beside the builder, above it, or by width ('auto'). */
-  readonly orientation?: RollerOrientation
   /** Mini and Compact: a link to the full roller, opened with Linking. */
   readonly appLink?: string
   /** Compact: extra footer content, after the app link. */
@@ -83,8 +80,6 @@ export interface RollerProps {
 }
 
 const RECENT = 3
-// Compact puts the readout beside the builder from this width up
-const LANDSCAPE_WIDTH = 640
 
 interface Shared {
   readonly roller: RollerState
@@ -139,11 +134,53 @@ function AppLink({
   )
 }
 
+// The last roll while it still matches the notation and nobody has closed it
+function useResultCard(roller: RollerState): {
+  readonly result: RollResult | null
+  readonly close: () => void
+} {
+  const [closed, setClosed] = useState<RollResult | null>(null)
+  const { result } = roller
+  const shown = result !== null && result !== closed && result.notation === roller.notation
+  return {
+    result: shown ? result : null,
+    close: () => {
+      setClosed(result)
+    }
+  }
+}
+
+function ResultCard({
+  roller,
+  styles,
+  result,
+  close
+}: {
+  readonly roller: RollerState
+  readonly styles: RollerStyles
+  readonly result: RollResult
+  readonly close: () => void
+}): React.JSX.Element {
+  return h(Readout, {
+    roller,
+    actions: h(
+      View,
+      { style: styles.cardActions },
+      h(QuietButton, {
+        styles,
+        label: 'Roll again',
+        onPress: () => {
+          roller.choose(result)
+        }
+      }),
+      h(QuietButton, { styles, label: 'Close', accessibilityLabel: 'Close result', onPress: close })
+    )
+  })
+}
+
 function Mini({ roller, styles, props }: Shared): React.JSX.Element {
   const [open, setOpen] = useState(false)
-  const [detail, setDetail] = useState(false)
-  const { result } = roller
-  const fresh = result !== null && result.notation === roller.notation
+  const { result, close } = useResultCard(roller)
   const presets = props.presets ?? []
   return h(
     View,
@@ -151,6 +188,15 @@ function Mini({ roller, styles, props }: Shared): React.JSX.Element {
     h(
       View,
       { style: styles.row },
+      h(NotationField, {
+        roller,
+        ...(props.placeholder === undefined ? {} : { placeholder: props.placeholder })
+      }),
+      h(RollButton, { roller })
+    ),
+    h(
+      View,
+      { style: styles.footer },
       h(
         Pressable,
         {
@@ -161,34 +207,18 @@ function Mini({ roller, styles, props }: Shared): React.JSX.Element {
             setOpen(o => !o)
           },
           style: ({ pressed }: { readonly pressed: boolean }) => [
-            styles.miniTotal,
+            styles.miniKeys,
             open ? styles.keyOn : null,
             pressed ? styles.pressed : null
           ]
         },
         h(Text, { style: styles.quietText }, 'Dice')
       ),
-      h(NotationField, {
+      h(StatusLine, {
         roller,
-        ...(props.placeholder === undefined ? {} : { placeholder: props.placeholder })
-      }),
-      h(RollButton, { roller }),
-      result === null
-        ? null
-        : h(
-            Pressable,
-            {
-              accessibilityRole: 'button',
-              accessibilityLabel: `Total ${result.total}`,
-              accessibilityHint: 'Shows how the roll was made',
-              accessibilityState: { expanded: detail },
-              onPress: () => {
-                setDetail(d => !d)
-              },
-              style: [styles.miniTotal, fresh ? null : styles.stale]
-            },
-            h(Text, { style: styles.miniTotalText }, result.total)
-          )
+        hint: 'Type notation, or open the dice keys.',
+        style: styles.grow
+      })
     ),
     open
       ? h(
@@ -205,34 +235,40 @@ function Mini({ roller, styles, props }: Shared): React.JSX.Element {
             : null
         )
       : null,
-    detail && result !== null ? h(RollSteps, { records: result.records }) : null,
+    props.appLink === undefined
+      ? null
+      : h(AppLink, { styles, href: props.appLink, label: 'Open in the Roller' }),
     h(
-      View,
-      { style: styles.footer },
-      h(StatusLine, {
-        roller,
-        hint: 'Type notation, or open the dice keys.',
-        style: styles.grow
-      }),
-      props.appLink === undefined
-        ? null
-        : h(AppLink, { styles, href: props.appLink, label: 'Open in the Roller' })
+      Modal,
+      { visible: result !== null, transparent: true, animationType: 'fade', onRequestClose: close },
+      h(
+        View,
+        { style: styles.scrim },
+        h(Pressable, {
+          accessibilityRole: 'button',
+          accessibilityLabel: 'Close result',
+          onPress: close,
+          style: styles.scrimTap
+        }),
+        result === null
+          ? null
+          : h(
+              View,
+              { style: styles.card },
+              h(ScrollView, null, h(ResultCard, { roller, styles, result, close }))
+            )
+      )
     )
   )
 }
 
 function Compact({ roller, styles, props }: Shared): React.JSX.Element {
   const [tab, setTab] = useState<'keys' | 'presets'>('keys')
-  const [wide, setWide] = useState(false)
+  const { result, close } = useResultCard(roller)
   const presets = props.presets ?? []
   const label = props.presetsLabel ?? 'Presets'
   const hasPresets = presets.length > 0
   const showPresets = hasPresets && tab === 'presets'
-  const orientation = props.orientation ?? 'auto'
-  const landscape = orientation === 'landscape' || (orientation === 'auto' && wide)
-  const onLayout = (event: LayoutChangeEvent): void => {
-    setWide(event.nativeEvent.layout.width >= LANDSCAPE_WIDTH)
-  }
   const tabButton = (id: 'keys' | 'presets', text: string): React.ReactNode => {
     const on = (id === 'presets') === showPresets
     return h(
@@ -252,36 +288,39 @@ function Compact({ roller, styles, props }: Shared): React.JSX.Element {
   const footer = props.appLink !== undefined || props.footer !== undefined
   return h(
     View,
-    { onLayout, style: [styles.panel, props.style] },
+    { style: [styles.panel, props.style] },
     h(
       View,
-      { style: landscape ? [styles.row, { gap: 16 }] : styles.steps },
-      h(Readout, { roller, style: landscape ? styles.grow : undefined }),
-      h(
-        View,
-        { style: [styles.steps, landscape ? styles.grow : null] },
-        h(
-          View,
-          { style: styles.row },
-          h(NotationField, {
-            roller,
-            ...(props.placeholder === undefined ? {} : { placeholder: props.placeholder })
-          }),
-          h(RollButton, { roller })
-        ),
-        h(StatusLine, { roller }),
-        hasPresets
-          ? h(
-              View,
-              { accessibilityRole: 'tablist', style: styles.tabs },
-              tabButton('keys', 'Dice keys'),
-              tabButton('presets', label)
-            )
-          : null,
-        showPresets
-          ? h(PresetList, { roller, presets, label, layout: props.presetsLayout ?? 'chips' })
-          : h(KeyPad, { roller, keys: props.keys ?? DEFAULT_KEYS })
-      )
+      { style: styles.row },
+      h(NotationField, {
+        roller,
+        ...(props.placeholder === undefined ? {} : { placeholder: props.placeholder })
+      }),
+      h(RollButton, { roller })
+    ),
+    // The result lies over the builder, so a roll never moves or resizes anything
+    h(
+      View,
+      { style: styles.builder },
+      h(StatusLine, { roller }),
+      hasPresets
+        ? h(
+            View,
+            { accessibilityRole: 'tablist', style: styles.tabs },
+            tabButton('keys', 'Dice keys'),
+            tabButton('presets', label)
+          )
+        : null,
+      showPresets
+        ? h(PresetList, { roller, presets, label, layout: props.presetsLayout ?? 'chips' })
+        : h(KeyPad, { roller, keys: props.keys ?? DEFAULT_KEYS }),
+      result === null
+        ? null
+        : h(
+            View,
+            { style: styles.overlay },
+            h(ScrollView, null, h(ResultCard, { roller, styles, result, close }))
+          )
     ),
     footer
       ? h(
