@@ -11,7 +11,8 @@
  * check fails on the ones the repo has already fixed once:
  *
  *   - size/format:      every file under 256 KiB, and text or a PNG/JPEG/GIF/WebP
- *   - download-and-run: shell that fetches and executes, or `node -e`, in any file
+ *   - download-and-run: shell that fetches and executes, inline `-e`/`-c` code,
+ *                       or npx/bunx/uvx/pipx run, in any file
  *   - credential:       code reading crypto, env vars, the home directory or keychains
  *   - accessor:         code defining getters, Proxies, `then` methods or
  *                       Object.defineProperty, which run on a mere read or await
@@ -43,7 +44,7 @@ const RULES: readonly Rule[] = [
   {
     name: 'download-and-run',
     pattern:
-      /\b(curl|wget)\b[^\n|]*\|\s*(sudo\s+)?(sh|bash|zsh|node|python3?|bun)\b|\$\((curl|wget)\b|\bnode\s+(-e|--eval)\b|\bnpx\s+-y\b|\b(iex|Invoke-Expression)\b/,
+      /\b(curl|wget)\b[^\n|]*\|\s*(sudo\s+)?(sh|bash|zsh|node|python3?|bun)\b|\$\((curl|wget)\b|\b(node|bun|deno)\s+(-e|--eval)\b|\bpython3?\s+-c\b|\b(ba|z)?sh\s+-c\b|\b(npx|bunx|uvx|pipx\s+run)\s|\b(iex|Invoke-Expression)\b/,
     appliesTo: () => true
   },
   {
