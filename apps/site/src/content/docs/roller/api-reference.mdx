@@ -190,7 +190,7 @@ These appear inside result objects but are not exported.
 | Type | Description |
 |---|---|
 | `ValidationResult` | `{ valid: true, argument, description, options, notation, error: null }` or `{ valid: false, argument, error: ValidationErrorInfo }` |
-| `ValidationErrorInfo` | `{ message: string, argument: string, position?: number }` |
+| `ValidationErrorInfo` | `{ message: string, argument: string, position?: number, code?: ErrorCode }` |
 
 ## Subpath exports
 

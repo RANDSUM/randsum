@@ -273,19 +273,26 @@ export function generateValidationLines(
     const guard = isOptionalField ? `${accessor} !== undefined && ` : ''
 
     if (decl.type === 'integer') {
-      // One guarded block per field: finite, then integer (a fraction such as 7.5
-      // would otherwise reach the roller as a fractional modifier or quantity),
-      // then range.
+      // Finite, then integer (a fraction such as 7.5 would otherwise reach the
+      // roller as a fractional modifier or quantity), then range. A required
+      // field is always checked, so a missing value or a string from an
+      // untyped caller is rejected rather than becoming NaN or concatenating
+      // into the notation; an optional one is checked whenever it is given.
       const label = quoteString(decl.description ?? `${specName} ${fieldName}`)
-      lines.push(`${indent}if (${guard}typeof ${accessor} === 'number') {`)
-      lines.push(`${indent}  validateFinite(${accessor}, ${label})`)
-      lines.push(`${indent}  validateInteger(${accessor}, ${label})`)
-      if (decl.minimum !== undefined && decl.maximum !== undefined) {
-        lines.push(
-          `${indent}  validateRange(${accessor}, ${decl.minimum}, ${decl.maximum}, ${label})`
-        )
+      const checks = [
+        `validateFinite(${accessor}, ${label})`,
+        `validateInteger(${accessor}, ${label})`,
+        ...(decl.minimum !== undefined && decl.maximum !== undefined
+          ? [`validateRange(${accessor}, ${decl.minimum}, ${decl.maximum}, ${label})`]
+          : [])
+      ]
+      if (isOptionalField) {
+        lines.push(`${indent}if (${accessor} !== undefined) {`)
+        lines.push(...checks.map(check => `${indent}  ${check}`))
+        lines.push(`${indent}}`)
+      } else {
+        lines.push(...checks.map(check => `${indent}${check}`))
       }
-      lines.push(`${indent}}`)
     }
 
     if (decl.type === 'string' && decl.enum !== undefined && decl.enum.length > 0) {

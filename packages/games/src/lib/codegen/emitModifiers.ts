@@ -46,6 +46,15 @@ export function buildDiceOptionsCode(
   inputs: Readonly<Record<string, InputDeclaration>> | undefined,
   optional: boolean
 ): string {
+  // The meta-schema accepts markDice/keepMarked, but codegen has no emitter for
+  // them; silently dropping them would roll without the filter the spec asked for.
+  if (modify?.some(op => op.markDice !== undefined || op.keepMarked !== undefined)) {
+    throw new SchemaError(
+      'markDice and keepMarked are not supported by codegen yet; use keepHighest, keepLowest or a countMatching resolve',
+      'INVALID_SPEC'
+    )
+  }
+
   const dc = toDiceConfig(dice)
   const pool = dc.pool
   const quantitySource = dc.quantity ?? pool.quantity

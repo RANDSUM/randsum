@@ -1,11 +1,4 @@
 {
   "extends": "../../tsconfig.json",
-  "include": [
-    "src/**/*",
-    "__tests__/**/*",
-    "test-utils/src/**/*",
-    "test-utils/__tests__/**/*",
-    "__benchmarks__/**/*",
-    "spec/**/*"
-  ]
+  "include": ["src/**/*", "__tests__/**/*", "test-utils/src/**/*", "__benchmarks__/**/*"]
 }

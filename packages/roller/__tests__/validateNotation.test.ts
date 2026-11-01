@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'bun:test'
-import { validateNotation } from '../src'
+import { type DiceNotation, roll, validateNotation } from '../src'
 
 describe('validateNotation', () => {
   describe('valid notation', () => {
@@ -344,5 +344,25 @@ describe('validateNotation', () => {
         expect(result.valid).toBe(true)
       })
     })
+  })
+})
+
+describe('validateNotation agrees with roll()', () => {
+  test.each([
+    ['2d6L3', 'Cannot drop 3 dice from a pool of 2'],
+    ['2d6KM', 'Cannot drop 2 dice from a pool of 2'],
+    ['3d2U', 'Cannot have 3 unique values with only 2 sides'],
+    ['1d6R{7}', 'Reroll value 7 is outside valid range [1, 6]'],
+    ['99999d6', 'quantity 99999 exceeds maximum of 10000']
+  ])('%s parses but cannot roll, so it is invalid', (notation, message) => {
+    const result = validateNotation(notation)
+    expect(result.valid).toBe(false)
+    if (!result.valid) expect(result.error.message).toContain(message)
+    expect(() => roll(notation as DiceNotation)).toThrow(message)
+  })
+
+  test.each(['4d6L', '3d2U{1}', '1d20+2d6L'])('%s is valid and rolls', notation => {
+    expect(validateNotation(notation).valid).toBe(true)
+    expect(() => roll(notation as DiceNotation)).not.toThrow()
   })
 })

@@ -24,15 +24,19 @@ export function describe(lines: readonly (readonly string[])[]): string {
 const TRIALS = 3
 
 /**
- * Parsing is not enough: `1d20L` parses but cannot roll (it drops the only
- * die). A trial roll catches what only the modifiers know, so the field can
- * say why before Roll would fail.
+ * `validateNotation` rejects notation that parses but cannot roll (`1d20L`
+ * drops the only die) and says why. A trial roll remains as a backstop for
+ * what only rolling shows, so the field can say why before Roll would fail.
  */
 export function checkNotation(notation: string): NotationCheck {
   if (notation.trim().length === 0) return { kind: 'empty' }
   const validated = validateNotation(notation)
   if (!validated.valid) {
-    const { position } = validated.error
+    const { position, code } = validated.error
+    // It parsed but cannot roll (2d6L3): say why, without the error class preamble.
+    if (code !== undefined && code !== 'INVALID_NOTATION') {
+      return { kind: 'invalid', message: withoutPreamble(validated.error.message) }
+    }
     if (position === undefined) return { kind: 'invalid', message: 'That isn’t dice notation yet.' }
     const char = notation.charAt(position)
     const message =
@@ -46,6 +50,11 @@ export function checkNotation(notation: string): NotationCheck {
   return { kind: 'valid', description: describe(validated.description) }
 }
 
+/** Drops the error class's 'Modifier error for "drop": ' preamble. */
+function withoutPreamble(message: string): string {
+  return message.replace(/^[^:]*: /, '')
+}
+
 function trialRoll(notation: DiceNotation): string | null {
   const messages: string[] = []
   for (const _ of Array.from({ length: TRIALS })) {
@@ -53,9 +62,7 @@ function trialRoll(notation: DiceNotation): string | null {
       roll(notation)
       return null
     } catch (error) {
-      const raw = error instanceof Error ? error.message : String(error)
-      // Drop the error class's 'Modifier error for "drop": ' preamble
-      messages.push(raw.replace(/^[^:]*: /, ''))
+      messages.push(withoutPreamble(error instanceof Error ? error.message : String(error)))
     }
   }
   return messages[0] ?? null

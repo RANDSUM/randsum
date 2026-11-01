@@ -2,6 +2,11 @@ import type { ParsedNotationOptions, RollOptions } from '../types'
 import { modifiersToDescription } from './modifiersToStrings'
 import { optionsToSidesFaces } from './optionsToSidesFaces'
 
+/** The description of a geometric pool (spec 4.3): each die rolls again on its maximum. */
+export function geometricDescription(quantity: number, sides: number): string {
+  return `Roll ${quantity}g${sides} (geometric: roll again on each ${sides}, summing all rolls)`
+}
+
 /**
  * The special-die discriminants a parsed pool may carry. Present only when the
  * options came from `notationToOptions` for a special die; absent for plain
@@ -36,7 +41,7 @@ function specialCoreDescription(
     case 'draw':
       return `Draw ${quantity} from d${sides}`
     case 'geometric':
-      return `Roll g${sides} (geometric: reroll d${sides} on max, sum all)`
+      return geometricDescription(quantity, sides)
     default:
       return null
   }

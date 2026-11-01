@@ -1,4 +1,5 @@
-import { NotationParseError } from '../errors'
+import { ERROR_CODES, type ErrorCode, NotationParseError, RandsumError } from '../errors'
+import { notationOptionsToParams } from '../roll/parseArguments'
 import { parseNotation } from './lexer/parse'
 import { parsedToOptions } from './parse/notationToOptions'
 import type { DiceNotation } from './types'
@@ -9,12 +10,13 @@ import { formatNotation } from './transformers/optionsToNotation'
 function invalid(
   notation: string,
   message: string,
-  position: number | undefined
+  position: number | undefined,
+  code: ErrorCode = ERROR_CODES.INVALID_NOTATION
 ): InvalidValidationResult {
   return {
     valid: false,
     argument: notation,
-    error: { message, argument: notation, ...(position !== undefined ? { position } : {}) }
+    error: { message, argument: notation, code, ...(position !== undefined ? { position } : {}) }
   }
 }
 
@@ -26,6 +28,23 @@ function buildOptions(
     return parsedToOptions(notation, parsed)
   } catch (error) {
     if (error instanceof NotationParseError) return error
+    throw error
+  }
+}
+
+function isErrorCode(code: string): code is ErrorCode {
+  return Object.values(ERROR_CODES).some(known => known === code)
+}
+
+function poolProblem(
+  notation: string,
+  options: Parameters<typeof notationOptionsToParams>[1]
+): RandsumError<ErrorCode> | undefined {
+  try {
+    notationOptionsToParams(notation, options, 1)
+    return undefined
+  } catch (error) {
+    if (error instanceof RandsumError && isErrorCode(error.code)) return error
     throw error
   }
 }
@@ -54,6 +73,15 @@ export function validateNotation(notation: string): ValidationResult {
     return invalid(notation, built.message, built.context?.position)
   }
   const options = built
+
+  // A string the grammar accepts can still be one roll() rejects before rolling:
+  // too many dice or sides, or a modifier its pool cannot satisfy (2d6L3, 3d2U,
+  // 1d6R{7}). Run the same checks so that valid means it rolls.
+  const rejected = poolProblem(notation, options)
+  if (rejected !== undefined) {
+    return invalid(notation, rejected.message, rejected.context?.position, rejected.code)
+  }
+
   const result: ValidValidationResult = {
     valid: true,
     argument: notation as DiceNotation,

@@ -1,37 +1,27 @@
 # test-utils
 
-Shared test utilities for the RANDSUM monorepo. Part of `@randsum/roller`; not
-published separately.
+Shared test utilities for `@randsum/roller`'s tests. Not published. There is no
+barrel: import each module by path.
 
 ## What it provides
 
-- **Deterministic RNG** — `createSeededRandom(seed)` and `createQueueRandom(...)`
-  return a `RandomFn` you can pass to `roll()` as a `RollConfig`.
-- **Assertions** — `expectRollInRange`, `expectAllRollsInRange`.
-- **Fixtures** — `commonNotations`, `commonRollOptions`, and factory helpers
-  (`createRollOptions`, `createRollParams`, `createNumericRollBonus`,
-  `createRequiredNumericRollParameters`, `createMockRollOne`).
-- **Mocks** — `createMockRoll`, `createDeterministicRoll`.
+- **Deterministic RNG**: `createSeededRandom(seed)` (`src/seededRandom.ts`) and
+  `createQueueRandom(...)` (`src/queueRandom.ts`) return a `RandomFn` you can
+  pass to `roll()` as a `RollConfig`. Both re-export `src/random.ts`.
+- **Fixtures**: `createRollOptions` and `createRollParams` (`src/fixtures.ts`),
+  factories with defaults and overrides.
 
 ## Usage
 
 ```typescript
-// From a test in packages/roller/__tests__/<area>/ — there is no package to import
-import { createSeededRandom, expectRollInRange, commonNotations } from "../../test-utils/src"
-import { roll } from "@randsum/roller"
+// From a test in packages/roller/__tests__/<area>/
+import { createSeededRandom } from "../../test-utils/src/seededRandom"
+import { roll } from "../../src/roll"
 
-// Deterministic testing — RollConfig must be the LAST argument to roll()
+// Deterministic testing: RollConfig must be the LAST argument to roll()
 const seeded = createSeededRandom(42)
 const result = roll("4d6L", { randomFn: seeded })
-
-// Custom assertions
-expectRollInRange(result, 3, 18)
-
-// Common fixtures (notation strings)
-const advantage = roll(commonNotations.advantage) // "2d20H"
 ```
 
 `createSeededRandom(seed)` returns a `RandomFn` (a `() => number` in `[0, 1)`).
 The same seed always yields the same sequence, so tests are reproducible.
-`commonNotations` keys: `advantage`, `disadvantage`, `abilityScore`, `damage`,
-`skillCheck`, `basic`, `percentile`, `exploding`, `reroll`, `cap`.

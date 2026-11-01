@@ -3,7 +3,7 @@ import type { PoolKind } from './specs'
 import { scan } from './scan'
 
 /** Maximum notation length accepted by every public surface (RDN safety limit). */
-export const MAX_NOTATION_LENGTH = 1000
+const MAX_NOTATION_LENGTH = 1000
 
 /** A single die pool with the modifier tokens that bind to it. */
 export interface PoolNode {

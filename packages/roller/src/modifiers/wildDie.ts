@@ -1,7 +1,6 @@
 import { wildDieSchema } from '../notation/definitions/wildDie'
 import { DEFAULT_EXPLOSION_DEPTH } from '../lib/constants'
 import type { ModifierDefinition } from './schema'
-import { assertRequiredContext } from './schema'
 import { ExplosionStrategies, applyAccumulatingExplosion } from './shared/explosion'
 
 export const wildDieModifier: ModifierDefinition<boolean> = {
@@ -10,7 +9,7 @@ export const wildDieModifier: ModifierDefinition<boolean> = {
   requiresParameters: true,
 
   apply: (rolls, _options, ctx) => {
-    const { rollOne, parameters } = assertRequiredContext(ctx)
+    const { rollOne, parameters } = ctx
     const { sides } = parameters
 
     if (rolls.length === 0) return { rolls: [] }

@@ -1,6 +1,6 @@
 import type { Mock } from 'bun:test'
 import { afterEach, describe, expect, spyOn, test } from 'bun:test'
-import { generateCode } from '../../src/lib/codegen'
+import { fetchRemoteData, generateCode } from '../../src/lib/codegen'
 import { SchemaError } from '../../src/lib/errors'
 
 function makeFetchMock(responseFactory: () => Promise<Response>): typeof fetch {
@@ -94,6 +94,20 @@ describe('fetchRemoteData', () => {
     const code = await generateCode(spec)
     expect(code).toContain('const REMOTE_DATA =')
     expect(code).toContain('Entry')
+  })
+
+  test('fetchRemoteData returns the table traversed by dataPath, the shape codegen caches', async () => {
+    fetchSpyRef.current = spyOn(globalThis, 'fetch').mockImplementation(
+      makeFetchMock(() =>
+        Promise.resolve({
+          ok: true,
+          json: () => Promise.resolve({ nested: { data: [{ name: 'Entry' }] } })
+        } as Response)
+      )
+    )
+    expect(await fetchRemoteData('https://example.com/t.json', 'nested.data')).toEqual([
+      { name: 'Entry' }
+    ])
   })
 
   test('uses cache when available', async () => {

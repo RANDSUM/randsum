@@ -1,4 +1,5 @@
 import { describe, expect, test } from 'bun:test'
+import { RandsumError } from '@randsum/roller/errors'
 import { rollNotation } from '../src/tools/roll'
 
 describe('rollNotation', () => {
@@ -46,5 +47,15 @@ describe('rollNotation', () => {
 
   test('throws with a suggestion on invalid notation', () => {
     expect(() => rollNotation({ notation: 'not-dice' })).toThrow(/Invalid dice notation/)
+    const caught = (() => {
+      try {
+        rollNotation({ notation: 'not-dice' })
+        return undefined
+      } catch (error) {
+        return error
+      }
+    })()
+    expect(caught).toBeInstanceOf(RandsumError)
+    expect((caught as RandsumError).code).toBe('INVALID_NOTATION')
   })
 })

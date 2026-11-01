@@ -10,7 +10,6 @@
 import { DEFAULT_EXPLOSION_DEPTH } from '../../lib/constants'
 import type { ComparisonOptions } from '../../notation/types'
 import type { ModifierApplyResult, ModifierContext } from '../schema'
-import { assertRequiredContext } from '../schema'
 import { buildExplosionTrigger } from './conditionMatch'
 
 /**
@@ -131,7 +130,7 @@ export function createAccumulatingExplosionBehavior(
   ctx: ModifierContext
 ) => ModifierApplyResult {
   return (rolls, options, ctx) => {
-    const { rollOne, parameters } = assertRequiredContext(ctx)
+    const { rollOne, parameters } = ctx
     const { sides } = parameters
     const maxDepth = resolveExplosionDepth(options)
     const trigger = buildExplosionTrigger(typeof options === 'number' ? true : options)
