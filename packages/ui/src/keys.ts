@@ -51,16 +51,16 @@ export const CONSTANT_KEYS: readonly Key[] = [
   { label: '+1', action: { kind: 'constant', delta: 1 }, title: 'Add one' }
 ]
 
-/** The keys every roller shows unless it is given its own. */
+/** The keys every roller shows unless it is given its own. Clear is last. */
 export const DEFAULT_KEYS: readonly Key[] = [
   ...DICE_KEYS,
-  CLEAR_KEY,
   ...CONSTANT_KEYS,
   mod('L', 'Drop low'),
   mod('H', 'Drop high'),
   mod('!', 'Explode'),
   mod('R{1}', 'Reroll 1s'),
-  mod('U', 'Unique')
+  mod('U', 'Unique'),
+  CLEAR_KEY
 ]
 
 /**
@@ -71,7 +71,7 @@ export function modifierKeys(name: ModifierName): readonly Key[] {
   const own = MODIFIER_TABLE[name].keys.map(k =>
     k.text === '+1' ? CONSTANT_KEYS : [mod(k.text, k.label)]
   )
-  return [...DICE_KEYS, CLEAR_KEY, ...own.flat()]
+  return [...DICE_KEYS, ...own.flat(), CLEAR_KEY]
 }
 
 /** Applies a key to a notation string and returns the new notation. */

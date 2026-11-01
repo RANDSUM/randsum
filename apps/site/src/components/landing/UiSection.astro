@@ -4,13 +4,14 @@
 import Button from '../ui/Button.astro'
 import CodeFrame from '../ui/CodeFrame.astro'
 import Section from '../ui/Section.astro'
-import { UiDemo } from '../rollers/UiDemo'
+import ServerRoller from '../rollers/ServerRoller.astro'
 
 const codeExample = [
-  "import { RollerMini } from '@randsum/ui/roller-mini'",
-  "import '@randsum/ui/styles.css'",
+  '<script type="module">',
+  "  import '@randsum/ui/roller'",
+  '</script>',
   '',
-  'export const Roll = () => <RollerMini defaultNotation="4d6L" />'
+  '<randsum-roller size="mini" notation="4d6L"></randsum-roller>'
 ].join('\n')
 ---
 
@@ -18,15 +19,15 @@ const codeExample = [
   id="ui"
   product="ui"
   title="Put the roller in your app"
-  lede="The roller on this page is a React component. @randsum/ui ships it in Max, Compact and Mini sizes, and every part it is built from as an import of its own, so you ship only what you use."
+  lede="The roller on this page is a Web Component: one element in Max, Compact and Mini sizes, for any page or framework. @randsum/ui ships it, every part it is built from, and React and Vue wrappers, each as an import of its own."
 >
   <Button slot="actions" href="/ui/getting-started/" variant="product" product="ui">
     Get the components
   </Button>
   <Button slot="actions" href="/ui/components/" variant="secondary">Every component</Button>
   <div class="ui-section">
-    <CodeFrame label="Roll.tsx" code={codeExample} lang="tsx" />
-    <UiDemo size="mini" client:only="react" />
+    <CodeFrame label="index.html" code={codeExample} lang="html" />
+    <ServerRoller class="not-content ui-demo" size="mini" notation="4d6L" />
   </div>
 </Section>
 

@@ -167,13 +167,13 @@ export const PRODUCTS: readonly ProductInfo[] = [
   },
   {
     id: 'ui',
-    tagline: 'The roller as React components',
+    tagline: 'The roller as Web Components',
     summary:
-      'The RANDSUM roller in Max, Compact and Mini sizes, plus every part they are built from. Import a component and your bundle gets only that component.',
+      'The RANDSUM roller as one element in Max, Compact and Mini sizes, plus every part it is built from. Works in any page or framework, with React and Vue wrappers. Import a component and your bundle gets only that component.',
     href: '/ui/introduction/',
     snippet: {
-      lang: 'tsx',
-      code: "import { RollerMini } from '@randsum/ui/roller-mini'\nimport '@randsum/ui/styles.css'\n\n<RollerMini defaultNotation=\"4d6L\" />"
+      lang: 'html',
+      code: '<script type="module">\n  import \'@randsum/ui/roller\'\n</script>\n\n<randsum-roller size="mini" notation="4d6L"></randsum-roller>'
     },
     actions: [
       { label: 'Get started', href: '/ui/getting-started/' },

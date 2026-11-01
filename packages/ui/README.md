@@ -1,107 +1,111 @@
 # @randsum/ui
 
-The RANDSUM dice roller as React components, in three sizes.
+The RANDSUM dice roller as Web Components: one element in three sizes, every
+part it is built from, and thin wrappers for React and Vue.
 
 ```bash
-npm install @randsum/ui @randsum/roller react react-dom
+npm install @randsum/ui
 ```
 
-Every component, hook and helper is its own module, the way lodash ships one
-module per function. There is no root entry: import exactly what you use, and
-that is all your bundle gets.
+```html
+<script type="module">
+  import '@randsum/ui/roller'
+</script>
+
+<randsum-roller size="mini" notation="4d6L"></randsum-roller>
+```
+
+Custom elements work in any page: plain HTML, htmx and Astro use the tags
+directly. Every element, wrapper and helper is its own module, the way lodash
+ships one module per function. There is no root entry: import exactly what you
+use, and that is all your bundle gets.
+
+## The roller
+
+`<randsum-roller>` takes a `size`:
+
+- **`mini`**: one row. The keys button opens a key pad, and hovering or
+  focusing Roll shows the roll in English.
+- **`compact`** (the default): a panel. `orientation` is `auto` (by container
+  width), `landscape` or `portrait`. Has a `footer` slot.
+- **`max`**: the full roller, with keys, a readout, recent rolls and a History
+  dialog. Set `storage-key` to keep history in `localStorage`.
+
+It fires `randsum-change` (detail `{ notation }`) on every edit and
+`randsum-roll` (detail: the result) after each roll, and has a `roll()`
+method. `presets` and `keys` take JSON attributes or properties.
+
+## Build your own
+
+```html
+<randsum-scope notation="2d6+1">
+  <randsum-notation-field></randsum-notation-field>
+  <randsum-roll-button></randsum-roll-button>
+  <randsum-readout></randsum-readout>
+</randsum-scope>
+```
+
+## Frameworks
 
 ```tsx
-// A whole roller, in one of three sizes
-import { RollerMax } from '@randsum/ui/roller-max'
-import { RollerCompact } from '@randsum/ui/roller-compact'
-import { RollerMini } from '@randsum/ui/roller-mini'
+// React 18 or 19
+import { Roller } from '@randsum/ui/react/roller'
+<Roller size="compact" defaultNotation="2d20H+5" onRoll={r => console.log(r.total)} />
+```
 
-// Or build your own from the parts
-import { useRoller } from '@randsum/ui/use-roller'
-import { NotationField } from '@randsum/ui/notation-field'
-import { RollButton } from '@randsum/ui/roll-button'
-import { StatusLine } from '@randsum/ui/status-line'
-import { KeyPad } from '@randsum/ui/key-pad'
-import { PresetList } from '@randsum/ui/preset-list'
-import { Readout } from '@randsum/ui/readout'
-import { RollSteps } from '@randsum/ui/roll-steps'
+```vue
+<!-- Vue 3 -->
+<script setup>
+import { Roller } from '@randsum/ui/vue/roller'
+</script>
+<template><Roller size="max" v-model="notation" @roll="onRoll" /></template>
+```
 
-// Data and logic, no React
-import { DEFAULT_KEYS, modifierKeys } from '@randsum/ui/keys'
-import { modifierPresets } from '@randsum/ui/presets'
-import { checkNotation, rollNotation } from '@randsum/ui/check'
+Svelte 5 uses the tags directly; `import type {} from '@randsum/ui/svelte'`
+types them.
 
-import '@randsum/ui/styles.css'
+## Server rendering
+
+`@randsum/ui/ssr` renders the elements on the server with their shadow roots
+filled in (Declarative Shadow DOM), so the roller shows before any script
+runs. Install `@lit-labs/ssr` alongside it.
+
+```ts
+import { renderToString } from '@randsum/ui/ssr'
+const html = await renderToString('<randsum-roller size="mini" notation="4d6L"></randsum-roller>')
 ```
 
 ## Every entry
 
-| Import                         | What it is                                                     |
-| ------------------------------ | -------------------------------------------------------------- |
-| `@randsum/ui/roller-max`       | `RollerMax`: the full roller, with keys, readout and history   |
-| `@randsum/ui/roller-compact`   | `RollerCompact`: a landscape or portrait panel                 |
-| `@randsum/ui/roller-mini`      | `RollerMini`: one row; hover Roll for the English description  |
-| `@randsum/ui/use-roller`       | `useRoller`: the state every part reads (notation, check, roll) |
-| `@randsum/ui/notation-field`   | `NotationField`: the input with coloured notation tokens       |
-| `@randsum/ui/roll-button`      | `RollButton`: Roll, disabled until the notation is valid       |
-| `@randsum/ui/status-line`      | `StatusLine`: the hint, the error, or the roll in English      |
-| `@randsum/ui/key-pad`          | `KeyPad`: dice and modifier keys                               |
-| `@randsum/ui/preset-list`      | `PresetList`: named rolls, as chips or a list                  |
-| `@randsum/ui/readout`          | `Readout`: the total and every step                            |
-| `@randsum/ui/roll-steps`       | `RollSteps`: just the steps of a roll                          |
-| `@randsum/ui/keys`             | `DEFAULT_KEYS`, `modifierKeys(name)`, `applyKey`               |
-| `@randsum/ui/presets`          | `modifierPresets(name)`, from the roller's own docs            |
-| `@randsum/ui/check`            | `checkNotation`, `rollNotation`                                |
-| `@randsum/ui/styles.css`       | Every style, as `--rsui-*` tokens you can override            |
-
-```tsx
-function MyRoller() {
-  const roller = useRoller({ defaultNotation: '2d6+1' })
-  return (
-    <div className="rsui">
-      <NotationField roller={roller} />
-      <RollButton roller={roller} />
-      <Readout roller={roller} />
-    </div>
-  )
-}
-```
-
-## Sizes
-
-- **`RollerMax`**: the full roller, with keys, a readout and recent rolls.
-  Pass `storageKey` to keep history in `localStorage`.
-- **`RollerCompact`**: a panel for a page. `orientation` is `'auto'` (by
-  container width), `'landscape'` or `'portrait'`.
-- **`RollerMini`**: one row. The keys button opens a key pad, and hovering or
-  focusing Roll shows the roll in English.
-
-```tsx
-<RollerCompact
-  defaultNotation="3d6!"
-  keys={modifierKeys('explode')}
-  presets={modifierPresets('explode')}
-/>
-```
-
-## Shared props
-
-| Prop              | Type                         | Notes                                                    |
-| ----------------- | ---------------------------- | -------------------------------------------------------- |
-| `defaultNotation` | `string`                     | Starting notation (uncontrolled)                         |
-| `notation`        | `string`                     | Controlled notation, with `onChange`                     |
-| `keys`            | `readonly Key[]`             | Defaults to `DEFAULT_KEYS`; always shown                 |
-| `presets`         | `readonly Preset[]`          | Optional; adds a presets switch, keys stay first         |
-| `onRoll`          | `(result: RollResult) => void` | Called after each roll                                 |
-| `rollSignal`      | `number`                     | Each new value rolls the current notation                |
+| Import                             | What it is                                                       |
+| ---------------------------------- | ---------------------------------------------------------------- |
+| `@randsum/ui/roller`               | `<randsum-roller>`: the whole roller, `size` mini, compact or max |
+| `@randsum/ui/scope`                | `<randsum-scope>`: one shared state for the parts inside it      |
+| `@randsum/ui/notation-field`       | `<randsum-notation-field>`: the input with coloured tokens       |
+| `@randsum/ui/roll-button`          | `<randsum-roll-button>`: Roll, disabled until the notation is valid |
+| `@randsum/ui/status-line`          | `<randsum-status-line>`: the hint, the error, or the roll in English |
+| `@randsum/ui/key-pad`              | `<randsum-key-pad>`: dice and modifier keys                      |
+| `@randsum/ui/preset-list`          | `<randsum-preset-list>`: named rolls, as chips or a list         |
+| `@randsum/ui/readout`              | `<randsum-readout>`: the total and every step                    |
+| `@randsum/ui/roll-steps`           | `<randsum-roll-steps>`: just the steps of a roll                 |
+| `@randsum/ui/react/roller` (and `react/<part>`) | `Roller`, `useRoller` and each part, for React     |
+| `@randsum/ui/vue/roller` (and `vue/<part>`)     | `Roller`, `useRoller` and each part, for Vue       |
+| `@randsum/ui/svelte`               | Types for every tag in Svelte markup                             |
+| `@randsum/ui/ssr`                  | `renderToString`: the elements as HTML, rendered on the server   |
+| `@randsum/ui/roller-state`         | `RollerState`: the state with no framework                       |
+| `@randsum/ui/keys`                 | `DEFAULT_KEYS`, `modifierKeys(name)`, `applyKey`                 |
+| `@randsum/ui/presets`              | `modifierPresets(name)`, from the roller's own docs              |
+| `@randsum/ui/check`                | `checkNotation`, `rollNotation`                                  |
 
 ## Styling
 
-`styles.css` declares its tokens as `--rsui-*` custom properties under
-`:where(.rsui)`, so you can override any of them from your own CSS:
+Styles live in each element's Shadow DOM, so host CSS cannot break them and
+there is no stylesheet to import. Every value is a `--rsui-*` custom property,
+and custom properties inherit through Shadow DOM, so set them on the element
+or any ancestor:
 
 ```css
-.rsui {
+randsum-roller {
   --rsui-accent: #0f766e;
 }
 ```

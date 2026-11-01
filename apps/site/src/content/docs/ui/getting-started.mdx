@@ -1,71 +1,152 @@
 ---
 title: Getting Started with @randsum/ui
-description: Install @randsum/ui, load its styles, and drop a dice roller into a React app in one of three sizes.
+description: Install @randsum/ui and drop a dice roller into plain HTML, htmx, React, Vue or Svelte, in one of three sizes.
 ---
 
 ## Install
 
 ```bash
-npm install @randsum/ui @randsum/roller react react-dom
+npm install @randsum/ui
 ```
 
-`@randsum/ui` needs React 18 or later. It rolls with `@randsum/roller`, so a
-roll in the component follows exactly the rules a roll in code does.
+It rolls with `@randsum/roller`, so a roll in the element follows exactly the
+rules a roll in code does. The elements are built with [Lit](https://lit.dev)
+and carry their own styles in Shadow DOM: there is no stylesheet to import.
 
-## Load the styles once
+## Plain HTML, htmx and Astro
+
+Import an element once and use its tag. Nothing else is needed, which is why
+htmx and Astro have no wrapper: an element htmx swaps in upgrades by itself.
+
+```html
+<script type="module">
+  import '@randsum/ui/roller'
+</script>
+
+<randsum-roller size="compact" notation="2d20H+5"></randsum-roller>
+
+<script>
+  document.querySelector('randsum-roller').addEventListener('randsum-roll', event => {
+    console.log(event.detail.total)
+  })
+</script>
+```
+
+Lists such as `presets` and `keys` can be set as JSON attributes, or as
+properties from script:
+
+```html
+<randsum-roller
+  presets='[{"label":"Advantage","notation":"2d20H"},{"label":"Stats","notation":"4d6L"}]'
+></randsum-roller>
+```
+
+## React
 
 ```tsx
-import '@randsum/ui/styles.css'
+import { Roller } from '@randsum/ui/react/roller'
+
+<Roller size="mini" defaultNotation="4d6L" onRoll={result => console.log(result.total)} />
 ```
 
-The stylesheet covers every component. Its tokens are `--rsui-*` custom
-properties declared under `:where(.rsui)`, so your own CSS overrides any of
-them without a specificity fight:
+React 18 and 19 both work: the wrapper sets properties and listens for events
+itself. `notation` with `onChange` keeps the value in your state, and each new
+`rollSignal` rolls on demand.
+
+## Vue
+
+```vue
+<script setup>
+import { ref } from 'vue'
+import { Roller } from '@randsum/ui/vue/roller'
+const notation = ref('4d6L')
+</script>
+
+<template>
+  <Roller size="compact" v-model="notation" @roll="result => console.log(result.total)" />
+</template>
+```
+
+## Svelte
+
+Svelte 5 handles custom elements directly, so there is no wrapper. Import the
+element, and `@randsum/ui/svelte` once for its types:
+
+```svelte
+<script lang="ts">
+  import '@randsum/ui/roller'
+  import type {} from '@randsum/ui/svelte'
+</script>
+
+<randsum-roller size="mini" notation="4d6L" onrandsum-roll={e => console.log(e.detail.total)} />
+```
+
+## Server rendering
+
+Custom elements normally draw themselves once their script runs.
+`@randsum/ui/ssr` renders them on the server instead, with each shadow root
+filled in as Declarative Shadow DOM, so the roller is on the page in the first
+frame, before any script loads. When the element's script does run, it swaps
+the server copy for the live one in place.
+
+```bash
+npm install @lit-labs/ssr
+```
+
+```ts
+import { renderToString } from '@randsum/ui/ssr'
+
+const html = await renderToString(
+  '<randsum-roller size="mini" notation="4d6L"></randsum-roller>'
+)
+// Send `html` in your page, and load '@randsum/ui/roller' in the browser.
+```
+
+It works in any server that runs JavaScript, so an htmx backend can return
+rendered rollers in its fragments. In Astro, put the result in
+`<Fragment set:html={html} />`; the rollers on this site are rendered this
+way.
+
+## Theme it
+
+Every colour, font and radius is a `--rsui-*` custom property. Custom
+properties inherit through Shadow DOM, so set them on the element or on any
+ancestor:
 
 ```css
-.rsui {
+randsum-roller {
   --rsui-accent: #0f766e;
   --rsui-radius-md: 4px;
 }
 ```
 
 Colours use `light-dark()`, so set `color-scheme` on your page and the
-components follow it.
+elements follow it.
 
-## Pick a size
+## Properties
 
-```tsx
-import { RollerMini } from '@randsum/ui/roller-mini'
+| Property (attribute)              | Type                                 | Notes                                                       |
+| --------------------------------- | ------------------------------------ | ----------------------------------------------------------- |
+| `size`                            | `'mini' \| 'compact' \| 'max'`       | Defaults to `'compact'`                                     |
+| `notation`                        | `string`                             | Setting it replaces what the user typed                     |
+| `keys`                            | `readonly Key[]`                     | Defaults to `DEFAULT_KEYS`; always shown                    |
+| `presets`                         | `readonly Preset[]`                  | Optional named rolls, behind a switch; keys first           |
+| `presetsLabel` (`presets-label`)  | `string`                             | What the presets are called. Defaults to "Presets"          |
+| `presetsLayout` (`presets-layout`)| `'chips' \| 'list'`                  | Compact: `'list'` shows each description                    |
+| `placeholder`                     | `string`                             | The empty field's hint                                      |
+| `orientation`                     | `'auto' \| 'landscape' \| 'portrait'`| Compact: readout beside or above the builder                |
+| `appLink` (`app-link`)            | `string`                             | Mini and Compact: a link to the full roller                 |
+| `history`                         | `boolean`                            | Max: recent rolls and a History dialog. Defaults to true    |
+| `storageKey` (`storage-key`)      | `string`                             | Max: keeps history in localStorage                          |
+| `historyLimit` (`history-limit`)  | `number`                             | Max: how many rolls history keeps. Defaults to 50           |
 
-<RollerMini defaultNotation="4d6L" />
-```
+Compact also has a `footer` slot. The element fires `randsum-change` (detail
+`{ notation }`) on every edit and `randsum-roll` (detail: the result) after
+each roll, and has a `roll()` method.
 
-```tsx
-import { RollerCompact } from '@randsum/ui/roller-compact'
-
-<RollerCompact defaultNotation="2d20H+5" orientation="auto" />
-```
-
-```tsx
-import { RollerMax } from '@randsum/ui/roller-max'
-
-<RollerMax storageKey="my-app-history" />
-```
-
-## Props every size takes
-
-| Prop              | Type                           | Notes                                              |
-| ----------------- | ------------------------------ | -------------------------------------------------- |
-| `defaultNotation` | `string`                       | Starting notation                                  |
-| `notation`        | `string`                       | Controlled notation; pair it with `onChange`       |
-| `onChange`        | `(notation: string) => void`   | Every edit: typing, a key or a preset              |
-| `onRoll`          | `(result: RollResult) => void` | After each roll, with the total and every record   |
-| `rollSignal`      | `number`                       | Each new value rolls the current notation          |
-| `keys`            | `readonly Key[]`               | Defaults to `DEFAULT_KEYS`; always shown           |
-| `presets`         | `readonly Preset[]`            | Optional named rolls, behind a switch; keys first  |
-| `presetsLabel`    | `string`                       | What the presets are called. Defaults to "Presets" |
-| `placeholder`     | `string`                       | The empty field's hint                             |
-| `className`       | `string`                       | Added to the root element                          |
+The React wrapper takes the same props in camelCase, plus `defaultNotation`,
+`onChange`, `onRoll`, `rollSignal`, `footer` and `className`. The Vue wrapper
+takes them with `v-model` for the notation and emits `change` and `roll`.
 
 ## Keys and presets
 
@@ -73,11 +154,11 @@ Every size shows dice keys. Pass `keys` to change them, and `presets` to add
 named rolls:
 
 ```tsx
-import { RollerCompact } from '@randsum/ui/roller-compact'
+import { Roller } from '@randsum/ui/react/roller'
 import { modifierKeys } from '@randsum/ui/keys'
 import { modifierPresets } from '@randsum/ui/presets'
 
-<RollerCompact
+<Roller
   defaultNotation="3d6!"
   keys={modifierKeys('explode')}
   presets={modifierPresets('explode')}

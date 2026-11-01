@@ -34,8 +34,14 @@
       "includeEntryExports": true
     },
     "packages/ui": {
-      "entry": ["src/*.{ts,tsx}", "scripts/*.ts", "__tests__/**/*.{ts,tsx}"],
-      "project": ["src/**/*.{ts,tsx}", "scripts/*.ts", "__tests__/**/*.{ts,tsx}"],
+      "entry": [
+        "src/*.ts",
+        "src/react/*.ts",
+        "src/vue/*.ts",
+        "scripts/*.ts",
+        "__tests__/**/*.{ts,tsx}"
+      ],
+      "project": ["src/**/*.ts", "scripts/*.ts", "__tests__/**/*.{ts,tsx}"],
       "includeEntryExports": true
     },
     "apps/api": {
@@ -47,7 +53,7 @@
       "project": ["src/**/*.ts"]
     },
     "apps/site": {
-      "entry": ["scripts/*.ts", "src/routeData.ts"],
+      "entry": ["scripts/*.ts", "src/routeData.ts", "src/components/rollers/UiDemo.tsx"],
       "ignoreDependencies": ["@astrojs/ts-content-mapper", "satteri"]
     }
   },

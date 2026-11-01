@@ -18,8 +18,8 @@ head:
 ---
 
 import CodeExample from '../../../components/live-repl/CodeExample.astro'
-import { ModifierRoller } from '../../../components/rollers/ModifierRoller'
-import { NotationRoller } from '../../../components/rollers/NotationRoller'
+import ModifierRoller from '../../../components/rollers/ModifierRoller.astro'
+import NotationRoller from '../../../components/rollers/NotationRoller.astro'
 
 Modifiers transform dice results after rolling. They can drop dice, reroll values, cap ranges, make dice explode, and more. Modifiers are applied in a fixed priority order to ensure consistent, predictable results.
 
@@ -108,7 +108,7 @@ roll({
   }
 })`} />
 
-<ModifierRoller modifier="cap" defaultNotation="4d20C{>18}" client:only="react" />
+<ModifierRoller modifier="cap" defaultNotation="4d20C{>18}" />
 
 **ComparisonOptions:**
 
@@ -155,7 +155,7 @@ roll({
   }
 })`} />
 
-<ModifierRoller modifier="drop" defaultNotation="4d6L" client:only="react" />
+<ModifierRoller modifier="drop" defaultNotation="4d6L" />
 
 **DropOptions:**
 
@@ -189,7 +189,7 @@ roll({
   }
 })`} />
 
-<ModifierRoller modifier="keep" defaultNotation="4d6K3" client:only="react" />
+<ModifierRoller modifier="keep" defaultNotation="4d6K3" />
 
 **KeepOptions:**
 
@@ -234,7 +234,7 @@ roll({
   }
 })`} />
 
-<ModifierRoller modifier="replace" defaultNotation="4d20V{8=12}" client:only="react" />
+<ModifierRoller modifier="replace" defaultNotation="4d20V{8=12}" />
 
 **ReplaceOptions:**
 
@@ -271,7 +271,7 @@ roll({
   }
 })`} />
 
-<ModifierRoller modifier="reroll" defaultNotation="4d20R{<5}" client:only="react" />
+<ModifierRoller modifier="reroll" defaultNotation="4d20R{<5}" />
 
 **RerollOptions:**
 
@@ -303,7 +303,7 @@ roll({
   modifiers: { explode: 5 }     // Max depth 5 (options only)
 })`} />
 
-<ModifierRoller modifier="explode" defaultNotation="4d20!" client:only="react" />
+<ModifierRoller modifier="explode" defaultNotation="4d20!" />
 
 When a die shows its maximum value, a new die is rolled and added as a separate result. Each new maximum continues the chain.
 
@@ -326,7 +326,7 @@ roll({
   modifiers: { compound: true }
 })`} />
 
-<ModifierRoller modifier="compound" defaultNotation="3d6!!" client:only="react" />
+<ModifierRoller modifier="compound" defaultNotation="3d6!!" />
 
 Unlike regular exploding, compound does not create new dice -- it modifies the existing die value.
 
@@ -349,7 +349,7 @@ roll({
   modifiers: { penetrate: true }
 })`} />
 
-<ModifierRoller modifier="penetrate" defaultNotation="3d6!p" client:only="react" />
+<ModifierRoller modifier="penetrate" defaultNotation="3d6!p" />
 
 Each subsequent penetration subtracts 1 from the result before adding, creating diminishing returns.
 
@@ -381,7 +381,7 @@ roll({
   modifiers: { explodeSequence: [4, 6, 8, 10] }
 })`} />
 
-<ModifierRoller modifier="explodeSequence" defaultNotation="1d4!s{4,6,8,10}" client:only="react" />
+<ModifierRoller modifier="explodeSequence" defaultNotation="1d4!s{4,6,8,10}" />
 
 When the die shows its maximum, a new die of the next size in the sequence is rolled and added. The sequence steps forward with each successive explosion; once the last size is reached, it repeats (capped at the default explosion depth).
 
@@ -408,7 +408,7 @@ roll({
   modifiers: { wildDie: true }
 })`} />
 
-<ModifierRoller modifier="wildDie" defaultNotation="5d6W" client:only="react" />
+<ModifierRoller modifier="wildDie" defaultNotation="5d6W" />
 
 **Wild die behavior:**
 
@@ -446,7 +446,7 @@ roll({
   }
 })`} />
 
-<ModifierRoller modifier="unique" defaultNotation="4d20U" client:only="react" />
+<ModifierRoller modifier="unique" defaultNotation="4d20U" />
 
 **UniqueOptions:**
 
@@ -471,7 +471,7 @@ roll({
   modifiers: { multiply: 2, plus: 3 }
 })`} />
 
-<ModifierRoller modifier="multiply" defaultNotation="2d6*2+3" client:only="react" />
+<ModifierRoller modifier="multiply" defaultNotation="2d6*2+3" />
 
 ## Plus / Minus
 
@@ -497,9 +497,9 @@ roll({
   modifiers: { minus: 2 }
 })`} />
 
-<ModifierRoller modifier="plus" defaultNotation="4d6+5" client:only="react" />
+<ModifierRoller modifier="plus" defaultNotation="4d6+5" />
 
-<ModifierRoller modifier="minus" defaultNotation="2d8-2" client:only="react" />
+<ModifierRoller modifier="minus" defaultNotation="2d8-2" />
 
 ## Sort
 
@@ -530,7 +530,7 @@ roll({
   modifiers: { sort: 'desc' }
 })`} />
 
-<ModifierRoller modifier="sort" defaultNotation="4d6sa" client:only="react" />
+<ModifierRoller modifier="sort" defaultNotation="4d6sa" />
 
 Sort reorders the dice results for display without changing the total. Useful for readability when reviewing large pools.
 
@@ -556,7 +556,7 @@ roll({
   modifiers: { integerDivide: 2 }
 })`} />
 
-<ModifierRoller modifier="integerDivide" defaultNotation="4d6//2" client:only="react" />
+<ModifierRoller modifier="integerDivide" defaultNotation="4d6//2" />
 
 **Example:** `4d6//2` rolls [3, 5, 4, 2] = 14. Integer divided by 2 = 7.
 
@@ -584,7 +584,7 @@ roll({
   modifiers: { modulo: 3 }
 })`} />
 
-<ModifierRoller modifier="modulo" defaultNotation="4d6%3" client:only="react" />
+<ModifierRoller modifier="modulo" defaultNotation="4d6%3" />
 
 **Example:** `4d6%3` rolls [3, 5, 4, 2] = 14. 14 % 3 = 2.
 
@@ -647,7 +647,7 @@ roll({
   }
 })`} />
 
-<ModifierRoller modifier="count" defaultNotation="5d10#{>=7}" client:only="react" />
+<ModifierRoller modifier="count" defaultNotation="5d10#{>=7}" />
 
 **Example:** `5d10#{>=7}` rolls [8, 2, 10, 1, 9]. Dice &gt;= 7: [8, 10, 9] = 3.
 
@@ -687,7 +687,7 @@ roll({
   modifiers: { plus: 3, multiplyTotal: 2 }
 })`} />
 
-<ModifierRoller modifier="multiplyTotal" defaultNotation="2d6+3**2" client:only="react" />
+<ModifierRoller modifier="multiplyTotal" defaultNotation="2d6+3**2" />
 
 ## Order of operations
 
@@ -710,6 +710,6 @@ The full calculation order is:
 15. Sort results if applicable (`sa`/`sd`)
 16. Apply total multiply (`**`)
 
-<NotationRoller defaultNotation="4d6K3!*2+3**2" client:only="react" />
+<NotationRoller defaultNotation="4d6K3!*2+3**2" />
 
 See the full [Notation Syntax Guide](/notation/randsum-dice-notation/) for the complete syntax reference.

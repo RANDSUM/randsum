@@ -5,7 +5,7 @@ description: "Install @randsum/roller with bun, npm or yarn and roll your first 
 
 import { Tabs, TabItem } from '@astrojs/starlight/components'
 import CodeExample from '../../../components/live-repl/CodeExample.astro'
-import { NotationRoller } from '../../../components/rollers/NotationRoller'
+import NotationRoller from '../../../components/rollers/NotationRoller.astro'
 
 Install `@randsum/roller` and roll your first die in under a minute.
 
@@ -32,7 +32,7 @@ console.log(result.total) // a number between 1 and 20`} />
 
 Pass a number to `roll()` and it rolls one die with that many sides. The return value is a typed result object with a `total` property.
 
-<NotationRoller defaultNotation="1d20" client:only="react" />
+<NotationRoller defaultNotation="1d20" />
 
 ## Notation strings
 
@@ -48,7 +48,7 @@ roll('5d6W')     // D6 System wild die
 roll('4d6Lx6')   // six ability scores (repeat operator)
 roll('g6')       // geometric die (roll until 1)`} />
 
-<NotationRoller defaultNotation="4d6L" client:only="react" />
+<NotationRoller defaultNotation="4d6L" />
 
 Try changing the notation in the playground above. See the [Notation Syntax Guide](/notation/randsum-dice-notation/) for the full syntax.
 
@@ -82,7 +82,7 @@ result.rolls   // Array of RollRecord objects with full history`} />
 
 Each entry in `result.rolls` is a `RollRecord` containing the original rolls, modifier logs, and final values for that dice group.
 
-<NotationRoller defaultNotation="4d6L+2" client:only="react" />
+<NotationRoller defaultNotation="4d6L+2" />
 
 ## Multiple groups
 
