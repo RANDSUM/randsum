@@ -264,6 +264,16 @@ describe('native <Roller>', () => {
     })
     expect(total.getAttribute('aria-expanded')).toBe('true')
     expect(dice()).toBe(3)
+    const dimmed = (): number =>
+      [...container.querySelectorAll<HTMLElement>('div')].filter(
+        d => d.style.opacity === '0.55' && d.querySelector('div[aria-label]') !== null
+      ).length
+    expect(dimmed()).toBe(0)
+    await act(async () => {
+      button(container, 'Add a d6').click()
+    })
+    // An edit leaves the open steps behind the notation, so they dim with the total
+    expect(dimmed()).toBeGreaterThan(0)
   })
 
   test('max: recent rolls, the History sheet, and Clear', async () => {

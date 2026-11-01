@@ -219,7 +219,9 @@ function build(t: RollerTheme): RollerStyles {
       fontVariant: ['tabular-nums']
     },
     totalMax: { fontSize: t.totalMax, lineHeight: t.totalMax },
-    resultMeta: { flexGrow: 1, flexShrink: 1, flexBasis: 160, gap: 2 },
+    // minWidth, not just flexBasis: Yoga shrinks a flex item before it wraps,
+    // so without it a beside-the-total action squeezes the description
+    resultMeta: { flexGrow: 1, flexShrink: 1, flexBasis: 160, minWidth: 160, gap: 2 },
     resultNotation: { ...mono, fontSize: t.textBase, fontWeight: '600' },
     resultDesc: { ...text, color: t.muted, fontSize: t.textSm },
 

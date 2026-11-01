@@ -205,7 +205,9 @@ function Mini({ roller, styles, props }: Shared): React.JSX.Element {
             : null
         )
       : null,
-    detail && result !== null ? h(RollSteps, { records: result.records }) : null,
+    detail && result !== null
+      ? h(RollSteps, { records: result.records, style: fresh ? undefined : styles.stale })
+      : null,
     h(
       View,
       { style: styles.footer },
