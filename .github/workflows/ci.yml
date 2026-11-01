@@ -261,6 +261,7 @@ jobs:
         with:
           # check:plugin-version diffs against the base branch's merge base.
           fetch-depth: 0
+          persist-credentials: false
       - name: Install Claude Code
         run: npm install -g @anthropic-ai/claude-code@2.1.284
       - name: Verify project agent config
@@ -281,7 +282,9 @@ jobs:
         run: bun run check:plugin-scan
       - name: Plugin changes bump its version
         if: github.event_name == 'pull_request'
-        run: bun run check:plugin-version "origin/${{ github.base_ref }}"
+        run: bun run check:plugin-version "origin/$BASE_REF"
+        env:
+          BASE_REF: ${{ github.base_ref }}
       - name: Verify marketplace
         run: claude plugin validate --strict .claude-plugin/marketplace.json
 
