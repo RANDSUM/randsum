@@ -122,11 +122,6 @@ interface ProductAction {
   readonly href: string
 }
 
-interface ProductFact {
-  readonly value: string
-  readonly label: string
-}
-
 export interface ProductInfo {
   readonly id: Product
   // One line in the landing stack and the hero
@@ -134,7 +129,6 @@ export interface ProductInfo {
   readonly summary: string
   readonly href: string
   readonly snippet: { readonly lang: string; readonly code: string }
-  readonly facts: readonly ProductFact[]
   // The hero's buttons: the first is the main one
   readonly actions: readonly [ProductAction, ...ProductAction[]]
 }
@@ -151,11 +145,6 @@ export const PRODUCTS: readonly ProductInfo[] = [
       lang: 'ts',
       code: "import { roll } from '@randsum/roller'\n\nconst { total, rolls } = roll('4d6L')\nrolls[0].description // ['Roll 4 6-sided dice', 'Drop lowest']"
     },
-    facts: [
-      { value: '0', label: 'runtime dependencies' },
-      { value: '26', label: 'modifiers in the spec' },
-      { value: 'ESM', label: 'with full type declarations' }
-    ],
     actions: [
       { label: 'Get started', href: '/roller/getting-started/' },
       { label: 'npm', href: 'https://www.npmjs.com/package/@randsum/roller' }
@@ -163,7 +152,7 @@ export const PRODUCTS: readonly ProductInfo[] = [
   },
   {
     id: 'games',
-    tagline: 'Seven tabletop games, ready to roll',
+    tagline: 'Tabletop games, ready to roll',
     summary:
       'Typed rolls for D&D 5e, Blades in the Dark, Daggerheart, Fate and more, generated from open .randsum.json specs.',
     href: '/games/introduction/',
@@ -171,11 +160,6 @@ export const PRODUCTS: readonly ProductInfo[] = [
       lang: 'ts',
       code: "import { roll } from '@randsum/games/fifth'\n\nconst { result } = roll({ modifier: 5, rollingWith: 'Advantage' })"
     },
-    facts: [
-      { value: '7', label: 'game systems' },
-      { value: '1', label: 'package, one subpath each' },
-      { value: 'JSON', label: 'specs you can write yourself' }
-    ],
     actions: [
       { label: 'Get started', href: '/games/getting-started/' },
       { label: 'Add your own game', href: '/games/schema/contributing-a-game/' }
@@ -185,17 +169,12 @@ export const PRODUCTS: readonly ProductInfo[] = [
     id: 'ui',
     tagline: 'The roller as Web Components',
     summary:
-      'The RANDSUM roller as one element with a size, Max, Compact or Mini, plus every part it is built from. Works in any page or framework, with React and Vue wrappers. Import one component and your bundle gets only that component.',
+      'The RANDSUM roller as one element in Max, Compact and Mini sizes, plus every part it is built from. Works in any page or framework, with React and Vue wrappers. Import a component and your bundle gets only that component.',
     href: '/ui/introduction/',
     snippet: {
       lang: 'html',
       code: '<script type="module">\n  import \'@randsum/ui/roller\'\n</script>\n\n<randsum-roller size="mini" notation="4d6L"></randsum-roller>'
     },
-    facts: [
-      { value: '3', label: 'roller sizes' },
-      { value: '1', label: 'import per component' },
-      { value: 'CSS', label: 'variables you can override' }
-    ],
     actions: [
       { label: 'Get started', href: '/ui/getting-started/' },
       { label: 'npm', href: 'https://www.npmjs.com/package/@randsum/ui' }
@@ -211,11 +190,6 @@ export const PRODUCTS: readonly ProductInfo[] = [
       lang: 'bash',
       code: 'curl "https://api.randsum.dev/v1/roll?notation=4d6L"\ncurl "https://api.randsum.dev/v1/games/blades/roll?rating=3"'
     },
-    facts: [
-      { value: '5', label: 'endpoints under /v1' },
-      { value: '0', label: 'keys or sign-ups' },
-      { value: 'CORS', label: 'callable from a browser' }
-    ],
     actions: [
       { label: 'Get started', href: '/api/introduction/#quick-start' },
       { label: 'Endpoint reference', href: '/api/reference/' }
@@ -231,10 +205,6 @@ export const PRODUCTS: readonly ProductInfo[] = [
       lang: 'text',
       code: '4d6L    → 14   [6, 5, 3] dropped 1\n1d20+5  → 17\n2d8!    → 11   exploded on 8'
     },
-    facts: [
-      { value: '1', label: 'tap to roll' },
-      { value: '0', label: 'network needed once installed' }
-    ],
     actions: [
       { label: 'Open the app', href: APP_URL },
       { label: 'Notation guide', href: '/notation/getting-started/' }
@@ -247,10 +217,6 @@ export const PRODUCTS: readonly ProductInfo[] = [
       'Slash commands for any notation and every supported game, with each step of the roll shown in the reply.',
     href: '/tools/discord-bot/',
     snippet: { lang: 'text', code: '/roll notation:4d6L+2\n/blades dice:3' },
-    facts: [
-      { value: '0', label: 'setup after adding it' },
-      { value: '6', label: 'games with their own command' }
-    ],
     actions: [
       { label: 'Add to Discord', href: DISCORD_INSTALL_URL },
       { label: 'All commands', href: '/tools/discord-bot/#commands' }
@@ -266,11 +232,6 @@ export const PRODUCTS: readonly ProductInfo[] = [
       lang: 'bash',
       code: '/plugin marketplace add RANDSUM/randsum\n/plugin install randsum@randsum'
     },
-    facts: [
-      { value: '4', label: 'skills' },
-      { value: '3', label: 'MCP tools' },
-      { value: '1', label: 'connector URL for Claude' }
-    ],
     actions: [
       { label: 'Set it up', href: '/tools/claude-code-plugin/#setup' },
       { label: 'Every agent option', href: '/tools/agents/' }
@@ -286,11 +247,6 @@ export const PRODUCTS: readonly ProductInfo[] = [
       lang: 'text',
       code: '4d6R{1}L+2\n\nroll 4d6 → reroll 1s → drop lowest → add 2'
     },
-    facts: [
-      { value: '26', label: 'modifiers' },
-      { value: '4', label: 'conformance levels' },
-      { value: '3', label: 'pipeline stages' }
-    ],
     actions: [
       { label: 'Read the spec', href: 'https://notation.randsum.dev/' },
       { label: 'Getting started', href: '/notation/getting-started/' }
