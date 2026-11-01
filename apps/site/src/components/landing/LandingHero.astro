@@ -4,13 +4,6 @@
 import { HeroRoller } from '../rollers/HeroRoller'
 import PipMark from '../PipMark.astro'
 import Button from '../ui/Button.astro'
-
-const proof = [
-  { value: '0', label: 'runtime dependencies' },
-  { value: '26', label: 'notation modifiers' },
-  { value: '7', label: 'games, ready to roll' },
-  { value: 'MIT', label: 'open source' }
-] as const
 ---
 
 <section id="_top" class="hero not-content" aria-labelledby="hero-title">
@@ -27,7 +20,7 @@ const proof = [
       <p class="hero-subtitle">
         Parse and roll any dice notation, from <code>1d20+5</code> to exploding, rerolling,
         drop-lowest pools, and get every step back as typed data. Zero dependencies, with ready-made
-        rules for D&amp;D 5e, Blades in the Dark and five more games.
+        rules for D&amp;D 5e, Blades in the Dark and more.
       </p>
       <div class="hero-actions">
         <Button href="/roller/getting-started/">Get started</Button>
@@ -67,14 +60,6 @@ const proof = [
       <HeroRoller client:only="react" />
     </div>
   </div>
-  <dl class="hero-proof">
-    {proof.map(item => (
-      <div>
-        <dt>{item.label}</dt>
-        <dd>{item.value}</dd>
-      </div>
-    ))}
-  </dl>
 </section>
 
 <script>

@@ -54,14 +54,6 @@ import { PRODUCT_LABELS, PRODUCTS } from '../../utils/product'
               </p>
               <h3>{product.tagline}</h3>
               <p class="carousel-summary">{product.summary}</p>
-              <dl class="carousel-facts">
-                {product.facts.map(fact => (
-                  <div>
-                    <dt>{fact.label}</dt>
-                    <dd>{fact.value}</dd>
-                  </div>
-                ))}
-              </dl>
               <Button href={product.href} variant="product" product={product.id}>
                 Explore {PRODUCT_LABELS[product.id]}
               </Button>
@@ -323,34 +315,8 @@ for (const root of document.querySelectorAll<HTMLElement>('[data-carousel]')) {
 }
 
 .carousel-summary {
-  margin: 0;
+  margin: 0 0 1.5rem;
   color: var(--sl-color-gray-2);
-}
-
-.carousel-facts {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1.5rem;
-  margin: 1.25rem 0 1.5rem;
-}
-
-.carousel-facts div {
-  display: flex;
-  flex-direction: column-reverse;
-}
-
-.carousel-facts dd {
-  margin: 0;
-  font-family: var(--rs-font-heading);
-  font-size: var(--rs-text-lg);
-  font-weight: var(--rs-weight-heavy);
-  line-height: var(--rs-leading-tight);
-  color: var(--sl-color-white);
-}
-
-.carousel-facts dt {
-  font-size: var(--rs-text-xs);
-  color: var(--sl-color-gray-3);
 }
 
 @media (prefers-reduced-motion: reduce) {

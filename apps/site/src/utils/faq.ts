@@ -17,7 +17,7 @@ export const LANDING_FAQ: readonly FaqEntry[] = [
   {
     question: 'Which dice notation does it support?',
     answer:
-      'Everything in RANDSUM Dice Notation: basic NdS rolls and arithmetic, plus 26 modifiers including drop and keep, reroll, exploding, compounding and penetrating dice, caps, unique results, and counting successes or failures. Fate, percentile, wild, geometric and draw dice are built in.',
+      'Everything in RANDSUM Dice Notation: basic NdS rolls and arithmetic, plus modifiers for drop and keep, reroll, exploding, compounding and penetrating dice, caps, unique results, and counting successes or failures. Fate, percentile, wild, geometric and draw dice are built in.',
     link: { label: 'See the notation reference', href: '/notation/randsum-dice-notation/' }
   },
   {
