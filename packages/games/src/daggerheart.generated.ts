@@ -24,7 +24,7 @@ export function roll(input?: {
   amplifyFear?: boolean
   rollingWith?: 'Advantage' | 'Disadvantage'
 }): GameRollResult<DaggerheartRollResult, DaggerheartRollDetails, RollRecord> {
-  if (input?.modifier !== undefined && typeof input?.modifier === 'number') {
+  if (input?.modifier !== undefined) {
     validateFinite(input?.modifier, 'Daggerheart modifier')
     validateInteger(input?.modifier, 'Daggerheart modifier')
     validateRange(input?.modifier, -30, 30, 'Daggerheart modifier')

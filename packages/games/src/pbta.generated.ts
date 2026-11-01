@@ -22,17 +22,15 @@ export function roll(input: {
   ongoing?: number
   rollingWith?: 'Advantage' | 'Disadvantage'
 }): GameRollResult<PbtaRollResult, PbtaRollDetails, RollRecord> {
-  if (typeof input.stat === 'number') {
-    validateFinite(input.stat, 'Powered by the Apocalypse stat')
-    validateInteger(input.stat, 'Powered by the Apocalypse stat')
-    validateRange(input.stat, -3, 5, 'Powered by the Apocalypse stat')
-  }
-  if (input.forward !== undefined && typeof input.forward === 'number') {
+  validateFinite(input.stat, 'Powered by the Apocalypse stat')
+  validateInteger(input.stat, 'Powered by the Apocalypse stat')
+  validateRange(input.stat, -3, 5, 'Powered by the Apocalypse stat')
+  if (input.forward !== undefined) {
     validateFinite(input.forward, 'Powered by the Apocalypse forward')
     validateInteger(input.forward, 'Powered by the Apocalypse forward')
     validateRange(input.forward, -5, 5, 'Powered by the Apocalypse forward')
   }
-  if (input.ongoing !== undefined && typeof input.ongoing === 'number') {
+  if (input.ongoing !== undefined) {
     validateFinite(input.ongoing, 'Powered by the Apocalypse ongoing')
     validateInteger(input.ongoing, 'Powered by the Apocalypse ongoing')
     validateRange(input.ongoing, -5, 5, 'Powered by the Apocalypse ongoing')

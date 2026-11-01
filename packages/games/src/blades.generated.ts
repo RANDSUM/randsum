@@ -18,7 +18,7 @@ export function roll(
 ): GameRollResult<BladesRollResult, undefined, RollRecord> {
   const input: { rating?: number } =
     typeof rawInput === 'number' ? { rating: rawInput } : (rawInput ?? {})
-  if (input?.rating !== undefined && typeof input?.rating === 'number') {
+  if (input?.rating !== undefined) {
     validateFinite(
       input?.rating,
       'Dice pool size including action rating, assists, and push (0 = roll two, take the worst)'

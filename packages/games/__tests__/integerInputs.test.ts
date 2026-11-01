@@ -39,3 +39,31 @@ describe('integer inputs reject fractions', () => {
     )
   })
 })
+
+// Untyped callers (JSON bodies, plain JS) can pass a string or leave a required
+// input out. Both must be rejected, not concatenated into the notation or
+// turned into NaN.
+describe('integer inputs reject missing and non-number values', () => {
+  const untyped = <T>(value: unknown): T => value as T
+
+  test('a missing required input is rejected', () => {
+    expect(() => pbta(untyped<Parameters<typeof pbta>[0]>({}))).toThrow(
+      'stat must be a finite number, received: undefined'
+    )
+    expect(() => rootRpg(untyped<Parameters<typeof rootRpg>[0]>({}))).toThrow(
+      'bonus must be a finite number, received: undefined'
+    )
+  })
+
+  test('a string for a required or optional input is rejected', () => {
+    expect(() => pbta(untyped<Parameters<typeof pbta>[0]>({ stat: '3' }))).toThrow(
+      'stat must be a finite number'
+    )
+    expect(() => pbta(untyped<Parameters<typeof pbta>[0]>({ stat: 1, forward: '2' }))).toThrow(
+      'forward must be a finite number'
+    )
+    expect(() => blades(untyped<Parameters<typeof blades>[0]>({ rating: '2' }))).toThrow(
+      'must be a finite number'
+    )
+  })
+})

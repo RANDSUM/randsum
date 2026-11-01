@@ -13,11 +13,9 @@ export function roll(input: {
   bonus: number
   rollingWith?: 'Advantage' | 'Disadvantage'
 }): GameRollResult<RootRpgRollResult, undefined, RollRecord> {
-  if (typeof input.bonus === 'number') {
-    validateFinite(input.bonus, 'Root RPG bonus')
-    validateInteger(input.bonus, 'Root RPG bonus')
-    validateRange(input.bonus, -3, 5, 'Root RPG bonus')
-  }
+  validateFinite(input.bonus, 'Root RPG bonus')
+  validateInteger(input.bonus, 'Root RPG bonus')
+  validateRange(input.bonus, -3, 5, 'Root RPG bonus')
   if (
     input.rollingWith !== undefined &&
     !['Advantage', 'Disadvantage'].includes(input.rollingWith as string)

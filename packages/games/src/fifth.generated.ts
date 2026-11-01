@@ -18,7 +18,7 @@ export function roll(input?: {
   rollingWith?: 'Advantage' | 'Disadvantage'
   crit?: boolean
 }): GameRollResult<FifthRollResult, FifthRollDetails, RollRecord> {
-  if (input?.modifier !== undefined && typeof input?.modifier === 'number') {
+  if (input?.modifier !== undefined) {
     validateFinite(input?.modifier, '5E modifier')
     validateInteger(input?.modifier, '5E modifier')
     validateRange(input?.modifier, -30, 30, '5E modifier')

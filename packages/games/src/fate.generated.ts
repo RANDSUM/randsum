@@ -29,7 +29,7 @@ export function roll(
 ): GameRollResult<FateRollResult, undefined, RollRecord> {
   const input: { modifier?: number } =
     typeof rawInput === 'number' ? { modifier: rawInput } : (rawInput ?? {})
-  if (input?.modifier !== undefined && typeof input?.modifier === 'number') {
+  if (input?.modifier !== undefined) {
     validateFinite(
       input?.modifier,
       'Skill rating (Fate ladder rung, Terrible -2 to Superb +5) added to the 4dF total'
