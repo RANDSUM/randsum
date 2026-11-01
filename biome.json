@@ -105,6 +105,10 @@
     },
     { "includes": ["**/package.json"], "json": { "formatter": { "lineWidth": 120 } } },
     {
+      "includes": ["packages/ui/__tests__/**"],
+      "linter": { "rules": { "correctness": { "noReactNativeRawText": "off" } } }
+    },
+    {
       "includes": ["packages/games/src/**"],
       "linter": {
         "rules": {

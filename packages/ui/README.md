@@ -64,6 +64,33 @@ import { Roller } from '@randsum/ui/vue/roller'
 Svelte 5 uses the tags directly; `import type {} from '@randsum/ui/svelte'`
 types them.
 
+## React Native and Expo
+
+React Native has no DOM, so `@randsum/ui/native/roller` is the same roller built
+from native views (`View`, `Text`, `TextInput`, `Pressable`) on the same
+`RollerState`. Install `react-native` (0.76 or later); Expo works as is.
+
+```tsx
+import { Roller } from '@randsum/ui/native/roller'
+<Roller size="compact" defaultNotation="2d20H+5" onRoll={r => console.log(r.total)} />
+```
+
+It takes the React `Roller`'s props. In place of `storageKey`, max keeps
+history in memory and hands each change to `onHistoryChange`, so an app can
+save it (AsyncStorage, say) and pass it back as `initialHistory`. The theme
+follows the device's light or dark scheme; `RollerThemeProvider`
+(`@randsum/ui/native/theme`) changes any token:
+
+```tsx
+import { RollerThemeProvider } from '@randsum/ui/native/theme'
+<RollerThemeProvider theme={{ accent: '#0f766e' }}>…</RollerThemeProvider>
+```
+
+Each part is its own entry too (`native/key-pad`, `native/readout`, …),
+sharing state from `useRoller` (`@randsum/ui/native/use-roller`). On iOS and
+Android the field colours each token; React Native Web's input cannot, so on
+the web use the elements instead.
+
 ## Server rendering
 
 `@randsum/ui/ssr` renders the elements on the server with their shadow roots
@@ -90,6 +117,7 @@ const html = await renderToString('<randsum-roller size="mini" notation="4d6L"><
 | `@randsum/ui/roll-steps`           | `<randsum-roll-steps>`: just the steps of a roll                 |
 | `@randsum/ui/react/roller` (and `react/<part>`) | `Roller`, `useRoller` and each part, for React     |
 | `@randsum/ui/vue/roller` (and `vue/<part>`)     | `Roller`, `useRoller` and each part, for Vue       |
+| `@randsum/ui/native/roller` (and `native/<part>`) | `Roller`, `useRoller`, each part and the theme, for React Native |
 | `@randsum/ui/svelte`               | Types for every tag in Svelte markup                             |
 | `@randsum/ui/ssr`                  | `renderToString`: the elements as HTML, rendered on the server   |
 | `@randsum/ui/roller-state`         | `RollerState`: the state with no framework                       |

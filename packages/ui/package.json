@@ -1,6 +1,6 @@
 {
   "name": "@randsum/ui",
-  "description": "Dice roller Web Components for the RANDSUM ecosystem: one element in three sizes, its parts, and React and Vue wrappers",
+  "description": "Dice roller Web Components for the RANDSUM ecosystem: one element in three sizes, its parts, React and Vue wrappers, and React Native components",
   "version": "0.0.0",
   "type": "module",
   "private": false,
@@ -27,6 +27,66 @@
       "import": {
         "types": "./dist/keys.d.ts",
         "default": "./dist/keys.js"
+      }
+    },
+    "./native/key-pad": {
+      "import": {
+        "types": "./dist/native/key-pad.d.ts",
+        "default": "./dist/native/key-pad.js"
+      }
+    },
+    "./native/notation-field": {
+      "import": {
+        "types": "./dist/native/notation-field.d.ts",
+        "default": "./dist/native/notation-field.js"
+      }
+    },
+    "./native/preset-list": {
+      "import": {
+        "types": "./dist/native/preset-list.d.ts",
+        "default": "./dist/native/preset-list.js"
+      }
+    },
+    "./native/readout": {
+      "import": {
+        "types": "./dist/native/readout.d.ts",
+        "default": "./dist/native/readout.js"
+      }
+    },
+    "./native/roll-button": {
+      "import": {
+        "types": "./dist/native/roll-button.d.ts",
+        "default": "./dist/native/roll-button.js"
+      }
+    },
+    "./native/roll-steps": {
+      "import": {
+        "types": "./dist/native/roll-steps.d.ts",
+        "default": "./dist/native/roll-steps.js"
+      }
+    },
+    "./native/roller": {
+      "import": {
+        "types": "./dist/native/roller.d.ts",
+        "default": "./dist/native/roller.js"
+      }
+    },
+    "./native/status-line": {
+      "import": {
+        "types": "./dist/native/status-line.d.ts",
+        "default": "./dist/native/status-line.js"
+      }
+    },
+    "./native/theme": {
+      "import": {
+        "types": "./dist/native/theme.d.ts",
+        "default": "./dist/native/theme.js"
+      }
+    },
+    "./native/use-roller": {
+      "import": {
+        "types": "./dist/native/use-roller.d.ts",
+        "default": "./dist/native/use-roller.js"
       }
     },
     "./notation-field": {
@@ -231,6 +291,8 @@
     "dice",
     "roller",
     "react",
+    "react-native",
+    "expo",
     "svelte",
     "vue",
     "lit",
@@ -250,6 +312,7 @@
   "peerDependencies": {
     "@lit-labs/ssr": ">=3",
     "react": ">=18",
+    "react-native": ">=0.76",
     "svelte": ">=5",
     "vue": ">=3.3"
   },
@@ -258,6 +321,9 @@
       "optional": true
     },
     "react": {
+      "optional": true
+    },
+    "react-native": {
       "optional": true
     },
     "svelte": {
@@ -276,6 +342,7 @@
     "@types/react-dom": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
+    "react-native": "0.87.1",
     "svelte": "5.57.3",
     "vue": "3.5.44"
   },
@@ -300,6 +367,46 @@
     {
       "path": "dist/keys.js",
       "limit": "1.5 KB"
+    },
+    {
+      "path": "dist/native/key-pad.js",
+      "limit": "2.5 KB"
+    },
+    {
+      "path": "dist/native/notation-field.js",
+      "limit": "7.5 KB"
+    },
+    {
+      "path": "dist/native/preset-list.js",
+      "limit": "2.5 KB"
+    },
+    {
+      "path": "dist/native/readout.js",
+      "limit": "4 KB"
+    },
+    {
+      "path": "dist/native/roll-button.js",
+      "limit": "2.25 KB"
+    },
+    {
+      "path": "dist/native/roll-steps.js",
+      "limit": "3.5 KB"
+    },
+    {
+      "path": "dist/native/roller.js",
+      "limit": "25.5 KB"
+    },
+    {
+      "path": "dist/native/status-line.js",
+      "limit": "2.25 KB"
+    },
+    {
+      "path": "dist/native/theme.js",
+      "limit": "1 KB"
+    },
+    {
+      "path": "dist/native/use-roller.js",
+      "limit": "14.5 KB"
     },
     {
       "path": "dist/notation-field.js",
@@ -362,12 +469,12 @@
       "limit": "11 KB"
     },
     {
-      "path": "dist/roller.js",
-      "limit": "33.5 KB"
-    },
-    {
       "path": "dist/roller-state.js",
       "limit": "13.5 KB"
+    },
+    {
+      "path": "dist/roller.js",
+      "limit": "33.5 KB"
     },
     {
       "path": "dist/scope.js",

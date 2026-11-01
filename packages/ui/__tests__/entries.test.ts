@@ -3,11 +3,11 @@ import { readFileSync, readdirSync } from 'node:fs'
 import { join } from 'node:path'
 import pkg from '../package.json'
 
-// Every file directly in src/, src/react/ and src/vue/ is a public entry, one
-// per element, wrapper or helper, the way lodash ships one module per
-// function. src/internal/ is not.
+// Every file directly in src/, src/native/, src/react/ and src/vue/ is a
+// public entry, one per element, component, wrapper or helper, the way lodash
+// ships one module per function. src/internal/ is not.
 const SRC = join(import.meta.dir, '..', 'src')
-const entries = ['', 'react/', 'vue/']
+const entries = ['', 'native/', 'react/', 'vue/']
   .flatMap(dir =>
     readdirSync(join(SRC, dir))
       .filter(file => /\.ts$/.test(file))
