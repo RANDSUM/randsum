@@ -12,15 +12,25 @@ const isSplash = Astro.locals.starlightRoute.entry.data.template === 'splash'
 {!isSplash && (
   <div class="kofi-footer not-content">
     <KofiButton />
+    <a class="privacy-link" href="/privacy/">
+      Privacy
+    </a>
   </div>
 )}
 
 <style>
 .kofi-footer {
   display: flex;
+  flex-wrap: wrap;
+  align-items: center;
   justify-content: center;
+  gap: 1rem;
   margin-top: 2rem;
   padding-top: 1.5rem;
   border-top: 1px solid var(--sl-color-hairline);
+}
+.privacy-link {
+  color: var(--sl-color-gray-3);
+  font-size: var(--sl-text-sm);
 }
 </style>

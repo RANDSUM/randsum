@@ -1,0 +1,94 @@
+---
+title: Privacy Policy
+description: What RANDSUM's site, app, API, Claude connector, Claude Code plugin and Discord bot collect, why, how long it is kept, and who to contact.
+---
+
+RANDSUM is an open-source dice project. None of its services have accounts,
+sign-in, cookies for tracking, advertising or analytics scripts, and none of
+them store your rolls on a server. This page says exactly what each one
+handles.
+
+_Last updated: November 1, 2026._
+
+## Who runs RANDSUM
+
+RANDSUM is maintained by its contributors on
+[GitHub](https://github.com/RANDSUM/randsum). Every service below runs on
+[Cloudflare](https://www.cloudflare.com/privacypolicy/), which hosts the
+site, the app, the API and the Discord bot.
+
+## What each service handles
+
+### randsum.dev and notation.randsum.dev
+
+The documentation site and the notation spec are static pages. They set no
+cookies and load no analytics. Your browser's local storage keeps your
+light or dark theme choice on your own device.
+
+### The Roller app (app.randsum.dev)
+
+The app rolls dice in your browser. Your roll history is saved in your
+browser's local storage and never leaves your device. Clear it in the app or
+by clearing the site's data.
+
+### The API and the Claude connector (api.randsum.dev)
+
+`api.randsum.dev/v1` (the HTTP API) and `api.randsum.dev/mcp` (the MCP server
+behind the RANDSUM Claude connector and the Claude Code plugin) receive only
+what a request contains: the dice notation, game name, parameters and optional
+seed you or your AI assistant send. They compute the roll, return it, and keep
+nothing.
+
+- **No accounts or keys.** The API and connector need no sign-in, so they never
+  see your name, email or any Claude account details.
+- **No conversation data.** The connector gets the arguments of each tool call
+  and nothing else. It cannot read your chats, files, memory or other tools.
+- **Request logs.** Cloudflare's Workers logs record operational data for each
+  request (time, path, response status and errors, and connection details such
+  as IP address and approximate location). They are used only to keep the
+  service running and debug failures, and Cloudflare deletes them
+  automatically after a few days (at most 7).
+- **Rate limiting.** Your IP address is used, in memory, to cap each address at
+  120 requests a minute. It is not stored.
+
+### The Claude Code plugin
+
+The `randsum` plugin runs inside Claude Code. Its skills are instructions for
+Claude, and its `/roll` command rolls on your machine with no network call. The
+only service it contacts is the RANDSUM MCP server at `api.randsum.dev/mcp`
+(and, if that is not connected, the HTTP API at `api.randsum.dev/v1`), which
+handles data as described above. It sends nothing anywhere else.
+
+### The Discord bot (bot.randsum.dev)
+
+When you use a slash command, Discord sends the bot the command and its
+options along with the IDs Discord includes with every interaction (your user
+ID, and the server and channel it came from). The bot rolls, replies, and keeps
+nothing: a reroll button carries the command and its options in the message
+itself, so there is no database. The
+same Cloudflare request logs apply. Discord's own handling of your messages is
+covered by [Discord's privacy policy](https://discord.com/privacy).
+
+## Sharing
+
+RANDSUM does not sell, rent or share your data with anyone. The only third
+party involved is Cloudflare, as the host, under its own privacy policy.
+Services that call RANDSUM (Claude, Discord, other MCP clients) have their own
+privacy policies for what they send.
+
+## Children
+
+RANDSUM collects no personal information from anyone, including children
+under 13.
+
+## Changes
+
+Changes to this policy are made in the open in the
+[RANDSUM repository](https://github.com/RANDSUM/randsum/commits/main/apps/site/src/content/docs/privacy.mdx),
+and the date above is updated with each one.
+
+## Contact
+
+Questions or requests about privacy: open an issue at
+[github.com/RANDSUM/randsum/issues](https://github.com/RANDSUM/randsum/issues)
+or email [hello@randsum.dev](mailto:hello@randsum.dev).

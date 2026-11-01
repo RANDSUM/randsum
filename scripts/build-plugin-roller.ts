@@ -32,7 +32,9 @@ const build = await Bun.build({
   entrypoints: [ENTRY],
   format: 'esm',
   target: 'browser',
-  minify: true
+  // Readable, not minified: Anthropic's plugin directory holds code its
+  // security scan cannot read for a human reviewer.
+  minify: false
 })
 
 const output = build.outputs[0]

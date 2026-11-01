@@ -7,6 +7,9 @@
     "url": "https://randsum.dev"
   },
   "homepage": "https://randsum.dev",
+  "documentationUrl": "https://randsum.dev/tools/claude-code-plugin/",
+  "supportUrl": "https://github.com/RANDSUM/randsum/issues",
+  "privacyPolicyUrl": "https://randsum.dev/privacy/",
   "repository": "https://github.com/RANDSUM/randsum",
   "license": "MIT",
   "keywords": [
@@ -22,5 +25,6 @@
     "blades-in-the-dark",
     "daggerheart",
     "pbta"
-  ]
+  ],
+  "icon": "./.claude-plugin/icon.png"
 }
