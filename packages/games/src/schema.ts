@@ -7,7 +7,7 @@ export { lookupByRange } from './lib/lookupByRange'
 
 export type { GenerateCodeOptions } from './lib/codegen'
 export type { SchemaErrorCode } from './lib/errors'
-export type { ValidationResult, ValidationError } from './lib/validator'
+export type { ValidationResult, SpecValidationIssue } from './lib/validator'
 export type {
   RandSumSpec,
   GameRollResult,
