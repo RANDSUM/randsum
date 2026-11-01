@@ -46,7 +46,7 @@ describe('Rosetta Stone — notation examples', () => {
           const firstRoll = result.rolls[0]
           if (firstRoll === undefined) return
 
-          // Geometric dice roll until 1 — initialRolls.length is variable by design
+          // Geometric dice reroll on max: initialRolls.length is variable by design
           if (firstRoll.parameters.geometric) return
 
           expect(firstRoll.initialRolls.length).toBe(expectedQuantity)

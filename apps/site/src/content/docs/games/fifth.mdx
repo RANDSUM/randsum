@@ -25,7 +25,7 @@ import CodeExample from '../../../components/live-repl/CodeExample.astro'
 
 The `@randsum/games/fifth` subpath provides [Dungeons & Dragons 5th Edition](https://www.dndbeyond.com/) mechanics including ability checks, saving throws, and attack rolls with full support for advantage and disadvantage.
 
-<LinkCard title="Official Site &amp; SRD" href="https://www.dndbeyond.com/" description="D&amp;D Beyond — Rules, SRD, and Character Builder" />
+<LinkCard title="Official Site &amp; SRD" href="https://www.dndbeyond.com/" description="D&amp;D Beyond: rules, SRD and character builder" />
 
 ## Installation
 
@@ -70,9 +70,9 @@ const result = roll({
 
 | Property | Type | Description |
 |---|---|---|
-| `modifier` | `number` (optional) | Ability/skill modifier (-30 to +30) |
+| `modifier` | `number` (optional) | Ability or skill modifier, an integer from -30 to +30. Defaults to 0 |
 | `rollingWith` | `'Advantage' \| 'Disadvantage' \| undefined` | Roll 2d20, keep highest or lowest |
-| `crit` | `boolean` (optional) | When set, enables natural 1/20 detection in `details.criticals` |
+| `crit` | `boolean` (optional) | When `true`, reports natural 1s and 20s in `details.criticals` |
 
 **Returns:** `GameRollResult<FifthRollResult, FifthRollDetails>` with:
 
@@ -87,7 +87,7 @@ const result = roll({
 
 | Property | Type | Description |
 |---|---|---|
-| `criticals` | `{ isNatural1: boolean, isNatural20: boolean } \| undefined` | Present when `crit` input is set |
+| `criticals` | `{ isNatural1: boolean, isNatural20: boolean } \| undefined` | Present when `crit` is `true` |
 
 ## Outcomes
 
@@ -95,7 +95,7 @@ const result = roll({
 - **Advantage** (`'Advantage'`): Roll 2d20, drop lowest, + modifier (equivalent to `2d20L+modifier`)
 - **Disadvantage** (`'Disadvantage'`): Roll 2d20, drop highest, + modifier (equivalent to `2d20H+modifier`)
 
-The modifier is validated to be a finite number in the range -30 to +30.
+The modifier must be an integer from -30 to +30.
 
 ## Common patterns
 
@@ -131,8 +131,8 @@ console.log(scores) // e.g. [14, 12, 15, 8, 10, 13]`} />
 
 Game `roll()` can throw two types of errors:
 
-- **`ValidationError`** (from `@randsum/roller`) -- numeric input out of range or not finite (e.g., `modifier: Infinity`)
-- **`SchemaError`** (from `@randsum/games/fifth`) -- game-specific issues like invalid `rollingWith` values
+- **`ValidationError`** (from `@randsum/roller`): numeric input out of range, not an integer, or not finite (e.g., `modifier: Infinity`)
+- **`SchemaError`** (from `@randsum/games/fifth`): game-specific issues like invalid `rollingWith` values
 
 <CodeExample code={`import { roll, SchemaError } from '@randsum/games/fifth'
 import { ValidationError } from '@randsum/roller'

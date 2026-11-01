@@ -29,10 +29,10 @@ Type guard that returns `true` if the string is valid dice notation. Use this fo
 
 <CodeExample code={`import { isDiceNotation } from '@randsum/roller'
 
-isDiceNotation('4d6L')   // true — typed as DiceNotation
+isDiceNotation('4d6L')   // true: typed as DiceNotation
 isDiceNotation('2d6+3')  // true
 isDiceNotation('hello')  // false
-isDiceNotation('4dX')    // false — non-numeric sides`} />
+isDiceNotation('4dX')    // false: non-numeric sides`} />
 
 ### `validateNotation(notation)`
 
@@ -41,10 +41,10 @@ Returns a detailed result object with either the parsed structure or an error:
 <CodeExample code={`import { validateNotation } from '@randsum/roller'
 
 const valid = validateNotation('4d6L')
-// { valid: true, notation: ['4d6L'], options: [{ sides: 6, quantity: 4, ... }] }
+// { valid: true, notation: ['4d6L'], options: [{ quantity: 4, sides: 6, ... }], description: [...], error: null }
 
 const invalid = validateNotation('4dX')
-// { valid: false, error: { message: '...', argument: '4dX' } }`} />
+// { valid: false, argument: '4dX', error: { message: 'Invalid dice notation: "4dX"', argument: '4dX', position: 0 } }`} />
 
 Use this instead of `isDiceNotation()` when you need to show error messages to the user.
 
@@ -54,10 +54,10 @@ Suggests a corrected version of invalid notation. Returns `undefined` if no sugg
 
 <CodeExample code={`import { suggestNotationFix } from '@randsum/roller'
 
-suggestNotationFix('d6')      // '1d6'  — missing quantity
-suggestNotationFix('4 d 6')   // '4d6'  — extra whitespace
-suggestNotationFix('46')      // '4d6'  — missing 'd' separator
-suggestNotationFix('xyz')     // undefined — no suggestion`} />
+suggestNotationFix('4 d 6')   // '4d6': whitespace between tokens
+suggestNotationFix('46')      // '4d6': missing 'd' separator
+suggestNotationFix('d6')      // '1d6': adds the implied quantity
+suggestNotationFix('xyz')     // undefined: no suggestion`} />
 
 Combine with `validateNotation()` for a complete user-facing validation flow:
 
@@ -88,7 +88,7 @@ notation('bad')             // throws NotationParseError`} />
 
 ### `notationToOptions(notation)`
 
-Parse a notation string into an array of `ParsedNotationOptions` objects — one per dice group in the expression:
+Parse a notation string into an array of `ParsedNotationOptions` objects, one per dice group in the expression:
 
 <CodeExample code={`import { isDiceNotation, notationToOptions } from '@randsum/roller'
 
@@ -96,8 +96,9 @@ if (isDiceNotation('4d6R{1}L+2')) {
   const options = notationToOptions('4d6R{1}L+2')
   // [
   //   {
-  //     sides: 6,
   //     quantity: 4,
+  //     arithmetic: 'add',
+  //     sides: 6,
   //     modifiers: {
   //       reroll: { exact: [1] },
   //       drop: { lowest: 1 },
@@ -143,15 +144,15 @@ modifiersToDescription({ drop: { lowest: 1 }, plus: 3 })
 
 ### `tokenize(notation)`
 
-Parse a notation string into typed tokens for syntax highlighting or UI display. Each token includes its position, type, and a human-readable description.
+Parse a notation string into typed tokens for syntax highlighting or UI display. Each token includes its position, category and a human-readable description.
 
 <CodeExample code={`import { tokenize } from '@randsum/roller'
 
 const tokens = tokenize('4d6L+2')
 // [
-//   { text: '4d6', key: 'xDN',  category: 'Core',   start: 0, end: 3, description: '4 six-sided dice' },
-//   { text: 'L',   key: 'L',    category: 'Filter',  start: 3, end: 4, description: 'Drop lowest 1' },
-//   { text: '+2',  key: '+',    category: 'Scale',   start: 4, end: 6, description: 'Plus 2' }
+//   { text: '4d6', key: 'xDN', category: 'Core',   start: 0, end: 3, description: 'Roll 4 6-sided dice' },
+//   { text: 'L',   key: 'L',   category: 'Filter', start: 3, end: 4, description: 'Drop lowest' },
+//   { text: '+2',  key: '+',   category: 'Scale',  start: 4, end: 6, description: 'Add 2' }
 // ]`} />
 
 Each token conforms to the `Token` interface:
@@ -179,8 +180,9 @@ Tokens that do not match any known pattern have `category: 'unknown'`.
 |---|---|---|
 | `'4dX'` | No | Non-numeric sides |
 | `'roll(4d6)'` | No | Unsupported wrapper syntax |
-| `'d6'` | No | Missing quantity -- `suggestNotationFix` returns `'1d6'` |
-| `' 4d6'` | Yes | Leading/trailing whitespace is trimmed automatically |
+| `'4d6 L'` | No | Whitespace between tokens; `suggestNotationFix` returns `'4d6L'` |
+| `'d6'` | Yes | The quantity defaults to 1 |
+| `' 4d6'` | Yes | Leading and trailing whitespace is ignored |
 | `'4d6l'` | Yes | Lowercase modifiers are accepted |
 | `'4d6L'` | Yes | Standard drop-lowest |
 

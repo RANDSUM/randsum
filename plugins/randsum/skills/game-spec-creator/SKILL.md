@@ -9,11 +9,11 @@ metadata:
 
 # Game Spec Creator
 
-Create `.randsum.json` specs that declaratively define tabletop RPG dice mechanics. A spec describes a four-stage pipeline -- **Dice -> Modify -> Resolve -> Outcome** -- and generates a typed TypeScript `roll()` function via codegen.
+Create `.randsum.json` specs that declaratively define tabletop RPG dice mechanics. A spec describes a four-stage pipeline (**Dice → Modify → Resolve → Outcome**) and generates a typed TypeScript `roll()` function via codegen.
 
 ## Spec Structure
 
-Every spec requires these top-level fields:
+Every spec requires `$schema`, `name`, `shortcode`, `game_url`, and either `roll` or `rolls` (named rolls). `version` is optional:
 
 ```json
 {
@@ -28,9 +28,9 @@ Every spec requires these top-level fields:
 
 Optional top-level sections for reuse across rolls:
 
-- **`pools`** -- Named dice pool definitions. Reference with `{ "$ref": "#/pools/<name>" }`.
-- **`tables`** -- Lookup tables mapping roll values to result strings.
-- **`outcomes`** -- Named outcome operations for result classification.
+- **`pools`**: Named dice pool definitions. Reference with `{ "$ref": "#/pools/<name>" }`.
+- **`tables`**: Lookup tables mapping roll values to result strings.
+- **`outcomes`**: Named outcome operations for result classification.
 
 ### The `roll` Object
 
@@ -38,14 +38,14 @@ The `roll` object defines the pipeline:
 
 | Field | Stage | Required | Purpose |
 |---|---|---|---|
-| `inputs` | -- | No | Declare runtime parameters (stat, modifier, rating) |
+| `inputs` | | No | Declare runtime parameters (stat, modifier, rating) |
 | `dice` | 1 | Yes* | Pool reference + quantity. *Or use `dicePools` for multi-pool rolls |
 | `modify` | 2 | No | Modifier chain (keepHighest, keepLowest, add, cap) |
-| `resolve` | 3 | Yes | Resolution: `"sum"`, `countMatching`, `tableLookup`, or `comparePool` |
+| `resolve` | 3 | Yes | Resolution: `"sum"`, `"faces"`, `countMatching`, `tableLookup`, `comparePoolHighest` or `comparePoolSum` |
 | `outcome` | 4 | No | Map resolved value to a game result string |
-| `when` | -- | No | Conditional overrides based on input values |
-| `details` | -- | No | Extra typed fields returned alongside the result |
-| `postResolveModifiers` | -- | No | Arithmetic applied after resolve (e.g. 2d6+stat) |
+| `when` | | No | Conditional overrides based on input values |
+| `details` | | No | Extra typed fields returned alongside the result |
+| `postResolveModifiers` | | No | Arithmetic applied after resolve (e.g. 2d6+stat) |
 
 ### Inputs
 
@@ -90,14 +90,15 @@ Array of modifier operations applied to individual dice before resolving:
 ]
 ```
 
-Available: `keepHighest`, `keepLowest`, `add`, `cap`, `markDice`/`keepMarked`.
+Available: `keepHighest`, `keepLowest`, `add`, `cap`. The schema also accepts `markDice`/`keepMarked`, but codegen does not apply them yet, so don't rely on them.
 
 ### Resolve
 
-- `"sum"` -- Total all remaining dice
-- `{ "countMatching": { "operator": ">=", "value": 7 } }` -- Count successes
-- `{ "tableLookup": { "$ref": "#/tables/myTable" } }` -- Map total through a table
-- `{ "comparePoolHighest": { "pools": ["a","b"], "outcomes": {...} } }` -- Compare pools
+- `"sum"`: total all remaining dice
+- `"faces"`: resolve a custom string-faces die to its rolled label
+- `{ "countMatching": { "operator": ">=", "value": 7 } }`: count successes
+- `{ "tableLookup": { "$ref": "#/tables/myTable" } }`: map the total through a table
+- `{ "comparePoolHighest": { "pools": ["a","b"], "outcomes": {...} } }`: compare pools (`comparePoolSum` compares pool totals)
 
 ### Outcome
 
@@ -131,7 +132,7 @@ Override pipeline stages based on input values. First match wins; unspecified st
 
 ### Pool Conditions
 
-Check dice composition rather than totals -- used in tables for mechanics like Blades criticals:
+Check dice composition rather than totals, as in tables for mechanics like Blades criticals:
 
 ```json
 {

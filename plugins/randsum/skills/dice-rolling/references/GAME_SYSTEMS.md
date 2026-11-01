@@ -102,9 +102,9 @@ A d20 looked up on one of the game's roll tables. Higher is better on the Core M
 
 Common tables: `Core Mechanic`, `Group Initiative`, `Critical Injury`, `Critical Damage`, `Reactor Overload`, `Area Salvage`, `Mech Salvage`, `Reaction Roll`, `NPC Action`, `Morale`, `Retreat`. There are many more (crawler, chimerium, character-creation tables); an unknown name returns an error.
 
-Core Mechanic: 20 Nailed It, 11–19 Success, 6–10 Tough Choice, 2–5 Failure, 1 Cascade Failure.
+Core Mechanic: 20 Nailed it, 11–19 Success, 6–10 Tough Choice, 2–5 Failure, 1 Cascade Failure.
 
-`result` holds `label`, `description` (the table text to read out), `tableName` and `roll`.
+`result` holds `key` (the table row), `label`, `description` (the table text to read out), `tableName`, `table` and `roll`.
 
 ## Games without a shortcode
 

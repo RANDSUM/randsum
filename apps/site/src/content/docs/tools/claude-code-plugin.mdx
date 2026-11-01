@@ -31,7 +31,7 @@ RANDSUM provides a **Claude Code plugin** with skills that give AI agents specia
 
 ## What is a Claude Code skill?
 
-A skill is a markdown document that gives Claude specialized knowledge. When Claude loads a RANDSUM skill, it learns domain-specific concepts — dice notation syntax, probability math, or the `.randsum.json` spec format — and can apply them to your questions without you needing to explain the domain.
+A skill is a markdown document that gives Claude specialized knowledge. When Claude loads a RANDSUM skill, it learns domain-specific concepts (dice notation syntax, probability math, or the `.randsum.json` spec format) and can apply them to your questions without you needing to explain the domain.
 
 Skills activate automatically based on context. Ask naturally:
 
@@ -116,9 +116,9 @@ The core skill for an agent rolling dice in conversation. It turns a natural-lan
 - How to report dice, total and meaning in one compact block
 
 **Files:**
-- [`plugins/randsum/skills/dice-rolling/SKILL.md`](https://github.com/RANDSUM/randsum/blob/main/plugins/randsum/skills/dice-rolling/SKILL.md) — main skill definition
-- [`plugins/randsum/skills/dice-rolling/references/NOTATION.md`](https://github.com/RANDSUM/randsum/blob/main/plugins/randsum/skills/dice-rolling/references/NOTATION.md) — full notation reference
-- [`plugins/randsum/skills/dice-rolling/references/GAME_SYSTEMS.md`](https://github.com/RANDSUM/randsum/blob/main/plugins/randsum/skills/dice-rolling/references/GAME_SYSTEMS.md) — game system mechanics
+- [`plugins/randsum/skills/dice-rolling/SKILL.md`](https://github.com/RANDSUM/randsum/blob/main/plugins/randsum/skills/dice-rolling/SKILL.md): main skill definition
+- [`plugins/randsum/skills/dice-rolling/references/NOTATION.md`](https://github.com/RANDSUM/randsum/blob/main/plugins/randsum/skills/dice-rolling/references/NOTATION.md): full notation reference
+- [`plugins/randsum/skills/dice-rolling/references/GAME_SYSTEMS.md`](https://github.com/RANDSUM/randsum/blob/main/plugins/randsum/skills/dice-rolling/references/GAME_SYSTEMS.md): game system mechanics
 
 ### RANDSUM Library
 
@@ -131,8 +131,8 @@ For an agent writing code. Teaches which package fits (`@randsum/roller`, a `@ra
 - Seeded rolls for tests, narrow subpath imports for small bundles, and when to use the REST API
 
 **Files:**
-- [`plugins/randsum/skills/randsum-library/SKILL.md`](https://github.com/RANDSUM/randsum/blob/main/plugins/randsum/skills/randsum-library/SKILL.md) — main skill definition
-- [`plugins/randsum/skills/randsum-library/references/GAMES.md`](https://github.com/RANDSUM/randsum/blob/main/plugins/randsum/skills/randsum-library/references/GAMES.md) — every game's API
+- [`plugins/randsum/skills/randsum-library/SKILL.md`](https://github.com/RANDSUM/randsum/blob/main/plugins/randsum/skills/randsum-library/SKILL.md): main skill definition
+- [`plugins/randsum/skills/randsum-library/references/GAMES.md`](https://github.com/RANDSUM/randsum/blob/main/plugins/randsum/skills/randsum-library/references/GAMES.md): every game's API
 
 ### Dice Probability
 
@@ -145,12 +145,12 @@ Teaches an agent to analyze probability distributions for dice rolls. Handles ex
 - Game-system outcome probabilities (e.g., "chance of critical success in Blades")
 
 **Files:**
-- [`plugins/randsum/skills/dice-probability/SKILL.md`](https://github.com/RANDSUM/randsum/blob/main/plugins/randsum/skills/dice-probability/SKILL.md) — main skill definition
-- [`plugins/randsum/skills/dice-probability/references/PROBABILITY_TABLES.md`](https://github.com/RANDSUM/randsum/blob/main/plugins/randsum/skills/dice-probability/references/PROBABILITY_TABLES.md) — precomputed reference tables
+- [`plugins/randsum/skills/dice-probability/SKILL.md`](https://github.com/RANDSUM/randsum/blob/main/plugins/randsum/skills/dice-probability/SKILL.md): main skill definition
+- [`plugins/randsum/skills/dice-probability/references/PROBABILITY_TABLES.md`](https://github.com/RANDSUM/randsum/blob/main/plugins/randsum/skills/dice-probability/references/PROBABILITY_TABLES.md): precomputed reference tables
 
 ### Game Spec Creator
 
-Teaches an agent the `.randsum.json` spec format — a declarative JSON Schema for describing tabletop RPG dice mechanics. Specs define a four-stage pipeline (Dice → Modify → Resolve → Outcome) and generate typed TypeScript `roll()` functions via codegen.
+Teaches an agent the `.randsum.json` spec format: a declarative JSON Schema for describing tabletop RPG dice mechanics. Specs define a four-stage pipeline (Dice → Modify → Resolve → Outcome) and generate typed TypeScript `roll()` functions via codegen.
 
 **What the agent learns:**
 - The full `.randsum.json` schema (pools, modifiers, conditions, outcome tables)
@@ -159,8 +159,8 @@ Teaches an agent the `.randsum.json` spec format — a declarative JSON Schema f
 - Validation rules and common patterns across game systems
 
 **Files:**
-- [`plugins/randsum/skills/game-spec-creator/SKILL.md`](https://github.com/RANDSUM/randsum/blob/main/plugins/randsum/skills/game-spec-creator/SKILL.md) — main skill definition
-- [`plugins/randsum/skills/game-spec-creator/references/SPEC_EXAMPLES.md`](https://github.com/RANDSUM/randsum/blob/main/plugins/randsum/skills/game-spec-creator/references/SPEC_EXAMPLES.md) — example specs for existing game systems
+- [`plugins/randsum/skills/game-spec-creator/SKILL.md`](https://github.com/RANDSUM/randsum/blob/main/plugins/randsum/skills/game-spec-creator/SKILL.md): main skill definition
+- [`plugins/randsum/skills/game-spec-creator/references/SPEC_EXAMPLES.md`](https://github.com/RANDSUM/randsum/blob/main/plugins/randsum/skills/game-spec-creator/references/SPEC_EXAMPLES.md): example specs for existing game systems
 
 ## Programmatic usage
 
@@ -172,7 +172,7 @@ If you're building a custom agent, you can also use `@randsum/roller` directly:
 
 const result = roll('4d6L')
 console.log(result.total)  // Sum after dropping lowest
-console.log(result.rolls)  // Individual die results`} />
+console.log(result.values) // Kept die values, e.g. [6, 4, 3]`} />
 
 See the [Roller documentation](/roller/introduction/) for the full API.
 

@@ -110,7 +110,7 @@ export const rerollDocs: readonly NotationDoc[] = [
     displayBase: 'R{..}',
     forms: [
       { notation: 'R{...}', note: 'Reroll until result no longer matches' },
-      { notation: 'R{...}(d)', note: 'Max d reroll attempts' }
+      { notation: 'R{...}(d)', note: 'Reroll at most d dice' }
     ],
     comparisons: [
       { operator: 'n', note: 'reroll dice showing exactly n' },
@@ -131,7 +131,7 @@ export const rerollDocs: readonly NotationDoc[] = [
         options: { sides: 10, quantity: 2, modifiers: { reroll: { lessThan: 3 } } }
       },
       {
-        description: 'Reroll under 3, max 2 attempts',
+        description: 'Reroll under 3, at most 2 dice',
         notation: '4d6R{<3}2',
         options: { sides: 6, quantity: 4, modifiers: { reroll: { lessThan: 3, max: 2 } } }
       }
@@ -314,14 +314,14 @@ export const explodeSequenceDocs: readonly NotationDoc[] = [
     colorLight: '#8d6000',
     title: 'Inflation',
     description:
-      'Explode upward through the TTRPG standard die set (4, 6, 8, 10, 12, 20, 100). Sugar for Explode Sequence going up.',
+      'Explode upward through the standard dice larger than this one (4, 6, 8, 10, 12, 20, 100). Sugar for Explode Sequence going up.',
     displayBase: '!i',
     forms: [{ notation: '!i', note: 'Inflate through standard dice sizes' }],
     examples: [
       {
-        description: 'Explode d4 through d6, d8, d10, d12, d20',
+        description: 'Explode d4 through d6, d8, d10, d12, d20, d100',
         notation: '1d4!i',
-        options: { sides: 4, modifiers: { explodeSequence: [6, 8, 10, 12, 20] } }
+        options: { sides: 4, modifiers: { explodeSequence: [6, 8, 10, 12, 20, 100] } }
       }
     ]
   },
@@ -332,7 +332,7 @@ export const explodeSequenceDocs: readonly NotationDoc[] = [
     colorLight: '#8d6000',
     title: 'Reduction',
     description:
-      'Explode downward through the TTRPG standard die set (4, 6, 8, 10, 12, 20, 100). Sugar for Explode Sequence going down.',
+      'Explode downward through the standard dice smaller than this one (100, 20, 12, 10, 8, 6, 4). Sugar for Explode Sequence going down.',
     displayBase: '!r',
     forms: [{ notation: '!r', note: 'Reduce through standard dice sizes' }],
     examples: [

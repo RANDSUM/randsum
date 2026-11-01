@@ -65,7 +65,7 @@ Add the server to `claude_desktop_config.json`:
 }
 ```
 
-Any MCP client that can spawn a stdio server works — point it at the
+Any MCP client that can spawn a stdio server works: point it at the
 `randsum-mcp` binary (or `bunx @randsum/mcp` / `npx @randsum/mcp`).
 
 ## Tools
@@ -133,7 +133,7 @@ the chosen game before it rolls.
 
 The `roll` tool accepts an optional integer `seed`. With a seed, the server uses
 a deterministic random number generator, so the same `notation` + `seed` always
-produces the same dice — ideal for tests, examples, and shareable results.
+produces the same dice, which suits tests, examples, and shareable results.
 Omit `seed` for a fresh random roll each call. (`validate` and `roll_game` do
 not take a seed.)
 

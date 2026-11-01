@@ -2,9 +2,10 @@
 //
 //   <randsum-roller size="mini" notation="4d6L"></randsum-roller>
 //
-// size="mini" is the field and Roll, with the keys and the total a row below;
-// "compact" (the default) is a panel with the readout beside or above the
-// builder; "max" adds recent rolls and a History dialog.
+// size="mini" is the field and Roll, with a keys button and the status line a
+// row below, and each roll in a popover; "compact" (the default) is a panel
+// with the keys below and each roll laid over them; "max" adds recent rolls
+// and a History dialog.
 // It fires randsum-change on every edit and randsum-roll after every roll.
 import { html, LitElement, nothing } from 'lit'
 import type { CSSResultGroup, PropertyDeclarations, PropertyValues, TemplateResult } from 'lit'

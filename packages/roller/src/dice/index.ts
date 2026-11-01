@@ -94,10 +94,11 @@ export const RANDSUM_DICE_SCHEMAS: readonly DiceSchema[] = [
       color: '#f2f2f3',
       colorLight: '#0f0f11',
       title: 'Geometric Die',
-      description: 'Roll an N-sided die repeatedly until a 1 appears. Total is the count of rolls.',
+      description:
+        'Roll an N-sided die, and roll again each time it shows N. Total is the sum of every roll.',
       displayBase: 'gN',
-      forms: [{ notation: 'gN', note: 'Roll until 1 appears; count rolls' }],
-      examples: [{ description: 'Geometric d6 — roll until 1', notation: 'g6' }]
+      forms: [{ notation: 'gN', note: 'Roll again on each N; sum all rolls' }],
+      examples: [{ description: 'Geometric d6: roll again on each 6', notation: 'g6' }]
     }
   },
   {

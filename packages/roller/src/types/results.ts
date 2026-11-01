@@ -17,7 +17,7 @@ export interface RollParams<T = string> extends Required<Omit<RollOptions<T>, 's
   numericFaces?: readonly number[]
   /** Draw without replacement (DD notation) */
   draw?: true
-  /** Geometric die — roll until 1, count attempts */
+  /** Geometric die: roll again on each max face, sum every roll */
   geometric?: true
   /** Original input argument */
   argument: RollArgument<T>

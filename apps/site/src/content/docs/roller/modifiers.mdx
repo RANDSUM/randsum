@@ -50,7 +50,7 @@ Modifiers are applied in priority order (lower number = earlier execution):
 | 100 | Total multiply | `**N` | `multiplyTotal` |
 
 :::note
-`S{...}` (count successes) and `F{...}` (count failures) are sugar aliases parsed onto the `count` modifier — they are not independent `ModifierOptions` keys.
+`S{...}` (count successes) and `F{...}` (count failures) are sugar parsed onto the `count` modifier. They are not separate `ModifierOptions` keys.
 :::
 
 This means dice values are capped/constrained first, then values are replaced or rerolled, then explosive mechanics fire, pool size is adjusted (drop/keep), and finally arithmetic is applied.
@@ -253,14 +253,17 @@ Reroll dice matching certain conditions.
 
 <CodeExample code={`import { roll } from '@randsum/roller'
 
-roll('4d20R{<5}') // 4-20
+roll('4d20R{<5}')     // Reroll results under 5
 roll('4d20R{>17}')    // Reroll results over 17
 
 // Reroll exact values
 roll('4d20R{8,12}')   // Reroll 8s and 12s
 
-// With max attempts
-roll('4d20R{<5}3')    // Reroll under 5, max 3 attempts
+// Reroll at most 3 dice
+roll('4d20R{<5}3')    // Reroll under 5, at most 3 dice
+
+// Reroll once: each matching die is rerolled a single time
+roll('4d6ro{1}')      // Reroll each 1 once, keep the new result
 
 // Options object
 roll({
@@ -276,9 +279,11 @@ roll({
 **RerollOptions:**
 
 <CodeExample code={`interface RerollOptions extends ComparisonOptions {
-  exact?: number[]
-  max?: number
+  max?: number    // reroll at most this many dice
+  once?: boolean  // reroll each matching die once (ro{..})
 }`} />
+
+`R{..}` keeps rerolling a die while it still matches, up to 99 attempts per die. `ro{..}` rerolls each matching die once and keeps the new result.
 
 ## Explode
 
@@ -328,11 +333,11 @@ roll({
 
 <ModifierRoller modifier="compound" defaultNotation="3d6!!" />
 
-Unlike regular exploding, compound does not create new dice -- it modifies the existing die value.
+Unlike regular exploding, compound does not create new dice: it adds to the existing die.
 
 ## Penetrate
 
-Penetrating exploding dice subtract 1 from each subsequent explosion (Hackmaster-style).
+Penetrating exploding dice count each added roll as 1 less (Hackmaster-style).
 
 **Options key:** `penetrate`
 
@@ -351,7 +356,7 @@ roll({
 
 <ModifierRoller modifier="penetrate" defaultNotation="3d6!p" />
 
-Each subsequent penetration subtracts 1 from the result before adding, creating diminishing returns.
+Each added roll has 1 subtracted before it is added, with no minimum.
 
 ## Explode Sequence
 
@@ -362,30 +367,30 @@ Roll additional dice using a custom die-size sequence when the current die shows
 | Notation | Description |
 |---|---|
 | `!s{N1,N2,...}` | Explode through die sizes in sequence |
-| `!i` | Sugar: inflate through standard die set (d4 &rarr; d6 &rarr; d8 &rarr; d10 &rarr; d12 &rarr; d20) |
-| `!r` | Sugar: reduce through standard die set (d20 &rarr; d12 &rarr; d10 &rarr; d8 &rarr; d6 &rarr; d4) |
+| `!i` | Sugar: inflate through each larger standard die (d4 &rarr; d6 &rarr; d8 &rarr; d10 &rarr; d12 &rarr; d20 &rarr; d100) |
+| `!r` | Sugar: reduce through each smaller standard die (d100 &rarr; d20 &rarr; d12 &rarr; d10 &rarr; d8 &rarr; d6 &rarr; d4) |
 
 `!r` takes no condition block. `!` followed by `R{...}` or `ro{...}` is Explode then Reroll: `4d6!R{<3}` explodes sixes and rerolls anything under 3, and `1d20!RR{<3}` is Reduction followed by that reroll.
 
 <CodeExample code={`import { roll } from '@randsum/roller'
 
-roll('1d4!s{4,6,8,10}') // Explode d4 -> d6 -> d8 -> d10
+roll('1d4!s{6,8,10}')   // On a 4, roll a d6, then a d8, then d10s
 roll('1d6!s{8,12}')     // Explode to d8, then d12
-roll('1d4!i')           // Inflate through standard die set
-roll('1d20!r')          // Reduce through standard die set
+roll('1d4!i')           // Same as 1d4!s{6,8,10,12,20,100}
+roll('1d20!r')          // Same as 1d20!s{12,10,8,6,4}
 
 // Options object
 roll({
   sides: 4,
   quantity: 1,
-  modifiers: { explodeSequence: [4, 6, 8, 10] }
+  modifiers: { explodeSequence: [6, 8, 10] }
 })`} />
 
-<ModifierRoller modifier="explodeSequence" defaultNotation="1d4!s{4,6,8,10}" />
+<ModifierRoller modifier="explodeSequence" defaultNotation="1d4!s{6,8,10}" />
 
 When the die shows its maximum, a new die of the next size in the sequence is rolled and added. The sequence steps forward with each successive explosion; once the last size is reached, it repeats (capped at the default explosion depth).
 
-**Example:** `1d4!s{4,6,8,10}` rolls a d4. On a 4 (max), rolls a d6. On a 6 (max), rolls a d8. On a 7 — not max — the sequence stops.
+**Example:** `1d4!s{6,8,10}` rolls a d4. On a 4 (max), it rolls a d6. On a 6 (max), it rolls a d8. On a 7, which is not the max, the sequence stops.
 
 ## Wild Die
 
@@ -412,7 +417,7 @@ roll({
 
 **Wild die behavior:**
 
-- **Wild die = max value (6):** The wild die compound-explodes -- keep rolling and adding while the maximum is rolled.
+- **Wild die = max value (6):** The wild die compound-explodes: keep rolling and adding while the maximum is rolled.
 - **Wild die = 1:** Remove the wild die AND the highest non-wild die from the pool.
 - **Otherwise:** No special effect, the wild die acts as a normal die.
 
@@ -598,7 +603,7 @@ Count dice matching a condition instead of summing values. Used in dice pool sys
 
 | Notation | Description |
 |---|---|
-| `#{condition}` | Primary notation — count dice matching a comparison condition |
+| `#{condition}` | Primary notation: count dice matching a comparison condition |
 | `S{N}` | Sugar: count dice &gt;= N (successes) |
 | `S{N,B}` | Sugar: count dice &gt;= N, subtract dice &lt;= B (successes minus botches) |
 | `F{N}` | Sugar: count dice &lt;= N (failures) |
@@ -613,7 +618,7 @@ Count dice matching a condition instead of summing values. Used in dice pool sys
 
 // Primary notation: #{condition}
 roll('5d10#{>=7}')      // Count dice >= 7
-roll('5d10#{>3,<1}')    // Count >3, subtract <1 (deduct mode)
+roll('5d10#{>=7,<=1}')  // Count >= 7, subtract <= 1 (deduct mode)
 
 // Sugar: S{} for successes
 roll('5d10S{7}')        // Count dice >= 7
@@ -651,7 +656,7 @@ roll({
 
 **Example:** `5d10#{>=7}` rolls [8, 2, 10, 1, 9]. Dice &gt;= 7: [8, 10, 9] = 3.
 
-**Example (deduct):** `5d10#{>3,<1}` counts dice &gt; 3 and subtracts dice &lt; 1. If above = 4 and below = 1, total = 3.
+**Example (deduct):** `5d10#{>=7,<=1}` counts dice &gt;= 7 and subtracts dice &lt;= 1. With [8, 1, 10, 4, 9], that is 3 &minus; 1 = 2.
 
 **CountOptions:**
 
@@ -700,7 +705,7 @@ The full calculation order is:
 5. Apply explode/compound/penetrate/explodeSequence (add dice or modify values)
 6. Apply wild die behavior (compound on max, remove on 1)
 7. Apply unique (ensure no duplicates)
-8. Apply drop/keep (adjust pool size — runs after explosions)
+8. Apply drop/keep (adjust pool size, after explosions)
 9. Apply count if applicable (#&#123;...&#125;, or sugar S&#123;...&#125;/F&#123;...&#125;)
 10. Sum remaining dice
 11. Apply pre-arithmetic multiply (`*`)

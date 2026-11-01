@@ -119,20 +119,20 @@ switch (result) {
 
 This package works with any PbtA game, including:
 
-- **Apocalypse World** -- The original PbtA game
-- **Dungeon World** -- Fantasy dungeon crawling
-- **Monster of the Week** -- Urban fantasy monster hunting
-- **Masks** -- Teen superheroes
-- **The Sprawl** -- Cyberpunk missions
-- **Urban Shadows** -- Urban supernatural politics
+- **Apocalypse World**: The original PbtA game
+- **Dungeon World**: Fantasy dungeon crawling
+- **Monster of the Week**: Urban fantasy monster hunting
+- **Masks**: Teen superheroes
+- **The Sprawl**: Cyberpunk missions
+- **Urban Shadows**: Urban supernatural politics
 - And many more
 
 ## Error handling
 
 Game `roll()` can throw two types of errors:
 
-- **`ValidationError`** (from `@randsum/roller`) -- numeric input out of range or not finite (e.g., `stat: 99` when max is 5)
-- **`SchemaError`** (from `@randsum/games/pbta`) -- game-specific issues like invalid `rollingWith` values
+- **`ValidationError`** (from `@randsum/roller`): numeric input out of range, not an integer, or not finite (e.g., `stat: 99` when the maximum is 5)
+- **`SchemaError`** (from `@randsum/games/pbta`): game-specific issues like invalid `rollingWith` values
 
 <CodeExample code={`import { roll, SchemaError } from '@randsum/games/pbta'
 import { ValidationError } from '@randsum/roller'

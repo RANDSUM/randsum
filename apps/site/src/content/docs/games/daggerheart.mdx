@@ -23,7 +23,7 @@ head:
 import { Tabs, TabItem, LinkCard } from '@astrojs/starlight/components'
 import CodeExample from '../../../components/live-repl/CodeExample.astro'
 
-The `@randsum/games/daggerheart` subpath provides mechanics for [Daggerheart](https://www.darringtonpress.com/daggerheart), a fantasy tabletop RPG featuring the unique hope and fear dice system.
+The `@randsum/games/daggerheart` subpath provides mechanics for [Daggerheart](https://www.darringtonpress.com/daggerheart), a fantasy tabletop RPG built on its Hope and Fear dice.
 
 <LinkCard title="Official Site" href="https://www.darringtonpress.com/daggerheart" description="Daggerheart by Darrington Press" />
 
@@ -61,13 +61,13 @@ roll({
 
 <CodeExample code={`import { roll } from '@randsum/games/daggerheart'
 
-// Amplify hope die (d12 becomes d20)
+// Amplify the Hope die (d12 becomes d20)
 roll({
   amplifyHope: true,
   modifier: 2
 })
 
-// Amplify fear die
+// Amplify the Fear die
 roll({
   amplifyFear: true,
   modifier: 3
@@ -84,7 +84,7 @@ roll({
 
 const { result, total, details } = roll({ modifier: 3 })
 // result: 'hope' | 'fear' | 'critical_hope'
-// details: { hope, fear, extraDie, modifier }
+// details: { hope, fear, modifier, extraDie? }
 
 const { hope, fear, extraDie, modifier } = details`} />
 
@@ -96,10 +96,10 @@ const { hope, fear, extraDie, modifier } = details`} />
 
 | Property | Type | Description |
 |---|---|---|
-| `modifier` | `number` (optional) | Modifier added to the total |
+| `modifier` | `number` (optional) | Modifier added to the total, an integer from -30 to +30. Defaults to 0 |
 | `rollingWith` | `'Advantage' \| 'Disadvantage' \| undefined` | Adds or subtracts a d6 |
-| `amplifyHope` | `boolean` | Use d20 instead of d12 for hope die |
-| `amplifyFear` | `boolean` | Use d20 instead of d12 for fear die |
+| `amplifyHope` | `boolean` (optional) | Use a d20 instead of a d12 for the Hope die. Defaults to `false` |
+| `amplifyFear` | `boolean` (optional) | Use a d20 instead of a d12 for the Fear die. Defaults to `false` |
 
 **Returns:** `GameRollResult` with:
 
@@ -126,17 +126,17 @@ The total (sum of all dice + modifier) determines mechanical success or failure.
 
 The `details` object provides full visibility into each component:
 
-- `hope` -- Hope die result and whether it was amplified
-- `fear` -- Fear die result and whether it was amplified
-- `extraDie` -- Advantage/disadvantage die result (if applicable)
-- `modifier` -- Applied modifier value
+- `hope`: the Hope die's `roll` and whether it was `amplified`
+- `fear`: the Fear die's `roll` and whether it was `amplified`
+- `modifier`: the modifier applied
+- `extraDie`: the advantage or disadvantage d6 (`advantageRoll` or `disadvantageRoll`), present only with `rollingWith`
 
 ## Error handling
 
 Game `roll()` can throw two types of errors:
 
-- **`ValidationError`** (from `@randsum/roller`) -- numeric input out of range or not finite (e.g., `modifier: Infinity`)
-- **`SchemaError`** (from `@randsum/games/daggerheart`) -- game-specific issues like invalid `rollingWith` values
+- **`ValidationError`** (from `@randsum/roller`): numeric input out of range, not an integer, or not finite (e.g., `modifier: Infinity`)
+- **`SchemaError`** (from `@randsum/games/daggerheart`): game-specific issues like invalid `rollingWith` values
 
 <CodeExample code={`import { roll, SchemaError } from '@randsum/games/daggerheart'
 import { ValidationError } from '@randsum/roller'
