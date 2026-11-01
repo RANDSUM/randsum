@@ -91,7 +91,6 @@ export function HeroRoller(): React.JSX.Element {
   return (
     <Roller
       size="compact"
-      className="hero-roller-panel"
       notation={notation}
       onChange={next => {
         cycling.current = false

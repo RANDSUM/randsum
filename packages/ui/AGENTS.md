@@ -7,7 +7,7 @@ page and modifier docs all render them through the React wrappers.
 
 ## Layout
 
-- Every file directly in `src/`, `src/native/`, `src/react/` and `src/vue/` is
+- Every `.ts` file directly in `src/`, `src/native/`, `src/react/` and `src/vue/` is
   a public entry with its own subpath, one per element, component, wrapper or
   helper (lodash style).
   There is no root barrel, so a page that imports `@randsum/ui/roller` never

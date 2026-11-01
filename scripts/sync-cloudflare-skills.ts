@@ -42,9 +42,9 @@ const DEST = join(ROOT, '.claude', 'skills')
  * it — an unused skill is not free.
  */
 const WANTED: Readonly<Record<string, string>> = {
-  'workers-best-practices': 'The site and the bot Worker run on Workers',
+  'workers-best-practices': 'The site, the api and the bot run on Workers',
   wrangler:
-    'Deploys run `wrangler deploy`; three wrangler configs are checked in (site, bot, notation.randsum.dev redirect)'
+    'Deploys run `wrangler deploy`; five wrangler configs are checked in (api, bot, site, the notation.randsum.dev and app.randsum.dev static hosts)'
 }
 
 /**

@@ -46,6 +46,7 @@ jobs:
               - 'package.json'
               - 'tsconfig*.json'
               - 'bunfig.toml'
+              - '.bun-version'
               - '.github/actions/**'
             roller:
               - 'packages/roller/**'
@@ -138,7 +139,7 @@ jobs:
             '$all | map(select($changed[.pkg] == "true" or $changed.shared == "true"))')
           echo "matrix={\"include\":$include}" >> "$GITHUB_OUTPUT"
 
-  # The per-package jobs (roller, games, mcp, discord-bot, api, site) were
+  # The per-package jobs (roller, games, mcp, ui, notation-spec, discord-bot, api, site) were
   # near-identical, differing only in filter name, node version, and coverage
   # flags. They are folded into one matrix, populated dynamically by the
   # `changes` job so only changed packages get a leg. The `include` entries
@@ -302,14 +303,12 @@ jobs:
         # Validate each tarball's manifest and type-resolution profile. Pinned via
         # bunx so no root deps are added. These are ESM-only packages, so attw runs
         # with --profile esm-only to not fail on the expected missing-CJS resolutions.
-        # `./styles.css` (@randsum/ui) is a stylesheet with no types by design;
-        # the excluded name is absent from every other tarball, so it is a no-op there.
         run: |
           set -euo pipefail
           for tgz in "$RUNNER_TEMP"/tarballs/*.tgz; do
             echo "::group::$(basename "$tgz")"
             bunx publint@0.3.21 "$tgz"
-            bunx @arethetypeswrong/cli@0.18.4 "$tgz" --profile esm-only --exclude-entrypoints ./styles.css
+            bunx @arethetypeswrong/cli@0.18.4 "$tgz" --profile esm-only
             echo "::endgroup::"
           done
 
@@ -359,13 +358,13 @@ jobs:
     name: CI Success
     if: always()
     # `package` is the consolidated matrix job: its single `result` aggregates
-    # every leg (roller, games, mcp, discord-bot, api, site) — if
+    # every leg (roller, games, mcp, ui, notation-spec, discord-bot, api, site) — if
     # any leg fails, the aggregate is `failure`, so listing it once still covers
-    # all six packages. `repo` runs the repo-wide gates, including the
+    # all eight packages. `repo` runs the repo-wide gates, including the
     # `ci-aggregator` step that guards this very list.
     #
     # `changes` is listed even though nothing here reads its outputs: a failure in
-    # it leaves its four dependents `skipped` rather than `failure`, and the loop
+    # it leaves its three dependents `skipped` rather than `failure`, and the loop
     # below treats skipped as a pass — so without it, a broken matrix build was a
     # green gate. (Found by `ci-aggregator` on its first run.)
     needs:

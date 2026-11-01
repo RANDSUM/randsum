@@ -13,7 +13,7 @@ Create `.randsum.json` specs that declaratively define tabletop RPG dice mechani
 
 ## Spec Structure
 
-Every spec requires these top-level fields:
+Every spec requires `$schema`, `name`, `shortcode`, `game_url` and exactly one of `roll` or `rolls` (a map of named rolls); `version` is optional:
 
 ```json
 {
@@ -41,7 +41,7 @@ The `roll` object defines the pipeline:
 | `inputs` | -- | No | Declare runtime parameters (stat, modifier, rating) |
 | `dice` | 1 | Yes* | Pool reference + quantity. *Or use `dicePools` for multi-pool rolls |
 | `modify` | 2 | No | Modifier chain (keepHighest, keepLowest, add, cap) |
-| `resolve` | 3 | Yes | Resolution: `"sum"`, `countMatching`, `tableLookup`, or `comparePool` |
+| `resolve` | 3 | Yes | Resolution: `"sum"`, `"faces"`, `countMatching`, `tableLookup`, `comparePoolHighest`/`comparePoolSum` or `remoteTableLookup` |
 | `outcome` | 4 | No | Map resolved value to a game result string |
 | `when` | -- | No | Conditional overrides based on input values |
 | `details` | -- | No | Extra typed fields returned alongside the result |

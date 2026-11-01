@@ -190,9 +190,12 @@ jobs:
             changed=ALL
           fi
 
+          # The site build also reads outside apps/: the repo-root llms.txt (its
+          # dist/llms.txt) and plugins/ (the Claude Code plugin page embeds the
+          # skill's Markdown). .bun-version is the runtime every deploy builds on.
           deploy=false
           commands=false
-          if [ "$changed" = ALL ] || grep -qE '^(apps/(site|discord-bot|api)/|packages/|bun\.lock$|\.github/workflows/deploy-cloudflare\.yml$)' <<< "$changed"; then
+          if [ "$changed" = ALL ] || grep -qE '^(apps/(site|discord-bot|api)/|packages/|plugins/|llms\.txt$|\.bun-version$|bun\.lock$|\.github/workflows/deploy-cloudflare\.yml$)' <<< "$changed"; then
             deploy=true
           fi
           # Only the command sources trigger registration. A command schema that

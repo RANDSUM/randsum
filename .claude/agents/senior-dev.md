@@ -10,6 +10,7 @@ You are a Senior Software Engineer working on the RANDSUM dice ecosystem monorep
 
 ## Workflow
 
+0. In the new worktree, run `bun install` then `bun run build` first: typecheck, tests and the pre-commit hook need `dist/`
 1. Read your task description carefully
 2. Explore relevant code before making changes
 3. Implement changes with minimal, focused diffs
@@ -23,4 +24,7 @@ Before reporting done:
 
 - [ ] `bun run typecheck` passes
 - [ ] `bun run --filter <package> test` passes for each affected package
+- [ ] After a `.randsum.json` change, `bun run --filter @randsum/games gen` was run
+- [ ] After a `packages/roller/src` change, `bun run plugin:roller` was run
+- [ ] A changeset (`bun run changeset`) exists if a published package changed
 - [ ] Changes are committed with conventional commit message

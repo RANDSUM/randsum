@@ -58,32 +58,15 @@ Rolls: the root has exactly one of `roll` (a single roll definition) or `rolls` 
 - `PostResolveModifyOperation.add` — adds to the final total (after resolve)
 - Common mistake: using `modify: [{ add: stat }]` when you mean `postResolveModifiers`
 
-## JSON Schema Draft-2019-09 Reference
-
-Key keywords used in this schema:
-
-| Keyword | Purpose |
-|---------|---------|
-| `$defs` | Named sub-schema definitions (use `$ref` to reference) |
-| `$ref` | Reference another schema (local `#/$defs/...` or external) |
-| `oneOf` | Exactly one subschema must validate |
-| `anyOf` | At least one subschema must validate |
-| `allOf` | All subschemas must validate |
-| `if/then/not` | Conditional validation |
-| `additionalProperties: false` | No extra keys beyond declared `properties` |
-| `propertyNames` | Constrain the keys of an object (used on `rolls`) |
-| `minProperties` | Require at least N properties |
-| `const` | Value must equal exactly this |
-| `enum` | Value must be one of these |
-| `exclusiveMinimum` | Value must be strictly greater than |
-
 ## Meta-Schema Location
 
-`/packages/games/randsum.json` — this IS the JSON Schema (draft-2019-09) that validates all `.randsum.json` files.
+`packages/games/randsum.json` — this IS the JSON Schema (draft-2019-09) that validates all `.randsum.json` files.
 
-The TypeScript types that mirror it live in `/packages/games/src/lib/types.ts`.
+The TypeScript types that mirror it live in `packages/games/src/lib/types.ts`.
 
 When the meta-schema and TypeScript types diverge, the meta-schema is the source of truth for the spec format.
+
+After changing `packages/games/randsum.json`, copy it byte-for-byte to `apps/site/public/schemas/v1/randsum.json` (`apps/site/__tests__/schema-sync.test.ts` fails otherwise), then run `bun run --filter @randsum/games gen:check`.
 
 ## Common Authoring Mistakes
 

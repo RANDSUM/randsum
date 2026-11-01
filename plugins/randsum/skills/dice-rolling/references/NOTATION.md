@@ -69,10 +69,10 @@ roll({
 
 ### Geometric Die (`gN`)
 
-Roll dN until a 1 appears, result = attempt count. Safety cap at 1000 iterations.
+Roll dN again while it shows N; the result is the sum of every roll. Safety cap at 1000 iterations.
 
 ```typescript
-roll("g6")   // Roll d6 until 1 appears (average: 6 rolls)
+roll("g6")   // e.g. [6, 6, 2] → 14 (mean 4.2)
 roll("3g6")  // Three independent geometric rolls
 ```
 
