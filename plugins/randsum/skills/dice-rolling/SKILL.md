@@ -24,8 +24,7 @@ Use the first one available:
    - `GET /v1/games/<game>/roll?<inputs>`, e.g. `/v1/games/blades/roll?rating=3`
    - `GET /v1/validate?notation=...`, `GET /v1/random?min=1&max=100&count=5`, `GET /v1/games`
    - `POST` with a JSON body works for `roll`, `validate` and game rolls too, and avoids URL encoding.
-3. **Local code**, if you have a shell but no network: `node -e "console.log(require('crypto').randomInt(1, 21))"` for a d20, and do the dice arithmetic yourself. Say the roll came from a local RNG.
-4. **Nothing available:** tell the user you cannot roll real dice here and give the notation they can roll themselves. Only simulate if they ask you to, and label it simulated.
+3. **Neither available:** tell the user you cannot roll real dice here and give the notation they can roll themselves. Only simulate if they ask you to, and label it simulated.
 
 ## 2. Translate the request
 

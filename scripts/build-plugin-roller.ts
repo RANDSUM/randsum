@@ -44,7 +44,19 @@ if (!build.success || output === undefined) {
   process.exit(1)
 }
 
-const bundle = `${HEADER}${await output.text()}`
+// Roller's error classes pin their static `name` in a `static {}` block so
+// minified builds keep readable class names. This bundle is not minified, so
+// the blocks do nothing here, and the directory scan flags
+// Object.defineProperty in a mod as code that may run on a mere read.
+const NAME_PIN =
+  /\n {2}static \{\n {4}Object\.defineProperty\(this, "name", \{ value: "\w+" \}\);\n {2}\}/g
+const built = await output.text()
+const pins = built.match(NAME_PIN)?.length ?? 0
+if (pins === 0) {
+  console.error("Plugin roller bundle: expected the error classes' static name pins, found none.")
+  process.exit(1)
+}
+const bundle = `${HEADER}${built.replace(NAME_PIN, '')}`
 
 if (process.argv.includes('--check')) {
   const committed = (() => {
