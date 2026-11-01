@@ -1,16 +1,13 @@
 {
   "name": "randsum",
   "displayName": "RANDSUM",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "RDN-conformant dice notation skills for Claude Code — roll dice, analyze probability, and create game specs for tabletop RPGs",
   "author": {
     "name": "RANDSUM",
     "url": "https://randsum.dev"
   },
   "homepage": "https://randsum.dev",
-  "documentationUrl": "https://randsum.dev/tools/claude-code-plugin/",
-  "supportUrl": "https://github.com/RANDSUM/randsum/issues",
-  "privacyPolicyUrl": "https://randsum.dev/privacy/",
   "repository": "https://github.com/RANDSUM/randsum",
   "license": "MIT",
   "keywords": [
@@ -26,6 +23,5 @@
     "blades-in-the-dark",
     "daggerheart",
     "pbta"
-  ],
-  "icon": "./.claude-plugin/icon.png"
+  ]
 }
