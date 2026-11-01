@@ -115,7 +115,8 @@ export default defineConfig({
             items: [
               { label: 'Introduction', slug: 'welcome/introduction' },
               { label: 'Ecosystem Overview', slug: 'welcome/ecosystem-overview' },
-              { label: 'Attribution', slug: 'welcome/attribution' }
+              { label: 'Attribution', slug: 'welcome/attribution' },
+              { label: 'Privacy Policy', slug: 'privacy' }
             ]
           },
           {
