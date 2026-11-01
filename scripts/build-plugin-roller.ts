@@ -44,7 +44,14 @@ if (!build.success || output === undefined) {
   process.exit(1)
 }
 
-const bundle = `${HEADER}${await output.text()}`
+// Roller's error classes pin their static `name` with Object.defineProperty so
+// minified builds keep readable class names. This bundle is not minified, so the
+// class names already match, and the directory's scan reads defineProperty in a
+// mod as a value that may run code when read. Drop those blocks here.
+const STATIC_NAME_BLOCK =
+  /\n {2}static \{\n {4}Object\.defineProperty\(this, "name", \{ value: "\w+" \}\);\n {2}\}/g
+
+const bundle = `${HEADER}${(await output.text()).replace(STATIC_NAME_BLOCK, '')}`
 
 if (process.argv.includes('--check')) {
   const committed = (() => {

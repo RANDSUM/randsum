@@ -94,6 +94,7 @@ jobs:
               # The plugin's /roll mod commits a bundle of roller's roll().
               - 'packages/roller/src/**'
               - 'scripts/build-plugin-roller.ts'
+              - 'scripts/check-plugin-directory.ts'
               - '.claude-plugin/**'
               - '.claude/**'
               - '.mcp.json'
@@ -257,16 +258,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          # check:plugin-directory diffs plugins/randsum against the PR's base
+          # to require a version bump.
+          fetch-depth: 0
+          persist-credentials: false
       - name: Install Claude Code
         run: npm install -g @anthropic-ai/claude-code@2.1.284
       - name: Verify project agent config
         run: claude plugin validate --strict .claude
-      # Plugin and marketplace stay non-strict on purpose. plugin.json has no
-      # `version`, so installers track the marketplace commit instead of a pin
-      # nobody bumps; `--strict` turns the resulting 'No version specified'
-      # warning into exit 1 for both. Errors still fail the step.
+      # Strict with the directory profile: any warning the plugin directory
+      # would raise on the manifest fails the build.
       - name: Verify plugin
-        run: claude plugin validate plugins/randsum
+        run: claude plugin validate --strict --profile directory plugins/randsum
       # Hooks modules are early access; this pinned build runs them only when asked.
       - name: Test the plugin's /roll mod
         run: claude plugin test plugins/randsum
@@ -275,8 +279,12 @@ jobs:
       - uses: ./.github/actions/bun-setup
       - name: Plugin roller bundle is fresh
         run: bun run check:plugin-roller
+      - name: Plugin passes the directory's scan rules
+        run: bun run check:plugin-directory
+        env:
+          PLUGIN_BASE_REF: ${{ github.base_ref }}
       - name: Verify marketplace
-        run: claude plugin validate .claude-plugin/marketplace.json
+        run: claude plugin validate --strict .claude-plugin/marketplace.json
 
   publish-dry-run:
     name: publish (dry run)
