@@ -257,14 +257,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          # check:plugin-version diffs against the base branch's merge base.
+          fetch-depth: 0
       - name: Install Claude Code
         run: npm install -g @anthropic-ai/claude-code@2.1.284
       - name: Verify project agent config
         run: claude plugin validate --strict .claude
-      # Plugin and marketplace stay non-strict on purpose. plugin.json has no
-      # `version`, so installers track the marketplace commit instead of a pin
-      # nobody bumps; `--strict` turns the resulting 'No version specified'
-      # warning into exit 1 for both. Errors still fail the step.
+      # Plugin and marketplace stay non-strict: the directory listing fields in
+      # plugin.json warn as unknown on some Claude Code builds. Errors still fail.
       - name: Verify plugin
         run: claude plugin validate plugins/randsum
       # Hooks modules are early access; this pinned build runs them only when asked.
@@ -275,6 +276,9 @@ jobs:
       - uses: ./.github/actions/bun-setup
       - name: Plugin roller bundle is fresh
         run: bun run check:plugin-roller
+      - name: Plugin changes bump its version
+        if: github.event_name == 'pull_request'
+        run: bun run check:plugin-version "origin/${{ github.base_ref }}"
       - name: Verify marketplace
         run: claude plugin validate .claude-plugin/marketplace.json
 
