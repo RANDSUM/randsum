@@ -182,9 +182,9 @@ export const PRODUCTS: readonly ProductInfo[] = [
   },
   {
     id: 'api',
-    tagline: 'Dice over HTTP, no key needed',
+    tagline: 'Random Numbers as a service',
     summary:
-      'A public REST API at api.randsum.dev: roll notation in short or long form, roll for any supported game, or draw random integers. JSON in, JSON out, from any language.',
+      'A free, keyless REST API at api.randsum.dev: roll notation in short or long form, roll for any supported game, or draw random integers. JSON in, JSON out, from any language.',
     href: '/api/introduction/',
     snippet: {
       lang: 'bash',
