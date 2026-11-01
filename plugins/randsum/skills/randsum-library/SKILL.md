@@ -110,7 +110,7 @@ Every game's input type, ranges, result values and details: [references/GAMES.md
 <randsum-roller size="compact" notation="2d20H+5"></randsum-roller>
 ```
 
-- One element, `<randsum-roller>`, with `size="mini"` (one row), `"compact"` (the default, a panel) or `"max"` (adds recent rolls and history; `storage-key` keeps them in localStorage).
+- One element, `<randsum-roller>`, with `size="mini"` (the field and Roll, with a keys button below), `"compact"` (the default, a panel) or `"max"` (adds recent rolls and history; `storage-key` keeps them in localStorage).
 - Events: `randsum-change` (detail `{ notation }`) on each edit, `randsum-roll` (detail: the result, with `total` and `records`) after each roll. Method: `roll()`.
 - `presets` and `keys` take JSON attributes or properties; `modifierKeys(name)` (`@randsum/ui/keys`) and `modifierPresets(name)` (`@randsum/ui/presets`) give each modifier's own set.
 - Parts are elements too (`notation-field`, `roll-button`, `status-line`, `key-pad`, `preset-list`, `readout`, `roll-steps`); inside a `<randsum-scope notation="…">` they share one roller with no script.

@@ -11,10 +11,16 @@ on:
     branches: [main]
     paths:
       - '.github/workflows/**'
+      - '.github/actions/**'
+      - '.github/dependabot.yml'
+      - '.github/zizmor.yml'
       - 'lefthook.yml'
   pull_request:
     paths:
       - '.github/workflows/**'
+      - '.github/actions/**'
+      - '.github/dependabot.yml'
+      - '.github/zizmor.yml'
       - 'lefthook.yml'
 
 permissions:

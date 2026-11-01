@@ -112,7 +112,7 @@
 
   /*
    * Everything below is the only way to spell a size, weight, radius, shadow or
-   * tracking: biome-plugins/design-tokens.grit fails any other stylesheet or
+   * tracking: the biome-plugins/no-raw-*.grit plugins fail any other stylesheet or
    * Astro <style> block that writes a raw one.
    */
 

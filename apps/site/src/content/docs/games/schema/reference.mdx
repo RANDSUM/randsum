@@ -23,10 +23,11 @@ Every `.randsum.json` spec conforms to the JSON Schema at `https://randsum.dev/s
 |---|---|---|---|
 | `$schema` | `string` | Yes | JSON Schema URL for validation |
 | `name` | `string` | Yes | Human-readable game name |
-| `shortcode` | `string` | Yes | Package identifier — used for subpath exports (`@randsum/games/{shortcode}`) and generated filenames |
-| `version` | `string` | Yes | Spec version (semver) |
-| `game_url` | `string` | No | Official game website |
+| `shortcode` | `string` | Yes | Identifier used for the subpath export (`@randsum/games/{shortcode}`) and generated file name |
+| `version` | `string` | No | Spec version (semver) |
+| `game_url` | `string` | Yes | Official game website |
 | `srd_url` | `string` | No | System reference document URL |
+| `roll` or `rolls` | `object` | One of them | One roll definition, or several named ones (`rolls`), each exported as its own function |
 
 ## `pools`
 
@@ -64,7 +65,7 @@ Lookup tables that map numeric results to string outcomes. Each table has an arr
 
 ### Range entries
 
-Each entry in the `ranges` array matches a roll total (or pool condition) to a result string. Ranges are evaluated in order — the first match wins.
+Each entry in the `ranges` array matches a roll total (or pool condition) to a result string. Ranges are evaluated in order, and the first match wins.
 
 | Field | Type | Description |
 |---|---|---|
@@ -124,9 +125,9 @@ Defines what the caller passes to the game's `roll()` function. Each key becomes
   "rating": {
     "type": "integer",
     "minimum": 0,
-    "maximum": 4,
+    "maximum": 10,
     "default": 1,
-    "description": "Action rating (0-4)"
+    "description": "Dice pool size (0-10)"
   },
   "rollingWith": {
     "type": "string",
@@ -150,7 +151,7 @@ Defines what the caller passes to the game's `roll()` function. Each key becomes
 | `enum` | `string[]` | Allowed values (string inputs only) |
 | `description` | `string` | Human-readable description |
 
-Codegen produces `validateRange()` and `validateFinite()` calls for integer inputs with `minimum`/`maximum`, and enum validation for string inputs with `enum`.
+Codegen produces `validateFinite()`, `validateInteger()` and `validateRange()` calls for integer inputs with `minimum`/`maximum`, and enum validation for string inputs with `enum`.
 
 ### `roll.dice`
 
@@ -208,9 +209,10 @@ Available modifiers:
 
 | Modifier | Value | Description |
 |---|---|---|
-| `keepHighest` | `number` | Keep the N highest dice |
-| `keepLowest` | `number` | Keep the N lowest dice |
-| `add` | `number` \| `{ "$input": string }` | Add to the total |
+| `keepHighest` | `number` \| `{ "$input": string }` | Keep the N highest dice |
+| `keepLowest` | `number` \| `{ "$input": string }` | Keep the N lowest dice |
+| `cap` | `{ "min"?, "max"? }` | Clamp each die to a range |
+| `add` | `number` \| `{ "$input": string }` | Add to the total; several `add` operations sum |
 
 The `{ "$input": string }` form reads the value from a named input at runtime.
 
@@ -221,7 +223,11 @@ How the roll total is determined.
 | Value | Description |
 |---|---|
 | `"sum"` | Sum all dice values after modifiers (most games) |
+| `"faces"` | Resolve a custom-faces die to the label it rolled |
+| `{ "countMatching": ... }` | Count the dice that meet a condition (`operator`, `value`) |
+| `{ "tableLookup": ... }` | Map the sum through a table |
 | `{ "comparePoolHighest": ... }` | Compare highest values across named pools (Daggerheart) |
+| `{ "comparePoolSum": ... }` | Compare the sums of named pools |
 | `{ "remoteTableLookup": ... }` | Look up results from an external table (Salvage Union) |
 
 #### `comparePoolHighest`
@@ -316,7 +322,7 @@ Detail values can be:
 | `{ "$conditionalPool": string, "field": "total" }` | Total from a conditional pool |
 | `{ "$dieCheck": object }` | Check a specific die value |
 | `{ "expr": string }` | Expression reference (e.g., `"diceTotal"`, `"total"`) |
-| `{ "when": object, "value": object }` | Conditional detail — only present when input is truthy |
+| `{ "when": object, "value": object }` | Conditional detail, present only when the input is truthy |
 
 #### `$dieCheck`
 
@@ -350,12 +356,12 @@ Conditional overrides that change the roll behavior based on input values. Each 
 | Field | Type | Description |
 |---|---|---|
 | `input` | `string` | Input field to check |
-| `operator` | `"="` \| `"!="` \| `">"` \| `"<"` \| `">="` \| `"<="` | Comparison operator |
+| `operator` | `"="` \| `">"` \| `"<"` \| `">="` \| `"<="` | Comparison operator |
 | `value` | `any` | Value to compare against |
 
 #### Override
 
-An override can replace any of `dice`, `dicePools`, `modify`, `resolve`, or `outcome`. Only the fields specified are overridden — unmentioned fields keep their default values.
+An override can replace any of `dice`, `modify`, `resolve`, `postResolveModifiers` or `outcome`. Only the fields it names are replaced; the rest keep their values.
 
 When multiple `when` entries match, they are evaluated in order and the first match is used.
 
@@ -369,10 +375,10 @@ Specs use JSON Pointer-style references (`$ref`) to avoid duplication. Reference
 
 ## Complete example
 
-For a complete, working spec, see the [Salvage Union source](https://github.com/RANDSUM/randsum/blob/main/packages/games/salvageunion.randsum.json) — the richest spec in the ecosystem with multiple roll tables, range-based outcomes, and dynamic table selection — or any other game spec in the `packages/games/` directory.
+For a complete, working spec, see the [Salvage Union source](https://github.com/RANDSUM/randsum/blob/main/packages/games/salvageunion.randsum.json) (the richest spec in the package, with many roll tables, range-based outcomes and dynamic table selection) or any other game spec in the `packages/games/` directory.
 
 ## Related
 
-- **[Schema Overview](/games/schema/overview/)** — philosophy and codegen pipeline
-- **[Using loadSpec()](/games/schema/using-loadspec/)** — load specs at runtime
-- **[Contributing a Game](/games/schema/contributing-a-game/)** — write and submit a new spec
+- **[Schema Overview](/games/schema/overview/)**: philosophy and codegen pipeline
+- **[The Schema API](/games/schema/schema-api/)**: validate specs and generate code
+- **[Contributing a Game](/games/schema/contributing-a-game/)**: write and submit a new spec

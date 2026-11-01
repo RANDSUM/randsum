@@ -9,22 +9,24 @@ It documents how each surface is hosted, deployed, rolled back, and recovered.
 
 | Surface            | App                                             | Host                | Trigger                  | URL                   |
 | ------------------ | ----------------------------------------------- | ------------------- | ------------------------ | --------------------- |
-| Docs site + spec   | `apps/site`                                     | **Cloudflare**      | green CI on `main`       | randsum.dev           |
-| Old spec host      | `apps/site` (`wrangler.notation.jsonc`, 301 only) | **Cloudflare**      | green CI on `main`       | notation.randsum.dev  |
+| Docs site          | `apps/site`                                     | **Cloudflare**      | green CI on `main`       | randsum.dev           |
+| Notation spec      | `apps/site` (`wrangler.notation.jsonc`, static) | **Cloudflare**      | green CI on `main`       | notation.randsum.dev  |
 | Roller app         | `apps/site` (`wrangler.app.jsonc`, static)      | **Cloudflare**      | green CI on `main`       | app.randsum.dev       |
+| REST API + MCP     | `apps/api`                                      | **Cloudflare**      | green CI on `main`       | api.randsum.dev       |
 | Discord bot        | `apps/discord-bot`                              | **Cloudflare**      | green CI on `main`       | bot.randsum.dev       |
-| npm packages       | `packages/roller`, `packages/games`, `packages/mcp` | npm registry        | changesets on merge      | npmjs.com/org/randsum |
+| npm packages       | `packages/roller`, `games`, `mcp`, `ui`, `notation-spec` | npm registry | changesets on merge | npmjs.com/org/randsum |
 
 DNS for `randsum.dev` is on Cloudflare (nameservers
 `davina`/`rajeev`.ns.cloudflare.com; registrar moving from Hover to Cloudflare
-Registrar, transfer started 2026-10-30), and all three
-surfaces serve from Workers with custom domains. `/api/roll` runs as a Worker
+Registrar, transfer started 2026-10-30), and every Cloudflare surface above
+serves from a Worker with a custom domain. `/api/roll` runs as a Worker
 route on the apex.
 
 > Config sources: `apps/site/wrangler.jsonc`, `apps/site/wrangler.notation.jsonc`
-> (the `notation.randsum.dev` 301s, deployed to the `randsum-rdn` Worker),
+> (the spec at `notation.randsum.dev`, static assets deployed to the `randsum-rdn` Worker),
 > `apps/site/wrangler.app.jsonc` (the Roller app at `app.randsum.dev`, the `randsum-app`
-> Worker, whose custom domain route creates its DNS record) and
+> Worker, whose custom domain route creates its DNS record),
+> `apps/api/wrangler.jsonc` (`api.randsum.dev`, the `randsum-api` Worker, likewise) and
 > `apps/discord-bot/wrangler.jsonc`. Deployment runs from
 > `.github/workflows/deploy-cloudflare.yml`. There are no other deploy configs.
 >
@@ -47,9 +49,10 @@ audit and the decommission, is in the PRs that did it: #1226 through #1236.
 ## Cloudflare (apps/site → randsum.dev)
 
 The Astro site is a Worker with a custom domain, deployed from
-`.github/workflows/deploy-cloudflare.yml` once CI is green on `main`. It also
-serves the notation spec at `/spec` and its conformance vectors at
-`/conformance/`.
+`.github/workflows/deploy-cloudflare.yml` once CI is green on `main`. Its build
+also writes the notation spec (`dist-notation/`) and the Roller app
+(`dist-app/`); randsum.dev 301s `/spec` and `/conformance/` to
+`notation.randsum.dev` (see below).
 
 - **site** — `output: 'static'`, no adapter, plus one hand-written Worker
   (`apps/site/worker/index.ts`) for `/api/roll`. `assets.run_worker_first`
@@ -60,8 +63,8 @@ serves the notation spec at `/spec` and its conformance vectors at
   The `plan` job diffs that commit against the commit the last successful
   CI-triggered deploy shipped, so a deploy the concurrency group cancelled has
   its changes carried by the next one; a change to any of
-  `apps/{site,discord-bot}/**`, `packages/**` or `bun.lock` runs both deploy
-  jobs. Each run records its commit in its run name (`Deploy <sha>`), and
+  `apps/{site,discord-bot,api}/**`, `packages/**`, `plugins/**`, `llms.txt`,
+  `.bun-version`, `bun.lock` or the workflow itself runs every deploy job. Each run records its commit in its run name (`Deploy <sha>`), and
   `plan` reads it back from there. If the commit is *older* than the last
   deployed one — a CI re-run on an earlier `main` commit — `plan` deploys
   nothing and says so in a notice, rather than roll every surface and the
@@ -88,6 +91,7 @@ bun run --filter '@randsum/games' build
 bun run site:build
 bun run --filter @randsum/site deploy
 bun run --filter @randsum/site deploy:notation   # notation.randsum.dev (the spec)
+bun run --filter @randsum/site deploy:app        # app.randsum.dev (the Roller app)
 ```
 
 ### notation.randsum.dev — the spec's host
@@ -132,7 +136,8 @@ main is green first:
 ```bash
 gh workflow run deploy-cloudflare.yml --ref main                    # all surfaces
 gh workflow run deploy-cloudflare.yml --ref main -f surface=bot     # just the bot
-gh workflow run deploy-cloudflare.yml --ref main -f surface=site    # randsum.dev
+gh workflow run deploy-cloudflare.yml --ref main -f surface=site    # randsum.dev, notation, app
+gh workflow run deploy-cloudflare.yml --ref main -f surface=api     # api.randsum.dev
 ```
 
 Or use the **Run workflow** button on the workflow's Actions page. It shares the
@@ -158,7 +163,8 @@ bun run --cwd apps/site wrangler deployments list --name randsum-site
 bun run --cwd apps/site wrangler rollback --name randsum-site [<version-id>]
 ```
 
-Same shape for `randsum-discord-bot`. This is atomic and
+Same shape for `randsum-rdn`, `randsum-app` and `randsum-api` (from their own
+app directory) and `randsum-discord-bot`. This is atomic and
 reversible — rolling back does not delete newer versions.
 
 > **`wrangler rollback` restores code, not configuration.** Custom domains,
@@ -169,7 +175,7 @@ reversible — rolling back does not delete newer versions.
 
 - The site is fully reproducible from source; loss of Cloudflare state is
   recoverable by re-running the deploy commands above. That includes the
-  `notation.randsum.dev` redirect (`bun run --filter @randsum/site
+  `notation.randsum.dev` spec (`bun run --filter @randsum/site
   deploy:notation`); if the `randsum-rdn` Worker itself is
   lost, re-add `notation.randsum.dev` as its Custom Domain after deploying.
 - The non-git state is **DNS and the zones**: `randsum.dev` and `randsum.io`
@@ -177,8 +183,8 @@ reversible — rolling back does not delete newer versions.
   Cloudflare Registrar (started 2026-10-30). The `randsum.io` zone holds only
   its redirect rule. Keep the registrar credentials
   and the Cloudflare account documented in the password vault. The zone holds
-  four proxied names — the apex, `www`, `notation` (the redirect Worker) and
-  `bot` — all pointing at Workers custom domains.
+  six proxied names — the apex, `www`, `notation` (the spec Worker), `app`,
+  `api` and `bot` — all pointing at Workers custom domains.
 - The old Netlify DNS zones (`randsum.dev`, `randsum.io`) were deleted on
   2026-10-30. Nothing RANDSUM-related is left on Netlify.
 - **Owner action outstanding:** finish the Hover → Cloudflare Registrar
@@ -313,7 +319,25 @@ application ID, not a secret.
 
 ---
 
-## npm packages (roller, games, mcp)
+## Cloudflare Worker — the API (apps/api → api.randsum.dev)
+
+`apps/api/wrangler.jsonc` (the `randsum-api` Worker), deployed by the `api` job of
+`.github/workflows/deploy-cloudflare.yml`. It serves `/v1` and `/mcp`, the URL behind
+the Claude connector and the plugin's `.mcp.json`. Like the bot it has no `build`
+script: roller, games and mcp are built first, then Wrangler compiles `src/index.ts`.
+
+```bash
+bun run --filter '@randsum/api^...' build
+bun run --filter @randsum/api deploy
+bun run --cwd apps/api wrangler rollback --name randsum-api [<version-id>]
+```
+
+It is fully reproducible from git; its custom domain route recreates the DNS record
+and certificate on deploy.
+
+---
+
+## npm packages (roller, games, mcp, ui, notation-spec)
 
 Publishing is automated by changesets and npm Trusted Publishing. The flow, the local
 fallback and the `workspace:~` rule are in the Releases section of `CONTRIBUTING.md`.

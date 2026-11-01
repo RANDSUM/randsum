@@ -29,11 +29,11 @@ use, and that is all your bundle gets.
   roll in English, and a roll opens in a popover.
 - **`compact`** (the default): a panel with the field and Roll on top and the
   keys below; a roll lies over the keys. Has a `footer` slot.
+- **`max`**: the full roller, with keys, a readout, recent rolls and a History
+  dialog. Set `storage-key` to keep history in `localStorage`.
 
 In mini and compact nothing moves when you roll: the result stays until you
 close it or change the notation.
-- **`max`**: the full roller, with keys, a readout, recent rolls and a History
-  dialog. Set `storage-key` to keep history in `localStorage`.
 
 It fires `randsum-change` (detail `{ notation }`) on every edit and
 `randsum-roll` (detail: the result) after each roll, and has a `roll()`

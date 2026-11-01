@@ -13,13 +13,14 @@ Private app, deploys to Cloudflare Workers once CI is green on `main` via
   evaluates); `wrangler.jsonc` sends only `/api/*` to it via
   `run_worker_first`. Legacy 301s live in `public/_redirects`, not Astro's
   `redirects` option. Run the Worker locally with
-  `bun run build && bunx wrangler@4 dev -c wrangler.jsonc`.
-- **`@astrojs/starlight` 0.40.0** — docs framework (sidebar, search, routing)
+  `bun run build && bunx wrangler dev -c wrangler.jsonc`.
+- **`@astrojs/starlight`** — docs framework (sidebar, search, routing)
   - `starlight-sidebar-topics` — top-level topic grouping in the sidebar
   - `starlight-page-actions` — per-page action links
-- **`@astrojs/react` 5.0.7** — interactive React islands (playground, REPL)
+- **`@astrojs/react`** — interactive React islands
 - **`astro-expressive-code`** — code block rendering
 - **`@randsum/roller`** — workspace-linked, powers the live notation components
+- **`@randsum/ui`** — every roller on the site; **`@randsum/notation-spec`** — the `/spec` content
 - Fonts (Gabarito for text and headings, JetBrains Mono for code)
   via Astro's Google font provider, loaded by the `<Font />` tags in `Head.astro`
 - Brand: the pip mark (`src/components/PipMark.astro`, outline and knockout) and a
@@ -136,7 +137,7 @@ product page: a Starlight splash page that opens with the app's `ProductHero`.
 
 - The shell is `src/pages/app-shell/index.astro`. Like `/spec` it is not a
   Starlight page: a full-screen shell around `components/rollers/AppRoller.tsx`,
-  which renders `@randsum/ui`'s `RollerMax` and keeps history in localStorage. Its links are absolute to the app host's root.
+  which renders `@randsum/ui`'s `Roller` (`size="max"`, history in localStorage via `storageKey`). Its links are absolute to the app host's root.
 - `bun run build` is `astro build` then `scripts/build-app.ts`, which writes
   `dist-app/`: the shell as `index.html`, `app-public/` (manifest, icons,
   `_headers`, `sw.js`), `dist/_astro/` and the favicon. It then deletes
@@ -155,7 +156,7 @@ product page: a Starlight splash page that opens with the app's `ProductHero`.
 
 Docs live in `src/content/docs/` as `.mdx` files; Starlight auto-routes them.
 Top-level topics: `welcome/`, `roller/`, `notation/`, `games/` (incl.
-`games/schema/`), `api/`, `tools/`.
+`games/schema/`), `ui/`, `api/`, `tools/`.
 
 ## Landing Page
 
@@ -170,7 +171,7 @@ only slides between them. `PRODUCTS` also feeds `ProductHero`, the
 hero at the top of each product's introduction page. After the carousel, each
 section wears its product's lockup (`QuickStart` the roller, `GameSchemaSection`
 the games, whose spec samples live in `src/utils/gameSchemas.ts` and render
-server-side behind tabs, `UiSection` the UI package with a live `RollerMini`), and `ClosingCta` and `LandingFooter` show the whole
+server-side behind tabs, `UiSection` the UI package with a live mini `ServerRoller`), and `ClosingCta` and `LandingFooter` show the whole
 family's dice. `landing.css` holds only the page frame and the hero; every
 other section styles itself. `Faq` and the page's
 FAQPage structured data share `LANDING_FAQ` in `src/utils/faq.ts`. The Discord bot's
@@ -193,21 +194,18 @@ the matching topic's `items` array.
 
 ## Components
 
-Starlight component overrides (in `src/components/`, wired in `astro.config.mjs`):
-
-- `Head.astro` — `<head>` override (OG/Twitter meta)
-- `Header.astro` — site header override
-- `SiteTitle.astro` — logo/title override
-- `ThemeSelect.astro` — theme toggle override
+Starlight component overrides live in `src/components/` and are wired in `astro.config.mjs` under `components`.
 
 Interactive / shared components:
 
 - `live-repl/` — live code examples (used via `<CodeExample>` in MDX)
-- `rollers/` — the site's wrappers around `@randsum/ui`: `HeroRoller` (the
-  landing hero's `RollerCompact`, with `LANDING_PRESETS` and the auto-cycle),
-  `ModifierRoller` (a modifier page's `RollerCompact`, with that modifier's
-  canonical keys and examples), `NotationRoller` (inline `RollerMini` for MDX)
-  and `AppRoller` (the app's `RollerMax`). `rollers.css` maps the package's
+- `rollers/` — the site's wrappers around `@randsum/ui`: `ServerRoller` (a
+  `<randsum-roller>` server-rendered with `@randsum/ui/ssr`, alone or as a React
+  island's fallback), `HeroRoller` (the landing hero's compact `Roller`, with
+  `LANDING_PRESETS` and the auto-cycle), `ModifierRoller` (a server-rendered
+  compact roller with that modifier's canonical keys and examples, replaced by
+  `ModifierRollerIsland` once it mounts), `NotationRoller` (inline
+  `ServerRoller size="mini"` for MDX) and `AppRoller` (the app's max `Roller`). `rollers.css` maps the package's
   `--rsui-*` tokens onto the theme's `--rs-*`. Tests are `__tests__/rollers.test.tsx`
   and mount through happy-dom, which `bunfig.toml` preloads for every site test.
 - `PipMark.astro` — the pip mark, outline or knockout, in a product's pattern (R by default)
@@ -222,11 +220,6 @@ Interactive / shared components:
 - `public/schemas/v1/randsum.json` — checked-in copy of
   `packages/games/randsum.json`, served at the schema's `$id` by both `astro dev`
   and the production build. `__tests__/schema-sync.test.ts` fails if it drifts.
-
-## Package Data
-
-`src/utils/packageData.ts` defines metadata for packages shown on the site
-(`corePackages`, `games`, `toolPackages`).
 
 ## Commands
 

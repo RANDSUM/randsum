@@ -28,11 +28,11 @@ Import from the game's subpath and call `roll()`. That's it.
 <CodeExample code={`import { roll } from '@randsum/games/salvageunion'
 
 const { result, total } = roll('Core Mechanic')
-console.log(result.label)       // 'Success' | 'Tough Choice' | 'Failure' | ...
+console.log(result.label)       // 'Nailed it' | 'Success' | 'Tough Choice' | ...
 console.log(result.description) // Full outcome text
 console.log(total)              // d20 roll`} />
 
-Pass a table name to roll against any of Salvage Union's many tables — combat, salvage, critical injuries, and more.
+Pass a table name to roll against any of Salvage Union's tables: combat, salvage, critical injuries and more.
 
 <CodeExample code={`import { roll, VALID_TABLE_NAMES } from '@randsum/games/salvageunion'
 
@@ -44,7 +44,7 @@ console.log(VALID_TABLE_NAMES) // All available tables`} />
 
 ## Moderately complex: D&D 5e
 
-The fifth edition package accepts an options object with modifier, advantage/disadvantage, and critical hit tracking.
+The D&D 5e game takes an options object with a modifier, advantage or disadvantage, and critical hit tracking.
 
 <CodeExample code={`import { roll } from '@randsum/games/fifth'
 
@@ -65,18 +65,18 @@ const crit = roll({
   crit: true
 })
 console.log(crit.details.criticals)
-// { isNatural1: false, isNatural20: true }`} />
+// e.g. { isNatural1: false, isNatural20: true }`} />
 
 ## Every game follows the same pattern
 
 Each game subpath exports a `roll()` function that:
 
 1. Accepts game-specific input (a number, an options object, or nothing)
-2. Validates the input — throws `ValidationError` (from roller) for out-of-range numbers, or `SchemaError` for game-specific issues
+2. Validates the input: throws `ValidationError` (from roller) for out-of-range numbers, or `SchemaError` for game-specific issues
 3. Calls `@randsum/roller` internally with the right dice configuration
 4. Returns a typed `GameRollResult` with `result`, `total`, `rolls`, and optionally `details`
 
-The `result` field is game-specific — a rich outcome object in Salvage Union (with `label`, `description`, and `tableName`), a numeric total in D&D 5e, a hope/fear determination in Daggerheart.
+The `result` field is game-specific: a rich outcome object in Salvage Union (with `label`, `description`, and `tableName`), a numeric total in D&D 5e, a Hope or Fear result in Daggerheart.
 
 Every game subpath re-exports `SchemaError`, `GameRollResult`, and `RollRecord`. Import `ValidationError` from `@randsum/roller` if you need to catch range errors.
 
@@ -84,8 +84,8 @@ Every game subpath re-exports `SchemaError`, `GameRollResult`, and `RollRecord`.
 
 Game `roll()` functions can throw two types of errors:
 
-- **`ValidationError`** (from `@randsum/roller`) — for numeric validation like out-of-range values
-- **`SchemaError`** (from `@randsum/games`) — for game-specific issues like unmatched outcome tables
+- **`ValidationError`** (from `@randsum/roller`): numeric validation, like out-of-range values
+- **`SchemaError`** (from `@randsum/games`): game-specific issues, like an invalid table name or enum value
 
 <CodeExample code={`import { roll, SchemaError } from '@randsum/games/salvageunion'
 import { ValidationError } from '@randsum/roller'
@@ -105,13 +105,13 @@ try {
 | Error | Code | When |
 |---|---|---|
 | `ValidationError` | `VALIDATION_ERROR` | Numeric input out of range or not finite |
-| `SchemaError` | `INVALID_INPUT_TYPE` | Input value is wrong type |
-| `SchemaError` | `NO_TABLE_MATCH` | Roll total doesn't match any outcome tier |
+| `SchemaError` | `INVALID_INPUT_TYPE` | Input value is the wrong type or not an allowed value |
+| `SchemaError` | `NO_TABLE_MATCH` | Unknown table name, or a total that matches no outcome tier |
 | `SchemaError` | `INPUT_NOT_FOUND` | Required input field is missing |
 
 ## What's next
 
-- **[Games Introduction](/games/introduction/)** — overview of all supported game systems
-- **[Salvage Union](/games/salvageunion/)** — table-based rolls for mech salvage RPG
-- **[D&D 5e](/games/fifth/)** — ability checks, attacks, and saving throws
-- **[Schema Overview](/games/schema/overview/)** — how game packages are generated from JSON specs
+- **[Games Introduction](/games/introduction/)**: an overview of all supported game systems
+- **[Salvage Union](/games/salvageunion/)**: table rolls for the mech salvage RPG
+- **[D&D 5e](/games/fifth/)**: ability checks, attacks, and saving throws
+- **[Schema Overview](/games/schema/overview/)**: how games are generated from JSON specs

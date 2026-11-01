@@ -5,7 +5,7 @@ Thanks for your interest in contributing! This guide covers everything you need 
 ## Prerequisites
 
 - [Bun](https://bun.sh) >= 1.4.0 (enforced by `engines`)
-- [Node.js](https://nodejs.org) v18+ (for compatibility)
+- [Node.js](https://nodejs.org) >= 22.23.4 (enforced by `engines`)
 - Git
 
 ## Setup
@@ -19,10 +19,7 @@ bun run check      # Verify everything works
 
 ## Project Structure
 
-- `packages/roller/` -- Core dice engine with built-in RDN notation parser (all packages depend on this)
-- `packages/games/` -- Game system packages (subpath exports per game)
-- `apps/discord-bot/` -- Private Discord bot, deployed as a Cloudflare Worker
-- `apps/site/` -- Documentation site at randsum.dev (Astro + Starlight); its rollers are `@randsum/ui` components wrapped in `src/components/rollers/`, and the notation spec is a plain Astro page at `/spec` (`src/spec/`)
+See the Architecture section of [`AGENTS.md`](AGENTS.md) for every package and app. The site (`apps/site/`) also builds the notation spec, served at notation.randsum.dev (randsum.dev 301s `/spec` there).
 
 ## Adding a New Game
 
@@ -86,7 +83,7 @@ Releases are automated via [changesets](https://github.com/changesets/changesets
 
 **`workspace:~` warning:** never run a bare `npm publish` from a package directory. npm ships the literal `workspace:~` string, which consumers cannot resolve. Publishing always goes through `scripts/publish.ts`.
 
-**Local fallback (rare):** `bun scripts/publish.ts --otp=<CODE>` (the npm account has 2FA set to `auth-and-writes`), optionally with `--dry-run`. Local runs omit `--provenance`. Publish order is fixed in the script: `@randsum/roller` → `@randsum/games` → `@randsum/mcp`.
+**Local fallback (rare):** `bun scripts/publish.ts --otp=<CODE>` (the npm account has 2FA set to `auth-and-writes`), optionally with `--dry-run`. Local runs omit `--provenance`. Publish order is fixed in the script: `@randsum/roller` → `@randsum/games` → `@randsum/mcp` → `@randsum/ui` → `@randsum/notation-spec`.
 
 ### Versioning
 

@@ -64,22 +64,22 @@ console.log(description)
 
 const { result } = roll('Core Mechanic')
 
-// Access structured result data
-switch (result.key) {
-  case 'nailed_it':
-    // Roll of 20 - exceptional success
+// Branch on the result's label
+switch (result.label) {
+  case 'Nailed it':
+    // Roll of 20: exceptional success
     break
-  case 'success':
-    // Roll of 11-19 - standard success
+  case 'Success':
+    // Roll of 11-19: standard success
     break
-  case 'tough_choice':
-    // Roll of 6-10 - success with complications
+  case 'Tough Choice':
+    // Roll of 6-10: success with complications
     break
 }`} />
 
 ## API
 
-### `roll(tableName: string)`
+### `roll(tableName: string)` or `roll({ tableName })`
 
 **Input:**
 
@@ -92,7 +92,7 @@ switch (result.key) {
 | Property | Type | Description |
 |---|---|---|
 | `result` | `SalvageunionRollResult` | Table result with metadata |
-| `total` | `number` | D20 roll result (1-20) |
+| `total` | `number` | The d20 roll (1-20) |
 | `rolls` | `RollRecord[]` | Raw dice data from the core roller |
 
 ### Result structure
@@ -101,12 +101,12 @@ The `SalvageunionRollResult` interface includes:
 
 | Property | Type | Description |
 |---|---|---|
-| `key` | `string` | Internal result identifier |
+| `key` | `string` | The table row's range, such as `'11-19'` |
 | `label` | `string` | Human-readable result label |
 | `description` | `string` | Detailed result description |
 | `table` | `Record<string, unknown>` | Full table data |
 | `tableName` | `string` | Name of the table rolled |
-| `roll` | `number` | D20 roll result (1-20) |
+| `roll` | `number` | The d20 roll (1-20) |
 
 ## Core Mechanic table
 
@@ -114,11 +114,11 @@ The default Core Mechanic table uses these result tiers:
 
 | Roll | Result |
 |---|---|
-| 20 | Nailed It -- exceptional success |
-| 11-19 | Success -- goal achieved without compromise |
-| 6-10 | Tough Choice -- success with complications |
+| 20 | Nailed it: exceptional success |
+| 11-19 | Success: goal achieved without compromise |
+| 6-10 | Tough Choice: success with complications |
 | 2-5 | Failure |
-| 1 | Cascade Failure -- critical failure |
+| 1 | Cascade Failure: critical failure |
 
 :::note
 Other tables in Salvage Union have different result tiers and descriptions. The package includes all official tables from the Salvage Union reference.

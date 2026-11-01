@@ -61,6 +61,12 @@ describe.skipIf(root === '' || versioned === '')('built spec pages (notation.ran
     expect(read('sitemap.xml').includes('/v/0.9.0/')).toBe(false)
   })
 
+  test('caches the fingerprinted /_astro/ assets forever', () => {
+    expect(read('_headers')).toMatch(
+      /^\/_astro\/\*\n {2}Cache-Control: public, max-age=31536000, immutable$/m
+    )
+  })
+
   test('randsum.dev keeps no copy, only redirects', () => {
     expect(fs.existsSync(path.join(site, 'dist/spec'))).toBe(false)
     const redirects = fs.readFileSync(path.join(site, 'public/_redirects'), 'utf-8')

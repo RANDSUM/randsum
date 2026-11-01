@@ -438,7 +438,7 @@
       "properties": {
         "add": {
           "$ref": "#/$defs/IntegerOrInput",
-          "description": "Add a flat value to each individual die result (not the total — use addToTotal for post-resolve addition)"
+          "description": "Add a flat value to the roll total. Several add operations sum together."
         },
         "cap": {
           "type": "object",

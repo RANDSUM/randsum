@@ -22,6 +22,7 @@ apps/api/
     index.ts   # Worker entry: CORS, rate limit, body decoding, /mcp and /v1 dispatch
     v1.ts      # handleV1(): decoded request -> { status, body }. Pure, never throws.
     random.ts  # Unbiased crypto integers (rejection sampling); injectable word source for tests
+    longform.ts  # roll() options object (dotted/bracketed query keys) -> notation for /v1
   __tests__/   # v1 routes, random, and the Worker end to end (MCP included)
   wrangler.jsonc
 ```
@@ -36,8 +37,8 @@ bun run typecheck  # tsc --noEmit
 bun run check      # typecheck + test
 ```
 
-`@randsum/roller`, `@randsum/games` and `@randsum/mcp` resolve to their `dist/`, so build them
-first: the root `bun run build` builds exactly those three.
+`@randsum/roller`, `@randsum/games` and `@randsum/mcp` resolve to their `dist/`, so run the root
+`bun run build` first.
 
 ## Notes
 

@@ -14,7 +14,7 @@
 
 </div>
 
-**[RDN v0.9.0 Level 3 (Extended) Conformant](https://notation.randsum.dev/)** — Level 4 (Full) is partial: conformance vector 39 (`!s{}`) is a known gap
+**[RDN v0.9.0 Level 4 (Full) Conformant](https://notation.randsum.dev/)**
 
 Built on **[the Butter Stack](https://alxjrvs.github.io/butter/)** — Bun · Unified workspace · TypeScript · TanStack · Edge-deployed · React.
 
@@ -34,7 +34,7 @@ This repository contains multiple packages and applications for dice rolling and
   - `@randsum/games/root-rpg` - Root RPG
   - `@randsum/games/salvageunion` - Salvage Union
 
-- **[@randsum/ui](packages/ui)** - React roller components in three sizes (max, compact, mini), with every part importable on its own
+- **[@randsum/ui](packages/ui)** - the roller as Lit Web Components in three sizes (max, compact, mini), with React, Vue and React Native wrappers and every part importable on its own
 
 ### Applications (private)
 

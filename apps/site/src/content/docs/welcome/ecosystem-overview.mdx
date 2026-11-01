@@ -1,11 +1,11 @@
 ---
 title: Ecosystem Overview
-description: How the RANDSUM roller, games, notation spec, API, Discord bot, agent plugin and Roller app fit together, and which one to start with.
+description: How the RANDSUM roller, games, UI, API, Roller app, Discord bot, agent plugin and notation spec fit together, and which one to start with.
 ---
 
 import { Card, CardGrid } from '@astrojs/starlight/components'
 
-RANDSUM is one dice engine with several ways in. Two npm packages hold the code, an open spec defines the notation, and the API, Discord bot, agent plugin and Roller app put the same engine in front of people who are not writing TypeScript. Every package ships ESM with full type declarations and is published to npm under `@randsum`.
+RANDSUM is one dice engine with several ways in. The npm packages hold the code, an open spec defines the notation, and the API, Roller app, Discord bot and agent plugin put the same engine in front of people who are not writing TypeScript. Every package ships ESM with full type declarations and is published to npm under `@randsum`.
 
 ## Dependency diagram
 
@@ -42,7 +42,7 @@ Every package depends only on packages above it in the tree. Games never depend 
     [Learn more](/games/introduction/)
   </Card>
   <Card title="@randsum/ui" icon="seti:html">
-    The roller as Web Components: one element in three sizes, Max, Compact and Mini, plus every part it is built from, with React and Vue wrappers. Each component is its own import, so a page ships only what it uses.
+    The roller as Web Components: one element in three sizes, Max, Compact and Mini, plus every part it is built from, with React, Vue and Svelte bindings and React Native components. Each component is its own import, so a page ships only what it uses.
 
     [Learn more](/ui/introduction/)
   </Card>
@@ -100,7 +100,7 @@ Most developers should start with `@randsum/roller`. It includes the full notati
 
 ## Design principles
 
-- **RDN conformant**: `@randsum/roller` implements the [RANDSUM Dice Notation (RDN) Specification](https://notation.randsum.dev/) at Level 3 (Extended) conformance
+- **RDN conformant**: `@randsum/roller` implements the [RANDSUM Dice Notation (RDN) Specification](https://notation.randsum.dev/) at Level 4 (Full) conformance
 - **Zero core dependencies**: `@randsum/roller` has no runtime dependencies and includes the full notation parser and validator
 - **Throws on invalid input**: `roll()` throws typed errors on bad input (`ValidationError`, `ModifierError`, or `NotationParseError`); validate user-provided strings with `isDiceNotation()` or `validateNotation()` before rolling
 - **Games are code-generated**: every game is a `.randsum.json` spec compiled into TypeScript by the games package's codegen

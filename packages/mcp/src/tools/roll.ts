@@ -3,7 +3,7 @@ import { suggestNotationFix } from '@randsum/roller'
 import { ERROR_CODES, RandsumError } from '@randsum/roller/errors'
 import { roll } from '@randsum/roller/roll'
 import { isDiceNotation } from '@randsum/roller/validate'
-import { createSeededRandom } from '../rng'
+import { createSeededRandom } from '@randsum/roller/random'
 
 /** Input for the `roll` tool handler. */
 export interface RollToolInput {

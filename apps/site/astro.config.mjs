@@ -143,7 +143,7 @@ export default defineConfig({
                 items: [
                   { label: 'Overview', slug: 'games/schema/overview' },
                   { label: 'Schema Reference', slug: 'games/schema/reference' },
-                  { label: 'Using loadSpec()', slug: 'games/schema/using-loadspec' },
+                  { label: 'The Schema API', slug: 'games/schema/schema-api' },
                   {
                     label: 'Contributing a Game',
                     slug: 'games/schema/contributing-a-game'

@@ -1,6 +1,6 @@
 # @randsum/roller — Core Dice Engine
 
-The `roll()` function, native notation parsing, validation, tokenization, and the 19-modifier roll pipeline. Every other package depends on this one. Zero runtime dependencies, ESM-only output.
+The `roll()` function, native notation parsing, validation, tokenization, and the modifier roll pipeline. Every other package depends on this one. Zero runtime dependencies, ESM-only output.
 
 Notation parsing lives in this package (`src/notation/`). There is no separate `@randsum/notation` package; it was merged in (ADR-005), so any reference to it is stale. The lexer's internals are in `src/notation/AGENTS.md`.
 
@@ -22,14 +22,6 @@ Game-specific interpretation (outcome tables, pool conditions, critical threshol
 ## Modifier system
 
 `MODIFIER_SCHEMAS` in `src/notation/definitions/index.ts` is the single source of truth for which modifiers exist and their execution order: a record keyed by option name (so a missing modifier is a type error), sorted by each schema's `priority`. The lexer specs, `modifiersToNotation` / `modifiersToDescription` and `RANDSUM_MODIFIERS` in `src/modifiers/definitions.ts` all derive from it.
-
-Execution priority order (19 modifiers):
-
-```
-cap, replace, reroll, explode, compound, penetrate, explodeSequence,
-wildDie, unique, drop, keep, count, multiply, plus, minus,
-integerDivide, modulo, sort, multiplyTotal
-```
 
 Each modifier is single-sourced across two files, which keeps the tokenize path free of roll-engine code:
 
@@ -60,7 +52,7 @@ The Claude Code plugin's `/roll` mod rolls with `plugins/randsum/hooks/roller.ge
 
 ## Conformance vectors
 
-`spec/` holds the hand-authored RDN conformance vectors (not published). `apps/site` serializes them to randsum.dev/conformance/, and `__tests__/spec/` runs them through `roll()`.
+The RDN conformance vectors live in `packages/notation-spec/vectors/` and run against roller in `packages/notation-spec/__tests__/runner.test.ts`; a roller change that breaks one fails there. notation.randsum.dev/conformance/ serves them. `__tests__/spec/` holds roller's own tests for spec sections 6, 9 and 10.
 
 ## Commands
 
@@ -76,4 +68,4 @@ From the repo root: `bun run --filter @randsum/roller <script>`.
 
 ## Publishing
 
-Publish only via `bun scripts/publish.ts` (see `CONTRIBUTING.md`). Never `npm publish` or a direct `bun publish`. In-repo `sideEffects` stays `true` (bunup self-DCE otherwise breaks the dist); that script flips it to `false` in the tarball. See ADR-018.
+In-repo `sideEffects` stays `true` (bunup self-DCE otherwise breaks the dist); that script flips it to `false` in the tarball. See ADR-018.
