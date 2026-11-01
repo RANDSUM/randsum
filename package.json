@@ -44,10 +44,8 @@
     "check:notation-mirror": "bun scripts/check-notation-mirror.ts",
     "build": "bun run --filter '@randsum/mcp...' --filter '@randsum/notation-spec...' --filter '@randsum/ui...' build",
     "test": "bun run --filter '*' test",
-    "test:coverage": "bun test --coverage --coverage-reporter=lcov --coverage-dir=./coverage",
     "lint": "biome lint .",
     "format": "biome format --write .",
-    "format:check": "biome format .",
     "typecheck": "bun run --filter '@randsum/*' typecheck && bun run typecheck:scripts",
     "typecheck:scripts": "tsc --noEmit -p scripts",
     "size": "bun run --filter '*' size",
@@ -60,7 +58,6 @@
     "site:build": "bun --filter @randsum/site build",
     "site:dev": "bun run --filter @randsum/site dev",
     "changeset": "bunx changeset",
-    "version-packages": "bunx changeset version",
     "publish": "bun run build && bun scripts/publish.ts"
   },
   "type": "module",

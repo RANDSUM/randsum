@@ -58,12 +58,15 @@ const ROOT = join(import.meta.dir, '..')
 
 /**
  * `@randsum/*` names that are mentioned on purpose but are not workspace
- * packages, each with the reason. Keep it as short as it deserves to be.
+ * packages, each with the reason. Keep it as short as it deserves to be: an
+ * entry no scanned doc mentions fails the check, so a stale one cannot linger.
  */
 const UNKNOWN_PACKAGE_ALLOWLIST = new Map<string, string>([
-  ['cli', 'removed package; the dice-rolling skill says so explicitly'],
-  ['notation', 'merged into roller (ADR-005); roller CLAUDE.md warns against reviving it']
+  ['notation', 'merged into roller (ADR-005); roller AGENTS.md warns against reviving it']
 ])
+
+/** Allowlist entries some scanned doc still mentions; an unused entry is itself a failure. */
+const usedAllowlistEntries = new Set<string>()
 
 interface Problem {
   readonly file: string
@@ -318,9 +321,11 @@ const checkImports = (line: string): readonly string[] =>
     if (/https?:\/\/\S*$/.test(before)) return []
     const manifest = byName.get(`@randsum/${name}`)
     if (manifest === undefined) {
-      return UNKNOWN_PACKAGE_ALLOWLIST.has(name)
-        ? []
-        : [`\`@randsum/${name}\` is not a workspace package`]
+      if (!UNKNOWN_PACKAGE_ALLOWLIST.has(name)) {
+        return [`\`@randsum/${name}\` is not a workspace package`]
+      }
+      usedAllowlistEntries.add(name)
+      return []
     }
     if (sub === undefined || exported(manifest.exports, `.${sub}`)) return []
     return [
@@ -448,7 +453,15 @@ const shimProblems: readonly Problem[] = tracked.flatMap(file => {
   return []
 })
 
-const allProblems: readonly Problem[] = [...shimProblems, ...problems]
+const allowlistProblems: readonly Problem[] = [...UNKNOWN_PACKAGE_ALLOWLIST.keys()]
+  .filter(name => !usedAllowlistEntries.has(name))
+  .map(name => ({
+    file: 'scripts/check-doc-claims.ts',
+    line: 1,
+    message: `UNKNOWN_PACKAGE_ALLOWLIST entry \`${name}\` is mentioned by no scanned doc; delete it`
+  }))
+
+const allProblems: readonly Problem[] = [...shimProblems, ...problems, ...allowlistProblems]
 
 if (allProblems.length > 0) {
   console.error(

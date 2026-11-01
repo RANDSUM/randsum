@@ -124,6 +124,10 @@ Minimum bar: notation → options, options → notation (round-trip), one behavi
 
 - Document the notation in the spec at `packages/notation-spec/spec/v0.9.0.md` (served at https://notation.randsum.dev/): taxonomy table, priority table, syntax section. Add a new `vX.Y.Z.md` only for a version bump; otherwise edit in place.
 - Update `llms.txt` at the repo root if the public notation surface materially changes.
+- Add conformance vectors in `packages/notation-spec/vectors/v0.9.0.json` and run `bun run --filter @randsum/notation-spec test`.
+- Update `plugins/randsum/skills/dice-rolling/references/NOTATION.md` and the quick reference in `plugins/randsum/skills/dice-rolling/SKILL.md`.
+- Run `bun run plugin:roller` so the plugin's `/roll` bundle picks up the modifier.
+- Add a changeset (`bun run changeset`) releasing `@randsum/roller`, `@randsum/games` and `@randsum/mcp`.
 
 ## Verification (in order)
 

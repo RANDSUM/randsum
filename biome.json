@@ -12,7 +12,6 @@
       "!**/*.d.ts",
       "!**/.astro",
       "!**/public",
-      "!**/.ladle",
       "!**/*.tsbuildinfo",
       "!**/.bunup-dts-*",
       "!**/__tests__/fixtures",
@@ -153,12 +152,7 @@
       ]
     },
     {
-      "includes": [
-        "packages/roller/src/notation/**/*.ts",
-        "packages/roller/src/tokenize.ts",
-        "src/notation/**/*.ts",
-        "src/tokenize.ts"
-      ],
+      "includes": ["packages/roller/src/notation/**/*.ts", "packages/roller/src/tokenize.ts"],
       "plugins": ["./biome-plugins/no-tokenize-modifier-import.grit"]
     },
     {

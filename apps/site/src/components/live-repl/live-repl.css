@@ -1,0 +1,16 @@
+/* The "Open in StackBlitz" action under each TypeScript code example */
+.open-in-stackblitz {
+  text-align: right;
+  margin-top: 0.25rem;
+}
+
+.open-in-stackblitz button {
+  padding: 0.25rem 0;
+  border: none;
+  background: none;
+  color: var(--sl-color-accent);
+  font-family: var(--sl-font);
+  font-size: var(--rs-text-xs);
+  text-decoration: none;
+  cursor: pointer;
+}
