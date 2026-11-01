@@ -217,4 +217,3 @@ export interface RandSumSpec {
 }
 
 export type { GameRollResult } from '../types'
-export type { RollRecord } from '@randsum/roller'
