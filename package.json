@@ -8,10 +8,10 @@
     "@size-limit/preset-small-lib": "12.1.0",
     "@types/bun": "catalog:",
     "bunup": "0.16.32",
-    "knip": "6.25.0",
+    "knip": "6.43.0",
     "lefthook": "2.1.14",
     "mitata": "catalog:",
-    "size-limit": "14.3.0",
+    "size-limit": "12.1.0",
     "typescript": "catalog:"
   },
   "engines": {
@@ -19,7 +19,7 @@
     "bun": ">=1.4.0"
   },
   "catalog": {
-    "fast-check": "4.10.2",
+    "fast-check": "4.8.0",
     "@types/bun": "1.4.0",
     "mitata": "1.0.34",
     "typescript": "7.0.2",
