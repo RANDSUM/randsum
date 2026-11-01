@@ -1,6 +1,9 @@
 import { parseNotation } from '../notation/lexer/parse'
 import { parsedToOptions } from '../notation/parse/notationToOptions'
-import { optionsToDescription } from '../notation/transformers/optionsToDescription'
+import {
+  geometricDescription,
+  optionsToDescription
+} from '../notation/transformers/optionsToDescription'
 import { formatNotation, optionsToNotation } from '../notation/transformers/optionsToNotation'
 import { optionsToSidesFaces } from '../notation/transformers/optionsToSidesFaces'
 import {
@@ -134,10 +137,7 @@ function specialOptionsToParams<T>(
         key,
         argument: arg,
         notation,
-        description: [
-          `Roll ${q}g${sides} (geometric: roll d${sides} again while it shows ${sides}, summing every roll)`,
-          ...modifierDescription
-        ]
+        description: [geometricDescription(q, sides), ...modifierDescription]
       }
     }
     default:
@@ -239,6 +239,26 @@ function nonStringOptions<T>(argument: Exclude<RollArgument<T>, string>): RollOp
 }
 
 /**
+ * Resolve the pools of an accepted notation string to RollParams, enforcing the
+ * size limits and validating every modifier against its pool. Throws a
+ * RandsumError for anything `roll()` would reject before rolling;
+ * `validateNotation` calls it so that "valid" means "rolls".
+ */
+export function notationOptionsToParams<T>(
+  argument: string,
+  allOptions: readonly ParsedNotationOptions[],
+  position: number
+): RollParams<T>[] {
+  for (const options of allOptions) {
+    validateMaxQuantity(options.quantity)
+    validateMaxSides(options.sides)
+  }
+  return allOptions.map((options, index) =>
+    optionsToParams<T>(options, argument as RollArgument<T>, position, index)
+  )
+}
+
+/**
  * Convert a roll argument to fully resolved roll parameters.
  *
  * A notation string is parsed once: `parseNotation` decides validity (throwing on
@@ -259,14 +279,7 @@ export function parseArguments<T>(argument: RollArgument<T>, position: number): 
         value: argument
       })
     }
-    const allOptions = parsedToOptions(argument, parsed)
-    for (const options of allOptions) {
-      validateMaxQuantity(options.quantity)
-      validateMaxSides(options.sides)
-    }
-    return allOptions.map((options, index) =>
-      optionsToParams<T>(options, argument, position, index)
-    )
+    return notationOptionsToParams<T>(argument, parsedToOptions(argument, parsed), position)
   }
 
   return nonStringOptions<T>(argument).map((options, index) =>

@@ -132,10 +132,10 @@ describe('Geometric dice (gN)', () => {
 describe('geometric description', () => {
   test('names the quantity and the reroll-on-maximum rule (spec 4.3)', () => {
     expect(roll('3g6').rolls[0]?.description).toEqual([
-      'Roll 3g6 (geometric: roll d6 again while it shows 6, summing every roll)'
+      'Roll 3g6 (geometric: roll again on each 6, summing all rolls)'
     ])
     expect(roll('g8').rolls[0]?.description).toEqual([
-      'Roll 1g8 (geometric: roll d8 again while it shows 8, summing every roll)'
+      'Roll 1g8 (geometric: roll again on each 8, summing all rolls)'
     ])
   })
 })

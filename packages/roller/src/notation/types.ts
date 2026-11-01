@@ -1,3 +1,4 @@
+import type { ErrorCode } from '../errors'
 export interface ComparisonOptions {
   /** Threshold for "greater than" comparisons (strict: roll > N) */
   greaterThan?: number
@@ -214,6 +215,12 @@ export interface ValidationErrorInfo {
    * unexpected/invalid token). Populated by the single-pass parser.
    */
   position?: number
+  /**
+   * Which check failed: `INVALID_NOTATION` when the string is not notation (or
+   * breaks a repeat limit), otherwise the code of the error `roll()` would throw
+   * for it, such as `MODIFIER_ERROR` for `2d6L3`.
+   */
+  code?: ErrorCode
 }
 
 /**
