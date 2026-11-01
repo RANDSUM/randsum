@@ -5,7 +5,7 @@ import type { RollResult } from '../check'
 import { detail, useElement, useLayoutEffectSafe } from '../internal/react'
 import type { Key } from '../keys'
 import type { Preset } from '../presets'
-import type { RandsumRoller, RollerOrientation, RollerSize } from '../roller'
+import type { RandsumRoller, RollerSize } from '../roller'
 import type { PresetsLayout } from '../internal/parts/preset-list'
 import '../roller'
 
@@ -13,7 +13,7 @@ export type { RollResult } from '../check'
 export type { PresetsLayout } from '../internal/parts/preset-list'
 export type { Key } from '../keys'
 export type { Preset } from '../presets'
-export type { RandsumRoller, RollerOrientation, RollerSize } from '../roller'
+export type { RandsumRoller, RollerSize } from '../roller'
 
 export interface RollerProps {
   /** 'mini', 'compact' (the default) or 'max'. */
@@ -37,8 +37,6 @@ export interface RollerProps {
   /** Compact: 'chips' (the default) or 'list', which shows each description. */
   readonly presetsLayout?: PresetsLayout
   readonly placeholder?: string
-  /** Compact: the readout beside the builder, above it, or by width ('auto'). */
-  readonly orientation?: RollerOrientation
   /** Mini and Compact: a link to the full roller. */
   readonly appLink?: string
   /** Compact: extra footer content, after the app link. */

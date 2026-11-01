@@ -161,25 +161,43 @@ function button(container: HTMLElement, name: string): HTMLButtonElement {
 }
 
 describe('native <Roller>', () => {
-  test('compact: typing, rolling, and the readout', async () => {
+  test('compact: typing, rolling, and a result over the keys that goes away', async () => {
     const rolls: RollResult[] = []
     const changes: string[] = []
-    const { container, getByText } = render(
+    const { container } = render(
       <Roller onRoll={r => rolls.push(r)} onChange={n => changes.push(n)} />
     )
-    expect(getByText('Your roll lands here')).toBeDefined()
+    const total = (): Element | null => container.querySelector('[aria-label^="Total "]')
+    expect(total()).toBeNull()
     expect(button(container, 'Roll').disabled).toBe(true)
     await act(async () => {
       fireEvent.change(input(container), { target: { value: '2d6+1' } })
     })
     expect(changes).toEqual(['2d6+1'])
-    expect(button(container, 'Roll').disabled).toBe(false)
     await act(async () => {
       button(container, 'Roll').click()
     })
     expect(rolls).toHaveLength(1)
-    const total = container.querySelector('[aria-label^="Total "]')
-    expect(total?.textContent).toBe(String(rolls[0]?.total))
+    expect(total()?.textContent).toBe(String(rolls[0]?.total))
+    // The field and Roll come before everything else, the result included
+    const order = input(container).compareDocumentPosition(total() as Node)
+    expect(order & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+    await act(async () => {
+      button(container, 'Roll again').click()
+    })
+    expect(rolls).toHaveLength(2)
+    await act(async () => {
+      button(container, 'Close result').click()
+    })
+    expect(total()).toBeNull()
+    await act(async () => {
+      button(container, 'Roll').click()
+    })
+    expect(total()).not.toBeNull()
+    await act(async () => {
+      fireEvent.change(input(container), { target: { value: '2d6+2' } })
+    })
+    expect(total()).toBeNull()
   })
 
   test('keys edit the notation and Clear is last', async () => {
@@ -240,40 +258,27 @@ describe('native <Roller>', () => {
     expect(opened).toEqual(['https://app.randsum.dev/'])
   })
 
-  test('mini: the keys and the steps open on a tap', async () => {
-    const { container } = render(<Roller size="mini" defaultNotation="3d6" />)
-    const dice = (): number =>
-      [...container.querySelectorAll('div[aria-label]')].filter(d =>
-        /^\d+$/.test(d.getAttribute('aria-label') ?? '')
-      ).length
+  test('mini: the keys open on a tap, and a roll opens a card that closes', async () => {
+    const { container, queryByRole } = render(<Roller size="mini" defaultNotation="3d6" />)
     expect(container.querySelector('[aria-label="Add a d6"]')).toBeNull()
     await act(async () => {
       button(container, 'Dice keys').click()
     })
     expect(container.querySelector('[aria-label="Add a d6"]')).not.toBeNull()
+    expect(queryByRole('dialog')).toBeNull()
     await act(async () => {
       button(container, 'Roll').click()
     })
-    const total = [...container.querySelectorAll('button')].find(b =>
-      b.getAttribute('aria-label')?.startsWith('Total ')
+    expect(queryByRole('dialog')).not.toBeNull()
+    expect(container.querySelector('[aria-label^="Total "]')?.textContent).toMatch(/^\d+$/)
+    const dice = [...container.querySelectorAll('div[aria-label]')].filter(d =>
+      /^\d+$/.test(d.getAttribute('aria-label') ?? '')
     )
-    if (total === undefined) throw new Error('no total')
-    expect(dice()).toBe(0)
+    expect(dice).toHaveLength(3)
     await act(async () => {
-      total.click()
+      button(container, 'Close result').click()
     })
-    expect(total.getAttribute('aria-expanded')).toBe('true')
-    expect(dice()).toBe(3)
-    const dimmed = (): number =>
-      [...container.querySelectorAll<HTMLElement>('div')].filter(
-        d => d.style.opacity === '0.55' && d.querySelector('div[aria-label]') !== null
-      ).length
-    expect(dimmed()).toBe(0)
-    await act(async () => {
-      button(container, 'Add a d6').click()
-    })
-    // An edit leaves the open steps behind the notation, so they dim with the total
-    expect(dimmed()).toBeGreaterThan(0)
+    expect(queryByRole('dialog')).toBeNull()
   })
 
   test('max: recent rolls, the History sheet, and Clear', async () => {

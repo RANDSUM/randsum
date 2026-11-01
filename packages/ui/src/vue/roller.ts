@@ -7,14 +7,14 @@ import type { PresetsLayout } from '../internal/parts/preset-list'
 import { renderElement } from '../internal/vue'
 import type { Key } from '../keys'
 import type { Preset } from '../presets'
-import type { RollerOrientation, RollerSize } from '../roller'
+import type { RollerSize } from '../roller'
 import '../roller'
 
 export type { RollResult } from '../check'
 export type { PresetsLayout } from '../internal/parts/preset-list'
 export type { Key } from '../keys'
 export type { Preset } from '../presets'
-export type { RollerOrientation, RollerSize } from '../roller'
+export type { RollerSize } from '../roller'
 
 export interface RollerProps {
   /** 'mini', 'compact' (the default) or 'max'. */
@@ -26,7 +26,6 @@ export interface RollerProps {
   readonly presetsLabel?: string
   readonly presetsLayout?: PresetsLayout
   readonly placeholder?: string
-  readonly orientation?: RollerOrientation
   readonly appLink?: string
   readonly history?: boolean
   readonly storageKey?: string
@@ -53,7 +52,6 @@ const PROPS = [
   'presetsLabel',
   'presetsLayout',
   'placeholder',
-  'orientation',
   'appLink',
   'history',
   'storageKey',

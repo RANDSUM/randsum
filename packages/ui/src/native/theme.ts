@@ -26,6 +26,8 @@ export interface RollerTheme {
   readonly invalid: string
   readonly disabledBg: string
   readonly disabledInk: string
+  /** What dims the app behind mini's result card. */
+  readonly scrim: string
   /** The added-die fill: the accent over `raised`, which CSS mixes for itself. */
   readonly addedBg: string
   /** Undefined uses the platform's system font. */
@@ -82,6 +84,7 @@ export const lightTheme: RollerTheme = {
   invalid: '#b91c1c',
   disabledBg: '#e4e4e7',
   disabledInk: '#71717a',
+  scrim: 'rgba(24, 24, 27, 0.4)',
   addedBg: '#fde9ea'
 }
 
@@ -101,6 +104,7 @@ export const darkTheme: RollerTheme = {
   invalid: '#f87171',
   disabledBg: '#2e2e33',
   disabledInk: '#8b8b94',
+  scrim: 'rgba(0, 0, 0, 0.6)',
   addedBg: '#402c30'
 }
 

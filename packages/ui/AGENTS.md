@@ -79,7 +79,11 @@ page and modifier docs all render them through the React wrappers.
 
 - Every size shows dice keys. Presets are an optional property and appear
   behind a keys / presets switch, keys first.
-- Compact and Max lay out with container queries, not viewport media queries.
+- Max lays out with container queries, not viewport media queries.
+- Mini and compact never change size on a roll: the field and Roll stay on
+  top, and the result is a layer (compact: over the keys; mini: a popover on
+  the web, a modal card in React Native) that goes when closed or when the
+  notation changes.
 - A notation is valid only when `validateNotation` passes and a trial roll
   succeeds (`check.ts`), so a combination the roller rejects at roll time shows
   as invalid before the user presses Roll.

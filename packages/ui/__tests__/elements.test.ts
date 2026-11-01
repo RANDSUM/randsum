@@ -55,6 +55,32 @@ describe('<randsum-roller>', () => {
     expect(q<HTMLInputElement>(shadow(el), 'input').value).toBe('2d6')
   })
 
+  test.each([
+    ['compact', '.rsui-result-layer'],
+    ['mini', '.rsui-pop--result']
+  ] as const)(
+    '%s: the field comes first and a roll lies over the page until closed or edited',
+    async (size, card) => {
+      const el: RandsumRoller = await mount('randsum-roller', { size, notation: '2d6' })
+      const root = shadow(el)
+      expect(root.querySelector(card)).toBeNull()
+      el.roll()
+      await el.updateComplete
+      const shown = q(root, card)
+      const order = q(root, 'input').compareDocumentPosition(shown)
+      expect(order & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+      q<HTMLButtonElement>(root, 'button[aria-label="Close result"]').click()
+      await el.updateComplete
+      expect(root.querySelector(card)).toBeNull()
+      el.roll()
+      await el.updateComplete
+      expect(root.querySelector(card)).not.toBeNull()
+      el.notation = '2d6+1'
+      await el.updateComplete
+      expect(root.querySelector(card)).toBeNull()
+    }
+  )
+
   test('Roll fires randsum-roll with the result and shows the total', async () => {
     const el: RandsumRoller = await mount('randsum-roller', { notation: '3d6' })
     const results: RollResult[] = []

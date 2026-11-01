@@ -33,13 +33,14 @@ npm install @randsum/ui
 `<randsum-roller>` takes a `size`.
 
 **Mini** is two short rows for docs, READMEs and chat: the field and Roll, then
-the keys and the total. Hover or focus Roll to read
-the roll in English.
+the keys. Hover or focus Roll to read the roll in English; a roll opens in a
+popover.
 
 <ServerRoller class="not-content ui-demo" size="mini" notation="4d6L" />
 
-**Compact**, the default, is a panel: the builder on one side and the result
-on the other, or stacked in a narrow column.
+**Compact**, the default, is a panel: the field and Roll on top, the keys
+below, and each roll laid over the keys until you close it or edit the
+notation, so nothing moves.
 
 <ServerRoller class="not-content ui-demo" size="compact" notation="2d20H+5" />
 

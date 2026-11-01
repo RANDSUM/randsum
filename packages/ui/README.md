@@ -24,11 +24,14 @@ use, and that is all your bundle gets.
 
 `<randsum-roller>` takes a `size`:
 
-- **`mini`**: the field and Roll on one row, the keys button and the total on
-  the row below. The keys button opens a key pad, and hovering or
-  focusing Roll shows the roll in English.
-- **`compact`** (the default): a panel. `orientation` is `auto` (by container
-  width), `landscape` or `portrait`. Has a `footer` slot.
+- **`mini`**: the field and Roll on one row, the keys button and the status
+  below. The keys button opens a key pad, hovering or focusing Roll shows the
+  roll in English, and a roll opens in a popover.
+- **`compact`** (the default): a panel with the field and Roll on top and the
+  keys below; a roll lies over the keys. Has a `footer` slot.
+
+In mini and compact nothing moves when you roll: the result stays until you
+close it or change the notation.
 - **`max`**: the full roller, with keys, a readout, recent rolls and a History
   dialog. Set `storage-key` to keep history in `localStorage`.
 

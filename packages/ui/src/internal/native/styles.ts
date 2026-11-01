@@ -74,8 +74,13 @@ type StyleName =
   | 'tabTextOn'
   | 'link'
   | 'footer'
-  | 'miniTotal'
-  | 'miniTotalText'
+  | 'miniKeys'
+  | 'builder'
+  | 'overlay'
+  | 'scrim'
+  | 'scrimTap'
+  | 'card'
+  | 'cardActions'
   | 'recentHead'
   | 'recentTitle'
   | 'recentEmpty'
@@ -274,13 +279,31 @@ function build(t: RollerTheme): RollerStyles {
     link: { ...text, color: t.ink, fontSize: t.textSm, fontWeight: '600' },
     footer: { flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap', gap: 8 },
 
-    miniTotal: {
-      ...quiet,
-      minWidth: 52,
-      minHeight: 52,
-      borderRadius: t.radiusLg
+    miniKeys: { ...quiet, minWidth: 52, minHeight: 52, borderRadius: t.radiusLg },
+
+    // Compact's result lies over the builder; its height is the builder's
+    builder: { gap: 12 },
+    overlay: {
+      position: 'absolute',
+      top: 0,
+      right: 0,
+      bottom: 0,
+      left: 0,
+      backgroundColor: t.bg
     },
-    miniTotalText: { ...text, fontSize: t.textLg, fontWeight: '800' },
+    // Mini's result is a card over a scrim
+    scrim: { flex: 1, justifyContent: 'center', padding: 16, backgroundColor: t.scrim },
+    scrimTap: { position: 'absolute', top: 0, right: 0, bottom: 0, left: 0 },
+    card: {
+      alignSelf: 'center',
+      width: '100%',
+      maxWidth: 480,
+      maxHeight: '80%',
+      borderRadius: t.radiusXl,
+      backgroundColor: t.bg,
+      overflow: 'hidden'
+    },
+    cardActions: { flexDirection: 'row', gap: 8 },
 
     recentHead: { flexDirection: 'row', alignItems: 'center', gap: 8 },
     recentTitle: { ...text, flexGrow: 1, fontSize: t.textMd, fontWeight: '700' },
