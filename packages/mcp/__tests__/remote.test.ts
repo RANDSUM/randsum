@@ -30,7 +30,17 @@ describe('handleMcpRequest', () => {
     expect(response.headers.get('Content-Type')).toContain('application/json')
     expect(response.headers.get('Mcp-Session-Id')).toBeNull()
     expect(await response.json()).toMatchObject({
-      result: { serverInfo: { name: '@randsum/mcp' } }
+      result: {
+        serverInfo: {
+          name: '@randsum/mcp',
+          title: 'RANDSUM',
+          websiteUrl: 'https://randsum.dev',
+          icons: [
+            { src: 'https://randsum.dev/favicon.svg' },
+            { src: 'https://randsum.dev/brand/randsum-avatar.png' }
+          ]
+        }
+      }
     })
   })
 

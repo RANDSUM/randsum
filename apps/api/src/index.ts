@@ -87,6 +87,12 @@ async function route(request: Request): Promise<Response> {
 
   if (pathname === '/') return Response.redirect(`${url.origin}/v1`, 302)
 
+  // Clients that label a connector with its host's favicon get the RANDSUM
+  // mark from randsum.dev instead of a stale or generic icon.
+  if (pathname === '/favicon.ico' || pathname === '/favicon.svg') {
+    return Response.redirect(`https://randsum.dev${pathname}`, 301)
+  }
+
   if (pathname === '/v1' || pathname.startsWith('/v1/')) {
     const input = await readInput(request, url)
     if (input instanceof Response) return input
