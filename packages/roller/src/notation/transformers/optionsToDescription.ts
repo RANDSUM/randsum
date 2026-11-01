@@ -36,7 +36,7 @@ function specialCoreDescription(
     case 'draw':
       return `Draw ${quantity} from d${sides}`
     case 'geometric':
-      return `Roll g${sides} (geometric: roll d${sides} until 1)`
+      return `Roll ${quantity}g${sides} (geometric: roll d${sides} again while it shows ${sides}, summing every roll)`
     default:
       return null
   }

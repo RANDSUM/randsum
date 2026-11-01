@@ -79,8 +79,8 @@ export type DrawDieNotation =
   | `${number}${'dd' | 'DD' | 'Dd' | 'dD'}${number}`
 
 /**
- * Geometric die notation — roll until first 1, count attempts.
- * `g6` rolls d6 repeatedly until a 1 appears, result is the attempt count.
+ * Geometric die notation: roll dN again while it shows N, summing every roll.
+ * `g6` rolls a d6, and again on each 6; the result is the sum of the rolls.
  * Supports quantity prefix: `3g6` performs 3 independent geometric rolls.
  *
  * Case-insensitive: g6 and G6 are equivalent.
