@@ -5,7 +5,7 @@ description: Reference for every function, type and error class exported by @ran
 
 import CodeExample from '../../../components/live-repl/CodeExample.astro'
 
-Everything exported from `@randsum/roller`. All functions and types below are exported directly from roller — notation parsing is built in with no separate package required.
+Everything exported from `@randsum/roller`. Notation parsing is built in, so there is no separate package to install. The notation helpers (`notationToOptions`, `optionsToNotation`, `tokenize`, `suggestNotationFix` and the description functions) are covered in the [Notation API Reference](/notation/api-reference/).
 
 ## Functions
 
@@ -29,6 +29,7 @@ roll('2d6+3[fire]')         // annotation`} />
 **Signature:**
 
 ```typescript
+function roll<T = string>(...args: RollArgument<T>[]): RollerRollResult<T>
 function roll<T = string>(
   ...args: [...RollArgument<T>[], RollConfig]
 ): RollerRollResult<T>
@@ -42,10 +43,11 @@ Validate a dice notation string and return a detailed result with parsed structu
 
 const result = validateNotation('4d6L')
 if (result.valid) {
-  console.log(result.notation)  // ['4d6L'] — array of DiceNotation
-  console.log(result.options)   // [{ sides: 6, quantity: 4, ... }] — array of ParsedNotationOptions
+  console.log(result.notation)     // ['4d6L']: one DiceNotation per pool
+  console.log(result.options)      // [{ quantity: 4, sides: 6, ... }]: one options object per pool
+  console.log(result.description)  // [['Roll 4 6-sided dice', 'Drop lowest']]
 } else {
-  console.log(result.error)     // { message: '...', argument: '...' }
+  console.log(result.error)        // { message, argument, position? }
 }`} />
 
 **Signature:**
@@ -73,7 +75,7 @@ function isDiceNotation(value: string): value is DiceNotation
 
 ### `notation(value)`
 
-Assert a string is valid dice notation or throw `NotationParseError`.
+Assert a string is valid dice notation or throw `NotationParseError`. The error's `suggestion` holds a corrected string when `suggestNotationFix()` can find one.
 
 **Signature:**
 
@@ -94,15 +96,15 @@ Validators for numeric input. Used by the roller engine and game packages. Each 
 
 ## Error classes
 
-`RandsumError` extends `Error` and adds a `code` property. `ValidationError`, `ModifierError`, and `RollError` all extend `RandsumError`. `NotationParseError` extends `Error` directly and is part of `@randsum/roller`.
+`RandsumError` extends `Error` and adds a `code` property and an optional `context`. `NotationParseError`, `ValidationError`, `ModifierError` and `RollError` all extend `RandsumError`.
 
 | Class | Extends | Code | Thrown when |
 |---|---|---|---|
 | `RandsumError` | `Error` | (varies) | Base class for roller errors |
-| `ValidationError` | `RandsumError` | `VALIDATION_ERROR` | Invalid input (zero sides, negative quantity, etc.) |
+| `ValidationError` | `RandsumError` | `VALIDATION_ERROR` | Invalid input: a string that is not notation, zero sides, a negative quantity |
 | `ModifierError` | `RandsumError` | `MODIFIER_ERROR` | Modifier produces invalid state (e.g. dropping all dice) |
 | `RollError` | `RandsumError` | `ROLL_ERROR` | General roll execution failure |
-| `NotationParseError` | `Error` | `INVALID_NOTATION` | Invalid dice notation string |
+| `NotationParseError` | `RandsumError` | `INVALID_NOTATION` | `notation()` or `notationToOptions()` rejects a string, or a repeat (`xN`) exceeds its limit |
 
 ### `ERROR_CODES`
 
@@ -121,12 +123,12 @@ const ERROR_CODES = {
 
 ### `RollerRollResult<T>`
 
-Return type of `roll()`. Extends `RollResult`.
+Return type of `roll()`.
 
 | Property | Type | Description |
 |---|---|---|
 | `total` | `number` | Combined total of all roll groups |
-| `values` | `T[]` | Aggregate result values (defaults to `string[]`) |
+| `values` | `(number \| T)[]` | Every die value across all groups: numbers for numeric dice, faces for custom-faced dice |
 | `rolls` | `RollRecord<T>[]` | Full record for each roll group |
 
 ### `RollRecord<T>`
@@ -147,24 +149,15 @@ Detailed record of a single roll group.
 | `label` | `string` (optional) | Annotation label from notation |
 | `customResults` | `T[]` (optional) | Custom face results for non-numeric dice |
 
-### `RollResult<TValues, TRollRecord>`
-
-Generic base type.
-
-| Property | Type | Description |
-|---|---|---|
-| `rolls` | `TRollRecord[]` | Individual roll records |
-| `values` | `TValues` | Aggregate result |
-
 ## Input types
 
 | Type | Description |
 |---|---|
 | `RollArgument<T>` | `RollOptions<T> \| DiceNotation \| number` |
-| `RollOptions<T>` | Options object with `sides`, `quantity`, `modifiers` |
-| `RollConfig` | `{ randomFn?: RandomFn }` -- pass as last argument to `roll()` |
-| `RandomFn` | `() => number` -- must return `[0, 1)` |
-| `DiceNotation` | Branded string type for valid notation |
+| `RollOptions<T>` | Options object with `sides`, `quantity`, `arithmetic`, `modifiers`, `key` and `label` |
+| `RollConfig` | `{ randomFn?: RandomFn }`, passed as the last argument to `roll()` |
+| `RandomFn` | `() => number`, returning a number in `[0, 1)` |
+| `DiceNotation` | Template literal type for notation strings (`` `${number}d${number}...` ``) |
 
 ## Modifier types
 
@@ -173,33 +166,31 @@ All modifier option types are exported from `@randsum/roller`.
 | Type | Description |
 |---|---|
 | `ModifierOptions` | Top-level modifier configuration object |
-| `ModifierConfig` | Union of all individual modifier configs |
 | `ComparisonOptions` | Conditions like `{ greaterThan: 3, lessThan: 18 }` |
 | `DropOptions` | Extends `ComparisonOptions` with `{ lowest?, highest? }` |
 | `KeepOptions` | `{ lowest?: number, highest?: number }` |
 | `RerollOptions` | Reroll conditions and limits |
 | `ReplaceOptions` | Value replacement rules |
 | `UniqueOptions` | Unique constraint config |
-| `SuccessCountOptions` | Count dice meeting a threshold |
-| `FailureCountOptions` | Count dice at or below a threshold |
+| `CountOptions` | Count dice that meet a condition (successes, failures, botches) |
 
 ## Internal types
+
+These appear inside result objects but are not exported.
 
 | Type | Description |
 |---|---|
 | `RollParams<T>` | Fully resolved parameters (extends `RollOptions`, adds `faces`, `argument`, `description`, `notation`) |
 | `RequiredNumericRollParameters` | `{ quantity: number, sides: number }` |
-| `ModifierLog` | `{ modifier, options, added, removed }` -- log entry for one modifier |
-| `NumericRollBonus` | `{ rolls: number[], logs: ModifierLog[] }` -- intermediate modifier state |
+| `ModifierLog` | `{ modifier, options, added, removed }`: the log entry for one modifier |
+| `NumericRollBonus` | `{ rolls: number[], logs: ModifierLog[] }`: intermediate modifier state |
 
 ## Validation result types
 
 | Type | Description |
 |---|---|
-| `ValidationResult` | `ValidValidationResult \| InvalidValidationResult` |
-| `ValidValidationResult` | `{ valid: true, argument, description, options, notation, error: null }` |
-| `InvalidValidationResult` | `{ valid: false, argument, error: ValidationErrorInfo }` |
-| `ValidationErrorInfo` | `{ message: string, argument: string }` |
+| `ValidationResult` | `{ valid: true, argument, description, options, notation, error: null }` or `{ valid: false, argument, error: ValidationErrorInfo }` |
+| `ValidationErrorInfo` | `{ message: string, argument: string, position?: number }` |
 
 ## Subpath exports
 
@@ -207,10 +198,11 @@ All modifier option types are exported from `@randsum/roller`.
 
 | Import path | Exports | When to use |
 |---|---|---|
-| `@randsum/roller` | Full API — all functions, types, and error classes | Default; use when bundle size is not a concern |
-| `@randsum/roller/roll` | `roll()` only | Game packages and the MCP server use this to avoid bundling the full notation toolkit |
+| `@randsum/roller` | Full API: every function, type and error class | Default; use when bundle size is not a concern |
+| `@randsum/roller/roll` | `roll()` only | The game packages use this to avoid bundling the full notation toolkit |
 | `@randsum/roller/validate` | `validateNotation()`, `isDiceNotation()`, `notation()`, validation helpers | When you only need input validation without rolling |
 | `@randsum/roller/errors` | `RandsumError`, `ValidationError`, `ModifierError`, `RollError`, `NotationParseError`, `ERROR_CODES` | Error handling only, no roll logic |
+| `@randsum/roller/random` | `createSeededRandom(seed)`, `createQueueRandom(options)` | Deterministic `RandomFn`s for tests and replays: a seeded sequence, or fixed values played back |
 | `@randsum/roller/tokenize` | `tokenize()` | Low-level notation tokenization |
 | `@randsum/roller/docs` | `NOTATION_DOCS`, `MODIFIER_DOCS`, `DICE_DOCS` and types `NotationDoc`, `ModifierCategory` | Build-time docs generation, introspection tooling |
 | `@randsum/roller/trace` | `traceRoll()`, `formatAsMath()` and type `RollTraceStep` | Step-by-step roll debugging and math display |
@@ -231,4 +223,4 @@ import { traceRoll, formatAsMath } from '@randsum/roller/trace'
 import type { RollTraceStep } from '@randsum/roller/trace'
 ```
 
-`traceRoll(record)` takes a `RollRecord` (from `result.rolls[n]`) and returns `readonly RollTraceStep[]` — a discriminated union with `kind: 'rolls' | 'divider' | 'arithmetic' | 'finalRolls'` — showing each stage of roll evaluation. `formatAsMath(rolls, delta?)` takes a `readonly number[]` and optional numeric delta and returns a human-readable math string (e.g. `"2 + 4 = 6"`). Useful for verbose output displays and debugging.
+`traceRoll(record)` takes a `RollRecord` (from `result.rolls[n]`) and returns `readonly RollTraceStep[]`, a discriminated union with `kind: 'rolls' | 'divider' | 'arithmetic' | 'finalRolls'` that shows each stage of the roll. `formatAsMath(rolls, delta?)` takes a `readonly number[]` and optional numeric delta and returns a human-readable math string (e.g. `"2 + 4 = 6"`). Useful for verbose output displays and debugging.

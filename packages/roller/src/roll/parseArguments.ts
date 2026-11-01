@@ -134,7 +134,10 @@ function specialOptionsToParams<T>(
         key,
         argument: arg,
         notation,
-        description: [`Roll g${sides} (geometric: roll d${sides} until 1)`, ...modifierDescription]
+        description: [
+          `Roll g${sides} (geometric: reroll d${sides} on max, sum all)`,
+          ...modifierDescription
+        ]
       }
     }
     default:

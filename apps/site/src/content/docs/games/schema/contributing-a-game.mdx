@@ -96,7 +96,7 @@ bun install`} />
     This runs `codegen.ts --check`, which parses all `.randsum.json` files in the package root and reports validation errors without writing any files.
 
     Fix any errors before proceeding. Common issues:
-    - Missing required fields (`name`, `shortcode`, `pools`, `roll`)
+    - Missing required fields (`$schema`, `name`, `shortcode`, `game_url`, and `roll` or `rolls`)
     - `$ref` pointing to a pool, table, or outcome that doesn't exist
     - Table ranges with gaps or overlaps
     - Input constraints missing `type` or `default`
@@ -130,7 +130,7 @@ bun install`} />
 
     No size-limit entry is needed: `packages/games/.size-limit.ts` gives every generated game a budget.
 
-5. **Write tests** — Create two test files in `packages/games/__tests__/`. See test templates below the steps.
+5. **Write tests**: create two test files in `packages/games/__tests__/`. See test templates below the steps.
 
 6. **Build and test**
 
@@ -143,6 +143,7 @@ bun install`} />
     - The generated `.ts` file
     - Both test files
     - The `package.json` export
+    - A changeset (`bun run changeset`) that releases `@randsum/games`, `@randsum/roller` and `@randsum/mcp` together
 
     In the PR description, link to the game's SRD or rules reference so reviewers can verify the outcome tables.
 
@@ -150,11 +151,11 @@ bun install`} />
 
 ## Test templates
 
-**`<shortcode>.test.ts`** — behavioral tests:
+**`<shortcode>.test.ts`**: behavioral tests:
 
 <CodeExample code={`import { describe, expect, test } from 'bun:test'\nimport { roll } from '@randsum/games/<shortcode>'\n\ndescribe('roll', () => {\n  test('returns a valid outcome', () => {\n    const { result } = roll()\n    expect(['success', 'partial', 'failure']).toContain(result)\n  })\n\n  test('total is within die bounds', () => {\n    const { rolls } = roll()\n    const total = rolls[0]?.total ?? 0\n    expect(total).toBeGreaterThanOrEqual(1)\n    expect(total).toBeLessThanOrEqual(6)\n  })\n})`} />
 
-**`<shortcode>.property.test.ts`** — property-based tests with `fast-check`:
+**`<shortcode>.property.test.ts`**: property-based tests with `fast-check`:
 
 <CodeExample code={`import { describe, expect, test } from 'bun:test'\nimport fc from 'fast-check'\nimport { roll } from '@randsum/games/<shortcode>'\n\ndescribe('roll property-based tests', () => {\n  test('result is always a valid outcome', () => {\n    fc.assert(\n      fc.property(fc.constant(undefined), () => {\n        const { result } = roll()\n        return ['success', 'partial', 'failure'].includes(result)\n      })\n    )\n  })\n})`} />
 
@@ -163,12 +164,12 @@ Adapt these templates to your game's inputs and outcomes. See existing test file
 ## Tips
 
 - **Start simple.** Get a basic spec working before adding inputs, conditional pools, or complex outcome trees. You can iterate in follow-up PRs.
-- **Use `loadSpec` for rapid iteration.** While developing your spec, use [`loadSpec()`](/games/schema/using-loadspec/) to test it without running codegen on every change.
-- **Check existing specs.** The seven built-in game specs in `packages/games/` cover a range of mechanics — table-based with dynamic lookup (salvageunion), advantage/disadvantage (fifth), pool-based (blades), dual-pool (daggerheart), and 2d6+stat (pbta). The [Salvage Union spec](https://github.com/RANDSUM/randsum/blob/main/packages/games/salvageunion.randsum.json) is the richest example, with multiple roll tables and range-based outcomes. Find the one closest to your game and use it as a starting point.
+- **Check as you go.** `validateSpec()` and `generateCode()` from [the schema API](/games/schema/schema-api/) let you check a spec and read its generated code from a script while you iterate.
+- **Check existing specs.** The built-in game specs in `packages/games/` cover a range of mechanics: table-based with dynamic lookup (salvageunion), advantage and disadvantage (fifth), pool-based (blades), dual-pool (daggerheart), a Fate ladder (fate) and 2d6+stat (pbta, root-rpg). The [Salvage Union spec](https://github.com/RANDSUM/randsum/blob/main/packages/games/salvageunion.randsum.json) is the richest example, with multiple roll tables and range-based outcomes. Find the one closest to your game and use it as a starting point.
 - **Table ranges must cover all possible values.** If your die produces 1-6, your outcome table must account for every value from 1 to 6. Gaps cause `SchemaError` with code `'NO_TABLE_MATCH'` at runtime.
 
 ## Learn more
 
-- **[Schema Overview](/games/schema/overview/)** — how `.randsum.json` specs work
-- **[Schema Reference](/games/schema/reference/)** — field-by-field spec documentation
-- **[Using loadSpec()](/games/schema/using-loadspec/)** — runtime spec loading for development and custom games
+- **[Schema Overview](/games/schema/overview/)**: how `.randsum.json` specs work
+- **[Schema Reference](/games/schema/reference/)**: field-by-field spec documentation
+- **[The Schema API](/games/schema/schema-api/)**: validate specs and generate code from a script

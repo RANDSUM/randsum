@@ -169,7 +169,7 @@ export const PRODUCTS: readonly ProductInfo[] = [
     id: 'ui',
     tagline: 'The roller as Web Components',
     summary:
-      'The RANDSUM roller as one element in Max, Compact and Mini sizes, plus every part it is built from. Works in any page or framework, with React and Vue wrappers. Import a component and your bundle gets only that component.',
+      'The RANDSUM roller as one element in Max, Compact and Mini sizes, plus every part it is built from. Works in any page or framework, with React, Vue and Svelte bindings and React Native components. Import a component and your bundle gets only that component.',
     href: '/ui/introduction/',
     snippet: {
       lang: 'html',

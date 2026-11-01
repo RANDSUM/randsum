@@ -13,7 +13,7 @@ Pre-computed reference tables for common dice scenarios. All probabilities are e
 | 7 | 2.93 | 97.22 |
 | 8 | 4.78 | 94.29 |
 | 9 | 7.02 | 89.51 |
-| 10 | 9.41 | 82.49 |
+| 10 | 9.41 | 82.48 |
 | 11 | 11.42 | 73.07 |
 | 12 | 12.89 | 61.65 |
 | 13 | 13.27 | 48.77 |
@@ -60,13 +60,13 @@ Outcome tiers: Critical (two+ 6s), Success (highest=6), Partial (highest=4-5), F
 
 | Pool Size | P(Crit) | P(Success) | P(Partial) | P(Failure) | E(highest) |
 |---|---|---|---|---|---|
-| 0 (roll 2, keep lowest) | 0.0% | 2.8% | 25.0% | 72.2% | 2.53 |
+| 0 (roll 2, keep lowest) | 0.0% | 2.8% | 22.2% | 75.0% | 2.53 |
 | 1 | 0.0% | 16.7% | 33.3% | 50.0% | 3.50 |
-| 2 | 2.8% | 25.0% | 44.4% | 27.8% | 4.47 |
-| 3 | 7.4% | 29.6% | 44.4% | 18.5% | 4.96 |
-| 4 | 13.2% | 31.6% | 39.9% | 15.3% | 5.24 |
-| 5 | 19.6% | 31.3% | 35.7% | 13.4% | 5.43 |
-| 6 | 26.3% | 29.8% | 31.8% | 12.1% | 5.56 |
+| 2 | 2.8% | 27.8% | 44.4% | 25.0% | 4.47 |
+| 3 | 7.4% | 34.7% | 45.4% | 12.5% | 4.96 |
+| 4 | 13.2% | 38.6% | 42.0% | 6.2% | 5.24 |
+| 5 | 19.6% | 40.2% | 37.1% | 3.1% | 5.43 |
+| 6 | 26.3% | 40.2% | 31.9% | 1.6% | 5.56 |
 
 **Zero dice rule:** In Blades, rolling zero dice means rolling 2d6 and keeping the lowest result.
 
@@ -76,8 +76,8 @@ Outcome tiers: Strong hit (10+), Weak hit (7-9), Miss (6-).
 
 | Stat Mod | P(10+) | P(7-9) | P(6-) | E(total) |
 |---|---|---|---|---|
-| -2 | 3/36 (8.3%) | 6/36 (16.7%) | 27/36 (75.0%) | 5.0 |
-| -1 | 6/36 (16.7%) | 9/36 (25.0%) | 21/36 (58.3%) | 6.0 |
+| -2 | 1/36 (2.8%) | 9/36 (25.0%) | 26/36 (72.2%) | 5.0 |
+| -1 | 3/36 (8.3%) | 12/36 (33.3%) | 21/36 (58.3%) | 6.0 |
 | +0 | 6/36 (16.7%) | 15/36 (41.7%) | 15/36 (41.7%) | 7.0 |
 | +1 | 10/36 (27.8%) | 16/36 (44.4%) | 10/36 (27.8%) | 8.0 |
 | +2 | 15/36 (41.7%) | 15/36 (41.7%) | 6/36 (16.7%) | 9.0 |
@@ -132,29 +132,29 @@ P(hit) = (21 + mod - AC) / 20, clamped to [5%, 95%]. Natural 1 always misses, na
 
 ## Reroll Impact (1dN, reroll values <= T)
 
-Approximate expected value when rerolling once: E = (N+1)/2 + T*(T)/(2*N).
+Expected value when each die showing T or less is rerolled once and the new result kept (`ro{<=T}`): E = (N+1)/2 + T*(N-T)/(2*N).
 
 | Roll | No Reroll | Reroll 1s | Reroll <=2 |
 |---|---|---|---|
-| 1d6 | 3.50 | 3.92 | 4.25 |
-| 1d8 | 4.50 | 4.94 | 5.31 |
-| 1d10 | 5.50 | 5.95 | 6.35 |
-| 1d12 | 6.50 | 6.96 | 7.38 |
-| 1d20 | 10.50 | 10.98 | 11.40 |
+| 1d6 | 3.50 | 3.92 | 4.17 |
+| 1d8 | 4.50 | 4.94 | 5.25 |
+| 1d10 | 5.50 | 5.95 | 6.30 |
+| 1d12 | 6.50 | 6.96 | 7.33 |
+| 1d20 | 10.50 | 10.97 | 11.40 |
 
 **Note:** Rerolling 1s on a d6 gains +0.42 expected value. Modest but meaningful over many rolls.
 
 ## Exploding Dice Impact (1dN!)
 
-When a die explodes on its max value (one explosion):
+When a die explodes on its max value. RANDSUM's `!` chains (an exploded die can explode again, up to 1000 times), so the chained column is what `1dN!` gives; the one-explosion column is for house rules that stop after one.
 
-| Die | Normal E | Exploding E | P(explode) |
-|---|---|---|---|
-| 1d4 | 2.50 | 3.13 | 25.0% |
-| 1d6 | 3.50 | 4.08 | 16.7% |
-| 1d8 | 4.50 | 5.06 | 12.5% |
-| 1d10 | 5.50 | 6.05 | 10.0% |
-| 1d12 | 6.50 | 7.04 | 8.3% |
-| 1d20 | 10.50 | 11.03 | 5.0% |
+| Die | Normal E | One explosion E | Chained E (`!`) | P(explode) |
+|---|---|---|---|---|
+| 1d4 | 2.50 | 3.13 | 3.33 | 25.0% |
+| 1d6 | 3.50 | 4.08 | 4.20 | 16.7% |
+| 1d8 | 4.50 | 5.06 | 5.14 | 12.5% |
+| 1d10 | 5.50 | 6.05 | 6.11 | 10.0% |
+| 1d12 | 6.50 | 7.04 | 7.09 | 8.3% |
+| 1d20 | 10.50 | 11.03 | 11.05 | 5.0% |
 
-**Note:** Exploding adds roughly (S+1)/(2*S) to the expected value per explosion. Smaller dice benefit proportionally more from explosion.
+**Note:** One explosion adds (S+1)/(2*S) to the expected value; chained explosions give E = (S+1)/2 * S/(S-1). Smaller dice benefit proportionally more.

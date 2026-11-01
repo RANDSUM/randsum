@@ -80,7 +80,7 @@ export type DrawDieNotation =
 
 /**
  * Geometric die notation — roll until first 1, count attempts.
- * `g6` rolls d6 repeatedly until a 1 appears, result is the attempt count.
+ * `g6` rolls a d6 again on each 6 and sums every roll.
  * Supports quantity prefix: `3g6` performs 3 independent geometric rolls.
  *
  * Case-insensitive: g6 and G6 are equivalent.

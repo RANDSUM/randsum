@@ -54,7 +54,8 @@ roll(2)  // Two dice
 roll(3)  // Three dice
 roll(4)  // Four dice (e.g., with assistance)
 roll(5)  // Five dice (e.g., with assistance + push)
-roll(6)  // Six dice (maximum pool)`} />
+roll(10) // Ten dice (the largest pool)
+roll({ rating: 3 }) // An options object works too`} />
 
 <CodeExample code={`import { roll } from '@randsum/games/blades'
 
@@ -62,45 +63,45 @@ const { result } = roll(2)
 
 switch (result) {
   case 'critical':
-    // Multiple 6s - exceptional outcome
+    // Two or more 6s: exceptional outcome
     break
   case 'success':
-    // Highest die is 6 - full success
+    // Highest die is 6: full success
     break
   case 'partial':
-    // Highest die is 4-5 - success with complication
+    // Highest die is 4-5: success with a complication
     break
   case 'failure':
-    // Highest die is 1-3 - things go badly
+    // Highest die is 1-3: things go badly
     break
 }`} />
 
 ## API
 
-### `roll(rating?: number)`
+### `roll(rating?: number)` or `roll({ rating })`
 
 **Input:**
 
 | Parameter | Type | Description |
 |---|---|---|
-| `rating` | `number` (optional) | Action rating / dice pool size (0-10) |
+| `rating` | `number` (optional) | Dice pool size, including action rating, assists and push (0-10). Defaults to 1 |
 
 **Returns:** `GameRollResult` with:
 
 | Property | Type | Description |
 |---|---|---|
 | `result` | `BladesRollResult` | `'critical' \| 'success' \| 'partial' \| 'failure'` |
-| `total` | `number` | Sum of kept dice after modifiers |
+| `total` | `number` | The kept die: the highest, or the lowest on a zero-dice roll |
 | `rolls` | `RollRecord[]` | Raw dice data from the core roller |
 
 ## Outcomes
 
 | Outcome | Condition | Description |
 |---|---|---|
-| `critical` | Multiple 6s | Critical success -- exceptional outcome |
-| `success` | Highest die is 6 | Full success -- you do it |
-| `partial` | Highest die is 4-5 | Partial success -- you do it, but with a complication |
-| `failure` | Highest die is 1-3 | Bad outcome -- things go wrong |
+| `critical` | Two or more 6s | Critical success: an exceptional outcome |
+| `success` | Highest die is 6 | Full success: you do it |
+| `partial` | Highest die is 4-5 | Partial success: you do it, but with a complication |
+| `failure` | Highest die is 1-3 | Bad outcome: things go wrong |
 
 ### Zero Dice Pool
 
@@ -108,14 +109,14 @@ When the dice pool is 0, the system rolls 2d6 and keeps only the lowest die. Thi
 
 ## About this implementation
 
-This package handles the dice roll outcome only. **Position** (controlled, risky, desperate) and **Effect** (limited, standard, great) are narrative mechanics in Blades in the Dark that a caller manages separately — they are not part of the roll output. Use `result` to determine the mechanical outcome, then apply position and effect in your own game logic.
+This package handles the dice roll outcome only. **Position** (controlled, risky, desperate) and **Effect** (limited, standard, great) are narrative mechanics in Blades in the Dark that a caller manages separately; they are not part of the roll output. Use `result` to determine the mechanical outcome, then apply position and effect in your own game logic.
 
 ## Error handling
 
 Game `roll()` can throw two types of errors:
 
-- **`ValidationError`** (from `@randsum/roller`) -- numeric input out of range or not finite (e.g., rating of 7 when max is 6)
-- **`SchemaError`** (from `@randsum/games/blades`) -- game-specific issues like unmatched outcome tables
+- **`ValidationError`** (from `@randsum/roller`): numeric input out of range or not finite (e.g., a rating of 11 when the maximum is 10)
+- **`SchemaError`** (from `@randsum/games/blades`): game-specific issues like unmatched outcome tables
 
 <CodeExample code={`import { roll, SchemaError } from '@randsum/games/blades'
 import { ValidationError } from '@randsum/roller'
@@ -124,7 +125,7 @@ try {
   roll(99)
 } catch (error) {
   if (error instanceof ValidationError) {
-    // Out-of-range rating (must be 0–10)
+    // Out-of-range rating (must be 0-10)
     console.log(error.code)    // 'VALIDATION_ERROR'
   } else if (error instanceof SchemaError) {
     // Game-specific error

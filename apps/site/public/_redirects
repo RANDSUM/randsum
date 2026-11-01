@@ -39,6 +39,10 @@
 /discord/                          /tools/discord-bot/                 301
 /discord                           /tools/discord-bot/                 301
 
+# The runtime loadSpec() was removed; its page became the schema API page
+/games/schema/using-loadspec/      /games/schema/schema-api/           301
+/games/schema/using-loadspec       /games/schema/schema-api/           301
+
 # Retired @randsum/cli docs -> its successor
 /tools/cli/                        /tools/mcp/                         301
 /tools/cli                         /tools/mcp/                         301

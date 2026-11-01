@@ -19,8 +19,8 @@ https://randsum.dev/schemas/v1/randsum.json
 ```
 
 It is served as `application/json` and is byte-identical to the source of truth
-in the monorepo (`packages/games/randsum.json`) — a build step copies it into the
-site and a sync test fails the build if the two ever drift.
+in the monorepo (`packages/games/randsum.json`): the site keeps a copy in
+`apps/site/public/schemas/v1/`, and a sync test fails if the two ever drift.
 
 ### Editor autocompletion
 
@@ -59,7 +59,7 @@ curl -X POST https://randsum.dev/api/roll \
   -d '{"notation":"4d6L"}'
 ```
 
-### Response — `200 OK`
+### Response: `200 OK`
 
 ```json
 {
@@ -77,7 +77,7 @@ curl -X POST https://randsum.dev/api/roll \
 | `rolls`       | `number[]` | Individual die values after modifiers        |
 | `description` | `string`   | Human-readable description of the roll        |
 
-### Errors — `400 Bad Request`
+### Errors: `400 Bad Request`
 
 Invalid notation returns the roller's own error message, plus a `suggestion`
 when a likely fix can be inferred (the same hint powered by `suggestNotationFix`):
@@ -98,7 +98,7 @@ curl -X POST https://randsum.dev/api/roll \
 Notation longer than 1000 characters is rejected before parsing, and oversized
 request bodies return `413 Payload Too Large`.
 
-### Usage — `GET /api/roll`
+### Usage: `GET /api/roll`
 
 A plain `GET` returns a JSON description of the contract, handy for quick
 discovery:

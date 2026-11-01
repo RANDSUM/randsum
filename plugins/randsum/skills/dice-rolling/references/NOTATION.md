@@ -28,7 +28,7 @@
   - [Repeat Operator](#repeat-operator-xn)
   - [Total Multiplier](#total-multiplier-)
   - [Combining Modifiers](#combining-modifiers)
-- [Multiple Dice Groups](#multiple-dice-sides-in-a-single-roll)
+- [Multiple Dice Groups](#multiple-dice-groups-in-a-single-roll)
 - [Common Use Cases](#common-use-cases)
 - [Performance Considerations](#performance-considerations)
 
@@ -38,13 +38,13 @@
 
 Dice notation is a compact way to represent dice rolls and their modifications. For example, `4d20+2` means "roll four twenty-sided dice, then add two".
 
-Randsum extends standard dice notation with powerful modifiers like dropping lowest rolls, rerolling specific values, and ensuring unique results.
+RANDSUM extends standard dice notation with modifiers like dropping the lowest rolls, rerolling specific values, and ensuring unique results. This reference covers the common features; the [Notation Syntax Guide](https://randsum.dev/notation/randsum-dice-notation/) and the [specification](https://notation.randsum.dev/) cover the rest, including Fate, percentile, zero-bias and custom-faced dice, reroll once (`ro{..}`), explode sequences (`!s{..}`, `!i`, `!r`), keep middle (`KM`), margin of success (`ms{..}`) and sort (`sa`, `sd`).
 
 The core `roll()` function accepts several argument types: a **number** (sides for a single die, e.g. `roll(20)` for 1d20), a **notation string** (e.g. `roll("4d6L")`), an **options object** (e.g. `roll({ sides: 6, quantity: 4, modifiers: { drop: { lowest: 1 } } })`), or **multiple arguments** combined into one total (e.g. `roll("1d20+5", "2d6")`).
 
 ## Basic Syntax
 
-All notation in randsum is case-insensitive (`2d8` = `2D8`).
+All RANDSUM notation is case-insensitive (`2d8` = `2D8`).
 
 ### Standard Rolls
 
@@ -232,7 +232,7 @@ roll({
   modifiers: { reroll: { exact: [8, 12] } }
 })
 
-roll("4d20R{<5}3") // Reroll under 5, max 3 attempts
+roll("4d20R{<5}3") // Reroll under 5, rerolling at most 3 dice
 roll({
   sides: 20,
   quantity: 4,
@@ -522,7 +522,7 @@ roll({
   sides: 10,
   quantity: 5,
   modifiers: {
-    countSuccesses: { threshold: 7 }
+    count: { greaterThanOrEqual: 7 }
   }
 })
 
@@ -532,9 +532,10 @@ roll({
   sides: 10,
   quantity: 5,
   modifiers: {
-    countSuccesses: {
-      threshold: 7,
-      botchThreshold: 1
+    count: {
+      greaterThanOrEqual: 7,
+      lessThanOrEqual: 1,
+      deduct: true
     }
   }
 })
@@ -582,7 +583,7 @@ roll({
   sides: 10,
   quantity: 5,
   modifiers: {
-    countFailures: { threshold: 3 }
+    count: { lessThanOrEqual: 3 }
   }
 })
 ```
@@ -662,12 +663,12 @@ roll("4d6Lx6") // Six ability score rolls
 - Reroll and explode run before drop/keep, so an exploded die can itself be dropped: `4d6!L` explodes first, then drops the lowest of everything rolled
 - Cap runs first of all, so `4d6C{>4}L` caps every die before the lowest is dropped
 
-## Multiple Dice Sides in a Single Roll
+## Multiple Dice Groups in a Single Roll
 
-You can roll multiple dice sides in a single by passing multiple arguments:
+You can roll several dice groups in a single call by passing multiple arguments:
 
 ```typescript
-roll("1d20", "-2d6", "10d8+2") // Roll 1d20, 2d6, and 10d8 + 2.
+roll("1d20", "-2d6", "10d8+2") // Roll 1d20, subtract 2d6, add 10d8 + 2
 roll("1d20-2d6+10d8+2") // Same as above, but in a single string
 ```
 
@@ -722,7 +723,7 @@ All explosive modifiers (explode, compound, penetrate) have built-in depth limit
 
 - **Explicit depth**: `!!N`, `!pN` - Limited to N depth
 - **Unlimited (0)**: `!!0`, `!p0` - Capped at 1000 for safety
-- **Default**: `!`, `!!`, `!p` - Limited to 1 explosion per die
+- **Default**: `!`, `!!`, `!p` - Keep going while each new roll is a maximum, capped at 1000
 
 ### Best Practices
 

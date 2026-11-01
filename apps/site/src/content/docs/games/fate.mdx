@@ -81,7 +81,7 @@ switch (result) {
 
 | Parameter | Type | Description |
 |---|---|---|
-| `modifier` | `number` (optional) | Skill rating — a rung on the Fate ladder (`-2` to `+5`), added to the 4dF total |
+| `modifier` | `number` (optional) | Skill rating: a rung on the Fate ladder (`-2` to `+5`), added to the 4dF total. Defaults to 0 |
 
 **Returns:** `GameRollResult` with:
 
@@ -115,8 +115,8 @@ The open-ended `legendary` and `terrible` rungs absorb any total beyond the ends
 
 Game `roll()` can throw two types of errors:
 
-- **`ValidationError`** (from `@randsum/roller`) — the skill modifier is out of range (`-2` to `+5`) or not finite
-- **`SchemaError`** (from `@randsum/games/fate`) — game-specific issues like an unmatched ladder rung
+- **`ValidationError`** (from `@randsum/roller`): the skill modifier is out of range (`-2` to `+5`), not an integer, or not finite
+- **`SchemaError`** (from `@randsum/games/fate`): game-specific issues like an unmatched ladder rung
 
 <CodeExample code={`import { roll, SchemaError } from '@randsum/games/fate'
 import { ValidationError } from '@randsum/roller'

@@ -52,7 +52,7 @@ A safety cap of 1000 iterations prevents infinite loops. Use cases include resou
 
 ### Draw die
 
-A draw die samples without replacement from a pool of faces -- like drawing cards from a deck. Each face value can only appear once until the pool is exhausted, at which point it reshuffles. All notation is **case-insensitive** (`DD`, `dd`, `Dd`, `dD` all work).
+A draw die samples without replacement from a pool of faces, like drawing cards from a deck. Each face value can only appear once until the pool is exhausted, at which point it reshuffles. All notation is **case-insensitive** (`DD`, `dd`, `Dd`, `dD` all work).
 
 | Notation | Description |
 |---|---|
@@ -96,7 +96,7 @@ Fate dice (also called Fudge dice) produce results of -1, 0, or +1 per die. The 
 <NotationRoller defaultNotation="4dF" />
 <NotationRoller defaultNotation="dF.2" />
 
-Internally, `dF` uses the replace modifier to map die faces to negative and zero values. `dF` takes modifiers like any other die, so `4dF+1` is a Fate Core roll with a +1 skill. An explosion that triggers on the maximum face (`!`, `!!`, `!p`, `!s`, `W`) needs a condition on `dF`, `zN` and `d{...}` dice, as in `4dF!{>0}`.
+Internally, `dF` is a die whose faces are -1, 0 and +1 (or -2 to +2 for `dF.2`). `dF` takes modifiers like any other die, so `4dF+1` is a Fate Core roll with a +1 skill. An explosion that triggers on the maximum face (`!`, `!!`, `!p`, `!s`, `W`) needs a condition on `dF`, `zN` and `d{...}` dice, as in `4dF!{>0}`.
 
 ### Zero-bias dice
 
@@ -111,7 +111,7 @@ Zero-indexed dice that roll 0 to N-1 instead of 1 to N. All notation is **case-i
 <NotationRoller defaultNotation="z6" />
 <NotationRoller defaultNotation="3z10" />
 
-Zero-bias dice are notation-only -- there is no options object equivalent. Use the notation string form `roll('z6')` or construct faces manually: `roll({ sides: [0, 1, 2, 3, 4, 5] })`.
+Zero-bias dice are notation-only: there is no options object equivalent. Use the notation string form `roll('z6')` or construct faces manually: `roll({ sides: [0, 1, 2, 3, 4, 5] })`.
 
 **Use cases:** Zero-indexed random table lookups, percentile systems that use 0-99, programming-friendly dice for array index selection.
 
@@ -129,7 +129,7 @@ Define dice with arbitrary face values. All notation is **case-insensitive**.
 <NotationRoller defaultNotation="d{2,3,5,7}" />
 <NotationRoller defaultNotation="d{fire,ice,lightning}" />
 
-Duplicate values create weighted distributions -- `d{1,1,2}` has a 2/3 chance of rolling 1 and a 1/3 chance of rolling 2. When faces are non-numeric strings, the roll result contains string values rather than numbers.
+Duplicate values create weighted distributions: `d{1,1,2}` has a 2/3 chance of rolling 1 and a 1/3 chance of rolling 2. When faces are non-numeric strings, the roll result contains string values rather than numbers.
 
 Custom faces dice take modifiers like any other die: `2d{1,2,3}+1`, `3d{a,b,c}L`. An explosion that triggers on the maximum face (`!`, `!!`, `!p`, `!s`, `W`) needs a condition, as in `3d{1,2,3}!{>2}`.
 
@@ -214,7 +214,8 @@ Reroll dice matching certain conditions.
 | `R{<N}` | Reroll results under N |
 | `R{<=N}` | Reroll results at or under N |
 | `R{X,Y}` | Reroll exact values X, Y |
-| `R{<N}M` | Reroll under N, max M attempts |
+| `R{<N}M` | Reroll under N, rerolling at most M dice |
+| `ro{<N}` | Reroll each die under N once, keeping the new result |
 
 <NotationRoller defaultNotation="4d20R{>17}" />
 <NotationRoller defaultNotation="4d20R{<5}" />
@@ -274,15 +275,15 @@ Exploding dice that add to the triggering die instead of creating new dice.
 <NotationRoller defaultNotation="3d6!!" />
 <NotationRoller defaultNotation="3d6!!5" />
 
-**Example:** `1d6!!` rolls 6. This compounds, rolling 4. The die value becomes 6 + 4 = 10. Unlike regular exploding, this does not create new dice -- it modifies the existing die.
+**Example:** `1d6!!` rolls 6. This compounds, rolling 4. The die value becomes 6 + 4 = 10. Unlike regular exploding, this does not create new dice: it adds to the existing die.
 
 **Difference from explode:**
-- **Explode (`!`)**: Creates new dice -- `[6, 4, 6]` becomes `[6, 4, 6, 5, 3]` (5 dice)
-- **Compound (`!!`)**: Modifies existing die -- `[6, 4, 6]` becomes `[15, 4, 12]` (still 3 dice)
+- **Explode (`!`)**: Creates new dice: `[6, 4, 6]` becomes `[6, 4, 6, 5, 3]` (5 dice)
+- **Compound (`!!`)**: Adds to the existing die: `[6, 4, 6]` becomes `[15, 4, 12]` (still 3 dice)
 
 ## Penetrate
 
-Exploding dice where each subsequent explosion subtracts 1 (Hackmaster-style).
+Exploding dice where each added roll counts 1 less (Hackmaster-style).
 
 | Notation | Description |
 |---|---|
@@ -307,7 +308,7 @@ The D6 System wild die modifier (West End Games). The last die in the pool is de
 
 **Wild die behavior:**
 
-- **Wild die = max value (6):** The wild die compound-explodes -- keep rolling and adding while the maximum is rolled.
+- **Wild die = max value (6):** The wild die compound-explodes: keep rolling and adding while the maximum is rolled.
 - **Wild die = 1:** Remove the wild die AND the highest non-wild die from the pool.
 - **Otherwise:** No special effect, the wild die acts as a normal die.
 
@@ -427,13 +428,13 @@ Notation sugar that repeats a roll expression N times. All notation is **case-in
 
 The `xN` suffix is detected during notation parsing. It strips the suffix, then repeats the base notation N times as separate roll groups. N must be >= 1.
 
-**Example:** `4d6Lx6` expands to six separate `4d6L` rolls -- perfect for generating all six D&D ability scores in a single call.
+**Example:** `4d6Lx6` expands to six separate `4d6L` rolls, which generates all six D&D ability scores in a single call.
 
 **Use cases:** D&D ability score generation (`4d6Lx6`), rolling multiple identical damage dice groups, batch stat generation.
 
 ## Annotations
 
-Attach metadata labels to dice terms. Labels are flavor text with no mechanical effect. All notation is **case-insensitive**.
+Attach labels to dice terms. Labels are flavor text with no mechanical effect, and their text keeps its case.
 
 | Notation | Description |
 |---|---|
@@ -442,7 +443,7 @@ Attach metadata labels to dice terms. Labels are flavor text with no mechanical 
 
 <NotationRoller defaultNotation="2d6+3[fire]" />
 
-Labels are enclosed in square brackets and attached to the preceding dice term. They are stripped before modifier parsing and stored in the roll result. Labels are valid notation -- `isDiceNotation` accepts notation with labels.
+Labels are enclosed in square brackets and attached to the preceding dice term. They are stripped before modifier parsing and stored in the roll result. Labels are valid notation: `isDiceNotation` accepts notation with labels.
 
 **Use cases:** Tracking damage types in D&D, labeling ability score rolls, annotating complex multi-group rolls for display purposes.
 
