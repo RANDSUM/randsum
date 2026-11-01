@@ -110,7 +110,7 @@ Paste skill content directly into any LLM conversation. Each skill is self-conta
 The core skill for an agent rolling dice in conversation. It turns a natural-language request into a call to the RANDSUM MCP tools (`roll`, `roll_game`, `validate`) or the [HTTP API](/api/introduction/), and reports the result for seven supported game systems: D&D 5e, Blades in the Dark, Daggerheart, Fate Core, PbtA, Root RPG, and Salvage Union.
 
 **What the agent learns:**
-- Never to invent a roll, and which tool to reach for first (MCP, then the HTTP API, then a local RNG)
+- Never to invent a roll, and which tool to reach for first (the MCP tools, then the HTTP API)
 - How common phrasings map to calls ("roll stats" is `4d6Lx6`, "Blades with 3 dice" is `roll_game` with `rating: 3`)
 - RANDSUM notation (`4d6L`, `2d20H+5`, `3d6!`, `d%`, `4dF`, etc.) and each game's inputs and outcomes
 - How to report dice, total and meaning in one compact block

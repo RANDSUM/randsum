@@ -34,7 +34,7 @@ What are the odds of rolling 15 or more on 3d6?
 ## What it runs and connects to
 
 - **One MCP server**, the hosted RANDSUM server at `https://api.randsum.dev/mcp`, declared in [`.mcp.json`](./.mcp.json). It needs no account or key. Its tools are read-only: they compute a roll from the notation and parameters Claude sends and return it.
-- **The HTTP API fallback.** If that server is not connected, the `dice-rolling` skill may call the same service's HTTP API at `https://api.randsum.dev/v1` with the same notation and parameters. With a shell but no network, the skill tells Claude to roll with a one-line local random number command (`node -e` with `crypto.randomInt`) and say so.
+- **The HTTP API fallback.** If that server is not connected, the `dice-rolling` skill may call the same service's HTTP API at `https://api.randsum.dev/v1` with the same notation and parameters.
 - **`/roll`** (Claude Code only) is a mod: [`hooks/hooks.json`](./hooks/hooks.json) names one hooks module, [`register.ts`](./hooks/register.ts), and it hooks exactly two events.
     - `session.start`: registers the `/roll` slash command (`$.command.register`). Nothing else runs at session start.
     - `command.run` for `/roll` only: rolls the notation you typed with [`roller.generated.js`](./hooks/roller.generated.js), the open-source `@randsum/roller` engine bundled into the plugin, using your machine's cryptographic random number generator. It prints the result, sets the plugin's status line to the last roll (`$.ui.status`), and adds one note to Claude's context saying you rolled it and what came up.
