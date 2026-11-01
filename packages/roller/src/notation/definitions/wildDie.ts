@@ -5,7 +5,7 @@ const wildDiePattern = /[Ww](?![{])/
 export const wildDieSchema: NotationSchema<boolean> = defineNotationSchema<boolean>({
   name: 'wildDie',
   priority: 55,
-  tokenKey: 'W',
+  lexemeKey: 'W',
   category: 'Dispatch',
 
   pattern: wildDiePattern,

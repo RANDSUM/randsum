@@ -7,7 +7,7 @@ const keepLowestPattern = /[Kk][Ll](\d+)?/i
 export const keepSchema: NotationSchema<KeepOptions> = defineNotationSchema<KeepOptions>({
   name: 'keep',
   priority: 66,
-  tokenKey: 'K',
+  lexemeKey: 'K',
   category: 'Filter',
 
   pattern: /[Kk]([LlMm])?(\d+)?/,

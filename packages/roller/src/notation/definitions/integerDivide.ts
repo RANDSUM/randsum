@@ -6,7 +6,7 @@ const integerDividePattern = /\/\/([1-9]\d*)/
 export const integerDivideSchema: NotationSchema<number> = defineNotationSchema<number>({
   name: 'integerDivide',
   priority: 93,
-  tokenKey: '//',
+  lexemeKey: '//',
   category: 'Scale',
 
   pattern: integerDividePattern,

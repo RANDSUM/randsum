@@ -60,7 +60,7 @@ import { type NotationSchema, defineNotationSchema } from '../schema'
 export const <name>Schema: NotationSchema<<TOptions>> = defineNotationSchema<<TOptions>>({
   name: '<name>',
   priority: <n>,
-  tokenKey: '<token key>', // stable lexer token key, e.g. 'C{..}', 'drop', '+'
+  lexemeKey: '<lexeme key>', // stable lexer lexeme key, e.g. 'C{..}', 'drop', '+'
   category: '<Category>',
   pattern: /.../, // no 'g' flag
   parse: notation => {

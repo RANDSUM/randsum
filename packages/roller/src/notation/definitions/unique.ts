@@ -8,7 +8,7 @@ export const uniqueSchema: NotationSchema<boolean | UniqueOptions> = defineNotat
 >({
   name: 'unique',
   priority: 60,
-  tokenKey: 'U',
+  lexemeKey: 'U',
   category: 'Substitute',
 
   pattern: uniquePattern,

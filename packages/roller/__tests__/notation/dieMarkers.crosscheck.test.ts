@@ -20,13 +20,13 @@ import { notationToOptions } from '../../src/notation/parse/notationToOptions'
  * loudly here.
  */
 const CASES = [
-  { marker: DIE_MARKER_PERCENTILE, notation: '2d%', tokenKey: 'd%', dieType: 'percentile' },
-  { marker: DIE_MARKER_FATE, notation: '4dF', tokenKey: 'dF', dieType: 'fate' },
-  { marker: DIE_MARKER_FATE, notation: 'dF.2', tokenKey: 'dF', dieType: 'fate' },
-  { marker: DIE_MARKER_CUSTOM_FACES, notation: 'd{a,b,c}', tokenKey: 'd{...}', dieType: 'custom' },
-  { marker: DIE_MARKER_DRAW, notation: '3DD6', tokenKey: 'DDN', dieType: 'draw' },
-  { marker: DIE_MARKER_GEOMETRIC, notation: 'g6', tokenKey: 'gN', dieType: 'geometric' },
-  { marker: DIE_MARKER_ZERO_BIAS, notation: '2z8', tokenKey: 'zN', dieType: 'zeroBias' }
+  { marker: DIE_MARKER_PERCENTILE, notation: '2d%', lexemeKey: 'd%', dieType: 'percentile' },
+  { marker: DIE_MARKER_FATE, notation: '4dF', lexemeKey: 'dF', dieType: 'fate' },
+  { marker: DIE_MARKER_FATE, notation: 'dF.2', lexemeKey: 'dF', dieType: 'fate' },
+  { marker: DIE_MARKER_CUSTOM_FACES, notation: 'd{a,b,c}', lexemeKey: 'd{...}', dieType: 'custom' },
+  { marker: DIE_MARKER_DRAW, notation: '3DD6', lexemeKey: 'DDN', dieType: 'draw' },
+  { marker: DIE_MARKER_GEOMETRIC, notation: 'g6', lexemeKey: 'gN', dieType: 'geometric' },
+  { marker: DIE_MARKER_ZERO_BIAS, notation: '2z8', lexemeKey: 'zN', dieType: 'zeroBias' }
 ] as const
 
 describe('die-type marker cross-check', () => {
@@ -39,14 +39,14 @@ describe('die-type marker cross-check', () => {
     }
   })
 
-  for (const { notation, tokenKey, dieType } of CASES) {
+  for (const { notation, lexemeKey, dieType } of CASES) {
     test(`"${notation}" is recognized consistently across consumers`, () => {
       expect(isDiceNotation(notation)).toBe(true)
 
       expect(notationToOptions(notation)[0]?.dieType).toBe(dieType)
 
       const tokens = tokenize(notation)
-      expect(tokens[0]?.key).toBe(tokenKey)
+      expect(tokens[0]?.key).toBe(lexemeKey)
       // the whole notation should tokenize as the single special-die token
       expect(tokens[0]?.text).toBe(notation)
     })

@@ -15,7 +15,9 @@
  *                       npx/bunx/uvx/pipx run, or curl/wget named beside
  *                       "shell" (the directory flagged that phrasing alone),
  *                       in any file
- *   - credential:       code reading crypto, env vars, the home directory or keychains
+ *   - credential:       code reading crypto, env vars, the home directory or keychains,
+ *                       or naming a `token` at all (the scan read roller's lexer
+ *                       identifiers as a credential and held the plugin for review)
  *   - accessor:         code defining getters, Proxies, `then` methods or
  *                       Object.defineProperty, which run on a mere read or await
  *   - listing:          README of at least 40 words, a `license` and a `version`
@@ -52,7 +54,7 @@ const RULES: readonly Rule[] = [
   {
     name: 'credential',
     pattern:
-      /\bcrypto\s*\.|require\(\s*['"](node:)?crypto['"]\s*\)|from\s+['"](node:)?crypto['"]|\bprocess\.env\b|\bhomedir\s*\(|\.ssh\b|\bkeychain\b|\.npmrc\b|\bgh\s+auth\s+token\b/i,
+      /\bcrypto\s*\.|require\(\s*['"](node:)?crypto['"]\s*\)|from\s+['"](node:)?crypto['"]|\bprocess\.env\b|\bhomedir\s*\(|\.ssh\b|\bkeychain\b|\.npmrc\b|token/i,
     appliesTo: ext => CODE.has(ext)
   },
   {

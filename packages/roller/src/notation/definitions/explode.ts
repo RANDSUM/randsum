@@ -15,7 +15,7 @@ export const explodeSchema: NotationSchema<boolean | ComparisonOptions> = define
 >({
   name: 'explode',
   priority: 50,
-  tokenKey: '!',
+  lexemeKey: '!',
   category: 'Generate',
 
   pattern: explodePattern,

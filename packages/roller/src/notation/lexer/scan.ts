@@ -1,8 +1,8 @@
 import type { PoolKind, TokenCategory } from './specs'
 import { MODIFIER_SPECS, POOL_SPECS } from './specs'
 
-/** A positioned lexical token. Roles above `unknown` tile the notation string. */
-export interface LexToken {
+/** A positioned lexical lexeme. Roles above `unknown` tile the notation string. */
+export interface Lexeme {
   readonly text: string
   readonly key: string
   readonly category: TokenCategory
@@ -101,12 +101,12 @@ function matchAt(matcher: RegExp, input: string, pos: number): string | null {
   return m?.index === pos ? m[0] : null
 }
 
-function appendUnknown(tokens: LexToken[], char: string, cursor: number): void {
-  const last = tokens[tokens.length - 1]
+function appendUnknown(lexemes: Lexeme[], char: string, cursor: number): void {
+  const last = lexemes[lexemes.length - 1]
   if (last?.role === 'unknown') {
-    tokens[tokens.length - 1] = { ...last, text: last.text + char, end: cursor + 1 }
+    lexemes[lexemes.length - 1] = { ...last, text: last.text + char, end: cursor + 1 }
   } else {
-    tokens.push({
+    lexemes.push({
       text: char,
       key: 'unknown',
       category: 'unknown',
@@ -118,7 +118,7 @@ function appendUnknown(tokens: LexToken[], char: string, cursor: number): void {
 }
 
 /**
- * Advance the cursor by exactly one token, pushing it onto `tokens`, and return
+ * Advance the cursor by exactly one lexeme, pushing it onto `lexemes`, and return
  * the new cursor. Every branch consumes at least one character, so the driving
  * loop in `scan` is guaranteed to terminate. This is an ordinary function (not a
  * recursion) precisely so that pathological input — a very long unmatched run, or
@@ -127,7 +127,7 @@ function appendUnknown(tokens: LexToken[], char: string, cursor: number): void {
 function scanStep(
   input: string,
   cursor: number,
-  tokens: LexToken[],
+  lexemes: Lexeme[],
   annotationState: AnnotationScanState
 ): number {
   const isStart = cursor === 0
@@ -135,7 +135,7 @@ function scanStep(
   if (isStart || nextIsSign) {
     const pool = scanPoolAt(input, cursor, isStart)
     if (pool) {
-      tokens.push({
+      lexemes.push({
         text: pool.text,
         key: pool.kind === 'standard' ? 'xDN' : pool.key,
         category: pool.kind === 'standard' ? 'Core' : 'Special',
@@ -151,7 +151,7 @@ function scanStep(
 
   const mod = scanModifierAt(input, cursor)
   if (mod) {
-    tokens.push({
+    lexemes.push({
       text: mod.text,
       key: mod.key,
       category: mod.category,
@@ -164,7 +164,7 @@ function scanStep(
 
   const repeat = matchAt(REPEAT_MATCHER, input, cursor)
   if (repeat) {
-    tokens.push({
+    lexemes.push({
       text: repeat,
       key: 'xN',
       category: 'Special',
@@ -177,7 +177,7 @@ function scanStep(
 
   const annotation = matchAnnotationAt(input, cursor, annotationState)
   if (annotation) {
-    tokens.push({
+    lexemes.push({
       text: annotation,
       key: 'label',
       category: 'Special',
@@ -188,30 +188,30 @@ function scanStep(
     return cursor + annotation.length
   }
 
-  appendUnknown(tokens, input[cursor] ?? '', cursor)
+  appendUnknown(lexemes, input[cursor] ?? '', cursor)
   return cursor + 1
 }
 
 /**
- * Pure lexical scan: one left-to-right cursor pass producing positioned tokens.
+ * Pure lexical scan: one left-to-right cursor pass producing positioned lexemes.
  * Structure is NOT enforced here (a leading modifier, a pool mid-stream, etc. are
  * tokenized as they lie) — this is the raw stream `tokenize` exposes. Structural
  * validity is layered on top by `parseNotation`.
  *
- * The pass is an iterative loop (not per-token/per-char recursion) so that
+ * The pass is an iterative loop (not per-lexeme/per-char recursion) so that
  * arbitrarily long input — the `tokenize` subpath is unguarded by the 1000-char
  * gate — cannot overflow the call stack.
  */
-export function scan(input: string): readonly LexToken[] {
+export function scan(input: string): readonly Lexeme[] {
   if (input.length === 0) return []
-  const tokens: LexToken[] = []
+  const lexemes: Lexeme[] = []
   // Mutable cursor held on a const object (the lint rule bans `let` but allows
   // this); every `scanStep` advances it by at least one character, so the loop
   // terminates in O(length) steps with O(1) stack depth.
   const cursor = { pos: 0 }
   const annotationState: AnnotationScanState = { noCloseBracketFrom: Number.POSITIVE_INFINITY }
   while (cursor.pos < input.length) {
-    cursor.pos = scanStep(input, cursor.pos, tokens, annotationState)
+    cursor.pos = scanStep(input, cursor.pos, lexemes, annotationState)
   }
-  return tokens
+  return lexemes
 }
