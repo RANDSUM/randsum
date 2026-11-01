@@ -24,6 +24,11 @@ export function roll(input?: {
   amplifyFear?: boolean
   rollingWith?: 'Advantage' | 'Disadvantage'
 }): GameRollResult<DaggerheartRollResult, DaggerheartRollDetails, RollRecord> {
+  if (input !== undefined && (typeof input !== 'object' || input === null))
+    throw new SchemaError(
+      'Daggerheart roll() takes an input object, received: ' + String(input),
+      'INVALID_INPUT_TYPE'
+    )
   if (input?.modifier !== undefined) {
     validateFinite(input?.modifier, 'Daggerheart modifier')
     validateInteger(input?.modifier, 'Daggerheart modifier')

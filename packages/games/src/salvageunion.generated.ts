@@ -2194,6 +2194,11 @@ export function roll(
 ): GameRollResult<SalvageunionRollResult, undefined, RollRecord> {
   const input: { tableName: string } =
     typeof rawInput === 'string' ? { tableName: rawInput } : rawInput
+  if (typeof input !== 'object' || input === null)
+    throw new SchemaError(
+      'Salvage Union roll() takes a string or an input object, received: ' + String(input),
+      'INVALID_INPUT_TYPE'
+    )
   const r = executeRoll({ sides: 20, quantity: 1 })
   const total = r.total
   const foundTable = REMOTE_DATA.find(t => t.name === input.tableName)

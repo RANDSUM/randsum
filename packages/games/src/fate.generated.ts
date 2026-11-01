@@ -29,6 +29,11 @@ export function roll(
 ): GameRollResult<FateRollResult, undefined, RollRecord> {
   const input: { modifier?: number } =
     typeof rawInput === 'number' ? { modifier: rawInput } : (rawInput ?? {})
+  if (typeof input !== 'object' || input === null)
+    throw new SchemaError(
+      'Fate Core roll() takes a number or an input object, received: ' + String(input),
+      'INVALID_INPUT_TYPE'
+    )
   if (input?.modifier !== undefined) {
     validateFinite(
       input?.modifier,

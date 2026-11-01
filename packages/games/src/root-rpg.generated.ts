@@ -13,6 +13,11 @@ export function roll(input: {
   bonus: number
   rollingWith?: 'Advantage' | 'Disadvantage'
 }): GameRollResult<RootRpgRollResult, undefined, RollRecord> {
+  if (typeof input !== 'object' || input === null)
+    throw new SchemaError(
+      'Root RPG roll() takes an input object, received: ' + String(input),
+      'INVALID_INPUT_TYPE'
+    )
   validateFinite(input.bonus, 'Root RPG bonus')
   validateInteger(input.bonus, 'Root RPG bonus')
   validateRange(input.bonus, -3, 5, 'Root RPG bonus')

@@ -22,6 +22,11 @@ export function roll(input: {
   ongoing?: number
   rollingWith?: 'Advantage' | 'Disadvantage'
 }): GameRollResult<PbtaRollResult, PbtaRollDetails, RollRecord> {
+  if (typeof input !== 'object' || input === null)
+    throw new SchemaError(
+      'Powered by the Apocalypse roll() takes an input object, received: ' + String(input),
+      'INVALID_INPUT_TYPE'
+    )
   validateFinite(input.stat, 'Powered by the Apocalypse stat')
   validateInteger(input.stat, 'Powered by the Apocalypse stat')
   validateRange(input.stat, -3, 5, 'Powered by the Apocalypse stat')

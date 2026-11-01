@@ -67,3 +67,19 @@ describe('integer inputs reject missing and non-number values', () => {
     )
   })
 })
+
+describe('roll() rejects a bare value where it takes an input object', () => {
+  const untyped = <T>(value: unknown): T => value as T
+
+  test('root-rpg roll(2) throws instead of dropping the bonus', () => {
+    expect(() => rootRpg(untyped<Parameters<typeof rootRpg>[0]>(2))).toThrow(
+      'Root RPG roll() takes an input object, received: 2'
+    )
+  })
+
+  test('blades accepts a number but not a string', () => {
+    expect(() => blades(untyped<Parameters<typeof blades>[0]>('3'))).toThrow(
+      'takes a number or an input object, received: 3'
+    )
+  })
+})

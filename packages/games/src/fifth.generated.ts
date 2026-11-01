@@ -18,6 +18,11 @@ export function roll(input?: {
   rollingWith?: 'Advantage' | 'Disadvantage'
   crit?: boolean
 }): GameRollResult<FifthRollResult, FifthRollDetails, RollRecord> {
+  if (input !== undefined && (typeof input !== 'object' || input === null))
+    throw new SchemaError(
+      'D&D 5th Edition roll() takes an input object, received: ' + String(input),
+      'INVALID_INPUT_TYPE'
+    )
   if (input?.modifier !== undefined) {
     validateFinite(input?.modifier, '5E modifier')
     validateInteger(input?.modifier, '5E modifier')

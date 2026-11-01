@@ -18,6 +18,11 @@ export function roll(
 ): GameRollResult<BladesRollResult, undefined, RollRecord> {
   const input: { rating?: number } =
     typeof rawInput === 'number' ? { rating: rawInput } : (rawInput ?? {})
+  if (typeof input !== 'object' || input === null)
+    throw new SchemaError(
+      'Blades in the Dark roll() takes a number or an input object, received: ' + String(input),
+      'INVALID_INPUT_TYPE'
+    )
   if (input?.rating !== undefined) {
     validateFinite(
       input?.rating,
