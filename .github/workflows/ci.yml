@@ -94,6 +94,7 @@ jobs:
               # The plugin's /roll mod commits a bundle of roller's roll().
               - 'packages/roller/src/**'
               - 'scripts/build-plugin-roller.ts'
+              - 'scripts/check-plugin-*.ts'
               - '.claude-plugin/**'
               - '.claude/**'
               - '.mcp.json'
@@ -264,10 +265,10 @@ jobs:
         run: npm install -g @anthropic-ai/claude-code@2.1.284
       - name: Verify project agent config
         run: claude plugin validate --strict .claude
-      # Plugin and marketplace stay non-strict: the directory listing fields in
-      # plugin.json warn as unknown on some Claude Code builds. Errors still fail.
+      # Strict, so a warning fails CI too: Anthropic's plugin directory runs the
+      # same checks (and more) on every version it ingests from main.
       - name: Verify plugin
-        run: claude plugin validate plugins/randsum
+        run: claude plugin validate --strict plugins/randsum
       # Hooks modules are early access; this pinned build runs them only when asked.
       - name: Test the plugin's /roll mod
         run: claude plugin test plugins/randsum
@@ -276,11 +277,13 @@ jobs:
       - uses: ./.github/actions/bun-setup
       - name: Plugin roller bundle is fresh
         run: bun run check:plugin-roller
+      - name: No plugin directory scan patterns
+        run: bun run check:plugin-scan
       - name: Plugin changes bump its version
         if: github.event_name == 'pull_request'
         run: bun run check:plugin-version "origin/${{ github.base_ref }}"
       - name: Verify marketplace
-        run: claude plugin validate .claude-plugin/marketplace.json
+        run: claude plugin validate --strict .claude-plugin/marketplace.json
 
   publish-dry-run:
     name: publish (dry run)
