@@ -69,10 +69,10 @@ roll({
 
 ### Geometric Die (`gN`)
 
-Roll dN, and roll it again each time it shows its maximum; the result is the sum of every roll. Safety cap at 1000 iterations.
+Roll dN again while it shows N; the result is the sum of every roll. Safety cap at 1000 iterations.
 
 ```typescript
-roll("g6")   // Roll a d6, again on each 6, and sum the rolls
+roll("g6")   // e.g. [6, 6, 2] → 14 (mean 4.2)
 roll("3g6")  // Three independent geometric rolls
 ```
 

@@ -3,7 +3,8 @@
 ## Status
 
 Superseded: `@randsum/cli` was retired in #1249 (`5db65568`), and `@randsum/dice-ui` is no
-longer a package: its web-only components were folded into `apps/site/src/components/dice-ui/`.
+longer a package: its web-only components were folded into `apps/site`, and were later replaced
+by `@randsum/ui` (Lit Web Components).
 Nothing below describes a live surface; it stays as the record of why Ink and a TUI target were
 never adopted. Paths below that name `packages/dice-ui/` are historical.
 

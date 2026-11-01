@@ -121,12 +121,12 @@ export function renderFacts(facts: readonly ViewFact[]): string {
  * removed and added, and the final arithmetic.
  *
  * This is `@randsum/roller/trace` reaching Discord for the first time. The
- * engine has always produced this step model — the site's dice-ui components render it on
- * the website — while the bot hand-rolled `.join(', ')` and showed two parallel
+ * engine has always produced this step model — `@randsum/ui`'s `<randsum-roll-steps>`
+ * renders it on the website — while the bot hand-rolled `.join(', ')` and showed two parallel
  * plain lists for the reader to diff by eye.
  *
  * Removed dice are struck through, added dice bold, unchanged dice plain, which
- * is exactly the `DieBadge` variant scheme the web component uses.
+ * the same kept / removed / added die variants `<randsum-roll-steps>` uses.
  */
 export function renderTrace(record: TraceableRollRecord): readonly string[] {
   return traceRoll(record).flatMap(step => {

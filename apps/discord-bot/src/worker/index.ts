@@ -8,10 +8,8 @@
  * 2026-08-18 — a `client.login()` that hung silently — cannot occur here,
  * because there is no login.
  *
- * The two models are MUTUALLY EXCLUSIVE. Configuring an Interactions Endpoint
- * URL in the Discord application settings stops interaction delivery over the
- * gateway entirely. Do not point Discord at this Worker until it is at parity
- * with the gateway bot — see the status note below.
+ * Discord's Interactions Endpoint URL points here (bot.randsum.dev). The gateway
+ * bot was removed on 2026-09-01, so this Worker is the only transport.
  */
 import { commands as commandList } from '../commands/index.js'
 import type { Command } from '../types.js'

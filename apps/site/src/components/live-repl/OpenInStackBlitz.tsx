@@ -1,5 +1,7 @@
 import sdk from '@stackblitz/sdk'
+import { buildNodeProject } from '../../helpers/stackblitz'
 import { extractRandsumDeps } from './extractRandsumDeps'
+import './live-repl.css'
 
 interface Props {
   code: string
@@ -7,22 +9,11 @@ interface Props {
 
 export function OpenInStackBlitz({ code }: Props): React.JSX.Element {
   const handleClick = (): void => {
-    const randsumDeps = extractRandsumDeps(code)
+    const project = buildNodeProject(code, extractRandsumDeps(code), 'RANDSUM Example')
     sdk.openProject({
-      title: 'RANDSUM Example',
-      template: 'node',
+      ...project,
       files: {
-        'index.ts': code,
-        'package.json': JSON.stringify(
-          {
-            name: 'randsum-example',
-            type: 'module',
-            scripts: { start: 'tsx index.ts' },
-            dependencies: { ...randsumDeps, tsx: 'latest' }
-          },
-          null,
-          2
-        ),
+        ...project.files,
         'tsconfig.json': JSON.stringify(
           {
             compilerOptions: {
@@ -39,20 +30,8 @@ export function OpenInStackBlitz({ code }: Props): React.JSX.Element {
   }
 
   return (
-    <div style={{ textAlign: 'right', marginTop: '0.25rem' }}>
-      <button
-        onClick={handleClick}
-        style={{
-          background: 'none',
-          border: 'none',
-          cursor: 'pointer',
-          color: 'var(--sl-color-accent)',
-          fontSize: '0.8125rem',
-          fontFamily: 'var(--sl-font)',
-          padding: '0.25rem 0',
-          textDecoration: 'none'
-        }}
-      >
+    <div className="open-in-stackblitz">
+      <button type="button" onClick={handleClick}>
         Open in StackBlitz ↗
       </button>
     </div>

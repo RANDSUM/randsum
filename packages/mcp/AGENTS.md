@@ -24,7 +24,6 @@ Three tools, each backed by a pure, directly-testable handler:
 - `src/tools/roll.ts` — `rollNotation()` pure handler
 - `src/tools/validate.ts` — `validateNotationInput()` pure handler
 - `src/tools/rollGame.ts` — `rollGame()` pure handler
-- `src/rng.ts` — `createSeededRandom()` LCG for deterministic seeded rolls
 
 Zod schemas live in `server.ts` (not the tool files): `isolatedDeclarations` forbids exporting a
 Zod raw shape without an explicit type annotation, so the shapes stay module-local and the tool
@@ -50,9 +49,3 @@ Smoke-test the live server by piping a JSON-RPC `initialize` message to `bun src
 - `@randsum/roller` and `@randsum/games` are **dev dependencies** (`workspace:~`), bundled into
   `dist/index.js` and `dist/remote.js` via bunup `noExternal: [/^@randsum\//]`. This keeps
   the published surface to just the SDK + zod.
-
-## Publishing
-
-Publish only via `bun scripts/publish.ts` (see `CONTRIBUTING.md`). Never `npm publish` or a direct `bun publish`.
-`prepublishOnly` runs `bun run build`. `build` chmods `dist/index.js` so the `randsum-mcp` bin is
-executable.

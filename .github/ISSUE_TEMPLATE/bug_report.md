@@ -17,7 +17,7 @@ roll("4d6L")
 ```
 
 **Expected output**
-What you expected `roll(...)` to return — pool, total, result, modifierLogs, etc.
+What you expected `roll(...)` to return — rolls, values, total, etc.
 
 **Actual output**
 

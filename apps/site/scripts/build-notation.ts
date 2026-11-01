@@ -5,7 +5,7 @@
  * Astro builds the spec pages with the rest of the site, under /spec/
  * (src/pages/spec/). This lifts them to the root of dist-notation/ beside the
  * fingerprinted /_astro/ assets and favicons they load, writes the host's
- * robots.txt and sitemap.xml, then deletes /spec/ from dist/ so randsum.dev
+ * robots.txt, sitemap.xml and _headers, then deletes /spec/ from dist/ so randsum.dev
  * never serves a second copy: its _redirects send /spec/* there instead. The
  * pages already link by their paths on this host (src/spec/urls.ts). Runs as
  * the last step of `bun run build`.
@@ -58,6 +58,12 @@ writeFileSync(
   `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls
     .map(p => `  <url><loc>${NOTATION_ORIGIN}${p}</loc></url>`)
     .join('\n')}\n</urlset>\n`
+)
+// Astro fingerprints every file under /_astro/, so it can be cached forever,
+// as randsum.dev (public/_headers) and app.randsum.dev (app-public/_headers) do.
+writeFileSync(
+  join(out, '_headers'),
+  '/_astro/*\n  Cache-Control: public, max-age=31536000, immutable\n'
 )
 writeFileSync(
   join(out, 'robots.txt'),

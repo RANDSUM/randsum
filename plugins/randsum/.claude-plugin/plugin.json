@@ -18,7 +18,9 @@
     "rdn",
     "dnd",
     "probability",
-    "game-mechanics"
-  ],
-  "skills": "./skills"
+    "game-mechanics",
+    "blades-in-the-dark",
+    "daggerheart",
+    "pbta"
+  ]
 }

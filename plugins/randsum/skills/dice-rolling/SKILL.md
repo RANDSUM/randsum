@@ -103,7 +103,7 @@ Case-insensitive. `NdS` rolls N dice with S sides; `d20` means `1d20`.
 | `4d6%3` | Total modulo 3 |
 | `4dF` | Fate dice |
 | `d%` | Percentile, 1d100 |
-| `g6` | Geometric die: roll a d6 again on each 6, sum every roll |
+| `g6` | Geometric die: roll d6 again while it shows 6, sum every roll |
 | `3DD6` | Draw 3 from a d6 without replacement |
 | `4d6Lx6` | Repeat 6 times |
 | `2d6+3[fire]` | Label a group |
