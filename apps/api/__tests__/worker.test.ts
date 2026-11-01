@@ -26,6 +26,14 @@ describe('worker', () => {
     expect(response.headers.get('Location')).toBe(`${BASE}/v1`)
   })
 
+  test('favicons redirect to the RANDSUM mark on randsum.dev', async () => {
+    for (const path of ['/favicon.ico', '/favicon.svg']) {
+      const response = await call(path)
+      expect(response.status).toBe(301)
+      expect(response.headers.get('Location')).toBe(`https://randsum.dev${path}`)
+    }
+  })
+
   test('every response is CORS-enabled and rolls are never cached', async () => {
     const response = await call('/v1/roll?notation=1d20')
     expect(response.status).toBe(200)
