@@ -10,11 +10,11 @@ import {
   modifiersToDescription,
   modifiersToNotation
 } from '../notation/transformers/modifiersToStrings'
-import type { ParsedNotationOptions } from '../notation/types'
+import type { ModifierOptions, ParsedNotationOptions } from '../notation/types'
 import { validateRollOptions } from '../lib/optionsValidation'
 import { validateModifiers } from '../modifiers/registry'
 import { validateMaxQuantity, validateMaxSides } from '../lib/utils/validation'
-import { ValidationError } from '../errors'
+import { ModifierError, ValidationError } from '../errors'
 import type { DiceNotation } from '../types'
 import type { RollArgument, RollOptions, RollParams } from '../types'
 
@@ -23,6 +23,37 @@ const FATE_EXTENDED_FACES = [-2, -1, 0, 1, 2]
 
 function isAllNumeric(values: readonly string[]): boolean {
   return values.every(v => /^-?\d+$/.test(v.trim()))
+}
+
+/**
+ * The only modifiers a geometric die takes (spec 4.3): the Total-channel Scale
+ * modifiers. Its pool holds every roll of every sequence, not one value per die,
+ * so a modifier that reads or changes individual dice (drop, keep, count, ...)
+ * would act on rolls rather than dice.
+ */
+const GEOMETRIC_MODIFIERS: ReadonlySet<keyof ModifierOptions> = new Set([
+  'plus',
+  'minus',
+  'multiply',
+  'integerDivide',
+  'modulo',
+  'multiplyTotal'
+])
+
+function rejectGeometricPoolModifiers(modifiers: ModifierOptions, notation: string): void {
+  const name = (Object.keys(modifiers) as (keyof ModifierOptions)[]).find(
+    key => modifiers[key] !== undefined && !GEOMETRIC_MODIFIERS.has(key)
+  )
+  if (name !== undefined) {
+    throw new ModifierError(
+      name,
+      `Pool modifiers are not supported on geometric dice (${notation})`,
+      {
+        path: `modifiers.${name}`,
+        notation
+      }
+    )
+  }
 }
 
 function keyFor(position: number, index: number): string {
@@ -166,6 +197,7 @@ function optionsToParams<T>(
   // A special die resolves its faces (dF, zN, d{...}) before validation; a
   // standard pool must be validated before rendering, which rejects bad values.
   const special = specialOptionsToParams<T>(options as ParsedNotationOptions, argument, key)
+  if (special?.geometric === true) rejectGeometricPoolModifiers(special.modifiers, special.notation)
   validateModifiers(
     options.modifiers ?? {},
     special

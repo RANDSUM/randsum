@@ -1,5 +1,7 @@
 import { describe, expect, test } from 'bun:test'
 import { roll } from '../../src/roll'
+import { validateNotation } from '../../src/notation/validateNotation'
+import type { DiceNotation } from '../../src/types'
 import { createSeededRandom } from '../../test-utils/src/seededRandom'
 
 describe('Geometric dice (gN)', () => {
@@ -137,5 +139,23 @@ describe('geometric description', () => {
     expect(roll('g8').rolls[0]?.description).toEqual([
       'Roll 1g8 (geometric: roll again on each 8, summing all rolls)'
     ])
+  })
+})
+
+describe('geometric dice take only total modifiers (spec 4.3)', () => {
+  test.each(['g6L', '3g6H', '3g6#{>6}', '3g6!', '3g6R{1}', '3g6C{>4}', '3g6U'])(
+    '%s is rejected, by roll() and validateNotation',
+    notation => {
+      const message = `Pool modifiers are not supported on geometric dice (${notation})`
+      expect(() => roll(notation as DiceNotation)).toThrow(message)
+      const result = validateNotation(notation)
+      expect(result.valid).toBe(false)
+      if (!result.valid) expect(result.error.message).toContain(message)
+    }
+  )
+
+  test.each(['g6+3', '3g6-1', '2g6*2', 'g6//2', 'g6%3', 'g6**2'])('%s rolls', notation => {
+    expect(validateNotation(notation).valid).toBe(true)
+    expect(() => roll(notation as DiceNotation)).not.toThrow()
   })
 })

@@ -95,7 +95,7 @@ export const RANDSUM_DICE_SCHEMAS: readonly DiceSchema[] = [
       colorLight: '#0f0f11',
       title: 'Geometric Die',
       description:
-        'Roll an N-sided die, and roll it again each time it shows N. Total is the sum of every roll.',
+        'Roll an N-sided die, and roll it again each time it shows N. Total is the sum of every roll. Takes total modifiers only (+, -, *, //, %).',
       displayBase: 'gN',
       forms: [{ notation: 'gN', note: 'Roll again on the maximum; sum every roll' }],
       examples: [{ description: 'Geometric d6: roll again on each 6', notation: 'g6' }]
