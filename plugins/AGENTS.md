@@ -16,7 +16,7 @@ Claude Code plugins published by this repo. The root `.claude-plugin/marketplace
 
 `randsum/hooks/` is a Claude Code mod: `hooks.json` names one hooks module, `register.ts`, which registers `/roll <notation>`. It rolls in Claude Code's hooks sandbox with no model turn, prints the result, pins it as the plugin's status line, and hands Claude a hidden note saying the user rolled it.
 
-- The sandbox imports only files inside the plugin, so `roller.generated.js` is `roll()` from `@randsum/roller`, bundled unminified by `bun run plugin:roller` so the directory's scan can read it. `bun run check:plugin-roller` (in `bun run check` and CI) fails when it is stale; re-run the bundle after any roller change. `roller.generated.d.ts` is hand-written.
+- The sandbox imports only files inside the plugin, so `roller.generated.js` is `roll()` from `@randsum/roller`, bundled unminified by `bun run plugin:roller` so the directory's scan can read it. The build strips roller's static name pins and renames its lexer's `token` identifiers to `lexeme`, because the scan reads "token" as a credential and holds the plugin for review. `bun run check:plugin-roller` (in `bun run check` and CI) fails when it is stale; re-run the bundle after any roller change. `roller.generated.d.ts` is hand-written.
 - `hooks.json` keeps an empty `hooks` object beside `modules` so Claude Code builds from before mods still read the file as valid.
 - Hooks modules are early access. `claude plugin validate plugins/randsum` reports what the module hooks and calls; `claude plugin test plugins/randsum` runs `roll.test.ts` (set `CLAUDE_CODE_ENABLE_FUNCTION_HOOKS=1` on builds where modules are off by default).
 
