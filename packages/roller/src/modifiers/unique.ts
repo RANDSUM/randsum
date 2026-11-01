@@ -11,16 +11,7 @@ export const uniqueModifier: ModifierDefinition<boolean | UniqueOptions> = {
   requiresParameters: true,
 
   apply: (rolls, options, ctx) => {
-    const { rollOne, parameters } = assertRequiredContext(ctx)
-    const { sides, quantity } = parameters
-
-    if (quantity > sides) {
-      throw new ModifierError(
-        'unique',
-        'Cannot have more rolls than sides when unique is enabled',
-        { path: 'modifiers.unique', value: { quantity, sides } }
-      )
-    }
+    const { rollOne } = assertRequiredContext(ctx)
 
     const exceptions = new Set(typeof options === 'object' ? options.notUnique : [])
 
@@ -32,7 +23,8 @@ export const uniqueModifier: ModifierDefinition<boolean | UniqueOptions> = {
             `Could not find a unique value after ${MAX_REROLL_ATTEMPTS} attempts`
           )
         }
-        if (!seen.has(current) && !exceptions.has(current)) return current
+        // An exempt value may repeat, so a reroll that lands on one is kept.
+        if (exceptions.has(current) || !seen.has(current)) return current
         return findUnique(rollOne(), attempts + 1)
       }
       return findUnique(value, 0)
@@ -66,14 +58,19 @@ export const uniqueModifier: ModifierDefinition<boolean | UniqueOptions> = {
     return { rolls: result, replacements }
   },
 
-  validate: (options, { sides, quantity }) => {
-    const exceptionCount = typeof options === 'object' ? options.notUnique.length : 0
-    const neededUnique = quantity - exceptionCount
+  validate: (options, { sides, quantity, faces }) => {
+    // A pool can be unique only if it has a face for every die. An exempt value
+    // that is one of the die's faces may repeat, so it lifts that limit; an
+    // exempt value the die cannot show does not.
+    const distinct = new Set(faces ?? Array.from({ length: sides }, (_, i) => i + 1))
+    const exempt = typeof options === 'object' ? options.notUnique : []
+    if (exempt.some(value => distinct.has(value))) return
 
-    if (neededUnique > sides) {
+    if (quantity > distinct.size) {
+      const unit = faces === undefined ? 'sides' : 'distinct faces'
       throw new ModifierError(
         'unique',
-        `Cannot have ${neededUnique} unique values with only ${sides} sides`,
+        `Cannot have ${quantity} unique values with only ${distinct.size} ${unit}`,
         { path: 'modifiers.unique', value: options }
       )
     }

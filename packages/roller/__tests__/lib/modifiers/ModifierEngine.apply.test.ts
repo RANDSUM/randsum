@@ -266,11 +266,11 @@ describe('applyModifier', () => {
       expect(result.rolls).toEqual([1, 3, 1, 4]) // 1s are allowed to duplicate
     })
 
-    test('throws when more rolls than sides', () => {
-      const ctx: ModifierContext = { rollOne: mockRollOne, parameters: { sides: 6, quantity: 7 } }
-      expect(() => {
-        applyModifier('unique', true, [1, 2, 3, 4, 5, 6, 1], ctx)
-      }).toThrow('Cannot have more rolls than sides when unique is enabled')
+    test('keeps a reroll that lands on an exempt value', () => {
+      const ctx: ModifierContext = { rollOne: () => 1, parameters: { sides: 2, quantity: 3 } }
+      const result = applyModifier('unique', { notUnique: [1] }, [2, 2, 1], ctx)
+
+      expect(result.rolls).toEqual([2, 1, 1])
     })
   })
 
