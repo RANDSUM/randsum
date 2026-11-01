@@ -53,5 +53,5 @@ roll("2d6+3[fire]") // Annotation
 
 ## Optional
 
-- [Legacy roll endpoint](https://randsum.dev/api/roll): `POST https://randsum.dev/api/roll` with `{ "notation": "4d6L" }` returns `{ notation, total, rolls, description }`; `GET` returns the contract. Prefer the `/v1` API for new work
+- [Legacy roll endpoint](https://randsum.dev/api/roll): `POST https://randsum.dev/api/roll` with `{ "notation": "4d6L" }` returns `{ notation, total, rolls, description }`; `GET` returns the contract. Deprecated: it sunsets on 2027-02-01 and then redirects to `https://api.randsum.dev/v1/roll`; use the `/v1` API
 - [Source on GitHub](https://github.com/RANDSUM/randsum)
