@@ -41,6 +41,21 @@ describe('@randsum/roller (dist)', () => {
     const mod = await import('../../roller/dist/errors.js')
     expect(typeof mod.ValidationError).toBe('function')
     expect(typeof mod.ModifierError).toBe('function')
+    // The bundle is minified; each class keeps its name for logs and error reports.
+    const names = [
+      mod.RandsumError,
+      mod.NotationParseError,
+      mod.ModifierError,
+      mod.ValidationError,
+      mod.RollError
+    ].map(cls => cls.name)
+    expect(names).toEqual([
+      'RandsumError',
+      'NotationParseError',
+      'ModifierError',
+      'ValidationError',
+      'RollError'
+    ])
   })
 
   test('notation functions exported from main entry', async () => {

@@ -23,6 +23,8 @@ describe('@randsum/games (dist)', () => {
     const err = new mod.SchemaError('test message', 'INVALID_SPEC')
     expect(err).toBeInstanceOf(Error)
     expect(err.message).toBe('test message')
+    // The bundle is minified; the class keeps its name for logs and error reports.
+    expect(err.constructor.name).toBe('SchemaError')
   })
 
   test('blades dist entry exports roll', async () => {
