@@ -1,18 +1,5 @@
 import type { ModifierConfig as _ModifierConfig } from '../notation/types'
 
-// Re-export modifier option types from notation for backward compatibility
-export type {
-  ComparisonOptions,
-  CountOptions,
-  DropOptions,
-  KeepOptions,
-  RerollOptions,
-  ReplaceOptions,
-  UniqueOptions,
-  ModifierConfig,
-  ModifierOptions
-} from '../notation/types'
-
 /**
  * Record of a single modifier's effect on the dice pool.
  *

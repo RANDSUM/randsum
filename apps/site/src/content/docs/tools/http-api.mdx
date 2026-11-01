@@ -40,10 +40,3 @@ validation while authoring a game spec:
   }
 }
 ```
-
-## Retired: `randsum.dev/api/roll`
-
-The site's original roll endpoint was retired on 1 November 2026. Requests to
-`https://randsum.dev/api/roll` now get a `308` redirect to
-[`/v1/roll`](/api/rolling/) on the RANDSUM API. A `POST` with `{"notation": "4d6L"}`
-still rolls, but the response has the `/v1` shape.

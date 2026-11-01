@@ -3,8 +3,7 @@
   //
   // The site is plain `output: 'static'` Astro with no adapter, deployed as an
   // assets-only Worker: there is no script, so every request is served from
-  // static assets, which is free and unbilled. Redirects, including the retired
-  // `/api/roll` (now a 308 to api.randsum.dev/v1/roll), live in public/_redirects.
+  // static assets, which is free and unbilled. Redirects live in public/_redirects.
   //
   // This file is the deployable config: `wrangler deploy -c apps/site/wrangler.jsonc`.
   "$schema": "node_modules/wrangler/config-schema.json",

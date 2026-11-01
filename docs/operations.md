@@ -19,8 +19,7 @@ It documents how each surface is hosted, deployed, rolled back, and recovered.
 DNS for `randsum.dev` is on Cloudflare (nameservers
 `davina`/`rajeev`.ns.cloudflare.com; registrar moving from Hover to Cloudflare
 Registrar, transfer started 2026-10-30), and every Cloudflare surface above
-serves from a Worker with a custom domain. The retired `randsum.dev/api/roll`
-is a 308 to `api.randsum.dev/v1/roll` in `apps/site/public/_redirects`.
+serves from a Worker with a custom domain.
 
 > Config sources: `apps/site/wrangler.jsonc`, `apps/site/wrangler.notation.jsonc`
 > (the spec at `notation.randsum.dev`, static assets deployed to the `randsum-rdn` Worker),
@@ -192,9 +191,8 @@ reversible — rolling back does not delete newer versions.
   Assets hardcodes it and `html_handling` cannot change it. This is not a
   regression to chase: pages emit `<link rel="canonical">` and the sitemap uses
   the trailing-slash form, so the canonical URL is declared explicitly. The
-  site's own legacy redirects are still 301 — they come from
-  `apps/site/public/_redirects` (Workers Static Assets `_redirects` rules), a
-  different mechanism from the hardcoded trailing-slash 307.
+  `/spec` redirects in `apps/site/public/_redirects` are 301s, a different
+  mechanism from the hardcoded trailing-slash 307.
 
 ---
 

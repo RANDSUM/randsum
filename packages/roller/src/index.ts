@@ -4,32 +4,32 @@ export * from './validate'
 export * from './errors'
 export type {
   CustomFacesNotation,
-  DiceNotation,
   DrawDieNotation,
   GeometricDieNotation,
   FateDieNotation,
   PercentileDie,
   RandomFn,
-  RollOptions,
   RollArgument,
   RollConfig,
   ZeroBiasNotation
 } from './types/core'
 
+export type { RollRecord, RollerRollResult } from './types/results'
+
 export type {
   ComparisonOptions,
   CountOptions,
+  DiceNotation,
   DropOptions,
   KeepOptions,
-  RerollOptions,
+  ModifierOptions,
   ReplaceOptions,
+  RerollOptions,
+  RollOptions,
   UniqueOptions,
-  ModifierOptions
-} from './types/modifiers'
-
-export type { RollRecord, RollerRollResult } from './types/results'
-
-export type { ValidationErrorInfo, ValidationResult } from './notation/types'
+  ValidationErrorInfo,
+  ValidationResult
+} from './notation/types'
 
 export { notationToOptions } from './notation/parse/notationToOptions'
 export { optionsToNotation } from './notation/transformers/optionsToNotation'
