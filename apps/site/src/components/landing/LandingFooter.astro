@@ -71,7 +71,10 @@ const year = new Date().getFullYear()
       ))}
     </nav>
   </div>
-  <p class="footer-legal">&copy; {year} RANDSUM. Open source under the MIT license.</p>
+  <p class="footer-legal">
+    &copy; {year} RANDSUM, made by <a href="https://alxjrvs.com/" rel="author">Alex Jarvis</a>. Open
+    source under the MIT license.
+  </p>
 </footer>
 
 <style>
@@ -158,6 +161,14 @@ const year = new Date().getFullYear()
   margin: 2.5rem 0 0;
   font-size: var(--rs-text-xs);
   color: var(--rs-gray-3);
+}
+
+.footer-legal a {
+  color: var(--rs-gray-2);
+}
+
+.footer-legal a:hover {
+  color: var(--rs-fg);
 }
 
 @media (max-width: 900px) {
