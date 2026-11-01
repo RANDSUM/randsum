@@ -42,7 +42,7 @@ packages/games/
   __tests__/
     <shortcode>.test.ts           # Unit tests per game
     <shortcode>.property.test.ts  # Property-based tests per game
-    build-smoke.test.ts           # Build output verification
+    dist.smoke.test.ts            # Build output verification (imports dist/)
   __fixtures__/
     salvageunion-tables.json      # Checked-in remote table snapshot (codegen reads this by default)
 ```
