@@ -1,6 +1,5 @@
 export { resolveExternalRefs } from './externalRefResolver'
 export { fetchRemoteData, generateCode } from './codegen'
-export type { GenerateCodeOptions } from './codegen'
 export { formatGeneratedCode } from './formatGeneratedCode'
 export { validateSpec } from './validator'
 export { getRollDefinitions } from './typeGuards'
