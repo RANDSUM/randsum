@@ -9,9 +9,6 @@ var ERROR_CODES = {
 };
 
 class RandsumError extends Error {
-  static {
-    Object.defineProperty(this, "name", { value: "RandsumError" });
-  }
   code;
   context;
   constructor(message, code, context) {
@@ -23,9 +20,6 @@ class RandsumError extends Error {
 }
 
 class NotationParseError extends RandsumError {
-  static {
-    Object.defineProperty(this, "name", { value: "NotationParseError" });
-  }
   suggestion;
   constructor(notation, reason, suggestion, context) {
     const message = suggestion ? `Invalid notation "${notation}": ${reason}. Did you mean "${suggestion}"?` : `Invalid notation "${notation}": ${reason}`;
@@ -37,9 +31,6 @@ class NotationParseError extends RandsumError {
 }
 
 class ModifierError extends RandsumError {
-  static {
-    Object.defineProperty(this, "name", { value: "ModifierError" });
-  }
   constructor(modifierType, reason, context) {
     super(`Modifier error for "${modifierType}": ${reason}`, ERROR_CODES.MODIFIER_ERROR, context);
     this.name = "ModifierError";
@@ -47,9 +38,6 @@ class ModifierError extends RandsumError {
 }
 
 class ValidationError extends RandsumError {
-  static {
-    Object.defineProperty(this, "name", { value: "ValidationError" });
-  }
   constructor(message, context) {
     super(`Validation error: ${message}`, ERROR_CODES.VALIDATION_ERROR, context);
     this.name = "ValidationError";
@@ -57,9 +45,6 @@ class ValidationError extends RandsumError {
 }
 
 class RollError extends RandsumError {
-  static {
-    Object.defineProperty(this, "name", { value: "RollError" });
-  }
   constructor(message, context) {
     super(message, ERROR_CODES.ROLL_ERROR, context);
     this.name = "RollError";

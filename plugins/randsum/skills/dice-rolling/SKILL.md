@@ -19,13 +19,12 @@ Use the first one available:
    - `roll_game` when the user names a supported game. It returns the game's outcome, not just a number.
    - `roll` for plain notation.
    - `validate` to check or explain notation, or to repair notation `roll` rejected.
-2. **The HTTP API** at `https://api.randsum.dev/v1`, if you can make a web request (`curl` in a shell, or a fetch tool). Public, keyless, JSON:
+2. **The HTTP API** at `https://api.randsum.dev/v1`, if you have a web fetch tool or an HTTP client. Public, keyless, JSON:
    - `GET /v1/roll?notation=4d6L` (URL-encode: `+` is `%2B`, `{` is `%7B`, `}` is `%7D`)
    - `GET /v1/games/<game>/roll?<inputs>`, e.g. `/v1/games/blades/roll?rating=3`
    - `GET /v1/validate?notation=...`, `GET /v1/random?min=1&max=100&count=5`, `GET /v1/games`
    - `POST` with a JSON body works for `roll`, `validate` and game rolls too, and avoids URL encoding.
-3. **Local code**, if you have a shell but no network: `node -e "console.log(require('crypto').randomInt(1, 21))"` for a d20, and do the dice arithmetic yourself. Say the roll came from a local RNG.
-4. **Nothing available:** tell the user you cannot roll real dice here and give the notation they can roll themselves. Only simulate if they ask you to, and label it simulated.
+3. **Neither available:** tell the user you cannot roll real dice here and give the notation they can roll themselves. Only simulate if they ask you to, and label it simulated.
 
 ## 2. Translate the request
 
