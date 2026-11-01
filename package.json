@@ -8,7 +8,7 @@
     "@size-limit/preset-small-lib": "12.1.0",
     "@types/bun": "catalog:",
     "bunup": "0.16.32",
-    "knip": "6.25.0",
+    "knip": "6.43.0",
     "lefthook": "2.1.14",
     "mitata": "catalog:",
     "size-limit": "12.1.0",
