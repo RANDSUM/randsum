@@ -3,6 +3,7 @@ import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from 
 import { join } from 'node:path'
 
 import {
+  fetchRemoteData,
   formatGeneratedCode,
   generateCode,
   getRollDefinitions,
@@ -24,12 +25,12 @@ function fixturePathFor(shortcode: string): string {
   return join(fixturesDir, `${shortcode}-tables.json`)
 }
 
-function getRemoteUrl(spec: RandSumSpec): string | undefined {
+function getRemoteTable(spec: RandSumSpec): { url: string; dataPath?: string } | undefined {
   for (const rollDef of Object.values(getRollDefinitions(spec))) {
     const resolve = rollDef.resolve
     if (typeof resolve === 'object' && 'remoteTableLookup' in resolve) {
-      const { url } = resolve.remoteTableLookup
-      if (typeof url === 'string') return url
+      const { url, dataPath } = resolve.remoteTableLookup
+      if (typeof url === 'string') return dataPath === undefined ? { url } : { url, dataPath }
     }
   }
   return undefined
@@ -62,16 +63,14 @@ async function main(): Promise<void> {
 
     shortcodes.push(spec.shortcode)
 
-    const remoteUrl = getRemoteUrl(spec)
+    const remoteTable = getRemoteTable(spec)
+    const remoteUrl = remoteTable?.url
     const remoteDataCache = new Map<string, readonly unknown[]>()
 
-    if (remoteUrl && refreshRemote && !checkMode) {
-      const response = await fetch(remoteUrl)
-      if (!response.ok) {
-        console.error(`FAIL  fetch ${remoteUrl}: HTTP ${String(response.status)}`)
-        process.exit(1)
-      }
-      const data = (await response.json()) as readonly unknown[]
+    if (remoteTable && remoteUrl && refreshRemote && !checkMode) {
+      // The fixture holds the table as generateCode would fetch it: traversed
+      // by dataPath, so the cache and a live fetch agree.
+      const data = await fetchRemoteData(remoteTable.url, remoteTable.dataPath)
       remoteDataCache.set(remoteUrl, data)
 
       mkdirSync(fixturesDir, { recursive: true })

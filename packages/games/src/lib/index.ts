@@ -1,5 +1,5 @@
 export { resolveExternalRefs } from './externalRefResolver'
-export { generateCode } from './codegen'
+export { fetchRemoteData, generateCode } from './codegen'
 export type { GenerateCodeOptions } from './codegen'
 export { formatGeneratedCode } from './formatGeneratedCode'
 export { validateSpec } from './validator'
