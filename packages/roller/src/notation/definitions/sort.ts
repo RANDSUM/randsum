@@ -8,7 +8,7 @@ const sortPattern = /[Ss]([Aa]|[Dd])(?![{\d])/
 export const sortSchema: NotationSchema<SortDirection> = defineNotationSchema<SortDirection>({
   name: 'sort',
   priority: 95,
-  tokenKey: 'sort',
+  lexemeKey: 'sort',
   category: 'Order',
 
   pattern: sortPattern,

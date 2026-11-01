@@ -7,7 +7,7 @@ const countPattern: RegExp = /#\{((?:>=|<=|>|<|=)?\d+(?:,(?:>=|<=|>|<|=)?\d+)*)\
 export const countSchema: NotationSchema<CountOptions> = defineNotationSchema<CountOptions>({
   name: 'count',
   priority: 80,
-  tokenKey: '#{..}',
+  lexemeKey: '#{..}',
   category: 'Reinterpret',
 
   pattern: countPattern,

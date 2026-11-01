@@ -1,7 +1,7 @@
 import type { NotationDoc } from '../docs/modifierDocs'
 import type { ModifierOptions } from './types'
 
-/** The RDN faceted category of a modifier token. */
+/** The RDN faceted category of a modifier lexeme. */
 export type ModifierCategory =
   | 'Core'
   | 'Special' // dice types
@@ -42,10 +42,10 @@ export interface NotationSchema<TOptions = unknown> {
    */
   priority: number
 
-  /** Stable key of the lexer token this schema matches (e.g. `'C{..}'`, `'drop'`). */
-  tokenKey: string
+  /** Stable key of the lexer lexeme this schema matches (e.g. `'C{..}'`, `'drop'`). */
+  lexemeKey: string
 
-  /** RDN faceted category of the token. */
+  /** RDN faceted category of the lexeme. */
   category: ModifierCategory
 
   /**

@@ -4,7 +4,7 @@ const multiplyTotalPattern = /\*\*(\d+)/
 export const multiplyTotalSchema: NotationSchema<number> = defineNotationSchema<number>({
   name: 'multiplyTotal',
   priority: 100,
-  tokenKey: '**',
+  lexemeKey: '**',
   category: 'Scale',
 
   pattern: multiplyTotalPattern,

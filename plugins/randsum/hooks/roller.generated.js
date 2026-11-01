@@ -70,7 +70,7 @@ var countFailuresPattern = /[Ff]\{(\d+)\}/;
 var countFailuresSchema = defineNotationSchema({
   name: "count",
   priority: 80,
-  tokenKey: "F{..}",
+  lexemeKey: "F{..}",
   category: "Reinterpret",
   pattern: countFailuresPattern,
   parse: (notation) => {
@@ -97,7 +97,7 @@ var countSuccessesPattern = /(?<!!)[Ss]\{(\d+)(?:,(\d+))?\}/;
 var countSuccessesSchema = defineNotationSchema({
   name: "count",
   priority: 80,
-  tokenKey: "S{..}",
+  lexemeKey: "S{..}",
   category: "Reinterpret",
   pattern: countSuccessesPattern,
   parse: (notation) => {
@@ -232,7 +232,7 @@ var capPattern = /[Cc]\{((?:>=|<=|>|<|=)?\d+(?:,(?:>=|<=|>|<|=)?\d+)*)\}/;
 var capSchema = defineNotationSchema({
   name: "cap",
   priority: 10,
-  tokenKey: "C{..}",
+  lexemeKey: "C{..}",
   category: "Clamp",
   pattern: capPattern,
   parse: (notation) => {
@@ -274,7 +274,7 @@ var compoundPattern = /!!(\d+)?(\{((?:>=|<=|>|<|=)?\d+(?:,(?:>=|<=|>|<|=)?\d+)*)
 var compoundSchema = defineNotationSchema({
   name: "compound",
   priority: 51,
-  tokenKey: "!!",
+  lexemeKey: "!!",
   category: "Accumulate",
   pattern: compoundPattern,
   parse: (notation) => {
@@ -329,7 +329,7 @@ var countPattern = /#\{((?:>=|<=|>|<|=)?\d+(?:,(?:>=|<=|>|<|=)?\d+)*)\}/;
 var countSchema = defineNotationSchema({
   name: "count",
   priority: 80,
-  tokenKey: "#{..}",
+  lexemeKey: "#{..}",
   category: "Reinterpret",
   pattern: countPattern,
   parse: (notation) => {
@@ -407,7 +407,7 @@ var dropConstraintsPattern = /[Dd]\{((?:>=|<=|>|<|=)?\d+(?:,(?:>=|<=|>|<|=)?\d+)
 var dropSchema = defineNotationSchema({
   name: "drop",
   priority: 65,
-  tokenKey: "drop",
+  lexemeKey: "drop",
   category: "Filter",
   pattern: /([Hh](\d+)?|(?<![Kk])[Ll](\d+)?|[Dd]\{((?:>=|<=|>|<|=)?\d+(?:,(?:>=|<=|>|<|=)?\d+)*)\})/,
   parse: (notation) => {
@@ -498,7 +498,7 @@ var explodePattern = /(?<!!)!(?!!|[pPsSiI]|[rR](?![oO]?\{))(\{((?:>=|<=|>|<|=)?\
 var explodeSchema = defineNotationSchema({
   name: "explode",
   priority: 50,
-  tokenKey: "!",
+  lexemeKey: "!",
   category: "Generate",
   pattern: explodePattern,
   parse: (notation) => {
@@ -545,7 +545,7 @@ var explodeSequencePattern = /![sS]\{[\d,]+\}/;
 var explodeSequenceSchema = defineNotationSchema({
   name: "explodeSequence",
   priority: 53,
-  tokenKey: "!s",
+  lexemeKey: "!s",
   category: "Generate",
   pattern: /![sS]\{[\d,]+\}|![iI]|![rR](?![oO]?\{)/,
   parse: (notation) => {
@@ -574,7 +574,7 @@ var integerDividePattern = /\/\/([1-9]\d*)/;
 var integerDivideSchema = defineNotationSchema({
   name: "integerDivide",
   priority: 93,
-  tokenKey: "//",
+  lexemeKey: "//",
   category: "Scale",
   pattern: integerDividePattern,
   parse: (notation) => {
@@ -598,7 +598,7 @@ var keepLowestPattern = /[Kk][Ll](\d+)?/i;
 var keepSchema = defineNotationSchema({
   name: "keep",
   priority: 66,
-  tokenKey: "K",
+  lexemeKey: "K",
   category: "Filter",
   pattern: /[Kk]([LlMm])?(\d+)?/,
   parse: (notation) => {
@@ -652,7 +652,7 @@ function createArithmeticNotation(config) {
   return defineNotationSchema({
     name,
     priority,
-    tokenKey: operator,
+    lexemeKey: operator,
     category: "Scale",
     pattern,
     parse: (notation) => {
@@ -690,7 +690,7 @@ var moduloPattern = /%([1-9]\d*)/;
 var moduloSchema = defineNotationSchema({
   name: "modulo",
   priority: 94,
-  tokenKey: "%",
+  lexemeKey: "%",
   category: "Scale",
   pattern: moduloPattern,
   parse: (notation) => {
@@ -712,7 +712,7 @@ var multiplyPattern = /(?<!\*)\*(?!\*)(\d+)/;
 var multiplySchema = defineNotationSchema({
   name: "multiply",
   priority: 85,
-  tokenKey: "*",
+  lexemeKey: "*",
   category: "Scale",
   pattern: multiplyPattern,
   parse: (notation) => {
@@ -734,7 +734,7 @@ var multiplyTotalPattern = /\*\*(\d+)/;
 var multiplyTotalSchema = defineNotationSchema({
   name: "multiplyTotal",
   priority: 100,
-  tokenKey: "**",
+  lexemeKey: "**",
   category: "Scale",
   pattern: multiplyTotalPattern,
   parse: (notation) => {
@@ -756,7 +756,7 @@ var penetratePattern = /!p(\d+)?(\{((?:>=|<=|>|<|=)?\d+(?:,(?:>=|<=|>|<|=)?\d+)*
 var penetrateSchema = defineNotationSchema({
   name: "penetrate",
   priority: 52,
-  tokenKey: "!p",
+  lexemeKey: "!p",
   category: "Accumulate",
   pattern: penetratePattern,
   parse: (notation) => {
@@ -819,7 +819,7 @@ var replacePattern = /[Vv]\{((?:>=|<=|>|<)?\d+=\d+(?:,(?:>=|<=|>|<)?\d+=\d+)*)\}
 var replaceSchema = defineNotationSchema({
   name: "replace",
   priority: 30,
-  tokenKey: "V{..}",
+  lexemeKey: "V{..}",
   category: "Map",
   pattern: replacePattern,
   parse: (notation) => {
@@ -869,7 +869,7 @@ var rerollPattern = new RegExp(`[Rr][Oo]\\{${comparisonGroup}\\}|[Rr]\\{${compar
 var rerollSchema = defineNotationSchema({
   name: "reroll",
   priority: 40,
-  tokenKey: "R{..}",
+  lexemeKey: "R{..}",
   category: "Substitute",
   pattern: /[Rr]([Oo])?\{((?:>=|<=|>|<|=)?\d+(?:,(?:>=|<=|>|<|=)?\d+)*)\}(\d+)?/,
   parse: (notation) => {
@@ -949,7 +949,7 @@ var sortPattern = /[Ss]([Aa]|[Dd])(?![{\d])/;
 var sortSchema = defineNotationSchema({
   name: "sort",
   priority: 95,
-  tokenKey: "sort",
+  lexemeKey: "sort",
   category: "Order",
   pattern: sortPattern,
   parse: (notation) => {
@@ -975,7 +975,7 @@ var uniquePattern = /[Uu](?:\{([^}]{1,50})\})?/;
 var uniqueSchema = defineNotationSchema({
   name: "unique",
   priority: 60,
-  tokenKey: "U",
+  lexemeKey: "U",
   category: "Substitute",
   pattern: uniquePattern,
   parse: (notation) => {
@@ -1011,7 +1011,7 @@ var wildDiePattern = /[Ww](?![{])/;
 var wildDieSchema = defineNotationSchema({
   name: "wildDie",
   priority: 55,
-  tokenKey: "W",
+  lexemeKey: "W",
   category: "Dispatch",
   pattern: wildDiePattern,
   parse: (notation) => {
@@ -1062,7 +1062,7 @@ function sticky(pattern) {
 }
 function specOf(schema) {
   return {
-    key: schema.tokenKey,
+    key: schema.lexemeKey,
     category: schema.category,
     schema,
     matcher: sticky(schema.pattern)
@@ -1136,12 +1136,12 @@ function matchAt(matcher, input, pos) {
   const m = matcher.exec(input);
   return m?.index === pos ? m[0] : null;
 }
-function appendUnknown(tokens, char, cursor) {
-  const last = tokens[tokens.length - 1];
+function appendUnknown(lexemes, char, cursor) {
+  const last = lexemes[lexemes.length - 1];
   if (last?.role === "unknown") {
-    tokens[tokens.length - 1] = { ...last, text: last.text + char, end: cursor + 1 };
+    lexemes[lexemes.length - 1] = { ...last, text: last.text + char, end: cursor + 1 };
   } else {
-    tokens.push({
+    lexemes.push({
       text: char,
       key: "unknown",
       category: "unknown",
@@ -1151,13 +1151,13 @@ function appendUnknown(tokens, char, cursor) {
     });
   }
 }
-function scanStep(input, cursor, tokens, annotationState) {
+function scanStep(input, cursor, lexemes, annotationState) {
   const isStart = cursor === 0;
   const nextIsSign = input[cursor] === "+" || input[cursor] === "-";
   if (isStart || nextIsSign) {
     const pool = scanPoolAt(input, cursor, isStart);
     if (pool) {
-      tokens.push({
+      lexemes.push({
         text: pool.text,
         key: pool.kind === "standard" ? "xDN" : pool.key,
         category: pool.kind === "standard" ? "Core" : "Special",
@@ -1172,7 +1172,7 @@ function scanStep(input, cursor, tokens, annotationState) {
   }
   const mod = scanModifierAt(input, cursor);
   if (mod) {
-    tokens.push({
+    lexemes.push({
       text: mod.text,
       key: mod.key,
       category: mod.category,
@@ -1184,7 +1184,7 @@ function scanStep(input, cursor, tokens, annotationState) {
   }
   const repeat = matchAt(REPEAT_MATCHER, input, cursor);
   if (repeat) {
-    tokens.push({
+    lexemes.push({
       text: repeat,
       key: "xN",
       category: "Special",
@@ -1196,7 +1196,7 @@ function scanStep(input, cursor, tokens, annotationState) {
   }
   const annotation = matchAnnotationAt(input, cursor, annotationState);
   if (annotation) {
-    tokens.push({
+    lexemes.push({
       text: annotation,
       key: "label",
       category: "Special",
@@ -1206,19 +1206,19 @@ function scanStep(input, cursor, tokens, annotationState) {
     });
     return cursor + annotation.length;
   }
-  appendUnknown(tokens, input[cursor] ?? "", cursor);
+  appendUnknown(lexemes, input[cursor] ?? "", cursor);
   return cursor + 1;
 }
 function scan(input) {
   if (input.length === 0)
     return [];
-  const tokens = [];
+  const lexemes = [];
   const cursor = { pos: 0 };
   const annotationState = { noCloseBracketFrom: Number.POSITIVE_INFINITY };
   while (cursor.pos < input.length) {
-    cursor.pos = scanStep(input, cursor.pos, tokens, annotationState);
+    cursor.pos = scanStep(input, cursor.pos, lexemes, annotationState);
   }
-  return tokens;
+  return lexemes;
 }
 
 // packages/roller/src/notation/lexer/parse.ts
@@ -1226,12 +1226,12 @@ var MAX_NOTATION_LENGTH = 1000;
 var COUNT_FAMILY_KEYS = new Set(["#{..}", "S{..}", "F{..}"]);
 var SUMMING = /^(?:[+-]\d+|ms\{\d+\}|[LH]\d*)$/i;
 var FLAG = /^(?:!|!!|!p|!i|!r|W|U|sa|sd)$/i;
-function modifierKind(token) {
-  if (token.key === "K")
-    return token.text.replace(/\d+$/, "").toLowerCase();
-  if (token.key === "drop")
-    return token.text.slice(0, 1).toUpperCase();
-  return token.key;
+function modifierKind(lexeme) {
+  if (lexeme.key === "K")
+    return lexeme.text.replace(/\d+$/, "").toLowerCase();
+  if (lexeme.key === "drop")
+    return lexeme.text.slice(0, 1).toUpperCase();
+  return lexeme.key;
 }
 var LEADING_QUANTITY = /^\d+/;
 var STANDARD_BODY = /^\d*[Dd]([1-9]\d*)$/;
@@ -1264,49 +1264,49 @@ function parseNotation(input) {
   if (trimmed.length > MAX_NOTATION_LENGTH) {
     return invalid(`Notation exceeds ${MAX_NOTATION_LENGTH} characters`, MAX_NOTATION_LENGTH + trimOffset);
   }
-  const tokens = scan(trimmed);
-  const unknown = tokens.find((t) => t.role === "unknown");
+  const lexemes = scan(trimmed);
+  const unknown = lexemes.find((t) => t.role === "unknown");
   if (unknown)
     return invalid(`Unexpected "${unknown.text}"`, unknown.start + trimOffset);
-  const head = tokens[0];
+  const head = lexemes[0];
   if (!head)
     return invalid("No die expression found", 0);
   if (head.role !== "pool") {
     return invalid(`Expected a die before "${head.text}"`, head.start + trimOffset);
   }
-  const strayRepeat = tokens.find((t, i) => t.role === "repeat" && tokens.slice(i + 1).some((u) => u.role !== "repeat"));
+  const strayRepeat = lexemes.find((t, i) => t.role === "repeat" && lexemes.slice(i + 1).some((u) => u.role !== "repeat"));
   if (strayRepeat) {
     return invalid(`Repeat "${strayRepeat.text}" must be at the end of the notation`, strayRepeat.start + trimOffset);
   }
-  const countFamily = tokens.filter((t) => t.role === "modifier" && COUNT_FAMILY_KEYS.has(t.key));
+  const countFamily = lexemes.filter((t) => t.role === "modifier" && COUNT_FAMILY_KEYS.has(t.key));
   if (countFamily.length > 1) {
     return invalid("Only one Count-family modifier (#{}, S{}, F{}) is permitted", (countFamily[1]?.start ?? 0) + trimOffset);
   }
-  const badPool = tokens.find((t) => t.role === "pool" && !poolMagnitudeValid(t.poolKind ?? "standard", t.text.replace(/^[+-]/, "")));
+  const badPool = lexemes.find((t) => t.role === "pool" && !poolMagnitudeValid(t.poolKind ?? "standard", t.text.replace(/^[+-]/, "")));
   if (badPool)
     return invalid(`Invalid die "${badPool.text}"`, badPool.start + trimOffset);
-  const maxFace = tokens.find((t, i) => (t.key === "!s" || t.key === "W" || /^!!?p?$/.test(t.key) && !t.text.includes("{")) && ["fate", "zeroBias", "custom"].includes(tokens.slice(0, i).reverse().find((u) => u.role === "pool")?.poolKind ?? ""));
+  const maxFace = lexemes.find((t, i) => (t.key === "!s" || t.key === "W" || /^!!?p?$/.test(t.key) && !t.text.includes("{")) && ["fate", "zeroBias", "custom"].includes(lexemes.slice(0, i).reverse().find((u) => u.role === "pool")?.poolKind ?? ""));
   if (maxFace) {
     return invalid(`"${maxFace.text}" needs a condition on dF, zN and d{...}`, maxFace.start + trimOffset);
   }
-  const emptyFace = tokens.find((t) => t.role === "pool" && t.poolKind === "custom" && (/\{([^}]*)\}/.exec(t.text)?.[1] ?? "").split(",").some((face) => face.trim() === ""));
+  const emptyFace = lexemes.find((t) => t.role === "pool" && t.poolKind === "custom" && (/\{([^}]*)\}/.exec(t.text)?.[1] ?? "").split(",").some((face) => face.trim() === ""));
   if (emptyFace) {
     return invalid(`"${emptyFace.text}" has an empty face`, emptyFace.start + trimOffset);
   }
-  const depthAndCondition = tokens.find((t) => /^!(?:!|p)\d+\{/i.test(t.text));
+  const depthAndCondition = lexemes.find((t) => /^!(?:!|p)\d+\{/i.test(t.text));
   if (depthAndCondition) {
     return invalid(`"${depthAndCondition.text}" takes a depth or a condition, not both`, depthAndCondition.start + trimOffset);
   }
-  const zeroSize = tokens.find((t) => t.key === "!s" && /[{,]0+[,}]/.test(t.text));
+  const zeroSize = lexemes.find((t) => t.key === "!s" && /[{,]0+[,}]/.test(t.text));
   if (zeroSize) {
     return invalid(`"${zeroSize.text}" lists a die with no sides`, zeroSize.start + trimOffset);
   }
-  const groups = tokens.flatMap((tok, i) => {
+  const groups = lexemes.flatMap((tok, i) => {
     if (tok.role !== "pool")
       return [];
-    const nextOffset = tokens.slice(i + 1).findIndex((t) => t.role === "pool");
-    const end = nextOffset === -1 ? tokens.length : i + 1 + nextOffset;
-    return [{ head: tok, bound: tokens.slice(i + 1, end) }];
+    const nextOffset = lexemes.slice(i + 1).findIndex((t) => t.role === "pool");
+    const end = nextOffset === -1 ? lexemes.length : i + 1 + nextOffset;
+    return [{ head: tok, bound: lexemes.slice(i + 1, end) }];
   });
   for (const { bound } of groups) {
     const annotations = bound.filter((t) => t.role === "annotation");
@@ -1319,7 +1319,7 @@ function parseNotation(input) {
     }
   }
   const pools = groups.map(({ head: poolHead, bound }) => buildPool(poolHead, bound));
-  const repeats = tokens.filter((t) => t.role === "repeat").map((t) => ({ count: Number(t.text.slice(1)), position: t.start + trimOffset }));
+  const repeats = lexemes.filter((t) => t.role === "repeat").map((t) => ({ count: Number(t.text.slice(1)), position: t.start + trimOffset }));
   return { valid: true, pools, repeats };
 }
 
@@ -1354,13 +1354,13 @@ function mergeDrop(a, b) {
     merged.lowest = lowest;
   return merged;
 }
-function modifiersFromTokens(tokens, sides) {
+function modifiersFromLexemes(lexemes, sides) {
   const textsBySchema = new Map;
-  for (const token of tokens) {
-    const spec = SPECS_BY_KEY.get(token.key);
+  for (const lexeme of lexemes) {
+    const spec = SPECS_BY_KEY.get(lexeme.key);
     if (spec === undefined)
       continue;
-    const text = token.key === "ms{..}" ? `-${token.text.slice(3, -1)}` : token.text;
+    const text = lexeme.key === "ms{..}" ? `-${lexeme.text.slice(3, -1)}` : lexeme.text;
     textsBySchema.set(spec.schema, [...textsBySchema.get(spec.schema) ?? [], text]);
   }
   const modifiers = {};
@@ -1371,9 +1371,9 @@ function modifiersFromTokens(tokens, sides) {
       modifiers.drop = modifiers.drop === undefined ? drop : mergeDrop(modifiers.drop, drop);
     }
   }
-  if (tokens.some((t) => /^!i$/i.test(t.text))) {
+  if (lexemes.some((t) => /^!i$/i.test(t.text))) {
     modifiers.explodeSequence = TTRPG_STANDARD_DIE_SET.filter((s) => s > sides);
-  } else if (tokens.some((t) => /^!r$/i.test(t.text))) {
+  } else if (lexemes.some((t) => /^!r$/i.test(t.text))) {
     modifiers.explodeSequence = TTRPG_STANDARD_DIE_SET.filter((s) => s < sides).reverse();
   }
   return modifiers;
@@ -1395,7 +1395,7 @@ function poolToOptions(node) {
   if (node.label !== undefined)
     options.label = node.label;
   if (node.modifiers.length > 0)
-    options.modifiers = modifiersFromTokens(node.modifiers, head.sides);
+    options.modifiers = modifiersFromLexemes(node.modifiers, head.sides);
   return options;
 }
 

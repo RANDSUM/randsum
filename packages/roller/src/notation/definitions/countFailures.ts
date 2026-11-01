@@ -7,7 +7,7 @@ export const countFailuresSchema: NotationSchema<CountOptions> = defineNotationS
   {
     name: 'count',
     priority: 80,
-    tokenKey: 'F{..}',
+    lexemeKey: 'F{..}',
     category: 'Reinterpret',
 
     pattern: countFailuresPattern,
