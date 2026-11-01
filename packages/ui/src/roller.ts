@@ -2,8 +2,9 @@
 //
 //   <randsum-roller size="mini" notation="4d6L"></randsum-roller>
 //
-// size="mini" is one row; "compact" (the default) is a panel with the readout
-// beside or above the builder; "max" adds recent rolls and a History dialog.
+// size="mini" is the field and Roll, with the keys and the total a row below;
+// "compact" (the default) is a panel with the readout beside or above the
+// builder; "max" adds recent rolls and a History dialog.
 // It fires randsum-change on every edit and randsum-roll after every roll.
 import { html, LitElement, nothing } from 'lit'
 import type { CSSResultGroup, PropertyDeclarations, PropertyValues, TemplateResult } from 'lit'
@@ -244,6 +245,10 @@ export class RandsumRoller extends LitElement {
     const hasPresets = this.presets.length > 0
     return html`<div class="rsui rsui-mini">
       <div class="rsui-mini-row">
+        ${notationField(state, { statusId: 'status', placeholder: this.placeholder })}
+        ${rollButton(state, { tip: true })}
+      </div>
+      <div class="rsui-mini-foot">
         <span class="rsui-anchor">
           <button
             type="button"
@@ -274,8 +279,6 @@ export class RandsumRoller extends LitElement {
               : nothing
           }
         </span>
-        ${notationField(state, { statusId: 'status', placeholder: this.placeholder })}
-        ${rollButton(state, { tip: true })}
         ${
           result === null
             ? nothing
@@ -294,8 +297,6 @@ export class RandsumRoller extends LitElement {
               >
             </span>`
         }
-      </div>
-      <div class="rsui-mini-foot">
         ${statusLine(state.check, {
           id: 'status',
           hint: 'Type notation, or open the dice keys.',

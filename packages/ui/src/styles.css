@@ -534,7 +534,7 @@
 }
 
 .rsui-pop--detail {
-  right: 0;
+  left: 0;
   width: min(22rem, 90vw);
   opacity: 0;
   visibility: hidden;
@@ -640,8 +640,13 @@
 
 .rsui-mini-foot {
   display: flex;
-  gap: 1rem;
-  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0.375rem 0.625rem;
+  align-items: center;
+}
+
+.rsui-mini-foot > .rsui-anchor {
+  min-height: 2.75rem;
 }
 
 .rsui-mini .rsui-status {

@@ -3,9 +3,9 @@
 //
 //   <Roller size="compact" defaultNotation="4d6L" onRoll={r => …} />
 //
-// "mini" is one row with the keys a tap away; "compact" (the default) is a
-// panel with the readout beside or above the builder; "max" adds recent rolls
-// and a History sheet.
+// "mini" is the field and Roll, with the keys and the total a row below;
+// "compact" (the default) is a panel with the readout beside or above the
+// builder; "max" adds recent rolls and a History sheet.
 import type React from 'react'
 import { createElement as h, useCallback, useEffect, useRef, useState } from 'react'
 import { Linking, Modal, Pressable, ScrollView, Text, View } from 'react-native'
@@ -151,6 +151,15 @@ function Mini({ roller, styles, props }: Shared): React.JSX.Element {
     h(
       View,
       { style: styles.row },
+      h(NotationField, {
+        roller,
+        ...(props.placeholder === undefined ? {} : { placeholder: props.placeholder })
+      }),
+      h(RollButton, { roller })
+    ),
+    h(
+      View,
+      { style: styles.footer },
       h(
         Pressable,
         {
@@ -168,11 +177,6 @@ function Mini({ roller, styles, props }: Shared): React.JSX.Element {
         },
         h(Text, { style: styles.quietText }, 'Dice')
       ),
-      h(NotationField, {
-        roller,
-        ...(props.placeholder === undefined ? {} : { placeholder: props.placeholder })
-      }),
-      h(RollButton, { roller }),
       result === null
         ? null
         : h(
@@ -188,7 +192,12 @@ function Mini({ roller, styles, props }: Shared): React.JSX.Element {
               style: [styles.miniTotal, fresh ? null : styles.stale]
             },
             h(Text, { style: styles.miniTotalText }, result.total)
-          )
+          ),
+      h(StatusLine, {
+        roller,
+        hint: 'Type notation, or open the dice keys.',
+        style: styles.grow
+      })
     ),
     open
       ? h(
@@ -208,18 +217,9 @@ function Mini({ roller, styles, props }: Shared): React.JSX.Element {
     detail && result !== null
       ? h(RollSteps, { records: result.records, style: fresh ? undefined : styles.stale })
       : null,
-    h(
-      View,
-      { style: styles.footer },
-      h(StatusLine, {
-        roller,
-        hint: 'Type notation, or open the dice keys.',
-        style: styles.grow
-      }),
-      props.appLink === undefined
-        ? null
-        : h(AppLink, { styles, href: props.appLink, label: 'Open in the Roller' })
-    )
+    props.appLink === undefined
+      ? null
+      : h(AppLink, { styles, href: props.appLink, label: 'Open in the Roller' })
   )
 }
 

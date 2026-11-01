@@ -24,7 +24,8 @@ use, and that is all your bundle gets.
 
 `<randsum-roller>` takes a `size`:
 
-- **`mini`**: one row. The keys button opens a key pad, and hovering or
+- **`mini`**: the field and Roll on one row, the keys button and the total on
+  the row below. The keys button opens a key pad, and hovering or
   focusing Roll shows the roll in English.
 - **`compact`** (the default): a panel. `orientation` is `auto` (by container
   width), `landscape` or `portrait`. Has a `footer` slot.
