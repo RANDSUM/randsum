@@ -173,7 +173,7 @@ server-side behind tabs, `UiSection` the UI package with a live mini `ServerRoll
 family's dice. `landing.css` holds only the page frame and the hero; every
 other section styles itself. `Faq` and the page's
 FAQPage structured data share `LANDING_FAQ` in `src/utils/faq.ts`. The Discord bot's
-only page is `/tools/discord-bot/`; `/discord/` 301s there (`public/_redirects`).
+only page is `/tools/discord-bot/`.
 
 ## Adding Content
 

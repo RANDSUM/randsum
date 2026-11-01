@@ -264,7 +264,7 @@ describe('dispatchInteraction', () => {
       interaction({
         type: 2,
         data: { name: 'root', options: [{ name: 'stat', value: 1 }] },
-        member: { user: { username: 'legacyuser' } }
+        member: { user: { username: 'memberuser' } }
       }),
       commands
     ) as Rendered
@@ -296,7 +296,7 @@ describe('dispatchInteraction', () => {
     })
 
     test('the IsComponentsV2 flag is always set on a view response', () => {
-      // Without it Discord reads `components` as legacy action rows and rejects
+      // Without it Discord reads `components` as classic action rows and rejects
       // the container outright, so this flag is load-bearing, not cosmetic.
       expect(invokeView().data?.flags).toBe(32768)
     })
