@@ -15,3 +15,7 @@ script. Styles live in each element's Shadow DOM and are themed with
 the server as Declarative Shadow DOM so they show before any script runs; plain HTML, htmx and Astro use the tags
 directly. `/roller-state`, `/keys`, `/presets` and `/check` are the
 framework-free state, keys, presets and notation check.
+
+For React Native and Expo, `/native/*` is the same roller built from native
+views on the same state: `/native/roller` in all three sizes, each part, and
+`/native/theme` (light and dark tokens and `RollerThemeProvider`).

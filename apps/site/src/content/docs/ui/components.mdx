@@ -48,6 +48,14 @@ Each part takes the `roller` that `useRoller` returns.
 The same set under `@randsum/ui/vue/`: `Roller` (with `v-model`), `useRoller`
 (returns `{ roller, snapshot }`) and each part.
 
+## React Native
+
+The same set under `@randsum/ui/native/`, built from native views rather than
+wrapping the elements: `Roller`, `useRoller` and each part
+(`@randsum/ui/native/notation-field`, `@randsum/ui/native/key-pad`, …), plus
+`@randsum/ui/native/theme` with `lightTheme`, `darkTheme`,
+`RollerThemeProvider` and `useRollerTheme`.
+
 ## Svelte
 
 | Import               | What it is                                                     |

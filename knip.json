@@ -36,6 +36,7 @@
     "packages/ui": {
       "entry": [
         "src/*.ts",
+        "src/native/*.ts",
         "src/react/*.ts",
         "src/vue/*.ts",
         "scripts/*.ts",

@@ -124,7 +124,7 @@ Every game's input type, ranges, result values and details: [references/GAMES.md
 | Vue 3 | `import { Roller } from '@randsum/ui/vue/roller'`: `<Roller v-model="notation" @roll="…" />` |
 | Svelte 5 | The tags directly (`onrandsum-roll={…}`); `import type {} from '@randsum/ui/svelte'` for types |
 | Server rendering | `renderToString(markup)` from `@randsum/ui/ssr` (needs `@lit-labs/ssr`) returns the elements as Declarative Shadow DOM, so they show before scripts load |
-| React Native / Expo | No DOM, so no custom elements. `RollerState` from `@randsum/ui/roller-state`, plus `keys`, `presets` and `check`, are framework-free and run there; build the views from them |
+| React Native / Expo | `import { Roller } from '@randsum/ui/native/roller'`: native views, same props as the React `Roller`; `useRoller` (`@randsum/ui/native/use-roller`), each part (`@randsum/ui/native/key-pad`, …), and `RollerThemeProvider` (`@randsum/ui/native/theme`). Max history: `initialHistory` in, `onHistoryChange` out, to persist with AsyncStorage |
 
 ## Deterministic rolls for tests and replays
 

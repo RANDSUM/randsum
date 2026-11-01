@@ -2,6 +2,7 @@ import { html } from 'lit'
 import type { TemplateResult } from 'lit'
 import { ifDefined } from 'lit/directives/if-defined.js'
 import type { NotationCheck } from '../../check'
+import { DEFAULT_HINT, statusText } from '../copy'
 
 export interface StatusLineOptions {
   readonly id?: string | undefined
@@ -12,16 +13,9 @@ export interface StatusLineOptions {
 /** The hint, the error, or the roll in English. */
 export function statusLine(
   check: NotationCheck,
-  { id, hint = 'Type notation, or tap a key.', showValid = true }: StatusLineOptions = {}
+  { id, hint = DEFAULT_HINT, showValid = true }: StatusLineOptions = {}
 ): TemplateResult {
-  const text =
-    check.kind === 'empty'
-      ? hint
-      : check.kind === 'invalid'
-        ? check.message
-        : showValid
-          ? check.description
-          : ''
+  const text = statusText(check, hint, showValid)
   return html`<p id=${ifDefined(id)} class="rsui-status" data-state=${check.kind} aria-live="polite">
     ${text}
   </p>`

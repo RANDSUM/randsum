@@ -81,6 +81,34 @@ element, and `@randsum/ui/svelte` once for its types:
 <randsum-roller size="mini" notation="4d6L" onrandsum-roll={e => console.log(e.detail.total)} />
 ```
 
+## React Native and Expo
+
+React Native has no DOM, so custom elements cannot run there.
+`@randsum/ui/native/roller` is the same roller built from native views, on the
+same state, with the same three sizes and the React `Roller`'s props. It needs
+`react-native` 0.76 or later, and works in Expo as is.
+
+```tsx
+import { Roller } from '@randsum/ui/native/roller'
+
+export function Dice() {
+  return <Roller size="compact" defaultNotation="4d6L" onRoll={result => console.log(result.total)} />
+}
+```
+
+There is no `localStorage`, so max keeps its history in memory. Pass
+`onHistoryChange` to save each change (to AsyncStorage, say) and
+`initialHistory` to start from what you saved. The colours follow the device's
+light or dark scheme, and `RollerThemeProvider` changes any token:
+
+```tsx
+import { RollerThemeProvider } from '@randsum/ui/native/theme'
+
+<RollerThemeProvider theme={{ accent: '#0f766e' }}>
+  <Roller size="max" />
+</RollerThemeProvider>
+```
+
 ## Server rendering
 
 Custom elements normally draw themselves once their script runs.

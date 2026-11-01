@@ -1,8 +1,8 @@
 import type { RollRecord } from '@randsum/roller'
-import { traceRoll } from '@randsum/roller/trace'
-import type { RollTraceStep } from '@randsum/roller/trace'
 import { html, nothing } from 'lit'
 import type { TemplateResult } from 'lit'
+import { visibleSteps } from '../steps'
+import type { ShownStep } from '../steps'
 
 type DieVariant = 'kept' | 'removed' | 'added'
 
@@ -10,8 +10,7 @@ function dice(values: readonly number[], variant: DieVariant): readonly Template
   return values.map(value => html`<span class="rsui-die" data-variant=${variant}>${value}</span>`)
 }
 
-function step(item: RollTraceStep, label?: string): TemplateResult | typeof nothing {
-  if (item.kind === 'divider' || item.kind === 'finalRolls') return nothing
+function step(item: ShownStep, label?: string): TemplateResult {
   if (item.kind === 'arithmetic') {
     return html`<li class="rsui-step">
       <span class="rsui-step-label">${item.label}</span>
@@ -38,10 +37,6 @@ function step(item: RollTraceStep, label?: string): TemplateResult | typeof noth
       ${dice(item.unchanged, 'kept')}
     </span>
   </li>`
-}
-
-function visibleSteps(record: RollRecord): readonly RollTraceStep[] {
-  return traceRoll(record).filter(s => s.kind !== 'divider' && s.kind !== 'finalRolls')
 }
 
 /** Every step of a roll: what was rolled, what changed, what was added. */

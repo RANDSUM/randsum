@@ -1,13 +1,15 @@
 # @randsum/ui
 
 The RANDSUM roller as Web Components (custom elements) built with Lit, over
-`@randsum/roller`, with thin React and Vue wrappers. The site's app, landing
+`@randsum/roller`, with thin React and Vue wrappers and React Native
+components. The site's app, landing
 page and modifier docs all render them through the React wrappers.
 
 ## Layout
 
-- Every file directly in `src/`, `src/react/` and `src/vue/` is a public entry
-  with its own subpath, one per element, wrapper or helper (lodash style).
+- Every file directly in `src/`, `src/native/`, `src/react/` and `src/vue/` is
+  a public entry with its own subpath, one per element, component, wrapper or
+  helper (lodash style).
   There is no root barrel, so a page that imports `@randsum/ui/roller` never
   bundles the Vue wrappers, and one that imports `@randsum/ui/key-pad` gets
   only the key pad. `__tests__/entries.test.ts` holds `package.json`
@@ -36,6 +38,17 @@ page and modifier docs all render them through the React wrappers.
   when it changes, so an unrelated render does not undo typing.
 - `src/vue/`: the same set; properties go through Vue's `.prop` prefix
   (`src/internal/vue.ts`). `Roller` supports `v-model`.
+- `src/native/`: React Native components, not wrappers: `Roller` (the same
+  three sizes) and each part, built from `View`, `Text`, `TextInput` and
+  `Pressable` on a `RollerState`. `react-native` is an optional peer and never
+  reaches the web entries. Styles are a `StyleSheet` per theme
+  (`src/internal/native/styles.ts`); `native/theme` holds the light and dark
+  tokens (the `--rsui-*` set as an object) and `RollerThemeProvider`. Each part
+  calls `useWatch`, so it re-renders on its own state's changes. The copy and
+  the visible roll steps are shared with the elements through
+  `src/internal/copy.ts` and `src/internal/steps.ts`. Max history lives in
+  memory: `initialHistory` in, `onHistoryChange` out, for the app to persist.
+  `__tests__/native.test.tsx` swaps `react-native` for DOM stand-ins.
 - `src/svelte.ts`: types only. Svelte 5 sets properties and listens for
   events itself, and htmx, Astro and plain HTML need nothing.
 - `src/ssr.ts`: `renderToString(markup)` renders any markup with

@@ -9,6 +9,7 @@ import { html, LitElement, nothing } from 'lit'
 import type { CSSResultGroup, PropertyDeclarations, PropertyValues, TemplateResult } from 'lit'
 import { repeat } from 'lit/directives/repeat.js'
 import type { RollResult } from './check'
+import { EMPTY_HISTORY } from './internal/copy'
 import { announce, define, freshShadowRoot } from './internal/element'
 import { keyPad } from './internal/parts/key-pad'
 import { notationField } from './internal/parts/notation-field'
@@ -42,7 +43,6 @@ export interface HistoryEntry {
 }
 
 const RECENT = 3
-const EMPTY_HISTORY = 'Your rolls land here. Tap one to roll it again.'
 
 function isHistoryEntry(value: unknown): value is HistoryEntry {
   if (typeof value !== 'object' || value === null) return false

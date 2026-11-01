@@ -237,7 +237,7 @@
 }
 
 /* Every row fills the width, the last one included */
-.rsui-keys > .rsui-key {
+:where(.rsui-keys) > .rsui-key {
   flex: 1 1 5.5rem;
 }
 
