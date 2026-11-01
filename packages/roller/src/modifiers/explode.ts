@@ -2,7 +2,6 @@ import type { ComparisonOptions } from '../notation/types'
 import { DEFAULT_EXPLOSION_DEPTH } from '../lib/constants'
 import { explodeSchema } from '../notation/definitions/explode'
 import type { ModifierDefinition } from './schema'
-import { assertRequiredContext } from './schema'
 import { buildExplosionTrigger } from './shared/conditionMatch'
 
 export const explodeModifier: ModifierDefinition<boolean | ComparisonOptions> = {
@@ -11,7 +10,7 @@ export const explodeModifier: ModifierDefinition<boolean | ComparisonOptions> = 
   requiresParameters: true,
 
   apply: (rolls, options, ctx) => {
-    const { rollOne, parameters } = assertRequiredContext(ctx)
+    const { rollOne, parameters } = ctx
     const trigger = buildExplosionTrigger(options)
     const { sides } = parameters
     // Each triggering die starts a chain: a new die that also triggers explodes

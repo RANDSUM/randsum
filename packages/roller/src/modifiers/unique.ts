@@ -3,7 +3,6 @@ import { uniqueSchema } from '../notation/definitions/unique'
 import { ModifierError } from '../errors'
 import { MAX_REROLL_ATTEMPTS } from '../lib/constants'
 import type { ModifierDefinition } from './schema'
-import { assertRequiredContext } from './schema'
 
 export const uniqueModifier: ModifierDefinition<boolean | UniqueOptions> = {
   ...uniqueSchema,
@@ -11,7 +10,7 @@ export const uniqueModifier: ModifierDefinition<boolean | UniqueOptions> = {
   requiresParameters: true,
 
   apply: (rolls, options, ctx) => {
-    const { rollOne } = assertRequiredContext(ctx)
+    const { rollOne } = ctx
 
     const exceptions = new Set(typeof options === 'object' ? options.notUnique : [])
 
