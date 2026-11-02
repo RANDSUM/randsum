@@ -8,11 +8,13 @@
 # name in $CLAUDE_CODE_MCP_SERVER_NAME and reads a JSON header object from
 # stdout.
 #
-# The token lives in the 1Password `claude-agent` vault, read with that vault's
-# service-account token: $OP_SERVICE_ACCOUNT_TOKEN when exported (cloud
-# sessions set it as an environment variable), otherwise the copy cached in the
-# macOS login keychain (security -s op-claude-agent). An already-exported
-# GITHUB_PAT wins, so a machine without `op` can still authenticate.
+# The token is the `claude-git-pat` item, read with a 1Password service-account
+# token: $OP_SERVICE_ACCOUNT_TOKEN when exported (cloud sessions set it as an
+# environment variable, scoped to the `Randsum` vault), otherwise the copy
+# cached in the macOS login keychain (security -s op-claude-agent, scoped to
+# the `claude-agent` vault). Each account sees only its own vault, so both
+# references are tried. An already-exported GITHUB_PAT wins, so a machine
+# without `op` can still authenticate.
 #
 # Fails loudly: with no token it exits 1 instead of sending an empty Bearer,
 # which looks configured and authenticates as nobody (#1188).
@@ -37,7 +39,9 @@ op_read() {
 case "${CLAUDE_CODE_MCP_SERVER_NAME:-}" in
   github)
     token="${GITHUB_PAT:-}"
-    [ -n "$token" ] || token="$(op_read 'op://claude-agent/claude-git-pat/credential')"
+    for ref in 'op://Randsum/claude-git-pat/credential' 'op://claude-agent/claude-git-pat/credential'; do
+      [ -n "$token" ] || token="$(op_read "$ref")"
+    done
     if [ -z "$token" ]; then
       echo 'github: no GITHUB_PAT and op read failed' >&2
       exit 1
