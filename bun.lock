@@ -97,6 +97,7 @@
       "devDependencies": {
         "@randsum/games": "workspace:~",
         "@randsum/roller": "workspace:~",
+        "@randsum/ui": "workspace:~",
       },
     },
     "packages/notation-spec": {

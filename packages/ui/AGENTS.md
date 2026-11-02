@@ -59,6 +59,16 @@ page and modifier docs all render them through the React wrappers.
   entry without a size limit (server only). The site renders every roller
   with it through `apps/site/src/components/rollers/ServerRoller.astro`,
   alone or as the `fallback` of a React island.
+- `src/mcp-app.ts`: `<randsum-mcp-app>`, the view an MCP Apps host (Claude)
+  shows for the RANDSUM server's `roll` and `roll_game` tools. It speaks the
+  MCP Apps postMessage protocol through `src/internal/mcp-host.ts`
+  (hand-written: the official `App` class brings the MCP SDK and Zod), shows
+  the server's roll in the readout from the records in the result's `_meta`,
+  and rolls again by asking the host to call the tool; it never rolls itself.
+  It maps the host's style variables onto the `--rsui-*` tokens and keeps the
+  accent. `scripts/mcp-app-html.ts` bundles it into the self-contained
+  `dist/mcp-app.html` and `dist/mcp-app-page.js` (the `mcp-app-page` subpath,
+  the page as a string), which `@randsum/mcp` inlines.
 - `src/keys.ts`, `src/presets.ts`, `src/check.ts`: data and logic with no
   framework. `presets` builds from the roller's `NOTATION_DOCS` examples, so
   docs and component never drift.
@@ -94,7 +104,7 @@ page and modifier docs all render them through the React wrappers.
 
 ```bash
 bun run --filter @randsum/ui test        # happy-dom, preloaded by bunfig.toml
-bun run --filter @randsum/ui build       # clean, bunup, then scripts/tag-types.ts
+bun run --filter @randsum/ui build       # clean, bunup, scripts/tag-types.ts, scripts/mcp-app-html.ts
 bun run --filter @randsum/ui size
 ```
 

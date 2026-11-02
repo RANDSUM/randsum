@@ -29,6 +29,18 @@
         "default": "./dist/keys.js"
       }
     },
+    "./mcp-app": {
+      "import": {
+        "types": "./dist/mcp-app.d.ts",
+        "default": "./dist/mcp-app.js"
+      }
+    },
+    "./mcp-app-page": {
+      "import": {
+        "types": "./dist/mcp-app-page.d.ts",
+        "default": "./dist/mcp-app-page.js"
+      }
+    },
     "./native/key-pad": {
       "import": {
         "types": "./dist/native/key-pad.d.ts",
@@ -349,7 +361,7 @@
   "scripts": {
     "dev": "bunup --watch",
     "prepublishOnly": "bun ../../scripts/ensure-bun-publish.ts && bun run build",
-    "build": "bun -e \"require('node:fs').rmSync('dist', { recursive: true, force: true })\" && bunup && bun scripts/tag-types.ts",
+    "build": "bun -e \"require('node:fs').rmSync('dist', { recursive: true, force: true })\" && bunup && bun scripts/tag-types.ts && bun scripts/mcp-app-html.ts",
     "test": "bun test --coverage --coverage-reporter=lcov --coverage-dir=./coverage",
     "typecheck": "tsc --noEmit",
     "size": "size-limit",
@@ -367,6 +379,10 @@
     {
       "path": "dist/keys.js",
       "limit": "1.5 KB"
+    },
+    {
+      "path": "dist/mcp-app.js",
+      "limit": "14 KB"
     },
     {
       "path": "dist/native/key-pad.js",

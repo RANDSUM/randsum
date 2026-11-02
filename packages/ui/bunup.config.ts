@@ -5,6 +5,7 @@ export default defineConfig({
     'src/check.ts',
     'src/key-pad.ts',
     'src/keys.ts',
+    'src/mcp-app.ts',
     'src/native/key-pad.ts',
     'src/native/notation-field.ts',
     'src/native/preset-list.ts',

@@ -54,7 +54,8 @@
   },
   "devDependencies": {
     "@randsum/games": "workspace:~",
-    "@randsum/roller": "workspace:~"
+    "@randsum/roller": "workspace:~",
+    "@randsum/ui": "workspace:~"
   },
   "scripts": {
     "build": "bunup && chmod +x dist/index.js",

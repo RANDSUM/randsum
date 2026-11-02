@@ -5,7 +5,8 @@ import pkg from '../package.json'
 
 // Every file directly in src/, src/native/, src/react/ and src/vue/ is a
 // public entry, one per element, component, wrapper or helper, the way lodash
-// ships one module per function. src/internal/ is not.
+// ships one module per function. src/internal/ is not. The one other export,
+// mcp-app-page, is built from mcp-app by scripts/mcp-app-html.ts.
 const SRC = join(import.meta.dir, '..', 'src')
 const entries = ['', 'native/', 'react/', 'vue/']
   .flatMap(dir =>
@@ -18,7 +19,7 @@ const entries = ['', 'native/', 'react/', 'vue/']
 describe('entries', () => {
   test('every src file has its own subpath export', () => {
     const exported = Object.keys(pkg.exports)
-      .filter(key => key !== './package.json')
+      .filter(key => key !== './package.json' && key !== './mcp-app-page')
       .map(key => key.slice(2))
       .sort()
     expect(exported).toEqual(entries)

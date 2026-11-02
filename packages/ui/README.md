@@ -128,6 +128,8 @@ const html = await renderToString('<randsum-roller size="mini" notation="4d6L"><
 | `@randsum/ui/keys`                 | `DEFAULT_KEYS`, `modifierKeys(name)`, `applyKey`                 |
 | `@randsum/ui/presets`              | `modifierPresets(name)`, from the roller's own docs              |
 | `@randsum/ui/check`                | `checkNotation`, `rollNotation`                                  |
+| `@randsum/ui/mcp-app`              | `<randsum-mcp-app>`: a server's roll inside an MCP Apps host such as Claude |
+| `@randsum/ui/mcp-app-page`         | That element as one self-contained HTML page, as a string        |
 
 ## Styling
 
