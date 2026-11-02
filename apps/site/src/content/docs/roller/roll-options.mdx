@@ -4,7 +4,7 @@ description: Full reference for roll() argument types, the RollOptions interface
 ---
 
 import CodeExample from '../../../components/live-repl/CodeExample.astro'
-import { NotationRoller } from '../../../components/NotationRoller'
+import NotationRoller from '../../../components/rollers/NotationRoller.astro'
 
 Configure dice rolls with numbers, notation strings, options objects, or any combination.
 
@@ -14,13 +14,13 @@ Configure dice rolls with numbers, notation strings, options objects, or any com
 
 Pass a number to roll a single die with that many sides.
 
-<NotationRoller defaultNotation="1d20" client:only="react" />
+<NotationRoller defaultNotation="1d20" />
 
 ### Notation string
 
-Pass a dice notation string. See the [Randsum Dice Notation Spec](/notation/randsum-dice-notation/) for full syntax.
+Pass a dice notation string. See the [Notation Syntax Guide](/notation/randsum-dice-notation/) for full syntax.
 
-<NotationRoller defaultNotation="4d6L" client:only="react" />
+<NotationRoller defaultNotation="4d6L" />
 
 ### Options object
 
@@ -58,6 +58,7 @@ The `RollOptions` interface provides full control over a roll.
   arithmetic?: 'add' | 'subtract'
   modifiers?: ModifierOptions
   key?: string | undefined
+  label?: string | undefined
 }`} />
 
 ### `sides` (required)
@@ -69,7 +70,7 @@ Number of sides on each die, or an array of custom face values.
 // Numeric sides
 roll({ sides: 20 })
 
-// Custom faces (e.g., Fate dice)
+// Custom faces
 roll({ sides: ['+', '+', ' ', ' ', '-', '-'], quantity: 4 })`} />
 
 ### `quantity`
@@ -108,7 +109,7 @@ roll({
   }
 })
 
-// New modifiers
+// More modifiers
 roll({
   sides: 6,
   quantity: 5,
@@ -127,12 +128,16 @@ roll({
 roll({
   sides: 10,
   quantity: 5,
-  modifiers: { countFailures: { threshold: 3 } }  // Count failures <= 3
+  modifiers: { count: { lessThanOrEqual: 3 } }   // Count failures <= 3
 })`} />
 
 ### `key`
 
-Optional string identifier for this roll in multi-roll expressions. Used by game packages to identify individual dice (e.g., hope/fear dice in Daggerheart).
+Optional string identifier for this roll in multi-roll expressions. Defaults to `Roll 1`, `Roll 2` and so on. Game packages use it to tell dice apart, such as the Hope and Fear dice in Daggerheart.
+
+### `label`
+
+Optional annotation carried through to the roll record, the same as `[fire]` in `2d6[fire]`. It does not change the result.
 
 ## RollConfig
 
@@ -163,10 +168,10 @@ The `roll()` function returns a `RollerRollResult` object.
 const result = roll('4d6L+2')
 
 console.log(result.total)    // Final total after all modifiers
-console.log(result.values)   // Array of per-group values (string[] by default)
+console.log(result.values)   // Every die value across all groups
 console.log(result.rolls)    // Array of RollRecord objects (one per dice group)`} />
 
-<NotationRoller defaultNotation="4d6L+2" client:only="react" />
+<NotationRoller defaultNotation="4d6L+2" />
 
 ### `total`
 
@@ -174,25 +179,30 @@ The final numeric total after all modifiers, drops, and arithmetic have been app
 
 ### `values`
 
-An array of individual die values across all groups. For standard numeric dice this is `string[]` (e.g., `["3", "5", "6"]`); for custom-face dice it matches the face type.
+An array of individual die values across all groups. Numeric dice contribute numbers (e.g., `[3, 5, 6]`); custom-faced dice contribute their faces.
 
 ### `rolls`
 
 An array of `RollRecord` objects, one for each dice group in the roll.
 
 <CodeExample code={`interface RollRecord<T = string> {
-  rolls: number[]           // die values after modifiers
-  initialRolls: number[]    // die values before modifiers
+  argument: RollArgument<T>   // the input this group came from
+  notation: DiceNotation      // dice notation string
+  description: string[]       // the roll in English
+  parameters: RollParams<T>   // full resolved roll parameters
+  rolls: number[]             // die values after modifiers
+  initialRolls: number[]      // die values before modifiers
   modifierLogs: ModifierLog[] // logs from each modifier application
-  notation: DiceNotation    // dice notation string
-  parameters: RollParams<T> // full resolved roll parameters
-  total: number             // total for this individual group
+  appliedTotal: number        // total including arithmetic modifiers
+  customResults?: T[]         // faces, for custom-faced dice
+  label?: string              // annotation, e.g. 'fire'
+  total: number               // total for this group
 }`} />
 
 See the [API Reference](/roller/api-reference/) for the full `RollRecord` and `RollParams` types.
 
 ## Error handling
 
-`roll()` throws a `RandsumError` on invalid input. Hardcoded notation like `roll('4d6L')` will never throw in practice — only validate when input comes from outside your control.
+`roll()` throws a `RandsumError` on invalid input. Valid notation written into your code, like `roll('4d6L')`, never throws, so validate only input that comes from outside your control.
 
 See [Error Handling](/roller/error-handling/) for validation patterns and the full error hierarchy, or the [API Reference](/roller/api-reference/) for `isDiceNotation()` and `validateNotation()` signatures.

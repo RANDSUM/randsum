@@ -1,8 +1,9 @@
 import type { RollArgument, RollConfig } from '@randsum/roller'
 import { suggestNotationFix } from '@randsum/roller'
+import { ERROR_CODES, RandsumError } from '@randsum/roller/errors'
 import { roll } from '@randsum/roller/roll'
 import { isDiceNotation } from '@randsum/roller/validate'
-import { createSeededRandom } from '../rng'
+import { createSeededRandom } from '@randsum/roller/random'
 
 /** Input for the `roll` tool handler. */
 export interface RollToolInput {
@@ -35,7 +36,12 @@ export function rollNotation(input: RollToolInput): RollToolResult {
   if (!isDiceNotation(input.notation)) {
     const suggestion = suggestNotationFix(input.notation)
     const base = `Invalid dice notation: "${input.notation}"`
-    throw new Error(suggestion ? `${base}. Did you mean \`${suggestion}\`?` : base)
+    // A RandsumError, so the MCP result reports its INVALID_NOTATION code.
+    throw new RandsumError(
+      suggestion ? `${base}. Did you mean \`${suggestion}\`?` : base,
+      ERROR_CODES.INVALID_NOTATION,
+      { notation: input.notation }
+    )
   }
 
   const config: RollConfig | undefined =

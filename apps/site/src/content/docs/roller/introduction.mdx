@@ -1,5 +1,5 @@
 ---
-title: "@randsum/roller"
+title: "@randsum/roller: TypeScript Dice Roller"
 description: TypeScript dice engine with advanced notation, modifiers, and full input validation. Works in Node.js, Bun, Deno, and browsers.
 head:
   - tag: script
@@ -33,24 +33,24 @@ head:
 ---
 
 import CodeExample from '../../../components/live-repl/CodeExample.astro'
-import { NotationRoller } from '../../../components/NotationRoller'
+import NotationRoller from '../../../components/rollers/NotationRoller.astro'
 
-Roll dice with a single function call — numbers, notation strings, or options objects. `@randsum/roller` is the core engine that powers the entire RANDSUM ecosystem: full TypeScript types, strict input validation, and zero dependencies — notation parsing is built in.
+Roll dice with a single function call: numbers, notation strings, or options objects. `@randsum/roller` is the core engine that powers the entire RANDSUM ecosystem: full TypeScript types, strict input validation, and zero dependencies. Notation parsing is built in.
 
 :::tip[RDN Conformant]
-`@randsum/roller` is **RDN v0.9.0 Level 3 (Extended) Conformant** against the [RANDSUM Dice Notation Specification](/spec/). Level 4 (Full) is partial: conformance vector 39 (`!s{}`) is a known gap.
+`@randsum/roller` is **RDN v0.9.0 Level 4 (Full) Conformant** against the [RANDSUM Dice Notation Specification](https://notation.randsum.dev/): it passes every conformance vector.
 :::
 
 ## Features
 
-- **Three input modes** — pass a number, a notation string, or a typed options object
-- **Advanced notation** — drop/keep, reroll, exploding, compounding, penetrating, cap, replace, unique, count successes/failures, wild die, integer division, modulo, annotations, and repeat
-- **Special dice** — geometric die (`gN`), draw die (`DDN`), percentile (`d%`), and Fate/Fudge (`dF`)
-- **Modifier pipeline** — 19 modifiers execute in a defined priority order, composable and predictable
-- **Multiple arguments** — combine rolls into a single total: `roll('1d20+5', '2d6')`
-- **Strict validation** — throws on invalid input; validate user strings with `isDiceNotation()` or `validateNotation()`
-- **Custom RNG** — pass a `randomFn` for seeded, deterministic, or cryptographic randomness
-- **Universal runtime** — works in Node.js, Bun, Deno, browsers, and edge functions
+- **Three input modes**: pass a number, a notation string, or a typed options object
+- **Advanced notation**: drop/keep, reroll, exploding, compounding, penetrating, cap, replace, unique, count successes/failures, wild die, integer division, modulo, annotations, and repeat
+- **Special dice**: geometric die (`gN`), draw die (`DDN`), percentile (`d%`), and Fate/Fudge (`dF`)
+- **Modifier pipeline**: modifiers execute in a defined priority order, composable and predictable
+- **Multiple arguments**: combine rolls into a single total: `roll('1d20+5', '2d6')`
+- **Strict validation**: throws on invalid input; validate user strings with `isDiceNotation()` or `validateNotation()`
+- **Custom RNG**: pass a `randomFn` for seeded, deterministic, or cryptographic randomness
+- **Universal runtime**: works in Node.js, Bun, Deno, browsers, and edge functions
 
 ## Argument types
 
@@ -65,7 +65,7 @@ console.log(result.total) // 1-20`} />
 
 ### Notation string
 
-Pass a [Randsum Dice Notation](/notation/randsum-dice-notation/) string for complex rolls.
+Pass a [RANDSUM Dice Notation](/notation/randsum-dice-notation/) string for complex rolls.
 
 <CodeExample code={`import { roll } from '@randsum/roller'
 
@@ -78,7 +78,7 @@ const attack = roll('2d20K+5')
 // Exploding d6s with rerolls below 3
 const wild = roll('4d6R{<3}!')`} />
 
-<NotationRoller defaultNotation="4d6L" client:only="react" />
+<NotationRoller defaultNotation="4d6L" />
 
 ### Options object
 
@@ -97,7 +97,7 @@ const result = roll({
 
 console.log(result.total)  // Sum of best 3d6 + 2`} />
 
-All three input types produce the same `RollerRollResult` — you can mix them in a single call:
+All three input types produce the same `RollerRollResult`, so you can mix them in a single call:
 
 <CodeExample code={`import { roll } from '@randsum/roller'
 
@@ -126,12 +126,12 @@ console.log(result.total) // d20 + 5 + 2d6`} />
 | `[text]` | Annotation/label | `2d6[fire]` |
 | `xN` | Repeat notation | `4d6Lx6` |
 
-See the full [Randsum Dice Notation Spec](/notation/randsum-dice-notation/) for reroll conditions, caps, replacements, success counting, and multipliers.
+See the full [Notation Syntax Guide](/notation/randsum-dice-notation/) for reroll conditions, caps, replacements, success counting, and multipliers.
 
 ## Learn more
 
-- **[Getting Started](/roller/getting-started/)** — install, first roll, result types
-- **[Roll Options](/roller/roll-options/)** — every option the `roll()` function accepts
-- **[Modifiers](/roller/modifiers/)** — how the modifier pipeline works, priority order, and examples
-- **[Error Handling](/roller/error-handling/)** — validation patterns for user-provided input
-- **[API Reference](/roller/api-reference/)** — all exported functions and types
+- **[Getting Started](/roller/getting-started/)**: install, first roll, result types
+- **[Roll Options](/roller/roll-options/)**: every option the `roll()` function accepts
+- **[Modifiers](/roller/modifiers/)**: how the modifier pipeline works, priority order, and examples
+- **[Error Handling](/roller/error-handling/)**: validation patterns for user-provided input
+- **[API Reference](/roller/api-reference/)**: all exported functions and types

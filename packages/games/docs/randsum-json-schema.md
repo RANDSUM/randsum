@@ -196,8 +196,8 @@ operation is a single-key object:
 | `keepLowest`  | Keep only the N lowest dice (disadvantage, Blades desperate).                   |
 | `add`         | Add a flat value to each kept die. Use for per-die bonuses — not for pool totals. |
 | `cap`         | Clamp each die to `{ min, max }`.                                               |
-| `markDice`    | Attach a `flag` string to each die matching a comparison.                       |
-| `keepMarked`  | Keep only dice previously marked with a given flag.                             |
+| `markDice`    | Attach a `flag` string to each die matching a comparison. Not yet supported by codegen: `generateCode` rejects it. |
+| `keepMarked`  | Keep only dice previously marked with a given flag. Not yet supported by codegen. |
 
 Every `IntegerOrInput` field here (`keepHighest`, `keepLowest`, `add`, cap
 bounds, mark value) accepts either a literal integer, `{ "$input": "name" }`

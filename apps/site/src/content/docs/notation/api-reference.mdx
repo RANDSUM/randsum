@@ -1,6 +1,6 @@
 ---
 title: Notation API Reference
-description: All exported functions, types, and schemas from @randsum/roller.
+description: "Reference for the dice notation functions, types and schemas exported by @randsum/roller: validation, parsing, tokenizing and conversion."
 ---
 
 import CodeExample from '../../../components/live-repl/CodeExample.astro'
@@ -15,7 +15,7 @@ Type guard that returns `true` if the string is valid dice notation.
 
 <CodeExample code={`import { isDiceNotation } from '@randsum/roller'
 
-isDiceNotation('4d6L')   // true — value is typed as DiceNotation
+isDiceNotation('4d6L')   // true: value is typed as DiceNotation
 isDiceNotation('hello')  // false`} />
 
 **Signature:**
@@ -26,7 +26,7 @@ function isDiceNotation(value: string): value is DiceNotation
 
 ### `notation(value)`
 
-Assert a string is valid notation or throw `NotationParseError`.
+Assert a string is valid notation or throw `NotationParseError`, whose `suggestion` holds a fix when one can be inferred.
 
 ```typescript
 function notation(value: string): DiceNotation
@@ -40,13 +40,13 @@ Parse a notation string into structured options. Throws `NotationParseError` (wi
 
 if (isDiceNotation('4d6L+2')) {
   const [options] = notationToOptions('4d6L+2')
-  // { sides: 6, quantity: 4, modifiers: { drop: { lowest: 1 }, plus: 2 } }
+  // { quantity: 4, arithmetic: 'add', sides: 6, modifiers: { drop: { lowest: 1 }, plus: 2 } }
 }`} />
 
 **Signature:**
 
 ```typescript
-function notationToOptions(notation: string): RollOptions[]
+function notationToOptions(notation: string): ParsedNotationOptions[]
 ```
 
 ### `validateNotation(notation)`
@@ -58,7 +58,7 @@ Validate with a detailed result. Returns a `ValidationResult`.
 const result = validateNotation('4d6L')
 if (result.valid) {
   result.notation   // DiceNotation[]
-  result.options    // RollOptions[]
+  result.options    // ParsedNotationOptions[]
 } else {
   result.error      // ValidationErrorInfo
 }`} />
@@ -75,7 +75,7 @@ Suggest a corrected version of invalid notation. Returns `undefined` if no fix i
 
 <CodeExample code={`import { suggestNotationFix } from '@randsum/roller'
 
-suggestNotationFix('d6')    // '1d6'
+suggestNotationFix('4d6 L') // '4d6L'
 suggestNotationFix('46')    // '4d6'
 suggestNotationFix('xyz')   // undefined`} />
 
@@ -97,8 +97,10 @@ optionsToNotation({ sides: 6, quantity: 4, modifiers: { drop: { lowest: 1 } } })
 // '4d6L'`} />
 
 ```typescript
-function optionsToNotation(options: RollOptions): DiceNotation
+function optionsToNotation<T = string>(options: RollOptions<T>): DiceNotation
 ```
+
+Throws `NotationParseError` if the options cannot be written as valid notation.
 
 ### `optionsToDescription(options)`
 
@@ -158,7 +160,7 @@ type TokenCategory = ModifierCategory | 'unknown'
 
 ### `ModifierCategory`
 
-The facet a modifier belongs to, per the [notation taxonomy](/spec/).
+The facet a modifier belongs to, per the [notation taxonomy](https://notation.randsum.dev/).
 
 ```typescript
 type ModifierCategory =
@@ -171,7 +173,7 @@ type ModifierCategory =
 
 ### `NotationParseError`
 
-Thrown by `notation()` when a string is not valid dice notation. Extends `RandsumError`.
+Thrown by `notation()` and `notationToOptions()` when a string is not valid dice notation, and by `optionsToNotation()` when options cannot be written as notation. Extends `RandsumError`; its `code` is `INVALID_NOTATION`.
 
 | Property     | Type                  | Description                                              |
 | ------------ | --------------------- | ------------------------------------------------------- |
@@ -184,12 +186,12 @@ Thrown by `notation()` when a string is not valid dice notation. Extends `Randsu
 
 | Type                | Description                                                                       |
 | ------------------- | -------------------------------------------------------------------------------- |
-| `DiceNotation`      | Branded template literal type for valid notation strings                         |
-| `RollOptions<T>`    | Configuration object for a roll (`sides`, `quantity`, `modifiers`, `key`, `arithmetic`) |
-| `RollArgument<T>`   | Any accepted `roll()` argument — a number, notation string, or `RollOptions`     |
+| `DiceNotation`      | Template literal type for notation strings                                       |
+| `RollOptions<T>`    | Configuration object for a roll (`sides`, `quantity`, `modifiers`, `key`, `label`, `arithmetic`) |
+| `RollArgument<T>`   | Any accepted `roll()` argument: a number, notation string, or `RollOptions`      |
 | `ModifierOptions`   | Top-level modifier configuration with all modifier keys                          |
 | `RollRecord<T>`     | Full record of a single roll: parameters, raw rolls, modifier logs, and total    |
-| `RollerRollResult<T>` | Result of `roll()` — `rolls`, `values`, and `total`                            |
+| `RollerRollResult<T>` | Result of `roll()`: `rolls`, `values`, and `total`                             |
 
 ### Modifier option types
 
@@ -198,14 +200,14 @@ Thrown by `notation()` when a string is not valid dice notation. Extends `Randsu
 | `ComparisonOptions` | `{ greaterThan?, greaterThanOrEqual?, lessThan?, lessThanOrEqual?, exact? }`  |
 | `DropOptions`       | Extends `ComparisonOptions` with `{ highest?, lowest? }`                      |
 | `KeepOptions`       | `{ highest?, lowest? }`                                                       |
-| `RerollOptions`     | Extends `ComparisonOptions` with `{ max? }`                                   |
+| `RerollOptions`     | Extends `ComparisonOptions` with `{ max?, once? }`                            |
 | `ReplaceOptions`    | `{ from: number \| ComparisonOptions, to: number }`                          |
 | `UniqueOptions`     | `{ notUnique: number[] }`                                                     |
-| `CountOptions`      | Success / failure counting threshold configuration                           |
+| `CountOptions`      | Extends `ComparisonOptions` with `{ deduct? }` for counting successes and failures |
 
 ### Validation types
 
 | Type                 | Description                                          |
 | -------------------- | --------------------------------------------------- |
 | `ValidationResult`   | Discriminated union of the valid and invalid results |
-| `ValidationErrorInfo` | `{ message: string, argument: string }`            |
+| `ValidationErrorInfo` | `{ message: string, argument: string, position?: number, code?: ErrorCode }` |

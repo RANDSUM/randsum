@@ -1,5 +1,5 @@
 ---
-title: Introduction
+title: Introduction to RANDSUM
 description: RANDSUM is a TypeScript dice engine for tabletop RPGs. Roll dice, parse notation, and integrate game-specific mechanics with a single function call.
 head:
   - tag: script
@@ -18,12 +18,13 @@ head:
 
 import { Tabs, TabItem, Aside } from '@astrojs/starlight/components'
 import CodeExample from '../../../components/live-repl/CodeExample.astro'
-import { NotationRoller } from '../../../components/NotationRoller'
+import NotationRoller from '../../../components/rollers/NotationRoller.astro'
 
 RANDSUM is a TypeScript-first dice engine for tabletop RPGs and game development.
 
-- **`@randsum/roller`** — roll dice with a single function call, apply modifiers, parse and validate [Randsum Dice Notation](/notation/randsum-dice-notation/) strings, get typed results
-- **`@randsum/games`** — game-specific roll functions for Salvage Union, D&D 5e, PbtA, and more
+- **`@randsum/roller`**: roll dice with a single function call, apply modifiers, parse and validate [RANDSUM Dice Notation](/notation/randsum-dice-notation/) strings, get typed results
+- **`@randsum/games`**: game-specific roll functions for Salvage Union, D&D 5e, PbtA, and more
+- **`@randsum/ui`**: a drop-in dice roller as a web component, with React, Vue, Svelte and React Native bindings
 
 ## Your first roll
 
@@ -32,21 +33,21 @@ RANDSUM is a TypeScript-first dice engine for tabletop RPGs and game development
 const result = roll(20)
 console.log(result.total) // => a number between 1 and 20`} />
 
-<NotationRoller defaultNotation="1d20" client:only="react" />
+<NotationRoller defaultNotation="1d20" />
 
-`roll()` accepts numbers, [notation strings](/notation/randsum-dice-notation/), or options objects — mix and match freely:
+`roll()` accepts numbers, [notation strings](/notation/randsum-dice-notation/), or options objects. Mix and match freely:
 
-<CodeExample code={`// Notation string — 4d6, drop the lowest
+<CodeExample code={`// Notation string: 4d6, drop the lowest
 const abilityScore = roll('4d6L')
 
-// Options object — same thing
+// Options object: the same thing
 const abilityScore2 = roll({
   sides: 6,
   quantity: 4,
   modifiers: { drop: { lowest: 1 } }
 })
 
-// Multiple arguments — combine rolls into one total
+// Multiple arguments: combine rolls into one total
 const attackDamage = roll('1d20+5', '2d6')`} />
 
 ## Install the one you need
@@ -94,21 +95,21 @@ All packages ship as ESM with full type declarations. No Node.js built-ins requi
 | Runtime | Supported |
 |---|---|
 | Node.js 18+ | Yes |
-| Bun 1.0+ | Yes |
+| Bun 1.3.10+ | Yes |
 | Deno | Yes |
 | Browser (ESM) | Yes |
 | Edge functions (Cloudflare, Vercel) | Yes |
 
 <Aside type="tip" title="When does roll() throw?">
-`roll()` throws on invalid input — `NotationParseError` for bad notation strings, `ValidationError` or `ModifierError` (both extending `RandsumError`) for impossible option values or unsatisfiable modifier conditions. Hardcoded notation in your source code will never throw. For user-provided strings, validate first with `validateNotation()` or `isDiceNotation()` (available from `@randsum/roller`). See [Error Handling](/roller/error-handling/) for the full pattern.
+`roll()` throws on invalid input. A string that isn't valid notation throws `ValidationError`, a modifier that can't be satisfied throws `ModifierError`, and notation past a hard limit (such as a repeat count over 1000) throws `NotationParseError`. All of them extend `RandsumError`. Valid notation written in your own source code won't throw. For user-provided strings, validate first with `validateNotation()` or `isDiceNotation()` (available from `@randsum/roller`). See [Error Handling](/roller/error-handling/) for the full pattern.
 </Aside>
 
 ## Where to go next
 
-- **[Roller — Getting Started](/roller/getting-started/)** — learn the `roll()` function, modifiers, and result types
-- **[Dice Notation](/notation/getting-started/)** — parse and validate dice notation strings
-- **[Games — Getting Started](/games/getting-started/)** — roll with game-specific mechanics for Salvage Union, D&D 5e, PbtA, and more
-- **[Ecosystem Overview](/welcome/ecosystem-overview/)** — how the packages fit together
+- **[Roller: Getting Started](/roller/getting-started/)**: learn the `roll()` function, modifiers, and result types
+- **[Dice Notation](/notation/getting-started/)**: parse and validate dice notation strings
+- **[Games: Getting Started](/games/getting-started/)**: roll with game-specific mechanics for Salvage Union, D&D 5e, PbtA, and more
+- **[Ecosystem Overview](/welcome/ecosystem-overview/)**: how the packages fit together
 
 ## Links
 

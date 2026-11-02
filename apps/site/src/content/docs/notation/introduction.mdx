@@ -1,6 +1,6 @@
 ---
-title: "Dice Notation"
-description: Parse, validate, and transform dice notation strings with @randsum/roller. Zero-dependency TypeScript utilities for notation validation, type guards, and structured options.
+title: Dice Notation Parsing and Validation
+description: "Parse, validate and convert dice notation strings in TypeScript with @randsum/roller: validation, type guards, tokenizing and structured roll options."
 head:
   - tag: script
     attrs:
@@ -34,21 +34,21 @@ head:
 
 import CodeExample from '../../../components/live-repl/CodeExample.astro'
 
-Parse, validate, and transform dice notation strings — all built into `@randsum/roller`. Notation is a core capability of the roller, not a separate package. It supports 19 modifier schemas, special dice types (geometric, draw), annotations, and the repeat operator, with zero runtime dependencies.
+Parse, validate and transform dice notation strings with `@randsum/roller`. Notation is built into the roller, not a separate package. It supports 19 modifier schemas, special dice types (geometric, draw), annotations, and the repeat operator, with zero runtime dependencies.
 
 ## What is RDN?
 
-**RANDSUM Dice Notation (RDN)** is a formal specification for dice notation syntax used in tabletop RPGs. It defines a three-stage execution pipeline, 26 modifiers, and four conformance levels. The full specification is published at [randsum.dev/spec](/spec/).
+**RANDSUM Dice Notation (RDN)** is a formal specification for dice notation syntax used in tabletop RPGs. It defines a staged execution pipeline, a fixed modifier order, and conformance levels any roller can implement. The full specification is published at [notation.randsum.dev](https://notation.randsum.dev/).
 
-`@randsum/roller` is **Level 3 (Extended) conformant**. Level 4 (Full) is partial: conformance vector 39 (`!s{}`) is a known gap.
+`@randsum/roller` is the reference implementation and is **Level 4 (Full) conformant**: it passes every conformance vector.
 
 ## What it does
 
-**Validation** — check if a string is valid dice notation, with type narrowing or structured error details.
+**Validation**: check if a string is valid dice notation, with type narrowing or structured error details.
 
 <CodeExample code={`import { isDiceNotation, validateNotation } from '@randsum/roller'
 
-// Type guard — narrows to DiceNotation
+// Type guard: narrows to DiceNotation
 if (isDiceNotation(userInput)) {
   // userInput is typed as DiceNotation
 }
@@ -59,14 +59,14 @@ if (!result.valid) {
   console.error(result.error.message)
 }`} />
 
-**Parsing** — convert notation strings into structured `ParsedNotationOptions` arrays.
+**Parsing**: convert notation strings into structured `ParsedNotationOptions` arrays.
 
 <CodeExample code={`import { notationToOptions } from '@randsum/roller'
 
 const options = notationToOptions('4d6L')
-// [{ sides: 6, quantity: 4, modifiers: { drop: { lowest: 1 } } }]`} />
+// [{ quantity: 4, arithmetic: 'add', sides: 6, modifiers: { drop: { lowest: 1 } } }]`} />
 
-**Transformation** — convert structured options back to notation strings or human-readable descriptions.
+**Transformation**: convert structured options back to notation strings or human-readable descriptions.
 
 <CodeExample code={`import { optionsToNotation, optionsToDescription } from '@randsum/roller'
 
@@ -79,26 +79,26 @@ const options = {
 optionsToNotation(options)     // '4d6L'
 optionsToDescription(options)  // ['Roll 4 6-sided dice', 'Drop lowest']`} />
 
-**Suggestion** — offer corrected notation for invalid input.
+**Suggestion**: offer corrected notation for invalid input.
 
 <CodeExample code={`import { suggestNotationFix } from '@randsum/roller'
 
-suggestNotationFix('d20')  // '1d20' — adds missing quantity`} />
+suggestNotationFix('4d6 L')  // '4d6L': removes the space`} />
 
-**Tokenization** — break notation into typed tokens for syntax highlighting or UI display.
+**Tokenization**: break notation into typed tokens for syntax highlighting or UI display.
 
 <CodeExample code={`import { tokenize } from '@randsum/roller'
 
 const tokens = tokenize('4d6L+5')
-// Each token has: text, type, start, end, description`} />
+// Each token has: text, key, category, start, end, description`} />
 
 ## Learn more
 
-- **[Getting Started](/notation/getting-started/)** — install and use notation in your project
-- **[Randsum Dice Notation Spec](/notation/randsum-dice-notation/)** — the full notation syntax reference
-- **[Validation & Parsing](/notation/validation-and-parsing/)** — deep dive into validation, parsing, and transformation
-- **[API Reference](/notation/api-reference/)** — all exported functions and types
-- **[Formal Specification](/spec/)** — the language-agnostic RANDSUM Dice Notation spec with conformance levels, execution pipeline, and modifier taxonomy
+- **[Getting Started](/notation/getting-started/)**: install and use notation in your project
+- **[Notation Syntax Guide](/notation/randsum-dice-notation/)**: the full notation syntax reference
+- **[Validation & Parsing](/notation/validation-and-parsing/)**: a deep dive into validation, parsing, and transformation
+- **[API Reference](/notation/api-reference/)**: all exported functions and types
+- **[Formal Specification](https://notation.randsum.dev/)**: the language-agnostic RANDSUM Dice Notation spec with conformance levels, execution pipeline, and modifier taxonomy
 
 ## Links
 

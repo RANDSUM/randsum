@@ -1,6 +1,6 @@
 ---
 // The top of a product's front page: the RANDSUM lockup with the product's name
-// set large in its colour, its pitch, its buttons, a real snippet and a few facts.
+// set large in its colour, its pitch, its buttons, and a real snippet.
 import PipMark from './PipMark.astro'
 import Button from './ui/Button.astro'
 import CodePanel from './ui/CodePanel.astro'
@@ -21,9 +21,9 @@ const id = info.id
 >
   <h1 id="_top">
     <span class="product-hero-brand">
-      <PipMark variant="knockout" size={22} />
+      <PipMark variant="knockout" product={id} size={22} />
       RANDSUM
-    </span>
+    </span>{' '}
     <span class="product-hero-name">{PRODUCT_LABELS[id]}</span>
   </h1>
   <p class="product-hero-tagline">{info.tagline}</p>
@@ -38,14 +38,6 @@ const id = info.id
   <div class="product-hero-snippet">
     <CodePanel code={info.snippet.code} lang={info.snippet.lang} />
   </div>
-  <dl class="product-hero-facts">
-    {info.facts.map(fact => (
-      <div>
-        <dt>{fact.label}</dt>
-        <dd>{fact.value}</dd>
-      </div>
-    ))}
-  </dl>
 </header>
 
 <style>
@@ -127,47 +119,5 @@ h1 {
 
 .product-hero-snippet {
   margin-top: 1.5rem;
-}
-
-.product-hero-facts {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
-  margin: 1.5rem 0 0;
-  border: 1px solid var(--sl-color-gray-5);
-  border-radius: var(--rs-radius-md);
-}
-
-.product-hero-facts div {
-  display: flex;
-  flex-direction: column-reverse;
-  justify-content: flex-end;
-  gap: 0.15rem;
-  padding: 0.9rem 1.1rem;
-}
-
-.product-hero-facts div + div {
-  border-left: 1px solid var(--sl-color-gray-5);
-}
-
-.product-hero-facts dd {
-  margin: 0;
-  font-family: var(--rs-font-heading);
-  font-size: var(--rs-text-xl);
-  font-weight: var(--rs-weight-heavy);
-  letter-spacing: var(--rs-tracking-heading);
-  line-height: 1.1;
-  color: var(--sl-color-white);
-}
-
-.product-hero-facts dt {
-  font-size: var(--rs-text-sm);
-  color: var(--sl-color-gray-3);
-}
-
-@media (max-width: 40rem) {
-  .product-hero-facts div + div {
-    border-left: none;
-    border-top: 1px solid var(--sl-color-gray-5);
-  }
 }
 </style>

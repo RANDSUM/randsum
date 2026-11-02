@@ -5,7 +5,7 @@ Thanks for your interest in contributing! This guide covers everything you need 
 ## Prerequisites
 
 - [Bun](https://bun.sh) >= 1.4.0 (enforced by `engines`)
-- [Node.js](https://nodejs.org) v18+ (for compatibility)
+- [Node.js](https://nodejs.org) >= 22.23.4 (enforced by `engines`)
 - Git
 
 ## Setup
@@ -19,10 +19,7 @@ bun run check      # Verify everything works
 
 ## Project Structure
 
-- `packages/roller/` -- Core dice engine with built-in RDN notation parser (all packages depend on this)
-- `packages/games/` -- Game system packages (subpath exports per game)
-- `apps/discord-bot/` -- Private Discord bot, deployed as a Cloudflare Worker
-- `apps/site/` -- Documentation site at randsum.dev (Astro + Starlight); its web-only React dice UI lives in `src/components/dice-ui/`, and the notation spec is a plain Astro page at `/spec` (`src/spec/`)
+See the Architecture section of [`AGENTS.md`](AGENTS.md) for every package and app. The site (`apps/site/`) also builds the notation spec, served at notation.randsum.dev (randsum.dev 301s `/spec` there).
 
 ## Adding a New Game
 
@@ -70,7 +67,7 @@ Run `bun run fix:all` to auto-fix lint and format issues.
 
 **pre-commit** runs `bun install --frozen-lockfile` first (nothing else runs if it fails), then in parallel: Biome (`check --write` — lint + format, covering `.astro`), `typecheck`, and a codegen check (`gen:check`) when a `.randsum.json` spec changed. A failing step prints its own fix.
 
-**pre-push** is a heavier gauntlet — expect it to take a while. It runs `build` first (nothing else runs if it fails), then in parallel: codegen check (`gen:check`), conformance check (`@randsum/site conformance:check`), the full test suite, and `knip`. A failing step prints its own fix. See `lefthook.yml` for the exact config. Do not `--no-verify` past a real failure.
+**pre-push** is a heavier gauntlet — expect it to take a while. It runs `build` first (nothing else runs if it fails), then in parallel: codegen check (`gen:check`), the full test suite, and `knip`. A failing step prints its own fix. See `lefthook.yml` for the exact config. Do not `--no-verify` past a real failure.
 
 ## Releases
 
@@ -86,7 +83,7 @@ Releases are automated via [changesets](https://github.com/changesets/changesets
 
 **`workspace:~` warning:** never run a bare `npm publish` from a package directory. npm ships the literal `workspace:~` string, which consumers cannot resolve. Publishing always goes through `scripts/publish.ts`.
 
-**Local fallback (rare):** `bun scripts/publish.ts --otp=<CODE>` (the npm account has 2FA set to `auth-and-writes`), optionally with `--dry-run`. Local runs omit `--provenance`. Publish order is fixed in the script: `@randsum/roller` → `@randsum/games` → `@randsum/mcp`.
+**Local fallback (rare):** `bun scripts/publish.ts --otp=<CODE>` (the npm account has 2FA set to `auth-and-writes`), optionally with `--dry-run`. Local runs omit `--provenance`. Publish order is fixed in the script: `@randsum/roller` → `@randsum/games` → `@randsum/mcp` → `@randsum/ui` → `@randsum/notation-spec`.
 
 ### Versioning
 
@@ -96,5 +93,5 @@ Releases are automated via [changesets](https://github.com/changesets/changesets
 
 - [GitHub Issues](https://github.com/RANDSUM/randsum/issues) -- bugs and feature requests
 - [Project Board](https://github.com/orgs/RANDSUM/projects/2/views/1) -- roadmap and priorities
-- [RANDSUM Dice Notation (RDN) Specification](https://randsum.dev/spec/) -- the formal spec for dice notation syntax
+- [RANDSUM Dice Notation (RDN) Specification](https://notation.randsum.dev/) -- the formal spec for dice notation syntax
 - [Architecture Decisions](docs/adr/) -- key design decisions and rationale

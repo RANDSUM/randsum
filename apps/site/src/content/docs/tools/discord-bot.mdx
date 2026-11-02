@@ -1,19 +1,32 @@
 ---
-title: RANDSUM Discord Dice Bot — D&D, Blades, PbtA & More
-description: Add a dice rolling bot to your Discord server. Supports RANDSUM notation, D&D 5e, Blades in the Dark, Daggerheart, Fate Core, PbtA, and Root RPG with full roll breakdowns.
+title: Discord Dice Bot for D&D, Blades, PbtA and More
+description: Add a free dice bot to your Discord server. Roll any notation, or D&D 5e, Blades in the Dark, Daggerheart, Fate Core, PbtA and Root RPG, with every step shown.
 ---
 
 import CodeExample from '../../../components/live-repl/CodeExample.astro'
+import Button from '../../../components/ui/Button.astro'
+import Card from '../../../components/ui/Card.astro'
+import CardGrid from '../../../components/ui/CardGrid.astro'
+import DiscordGlyph from '../../../components/ui/DiscordGlyph.astro'
+import { DISCORD_INSTALL_URL } from '../../../utils/product'
 
-See the [Discord Bot landing page](/discord) for screenshots and quick setup.
+The **RANDSUM Discord Bot** is a Discord application for rolling dice in chat. It runs as a Cloudflare Worker that answers Discord's slash commands, and shows every step of each roll. Every command takes an optional `hidden:true`, which shows the result only to you. It has a command for every RANDSUM game except Salvage Union, which the official SURef bot handles.
 
-The **RANDSUM Discord Bot** is a Discord application for rolling dice in chat. It runs as a Cloudflare Worker that answers Discord's slash commands, and provides detailed roll breakdowns and full support for all RANDSUM game packages.
+## What a roll looks like
+
+Each reply breaks the roll down step by step, coloured by outcome.
+
+![The bot's reply to /roll 10d20, totalling 100](/discord-ss-roll-10d20.png)
+
+![The bot's reply to /roll 2d12+1](/discord-ss-roll-2d12.png)
 
 ## Add to your server
 
 Add the bot to any Discord server with one click:
 
-[Add RANDSUM to Discord](https://discord.com/oauth2/authorize?client_id=1290434147159904276&permissions=274877906944&scope=bot%20applications.commands)
+<div class="not-content">
+  <Button href={DISCORD_INSTALL_URL} variant="product" product="discord"><DiscordGlyph /> Add to Discord</Button>
+</div>
 
 No configuration is required after adding.
 
@@ -33,25 +46,26 @@ Roll Blades in the Dark action rolls. Takes the number of dice in your pool and 
 
 <CodeExample lang="bash" code={`/blades dice:3
 /blades dice:2
-/blades dice:0   # Desperate position (rolls 2d6, takes lowest)`} />
+/blades dice:0   # Zero dice: rolls 2d6 and keeps the lowest`} />
 
 ### `/fifth`
 
-Roll D&D 5th Edition dice (1d20 + modifier). Supports advantage and disadvantage. Natural 20 results display in gold, natural 1 in crimson — visible at a glance.
+Roll D&D 5th Edition dice (1d20 + modifier). Supports advantage and disadvantage, and an optional `dc` to show success or failure. Natural 20s display in gold and natural 1s in crimson, so they stand out at a glance.
 
 <CodeExample lang="bash" code={`/fifth modifier:5
 /fifth modifier:3 rolling_with:Advantage
+/fifth modifier:4 dc:15
 /fifth rolling_with:Disadvantage
 /fifth   # Straight 1d20`} />
 
 ### `/dh`
 
-Roll Daggerheart mechanics with hope and fear dice. Supports modifiers, advantage/disadvantage, and amplification of hope or fear dice.
+Roll Daggerheart's Hope and Fear dice. Supports modifiers, advantage and disadvantage, amplifying either die, and an optional `difficulty` that resolves the roll into success or failure.
 
 <CodeExample lang="bash" code={`/dh modifier:5 rolling_with:Advantage
 /dh modifier:3 rolling_with:Disadvantage
 /dh amplify_hope:true amplify_fear:false
-/dh modifier:2`} />
+/dh modifier:2 difficulty:14`} />
 
 ### `/fate`
 
@@ -63,21 +77,21 @@ Roll Fate Core: four Fate dice (`4dF`) plus a skill rating, read off the Fate la
 
 ### `/root`
 
-Roll Root RPG mechanics. Rolls 2d6 with an optional modifier and returns the outcome (Strong Hit, Weak Hit, or Miss).
+Roll Root RPG moves. Rolls 2d6 plus an optional modifier and returns the outcome (Strong Hit, Weak Hit, or Miss). Name the `stat` the move uses, and roll with advantage or disadvantage to roll 3d6 and keep the best or worst two.
 
-<CodeExample lang="bash" code={`/root modifier:2
-/root modifier:-1
+<CodeExample lang="bash" code={`/root modifier:2 stat:Might
+/root modifier:-1 rolling_with:Disadvantage
 /root   # No modifier`} />
 
 ### `/salvageunion`
 
-Salvage Union rolls have moved. This command points you to [SURef](https://salvageunion.io/discord), the official bot from salvageunion.io, which rolls every Salvage Union table and looks up any chassis, system, module, or piece of equipment. It replaces the old `/su` command, which no longer exists.
+Salvage Union rolls have moved. This command points you to [SURef](https://salvageunion.io/discord), the official bot from salvageunion.io, which rolls every Salvage Union table and looks up any chassis, system, module, or piece of equipment.
 
 <CodeExample lang="bash" code={`/salvageunion`} />
 
 ### `/pbta`
 
-Roll Powered by the Apocalypse moves (2d6 + stat). Supports forward, ongoing bonuses, and advantage/disadvantage.
+Roll Powered by the Apocalypse moves (2d6 + stat). Supports forward and ongoing bonuses, and advantage and disadvantage.
 
 <CodeExample lang="bash" code={`/pbta stat:2
 /pbta stat:1 forward:1
@@ -96,31 +110,39 @@ Lists all available RANDSUM slash commands with descriptions.
 
 ## Game Support
 
-The following game packages have dedicated slash commands:
+Six games have their own slash command, each resolving the roll by that game's rules:
 
-- **@randsum/games/fifth** -- `/fifth` for D&D 5th Edition rolls
-- **@randsum/games/blades** -- `/blades` for Blades in the Dark action rolls
-- **@randsum/games/daggerheart** -- `/dh` for Daggerheart hope and fear dice
-- **@randsum/games/fate** -- `/fate` for Fate Core rolls against the ladder
-- **@randsum/games/pbta** -- `/pbta` for Powered by the Apocalypse moves
-- **@randsum/games/root-rpg** -- `/root` for Root RPG mechanics
+<CardGrid>
+  <Card href="/games/fifth/" eyebrow="/fifth" title="D&D 5th Edition" accent="var(--game-fifth)">
+    d20 + modifier with advantage or disadvantage. Natural 20s and 1s stand out.
+  </Card>
+  <Card href="/games/blades/" eyebrow="/blades" title="Blades in the Dark" accent="var(--game-blades)">
+    Action dice pool: critical, success, partial or failure.
+  </Card>
+  <Card href="/games/daggerheart/" eyebrow="/dh" title="Daggerheart" accent="var(--game-daggerheart)">
+    Hope and fear dice with modifiers and amplification.
+  </Card>
+  <Card href="/games/fate/" eyebrow="/fate" title="Fate Core" accent="var(--game-fate)">
+    4dF + skill on the Fate ladder, with shifts against opposition.
+  </Card>
+  <Card href="/games/pbta/" eyebrow="/pbta" title="Powered by the Apocalypse" accent="var(--game-pbta)">
+    2d6 + stat. Miss, weak hit or strong hit for any PbtA game.
+  </Card>
+  <Card href="/games/root-rpg/" eyebrow="/root" title="Root RPG" accent="var(--game-root-rpg)">
+    2d6 + bonus. Strong hit, weak hit or miss.
+  </Card>
+</CardGrid>
 
 Salvage Union is served by the [SURef bot](https://salvageunion.io/discord) instead; `/salvageunion` points there. The `@randsum/games/salvageunion` package is still published and usable in your own code.
 
 ## Features
 
-- **Detailed breakdowns** -- Shows individual die results, modifiers, and step-by-step calculations
-- **Full notation support** -- All RANDSUM dice notation features (drop, reroll, explode, etc.)
-- **Game-specific commands** -- Dedicated commands for each supported RPG system
-- **Color-coded results** -- Results are visually distinct by outcome type
-
-## Example Results
-
-See what RANDSUM bot results look like in practice.
-
-![/roll notation:10d20 — rolled a 100](/discord-ss-roll-10d20.png)
-
-![/roll notation:2d12+1 result](/discord-ss-roll-2d12.png)
+- **Detailed breakdowns**: individual die results, modifiers and step-by-step calculations
+- **Full notation support**: every RANDSUM dice notation feature (drop, reroll, explode and the rest)
+- **Game-specific commands**: a dedicated command for each supported game
+- **Color-coded results**: results are visually distinct by outcome
+- **Private rolls**: `hidden:true` on any command shows the result only to you
+- **Reroll button**: roll the same thing again from the reply
 
 ## Self-Hosted Setup
 
@@ -135,10 +157,10 @@ bun install
 # Set up environment variables
 cp .env.example .env
 
-# Deploy commands
+# Register the slash commands with Discord
 bun run deploy-commands
 
-# Run the bot
+# Run the Worker locally (wrangler dev)
 bun run dev`} />
 
 For detailed setup instructions, see the [Discord Bot source on GitHub](https://github.com/RANDSUM/randsum/tree/main/apps/discord-bot).

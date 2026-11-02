@@ -1,0 +1,96 @@
+---
+title: "@randsum/ui: Dice Roller Web Components"
+description: The RANDSUM dice roller as Web Components, one element in three sizes plus every part it is built from, with React, Vue, Svelte and React Native support. Each is importable on its own.
+---
+
+import { UiDemo } from '../../../components/rollers/UiDemo'
+import ServerRoller from '../../../components/rollers/ServerRoller.astro'
+
+**`@randsum/ui`** is the RANDSUM roller as Web Components (custom elements).
+The same elements run the [Roller app](/app/), the landing page and every
+roller in these docs.
+
+A custom element works in any page: plain HTML, htmx, Astro, or any framework.
+`@randsum/ui` also ships thin wrappers for React and Vue, types for Svelte,
+and native components for React Native and Expo. Each element and wrapper is its own module, the way lodash ships one
+module per function, so importing one component bundles that component and
+nothing else.
+
+```bash
+npm install @randsum/ui
+```
+
+```html
+<script type="module">
+  import '@randsum/ui/roller'
+</script>
+
+<randsum-roller size="mini" notation="4d6L"></randsum-roller>
+```
+
+## One roller, three sizes
+
+`<randsum-roller>` takes a `size`.
+
+**Mini** is two short rows for docs, READMEs and chat: the field and Roll, then
+a keys button and the status line. Hover or focus Roll to read the roll in English; a roll opens in a
+popover.
+
+<ServerRoller class="not-content ui-demo" size="mini" notation="4d6L" />
+
+**Compact**, the default, is a panel: the field and Roll on top, the keys
+below, and each roll laid over the keys until you close it or edit the
+notation, so nothing moves.
+
+<ServerRoller class="not-content ui-demo" size="compact" notation="2d20H+5" />
+
+**Max** is the whole roller, with a readout, recent rolls and history.
+
+<ServerRoller class="not-content ui-demo" size="max" notation="4d6L" history={false} />
+
+## Or build your own
+
+Every part is an element of its own. Put them in a `<randsum-scope>` and they
+share one roller, with no script:
+
+```html
+<script type="module">
+  import '@randsum/ui/scope'
+  import '@randsum/ui/notation-field'
+  import '@randsum/ui/roll-button'
+  import '@randsum/ui/readout'
+</script>
+
+<randsum-scope notation="2d6+1">
+  <randsum-notation-field></randsum-notation-field>
+  <randsum-roll-button></randsum-roll-button>
+  <randsum-readout></randsum-readout>
+</randsum-scope>
+```
+
+In React, `useRoller` holds the state and each part takes it as `roller`:
+
+<UiDemo client:only="react" />
+
+```tsx
+import { useRoller } from '@randsum/ui/react/use-roller'
+import { NotationField } from '@randsum/ui/react/notation-field'
+import { RollButton } from '@randsum/ui/react/roll-button'
+import { Readout } from '@randsum/ui/react/readout'
+
+export function MyRoller() {
+  const roller = useRoller({ defaultNotation: '2d6+1' })
+  return (
+    <div>
+      <NotationField roller={roller} />
+      <RollButton roller={roller} />
+      <Readout roller={roller} />
+    </div>
+  )
+}
+```
+
+## Next
+
+- [Getting started](/ui/getting-started/): HTML, React, Vue, Svelte, htmx and React Native, theming, and every property
+- [Components](/ui/components/): every entry, what it renders and its props

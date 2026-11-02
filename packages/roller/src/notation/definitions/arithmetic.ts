@@ -22,7 +22,7 @@ export function createArithmeticNotation(
   return defineNotationSchema<number>({
     name,
     priority,
-    tokenKey: operator,
+    lexemeKey: operator,
     category: 'Scale',
 
     pattern,

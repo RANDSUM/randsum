@@ -13,11 +13,18 @@ describe('@randsum/games (dist)', () => {
     expect(typeof mod.SchemaError).toBe('function')
   })
 
-  test('schema dist entry exports the codegen toolkit', async () => {
+  test('schema dist entry exports a working codegen toolkit', async () => {
     const mod = await import('../../games/dist/schema.js')
-    expect(typeof mod.validateSpec).toBe('function')
     expect(typeof mod.generateCode).toBe('function')
-    expect(typeof mod.SchemaError).toBe('function')
+    expect(typeof mod.lookupByRange).toBe('function')
+    expect(typeof mod.resolveExternalRefs).toBe('function')
+    expect(mod.validateSpec({}).valid).toBe(false)
+    expect(mod.specToFilename('D&D 5th Edition')).toBe('dd-5th-edition')
+    const err = new mod.SchemaError('test message', 'INVALID_SPEC')
+    expect(err).toBeInstanceOf(Error)
+    expect(err.message).toBe('test message')
+    // The bundle is minified; the class keeps its name for logs and error reports.
+    expect(err.constructor.name).toBe('SchemaError')
   })
 
   test('blades dist entry exports roll', async () => {

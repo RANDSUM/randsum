@@ -19,7 +19,9 @@
   "dependencies": {
     "@astrojs/react": "7.1.2",
     "@astrojs/starlight": "0.42.7",
+    "@randsum/notation-spec": "workspace:~",
     "@randsum/roller": "workspace:~",
+    "@randsum/ui": "workspace:~",
     "@stackblitz/sdk": "~1.11.0",
     "astro": "7.4.4",
     "astro-expressive-code": "0.44.3",
@@ -28,23 +30,22 @@
   },
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build",
+    "build": "astro build && bun scripts/build-app.ts && bun scripts/build-notation.ts",
     "preview": "astro preview",
     "deploy": "wrangler deploy -c wrangler.jsonc",
     "deploy:notation": "wrangler deploy -c wrangler.notation.jsonc",
+    "deploy:app": "wrangler deploy -c wrangler.app.jsonc",
     "astro": "astro",
     "test": "bun test",
     "typecheck": "astro sync && tsc --noEmit --runExternalCode",
-    "check": "bun run build && bun run typecheck && bun run test && bun run conformance:check",
-    "conformance:gen": "bun conformance-gen.ts",
-    "conformance:check": "bun conformance-gen.ts --check"
+    "check": "bun run build && bun run typecheck && bun run test"
   },
   "devDependencies": {
     "@astrojs/sitemap": "3.7.4",
     "@astrojs/ts-content-mapper": "0.2.0",
     "@happy-dom/global-registrator": "21.0.4",
-    "@testing-library/dom": "10.4.1",
-    "@testing-library/react": "16.3.2",
+    "@testing-library/dom": "10.4.2",
+    "@testing-library/react": "16.3.3",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
     "satteri": "0.10.5",

@@ -1,17 +1,20 @@
 import { parseNotation } from '../notation/lexer/parse'
 import { parsedToOptions } from '../notation/parse/notationToOptions'
-import { optionsToDescription } from '../notation/transformers/optionsToDescription'
+import {
+  geometricDescription,
+  optionsToDescription
+} from '../notation/transformers/optionsToDescription'
 import { formatNotation, optionsToNotation } from '../notation/transformers/optionsToNotation'
 import { optionsToSidesFaces } from '../notation/transformers/optionsToSidesFaces'
 import {
   modifiersToDescription,
   modifiersToNotation
 } from '../notation/transformers/modifiersToStrings'
-import type { ParsedNotationOptions } from '../notation/types'
+import type { ModifierOptions, ParsedNotationOptions } from '../notation/types'
 import { validateRollOptions } from '../lib/optionsValidation'
 import { validateModifiers } from '../modifiers/registry'
 import { validateMaxQuantity, validateMaxSides } from '../lib/utils/validation'
-import { ValidationError } from '../errors'
+import { ModifierError, ValidationError } from '../errors'
 import type { DiceNotation } from '../types'
 import type { RollArgument, RollOptions, RollParams } from '../types'
 
@@ -20,6 +23,37 @@ const FATE_EXTENDED_FACES = [-2, -1, 0, 1, 2]
 
 function isAllNumeric(values: readonly string[]): boolean {
   return values.every(v => /^-?\d+$/.test(v.trim()))
+}
+
+/**
+ * The only modifiers a geometric die takes (spec 4.3): the Total-channel Scale
+ * modifiers. Its pool holds every roll of every sequence, not one value per die,
+ * so a modifier that reads or changes individual dice (drop, keep, count, ...)
+ * would act on rolls rather than dice.
+ */
+const GEOMETRIC_MODIFIERS: ReadonlySet<keyof ModifierOptions> = new Set([
+  'plus',
+  'minus',
+  'multiply',
+  'integerDivide',
+  'modulo',
+  'multiplyTotal'
+])
+
+function rejectGeometricPoolModifiers(modifiers: ModifierOptions, notation: string): void {
+  const name = (Object.keys(modifiers) as (keyof ModifierOptions)[]).find(
+    key => modifiers[key] !== undefined && !GEOMETRIC_MODIFIERS.has(key)
+  )
+  if (name !== undefined) {
+    throw new ModifierError(
+      name,
+      `Pool modifiers are not supported on geometric dice (${notation})`,
+      {
+        path: `modifiers.${name}`,
+        notation
+      }
+    )
+  }
 }
 
 function keyFor(position: number, index: number): string {
@@ -134,7 +168,7 @@ function specialOptionsToParams<T>(
         key,
         argument: arg,
         notation,
-        description: [`Roll g${sides} (geometric: roll d${sides} until 1)`, ...modifierDescription]
+        description: [geometricDescription(q, sides), ...modifierDescription]
       }
     }
     default:
@@ -163,6 +197,7 @@ function optionsToParams<T>(
   // A special die resolves its faces (dF, zN, d{...}) before validation; a
   // standard pool must be validated before rendering, which rejects bad values.
   const special = specialOptionsToParams<T>(options as ParsedNotationOptions, argument, key)
+  if (special?.geometric === true) rejectGeometricPoolModifiers(special.modifiers, special.notation)
   validateModifiers(
     options.modifiers ?? {},
     special
@@ -236,6 +271,26 @@ function nonStringOptions<T>(argument: Exclude<RollArgument<T>, string>): RollOp
 }
 
 /**
+ * Resolve the pools of an accepted notation string to RollParams, enforcing the
+ * size limits and validating every modifier against its pool. Throws a
+ * RandsumError for anything `roll()` would reject before rolling;
+ * `validateNotation` calls it so that "valid" means "rolls".
+ */
+export function notationOptionsToParams<T>(
+  argument: string,
+  allOptions: readonly ParsedNotationOptions[],
+  position: number
+): RollParams<T>[] {
+  for (const options of allOptions) {
+    validateMaxQuantity(options.quantity)
+    validateMaxSides(options.sides)
+  }
+  return allOptions.map((options, index) =>
+    optionsToParams<T>(options, argument as RollArgument<T>, position, index)
+  )
+}
+
+/**
  * Convert a roll argument to fully resolved roll parameters.
  *
  * A notation string is parsed once: `parseNotation` decides validity (throwing on
@@ -256,14 +311,7 @@ export function parseArguments<T>(argument: RollArgument<T>, position: number): 
         value: argument
       })
     }
-    const allOptions = parsedToOptions(argument, parsed)
-    for (const options of allOptions) {
-      validateMaxQuantity(options.quantity)
-      validateMaxSides(options.sides)
-    }
-    return allOptions.map((options, index) =>
-      optionsToParams<T>(options, argument, position, index)
-    )
+    return notationOptionsToParams<T>(argument, parsedToOptions(argument, parsed), position)
   }
 
   return nonStringOptions<T>(argument).map((options, index) =>

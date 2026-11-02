@@ -11,8 +11,8 @@ import { curatedLlmsTxt } from './src/integrations/curated-llms-txt'
 // https://astro.build/config
 export default defineConfig({
   base: '/',
-  // Legacy 301 redirects for old URL shapes live in `public/_redirects`, which
-  // Workers Static Assets serves as real 301s. Astro's own `redirects` option
+  // Redirects live in `public/_redirects`, which Workers Static Assets serves
+  // as real 301s. Astro's own `redirects` option
   // would only emit meta-refresh pages without an adapter.
   fonts: [
     {
@@ -28,6 +28,15 @@ export default defineConfig({
       provider: fontProviders.google(),
       weights: [400, 500, 600, 700],
       styles: ['normal']
+    },
+    // The notation spec's body face, and only the spec's: a formal document
+    // reads apart from the product pages (src/spec/SpecLayout.astro)
+    {
+      name: 'Source Serif 4',
+      cssVariable: '--font-source-serif',
+      provider: fontProviders.google(),
+      weights: [400, 600],
+      styles: ['normal', 'italic']
     }
   ],
   site: 'https://randsum.dev',
@@ -38,14 +47,25 @@ export default defineConfig({
     environments: { prerender: { resolve: { external: ['satteri'] } } }
   },
   integrations: [
-    sitemap(),
+    // /app-shell/ is the Roller's shell, moved to app.randsum.dev by
+    // scripts/build-app.ts; randsum.dev never serves it.
+    sitemap({
+      filter: page => !page.includes('/app-shell/') && !page.includes('/spec/')
+    }),
     starlight({
       title: 'RANDSUM',
       favicon: '/favicon.svg',
+      routeMiddleware: './src/routeData.ts',
       head: [
         {
           tag: 'meta',
           attrs: { property: 'og:image', content: 'https://randsum.dev/og-image.png' }
+        },
+        { tag: 'meta', attrs: { property: 'og:image:width', content: '1200' } },
+        { tag: 'meta', attrs: { property: 'og:image:height', content: '630' } },
+        {
+          tag: 'meta',
+          attrs: { property: 'og:image:alt', content: 'RANDSUM: Throw Dice, Not Exceptions.' }
         },
         {
           tag: 'meta',
@@ -65,7 +85,7 @@ export default defineConfig({
         {
           icon: 'discord',
           label: 'Discord Bot',
-          href: '/discord'
+          href: '/tools/discord-bot/'
         }
       ],
       components: {
@@ -95,7 +115,8 @@ export default defineConfig({
             items: [
               { label: 'Introduction', slug: 'welcome/introduction' },
               { label: 'Ecosystem Overview', slug: 'welcome/ecosystem-overview' },
-              { label: 'Attribution', slug: 'welcome/attribution' }
+              { label: 'Attribution', slug: 'welcome/attribution' },
+              { label: 'Privacy Policy', slug: 'privacy' }
             ]
           },
           {
@@ -112,22 +133,6 @@ export default defineConfig({
             ]
           },
           {
-            label: 'Notation',
-            link: '/notation/introduction/',
-            icon: 'document',
-            items: [
-              { label: 'Introduction', slug: 'notation/introduction' },
-              { label: 'Getting Started', slug: 'notation/getting-started' },
-              {
-                label: 'RDN Syntax Guide',
-                slug: 'notation/randsum-dice-notation'
-              },
-              { label: 'Validation & Parsing', slug: 'notation/validation-and-parsing' },
-              { label: 'API Reference', slug: 'notation/api-reference' },
-              { label: 'Formal Specification', link: '/spec/' }
-            ]
-          },
-          {
             label: 'Games',
             link: '/games/introduction/',
             icon: 'puzzle',
@@ -139,7 +144,7 @@ export default defineConfig({
                 items: [
                   { label: 'Overview', slug: 'games/schema/overview' },
                   { label: 'Schema Reference', slug: 'games/schema/reference' },
-                  { label: 'Using loadSpec()', slug: 'games/schema/using-loadspec' },
+                  { label: 'The Schema API', slug: 'games/schema/schema-api' },
                   {
                     label: 'Contributing a Game',
                     slug: 'games/schema/contributing-a-game'
@@ -158,6 +163,16 @@ export default defineConfig({
                   { label: 'Salvage Union', slug: 'games/salvageunion' }
                 ]
               }
+            ]
+          },
+          {
+            label: 'UI',
+            link: '/ui/introduction/',
+            icon: 'seti:react',
+            items: [
+              { label: 'Introduction', slug: 'ui/introduction' },
+              { label: 'Getting Started', slug: 'ui/getting-started' },
+              { label: 'Components', slug: 'ui/components' }
             ]
           },
           {
@@ -187,6 +202,22 @@ export default defineConfig({
               },
               { label: 'Discord Bot', slug: 'tools/discord-bot' },
               { label: 'Hosted Schema', slug: 'tools/http-api' }
+            ]
+          },
+          {
+            label: 'Notation',
+            link: '/notation/introduction/',
+            icon: 'document',
+            items: [
+              { label: 'Introduction', slug: 'notation/introduction' },
+              { label: 'Getting Started', slug: 'notation/getting-started' },
+              {
+                label: 'RDN Syntax Guide',
+                slug: 'notation/randsum-dice-notation'
+              },
+              { label: 'Validation & Parsing', slug: 'notation/validation-and-parsing' },
+              { label: 'API Reference', slug: 'notation/api-reference' },
+              { label: 'Formal Specification', link: 'https://notation.randsum.dev/' }
             ]
           }
         ])

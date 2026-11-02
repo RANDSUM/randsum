@@ -25,12 +25,12 @@ describe('explosion depth limits', () => {
       expect(result.total).toBeLessThanOrEqual(24)
     })
 
-    test('compound depth=true (default) triggers once', () => {
+    test('bare compound (true) chains up to the 1000-roll cap', () => {
       const result = roll(
         { sides: 6, quantity: 1, modifiers: { compound: true } },
         { randomFn: alwaysMax }
       )
-      expect(result.total).toBeLessThanOrEqual(12)
+      expect(result.total).toBe(6 * 1001)
     })
   })
 
@@ -54,12 +54,12 @@ describe('explosion depth limits', () => {
   })
 
   describe('explode (!)', () => {
-    test('basic explode only adds one wave of extra dice (no chaining)', () => {
+    test('explode chains, capped at 1000 new dice per original die', () => {
       const result = roll(
         { sides: 6, quantity: 3, modifiers: { explode: true } },
         { randomFn: alwaysMax }
       )
-      expect(result.rolls[0]?.rolls.length).toBeLessThanOrEqual(6)
+      expect(result.rolls[0]?.rolls.length).toBe(3 + 3 * 1000)
     })
   })
 })

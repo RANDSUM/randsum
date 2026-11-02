@@ -61,7 +61,7 @@ function sticky(pattern: RegExp): RegExp {
 
 function specOf(schema: NotationSchema): ModifierSpec {
   return {
-    key: schema.tokenKey,
+    key: schema.lexemeKey,
     category: schema.category,
     schema,
     matcher: sticky(schema.pattern)

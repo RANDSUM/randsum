@@ -1,6 +1,7 @@
 {
   "name": "randsum",
   "displayName": "RANDSUM",
+  "version": "1.0.2",
   "description": "RDN-conformant dice notation skills for Claude Code — roll dice, analyze probability, and create game specs for tabletop RPGs",
   "author": {
     "name": "RANDSUM",
@@ -18,7 +19,9 @@
     "rdn",
     "dnd",
     "probability",
-    "game-mechanics"
-  ],
-  "skills": "./skills"
+    "game-mechanics",
+    "blades-in-the-dark",
+    "daggerheart",
+    "pbta"
+  ]
 }

@@ -14,7 +14,8 @@ interface Props extends Omit<HTMLAttributes<'a'>, 'class'> {
 }
 
 const { href, variant = 'primary', product, size = 'md', class: className, ...rest } = Astro.props
-const external = /^https?:\/\//.test(href)
+// randsum.dev's own hosts (app.randsum.dev) open in place, like any page here
+const external = /^https?:\/\//.test(href) && !/^https:\/\/([a-z]+\.)?randsum\.dev(\/|$)/.test(href)
 const style = product ? `--button-fill: var(--product-${product}-fill)` : undefined
 ---
 

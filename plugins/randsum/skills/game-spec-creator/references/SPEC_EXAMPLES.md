@@ -4,7 +4,7 @@ Complete working `.randsum.json` specs at three complexity levels.
 
 ## Simple: Pool-Based with Tiered Outcomes
 
-A Blades in the Dark-style mechanic: roll a pool of d6s based on rating, keep highest, classify the result. Rating 0 is a special case -- roll 2d6 and keep the lowest.
+A Blades in the Dark-style mechanic: roll a pool of d6s based on rating, keep highest, classify the result. Rating 0 is a special case: roll 2d6 and keep the lowest.
 
 ```json
 {

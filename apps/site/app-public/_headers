@@ -1,0 +1,14 @@
+# Headers for app.randsum.dev (wrangler.app.jsonc), copied into dist-app/ by
+# scripts/build-app.ts.
+
+# Astro fingerprints every file under /_astro/, so it can be cached forever.
+/_astro/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# The service worker must be revalidated on every visit, or a deploy would
+# never reach installed copies.
+/sw.js
+  Cache-Control: no-cache
+
+/manifest.webmanifest
+  Content-Type: application/manifest+json; charset=utf-8

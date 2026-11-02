@@ -1,0 +1,55 @@
+---
+// A <randsum-roller> rendered on the server with @randsum/ui/ssr, so the
+// roller is on the page in the first frame. The script registers the element,
+// which then swaps the server copy for the live one. Used on its own (the
+// docs' inline rollers) and as the `fallback` of each React island, which
+// replaces it once it mounts.
+import { renderToString } from '@randsum/ui/ssr'
+import type { Key } from '@randsum/ui/keys'
+import type { Preset } from '@randsum/ui/presets'
+import type { RollerSize } from '@randsum/ui/roller'
+import './rollers.css'
+
+interface Props {
+  readonly size: RollerSize
+  readonly notation: string
+  /** Classes for the wrapper around the element. */
+  readonly class?: string
+  readonly keys?: readonly Key[]
+  readonly presets?: readonly Preset[]
+  readonly presetsLabel?: string
+  readonly presetsLayout?: 'chips' | 'list'
+  readonly appLink?: string
+  readonly history?: boolean
+  readonly slot?: string
+}
+
+const { size, notation, keys, presets, presetsLabel, presetsLayout, appLink, history, ...rest } =
+  Astro.props
+
+const escapeAttribute = (value: string): string =>
+  value.replaceAll('&', '&amp;').replaceAll('"', '&quot;').replaceAll('<', '&lt;')
+
+const attributes: Readonly<Record<string, string | undefined>> = {
+  size,
+  notation,
+  keys: keys === undefined ? undefined : JSON.stringify(keys),
+  presets: presets === undefined ? undefined : JSON.stringify(presets),
+  'presets-label': presetsLabel,
+  'presets-layout': presetsLayout,
+  'app-link': appLink,
+  history: history === false ? 'false' : undefined
+}
+
+const attributeText = Object.entries(attributes)
+  .flatMap(([name, value]) => (value === undefined ? [] : [`${name}="${escapeAttribute(value)}"`]))
+  .join(' ')
+
+const html = await renderToString(`<randsum-roller ${attributeText}></randsum-roller>`)
+---
+
+<div class:list={['server-roller', rest.class]} slot={rest.slot}><Fragment set:html={html} /></div>
+
+<script>
+import '@randsum/ui/roller'
+</script>

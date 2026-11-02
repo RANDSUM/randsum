@@ -13,7 +13,7 @@ const generated = '# Site Documentation\n\n- https://randsum.dev/roller/introduc
 
 describe('curated llms.txt', () => {
   test('the repo-root source documents the HTTP roll endpoint', () => {
-    expect(fs.readFileSync(rootLlmsTxt, 'utf-8')).toContain('/api/roll')
+    expect(fs.readFileSync(rootLlmsTxt, 'utf-8')).toContain('api.randsum.dev/v1')
   })
 
   test('curated text leads and the generated page list follows under one H1', () => {
@@ -36,14 +36,17 @@ describe('curated llms.txt', () => {
     // The hook reads only `dir`; the rest of the build context is irrelevant here.
     void hook({ dir: pathToFileURL(`${dir}/`) } as Parameters<typeof hook>[0])
     const written = fs.readFileSync(path.join(dir, 'llms.txt'), 'utf-8')
-    expect(written).toContain('/api/roll')
+    expect(written).toContain('api.randsum.dev/v1')
     expect(written).toContain('- https://randsum.dev/roller/introduction/')
     fs.rmSync(dir, { recursive: true })
   })
 
   // Catches the integration being moved ahead of starlight(), where
   // starlight-page-actions would overwrite it again. Runs after `bun run build`.
-  test.skipIf(!fs.existsSync(builtLlmsTxt))('the built llms.txt carries /api/roll', () => {
-    expect(fs.readFileSync(builtLlmsTxt, 'utf-8')).toContain('/api/roll')
-  })
+  test.skipIf(!fs.existsSync(builtLlmsTxt))(
+    'the built llms.txt carries the curated API section',
+    () => {
+      expect(fs.readFileSync(builtLlmsTxt, 'utf-8')).toContain('api.randsum.dev/v1')
+    }
+  )
 })

@@ -1,21 +1,18 @@
 ---
-// The RANDSUM mark: seven pips on a d6 face spelling R. Two finishes of one
+// The RANDSUM mark: pips on a d6 face. The roller's spell R, the family's
+// mark; every other product has its own pattern (PIPS). Two finishes of one
 // geometry (wall 8, corner 22, pip 8 on a 22 pitch): `outline` at rest, and
 // `knockout` (a solid die with the pips cut out) on colour and at small sizes.
+import { PIPS, type Product } from '../utils/product'
+
 interface Props {
   variant?: 'outline' | 'knockout'
+  product?: Product
   size?: number
   class?: string
 }
-const { variant = 'outline', size = 32, class: className } = Astro.props
-const pips: readonly (readonly [number, number])[] = [
-  [28, 28],
-  [50, 28],
-  [28, 50],
-  [50, 50],
-  [28, 72],
-  [72, 72]
-]
+const { variant = 'outline', product = 'roller', size = 32, class: className } = Astro.props
+const pips = PIPS[product]
 const holes = pips.map(([cx, cy]) => `M${cx - 8} ${cy}a8 8 0 1 0 16 0a8 8 0 1 0-16 0Z`).join('')
 const body =
   'M26 0H74A26 26 0 0 1 100 26V74A26 26 0 0 1 74 100H26A26 26 0 0 1 0 74V26A26 26 0 0 1 26 0Z'

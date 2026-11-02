@@ -1,6 +1,6 @@
 ---
 title: Powered by the Apocalypse
-description: TypeScript dice package for Powered by the Apocalypse games. Works with Dungeon World, Monster of the Week, Apocalypse World, Masks, and any 2d6+stat system.
+description: Roll Powered by the Apocalypse moves in TypeScript with @randsum/games/pbta. Works for Dungeon World, Monster of the Week, Masks and any 2d6+stat game.
 head:
   - tag: script
     attrs:
@@ -12,7 +12,6 @@ head:
         "name": "@randsum/games/pbta",
         "applicationCategory": "DeveloperApplication",
         "programmingLanguage": "TypeScript",
-        "version": "1.3.0",
         "description": "TypeScript dice package for Powered by the Apocalypse games. 2d6 resolution with strong hit, weak hit, and miss outcomes for Dungeon World, Apocalypse World, and more.",
         "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
         "downloadUrl": "https://www.npmjs.com/package/@randsum/games",
@@ -120,20 +119,20 @@ switch (result) {
 
 This package works with any PbtA game, including:
 
-- **Apocalypse World** -- The original PbtA game
-- **Dungeon World** -- Fantasy dungeon crawling
-- **Monster of the Week** -- Urban fantasy monster hunting
-- **Masks** -- Teen superheroes
-- **The Sprawl** -- Cyberpunk missions
-- **Urban Shadows** -- Urban supernatural politics
+- **Apocalypse World**: The original PbtA game
+- **Dungeon World**: Fantasy dungeon crawling
+- **Monster of the Week**: Urban fantasy monster hunting
+- **Masks**: Teen superheroes
+- **The Sprawl**: Cyberpunk missions
+- **Urban Shadows**: Urban supernatural politics
 - And many more
 
 ## Error handling
 
 Game `roll()` can throw two types of errors:
 
-- **`ValidationError`** (from `@randsum/roller`) -- numeric input out of range or not finite (e.g., `stat: 99` when max is 5)
-- **`SchemaError`** (from `@randsum/games/pbta`) -- game-specific issues like invalid `rollingWith` values
+- **`ValidationError`** (from `@randsum/roller`): numeric input out of range, not an integer, or not finite (e.g., `stat: 99` when the maximum is 5)
+- **`SchemaError`** (from `@randsum/games/pbta`): game-specific issues like invalid `rollingWith` values
 
 <CodeExample code={`import { roll, SchemaError } from '@randsum/games/pbta'
 import { ValidationError } from '@randsum/roller'

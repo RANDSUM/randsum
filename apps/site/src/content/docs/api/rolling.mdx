@@ -3,7 +3,7 @@ title: Rolling Dice
 description: Roll RANDSUM dice notation over HTTP with /v1/roll, in short form or as a long-form options object, with optional seeds for reproducible results, and check rolls with /v1/validate.
 ---
 
-`/v1/roll` rolls dice. It accepts any [RANDSUM Dice Notation](/spec/), from
+`/v1/roll` rolls dice. It accepts any [RANDSUM Dice Notation](https://notation.randsum.dev/), from
 `1d20` to `4d6R{1}L+2`, and every modifier the
 [roller](/roller/modifiers/) supports.
 
@@ -67,7 +67,7 @@ Every roll can be sent two ways, and they are the same roll.
   the name the [roll options](/roller/roll-options/) give it: `drop`, `keep`,
   `reroll`, `explode`, `compound`, `penetrate`, `cap`, `unique`, `replace`,
   `count`, `plus`, `minus`, `multiply`, `multiplyTotal`, `integerDivide`,
-  `modulo`, `sort`, `wildDie`.
+  `modulo`, `sort`, `wildDie`, `explodeSequence`.
 
 As JSON, the long form is exactly the TypeScript object:
 

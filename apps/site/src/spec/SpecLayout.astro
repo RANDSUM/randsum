@@ -6,13 +6,10 @@ import SkipLink from './components/SkipLink.astro'
 import ShareActions from './components/ShareActions.astro'
 import MobileMenu from './components/MobileMenu.astro'
 import KofiButton from '../components/KofiButton.astro'
+import { builtPath, specUrl as notationUrl } from './urls'
 import './spec.css'
 
-interface Heading {
-  depth: number
-  slug: string
-  text: string
-}
+import type { Heading } from './sections'
 
 interface Props {
   title: string
@@ -21,16 +18,48 @@ interface Props {
   isLatest: boolean
   specMarkdown?: string
   headings?: Heading[]
+  /** The version's date (ISO), from its front matter */
+  published?: string
+  /** A page beside the spec itself (/conformance/) names its own path on the spec host */
+  canonicalPath?: string
+  description?: string
 }
 
-const { title, version, versions, isLatest, specMarkdown = '', headings = [] } = Astro.props
+const {
+  title,
+  version,
+  versions,
+  isLatest,
+  specMarkdown = '',
+  headings = [],
+  published,
+  canonicalPath,
+  description = 'The formal specification for RANDSUM Dice Notation — a human-readable syntax for dice rolls in tabletop RPGs. Defines modifiers, execution pipeline, conformance levels, and special dice types.'
+} = Astro.props
 const pageTitle = isLatest ? `${title}` : `${title} — ${version}`
-// /spec/ and /spec/v/<latest>/ render the same version (ADR-016 keeps both,
-// with no redirect), so both name the versioned URL as canonical.
-const specUrl = new URL(`/spec/v/${version}/`, Astro.site).href
+// / and /v/<latest>/ render the same version (ADR-016 keeps both, with no
+// redirect), so both name / as canonical: links and rankings stay on the
+// address people share when a new version ships. Older versions are canonical
+// to themselves. Every canonical URL is on notation.randsum.dev (./urls.ts).
+const canonical = canonicalPath ?? (isLatest ? '/' : `/v/${version}/`)
+const specUrl = notationUrl(canonical)
 // Starlight's Pagefind index skips pages without data-pagefind-body. Opt in
 // the canonical page only, so search lists each version once.
-const isCanonical = Astro.url.pathname.replace(/\/?$/, '/') === new URL(specUrl).pathname
+const isCanonical = Astro.url.pathname.replace(/\/?$/, '/') === builtPath(canonical)
+const jsonLd = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'TechArticle',
+  headline: pageTitle,
+  name: `RANDSUM Dice Notation ${version}`,
+  description,
+  url: specUrl,
+  version,
+  ...(published ? { datePublished: published } : {}),
+  inLanguage: 'en',
+  image: 'https://randsum.dev/og/spec.png',
+  author: { '@type': 'Person', name: 'Alex Jarvis' },
+  publisher: { '@type': 'Organization', name: 'RANDSUM', url: 'https://randsum.dev/' }
+})
 ---
 
 <!doctype html>
@@ -42,27 +71,20 @@ const isCanonical = Astro.url.pathname.replace(/\/?$/, '/') === new URL(specUrl)
     <link rel="icon" href="/favicon.ico" sizes="32x32">
     <link rel="icon" href="/favicon.svg" type="image/svg+xml">
     <link rel="canonical" href={specUrl}>
-    <meta
-      name="description"
-      content="The formal specification for RANDSUM Dice Notation — a human-readable syntax for dice rolls in tabletop RPGs. Defines modifiers, execution pipeline, conformance levels, and special dice types."
-    >
+    <meta name="description" content={description}>
     <meta property="og:title" content={pageTitle}>
-    <meta
-      property="og:description"
-      content="The formal specification for RANDSUM Dice Notation — a human-readable syntax for dice rolls in tabletop RPGs. Defines modifiers, execution pipeline, conformance levels, and special dice types."
-    >
-    <meta property="og:image" content="https://randsum.dev/og-image.png">
+    <meta property="og:description" content={description}>
+    <meta property="og:image" content="https://randsum.dev/og/spec.png">
     <meta property="og:url" content={specUrl}>
     <meta property="og:type" content="article">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content={pageTitle}>
-    <meta
-      name="twitter:description"
-      content="The formal specification for RANDSUM Dice Notation — a human-readable syntax for dice rolls in tabletop RPGs. Defines modifiers, execution pipeline, conformance levels, and special dice types."
-    >
-    <meta name="twitter:image" content="https://randsum.dev/og-image.png">
+    <meta name="twitter:description" content={description}>
+    <meta name="twitter:image" content="https://randsum.dev/og/spec.png">
+    <script type="application/ld+json" set:html={jsonLd} />
     <Font cssVariable="--font-gabarito" preload />
     <Font cssVariable="--font-jetbrains-mono" />
+    <Font cssVariable="--font-source-serif" preload />
     <script is:inline>
     // Apply the theme before render to prevent a flash: a saved choice wins,
     // otherwise follow the OS. Same key and data-theme as Starlight's picker,
@@ -95,9 +117,7 @@ const isCanonical = Astro.url.pathname.replace(/\/?$/, '/') === new URL(specUrl)
     <VersionBanner isLatest={isLatest} />
     <div class="spec-layout">
       <nav class="spec-sidebar" aria-label="Spec sections">
-        <slot name="sidebar">
-          <p class="label" style="color: var(--text-muted);">Sidebar</p>
-        </slot>
+        <slot name="sidebar" />
       </nav>
       <main
         id="main-content"
@@ -106,11 +126,6 @@ const isCanonical = Astro.url.pathname.replace(/\/?$/, '/') === new URL(specUrl)
       >
         <slot name="content" />
       </main>
-      <aside class="spec-aside" aria-label="In this section">
-        <slot name="aside">
-          <p class="label" style="color: var(--text-muted);">On this page</p>
-        </slot>
-      </aside>
     </div>
     {specMarkdown && <ShareActions specMarkdown={specMarkdown} specUrl={specUrl} />}
     <footer class="spec-footer">

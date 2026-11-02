@@ -66,7 +66,7 @@
   },
   "author": {
     "name": "Alex Jarvis",
-    "url": "https://github.com/alxjrvs"
+    "url": "https://alxjrvs.com/"
   },
   "license": "MIT",
   "homepage": "https://randsum.dev/packages/roller/",
@@ -119,7 +119,7 @@
     },
     {
       "path": "dist/tokenize.js",
-      "limit": "6.6 KB"
+      "limit": "6.85 KB"
     },
     {
       "path": "dist/docs/index.js",

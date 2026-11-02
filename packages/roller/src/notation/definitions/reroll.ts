@@ -12,7 +12,7 @@ const rerollPattern = new RegExp(
 export const rerollSchema: NotationSchema<RerollOptions> = defineNotationSchema<RerollOptions>({
   name: 'reroll',
   priority: 40,
-  tokenKey: 'R{..}',
+  lexemeKey: 'R{..}',
   category: 'Substitute',
 
   pattern: /[Rr]([Oo])?\{((?:>=|<=|>|<|=)?\d+(?:,(?:>=|<=|>|<|=)?\d+)*)\}(\d+)?/,
@@ -29,8 +29,9 @@ export const rerollSchema: NotationSchema<RerollOptions> = defineNotationSchema<
       // match[3] = max count from R{...}N form
       const isRerollOnce = match[1] !== undefined
       const conditions = isRerollOnce ? match[1] : match[2]
-      const maxCount = isRerollOnce ? 1 : match[3] ? Number(match[3]) : undefined
+      const maxCount = !isRerollOnce && match[3] ? Number(match[3]) : undefined
 
+      if (isRerollOnce) reroll.once = true
       if (maxCount !== undefined) {
         reroll.max = maxCount
       }
@@ -46,14 +47,14 @@ export const rerollSchema: NotationSchema<RerollOptions> = defineNotationSchema<
       }
     }
 
-    return hasConditions(reroll) || reroll.max !== undefined ? { reroll } : {}
+    return hasConditions(reroll) || reroll.max !== undefined || reroll.once ? { reroll } : {}
   },
 
   toNotation: options => {
     const parts = formatComparisonNotation(options)
     if (!parts.length) return undefined
 
-    if (options.max === 1) {
+    if (options.once && options.max === undefined) {
       return `ro{${parts.join(',')}}`
     }
 
@@ -62,7 +63,7 @@ export const rerollSchema: NotationSchema<RerollOptions> = defineNotationSchema<
   },
 
   toDescription: options => {
-    const { exact, greaterThan, greaterThanOrEqual, lessThan, lessThanOrEqual, max } = options
+    const { exact, greaterThan, greaterThanOrEqual, lessThan, lessThanOrEqual, max, once } = options
     const rerollList: string[] = []
 
     if (exact) {
@@ -89,7 +90,7 @@ export const rerollSchema: NotationSchema<RerollOptions> = defineNotationSchema<
     const conditions = [exactList, greaterLess].filter(Boolean).join(', ')
     if (!conditions) return []
 
-    if (max === 1) {
+    if (once && max === undefined) {
       return [`Reroll once ${conditions}`]
     }
 

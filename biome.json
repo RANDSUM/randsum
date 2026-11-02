@@ -12,7 +12,6 @@
       "!**/*.d.ts",
       "!**/.astro",
       "!**/public",
-      "!**/.ladle",
       "!**/*.tsbuildinfo",
       "!**/.bunup-dts-*",
       "!**/__tests__/fixtures",
@@ -105,6 +104,10 @@
     },
     { "includes": ["**/package.json"], "json": { "formatter": { "lineWidth": 120 } } },
     {
+      "includes": ["packages/ui/__tests__/**"],
+      "linter": { "rules": { "correctness": { "noReactNativeRawText": "off" } } }
+    },
+    {
       "includes": ["packages/games/src/**"],
       "linter": {
         "rules": {
@@ -134,7 +137,12 @@
       }
     },
     {
-      "includes": ["**/*.css", "**/*.astro", "!apps/site/src/styles/theme.css"],
+      "includes": [
+        "**/*.css",
+        "**/*.astro",
+        "!apps/site/src/styles/theme.css",
+        "!packages/ui/src/tokens.css"
+      ],
       "plugins": [
         "./biome-plugins/no-raw-color.grit",
         "./biome-plugins/no-raw-type.grit",
@@ -144,12 +152,7 @@
       ]
     },
     {
-      "includes": [
-        "packages/roller/src/notation/**/*.ts",
-        "packages/roller/src/tokenize.ts",
-        "src/notation/**/*.ts",
-        "src/tokenize.ts"
-      ],
+      "includes": ["packages/roller/src/notation/**/*.ts", "packages/roller/src/tokenize.ts"],
       "plugins": ["./biome-plugins/no-tokenize-modifier-import.grit"]
     },
     {

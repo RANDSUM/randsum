@@ -13,7 +13,7 @@ import { PRODUCT_LABELS, PRODUCTS } from '../../utils/product'
 <Section
   id="products"
   title="Roll your own way"
-  lede="One engine, many ways in: a library, ready-made games, an open spec, a public API, a Discord bot, an agent plugin and a roller app for your phone."
+  lede="One engine, many ways in: a library, ready-made games, React components, a public API, a roller app for your phone, a Discord bot, an agent plugin and an open spec."
 >
   <div class="carousel" data-carousel>
     <div class="carousel-tabs" role="tablist" aria-orientation="vertical" aria-label="Products">
@@ -28,7 +28,7 @@ import { PRODUCT_LABELS, PRODUCTS } from '../../utils/product'
           class="carousel-tab"
           style={`--p: var(--product-${product.id}-fill); --p-text: var(--product-${product.id})`}
         >
-          <PipMark variant="knockout" size={20} />
+          <PipMark variant="knockout" product={product.id} size={20} />
           <span class="carousel-tab-text">
             <span class="carousel-tab-name">{PRODUCT_LABELS[product.id]}</span>
             <span class="carousel-tab-line">{product.tagline}</span>
@@ -49,19 +49,11 @@ import { PRODUCT_LABELS, PRODUCTS } from '../../utils/product'
           >
             <div class="carousel-copy">
               <p class="carousel-name">
-                <PipMark variant="knockout" size={22} />
+                <PipMark variant="knockout" product={product.id} size={22} />
                 {PRODUCT_LABELS[product.id]}
               </p>
               <h3>{product.tagline}</h3>
               <p class="carousel-summary">{product.summary}</p>
-              <dl class="carousel-facts">
-                {product.facts.map(fact => (
-                  <div>
-                    <dt>{fact.label}</dt>
-                    <dd>{fact.value}</dd>
-                  </div>
-                ))}
-              </dl>
               <Button href={product.href} variant="product" product={product.id}>
                 Explore {PRODUCT_LABELS[product.id]}
               </Button>
@@ -323,34 +315,8 @@ for (const root of document.querySelectorAll<HTMLElement>('[data-carousel]')) {
 }
 
 .carousel-summary {
-  margin: 0;
+  margin: 0 0 1.5rem;
   color: var(--sl-color-gray-2);
-}
-
-.carousel-facts {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1.5rem;
-  margin: 1.25rem 0 1.5rem;
-}
-
-.carousel-facts div {
-  display: flex;
-  flex-direction: column-reverse;
-}
-
-.carousel-facts dd {
-  margin: 0;
-  font-family: var(--rs-font-heading);
-  font-size: var(--rs-text-lg);
-  font-weight: var(--rs-weight-heavy);
-  line-height: var(--rs-leading-tight);
-  color: var(--sl-color-white);
-}
-
-.carousel-facts dt {
-  font-size: var(--rs-text-xs);
-  color: var(--sl-color-gray-3);
 }
 
 @media (prefers-reduced-motion: reduce) {

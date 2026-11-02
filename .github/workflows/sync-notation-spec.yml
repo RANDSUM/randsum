@@ -1,0 +1,97 @@
+# Mirror packages/notation-spec to github.com/RANDSUM/notation-spec once CI is
+# green on main. The monorepo stays the source of truth: the spec is edited and
+# tested beside its reference implementation, and the mirror is its public,
+# standalone home (issues, discussions, tags). scripts/sync-notation-spec.ts
+# writes the tree; this workflow commits and pushes it, and tags each spec
+# revision as v<version>-rev.<n> from the newest spec file's front matter.
+#
+# SECURITY: workflow_run runs in the base-repo context with the push token.
+# Like deploy-cloudflare.yml it acts only on a CI run from a push to main in
+# this repository, checks out that run's commit, and downloads nothing the run
+# uploaded.
+#
+# Needs NOTATION_SPEC_PUSH_TOKEN: a fine-grained token with Contents read and
+# write on RANDSUM/notation-spec only. Without it the job skips with a notice.
+name: Sync notation spec
+
+on:
+  # zizmor: ignore[dangerous-triggers] — default-branch commit only, no
+  # PR-controlled input or artifacts consumed (see the security note above).
+  workflow_run:
+    workflows: ['CI']
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: sync-notation-spec
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  sync:
+    name: sync
+    runs-on: ubuntu-latest
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.event == 'push' &&
+      github.event.workflow_run.head_repository.full_name == github.repository)
+    env:
+      SHA: ${{ github.event.workflow_run.head_sha || github.sha }}
+      HAS_TOKEN: ${{ secrets.NOTATION_SPEC_PUSH_TOKEN != '' }}
+    steps:
+      - name: Token present
+        if: env.HAS_TOKEN != 'true'
+        run: echo "::notice::NOTATION_SPEC_PUSH_TOKEN is not set; skipping the notation-spec mirror."
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        if: env.HAS_TOKEN == 'true'
+        with:
+          ref: ${{ env.SHA }}
+          persist-credentials: false
+          # The sync names the last roller commit in vendor/roller/.
+          fetch-depth: 0
+      - uses: ./.github/actions/bun-setup
+        if: env.HAS_TOKEN == 'true'
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        if: env.HAS_TOKEN == 'true'
+        with:
+          repository: RANDSUM/notation-spec
+          token: ${{ secrets.NOTATION_SPEC_PUSH_TOKEN }}
+          path: .mirror
+          fetch-depth: 0
+      - name: Write the mirror tree
+        if: env.HAS_TOKEN == 'true'
+        run: bun scripts/sync-notation-spec.ts .mirror
+      - name: Run the mirror's check on the tree
+        # CI already ran this check on main; running it again on the exact tree
+        # means nothing reaches the mirror that its required `check` fails.
+        if: env.HAS_TOKEN == 'true'
+        run: bun scripts/check-notation-mirror.ts .mirror
+      - name: Commit, push and tag
+        if: env.HAS_TOKEN == 'true'
+        working-directory: .mirror
+        run: |
+          set -euo pipefail
+          git config user.name 'randsum-bot'
+          git config user.email 'noreply@randsum.dev'
+          git add -A
+          if git diff --cached --quiet; then
+            echo 'The mirror is up to date.'
+          else
+            subject=$(git -C .. log -1 --format=%s "$SHA")
+            git commit -m "$subject" -m "Synced from RANDSUM/randsum@$SHA (packages/notation-spec)."
+            git push origin HEAD:main
+          fi
+          latest=$(find spec -name 'v*.md' | sort -V | tail -1)
+          version=$(sed -n 's/^version: *//p' "$latest" | head -1 | tr -d "'\"")
+          revision=$(sed -n 's/^revision: *//p' "$latest" | head -1)
+          tag="v${version}${revision:+-rev.$revision}"
+          if git ls-remote --exit-code --tags origin "refs/tags/$tag" >/dev/null; then
+            echo "$tag already exists."
+          else
+            git tag -a "$tag" -m "RANDSUM Dice Notation $version${revision:+, revision $revision}"
+            git push origin "refs/tags/$tag"
+          fi

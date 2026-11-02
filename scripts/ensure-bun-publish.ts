@@ -12,8 +12,6 @@
  *       npm error code EUNSUPPORTEDPROTOCOL
  *       npm error Unsupported URL Type "workspace:": workspace:~
  *
- *   That is exactly how the legacy standalone game packages (@randsum/salvageunion,
- *   daggerheart, blades, fifth, root-rpg, pbta) were broken.
  * - A direct `bun publish` resolves `workspace:` but skips the pack-time
  *   `sideEffects: true` -> `false` flip that scripts/publish.ts applies to roller and
  *   games (ADR-018), so it would ship a manifest that defeats consumer tree-shaking.

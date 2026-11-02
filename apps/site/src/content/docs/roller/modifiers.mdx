@@ -1,6 +1,6 @@
 ---
 title: Modifiers
-description: "Full TypeScript API for every RANDSUM modifier: cap, drop, keep, replace, reroll, explode, compound, penetrate, explode sequence, wild die, unique, count, sort, integer divide, modulo, and multipliers."
+description: "The TypeScript API for every RANDSUM modifier: drop, keep, reroll, explode, compound, penetrate, cap, unique, count, replace, sort, divide, modulo and multiply."
 head:
   - tag: script
     attrs:
@@ -18,7 +18,8 @@ head:
 ---
 
 import CodeExample from '../../../components/live-repl/CodeExample.astro'
-import { NotationRoller } from '../../../components/NotationRoller'
+import ModifierRoller from '../../../components/rollers/ModifierRoller.astro'
+import NotationRoller from '../../../components/rollers/NotationRoller.astro'
 
 Modifiers transform dice results after rolling. They can drop dice, reroll values, cap ranges, make dice explode, and more. Modifiers are applied in a fixed priority order to ensure consistent, predictable results.
 
@@ -49,7 +50,7 @@ Modifiers are applied in priority order (lower number = earlier execution):
 | 100 | Total multiply | `**N` | `multiplyTotal` |
 
 :::note
-`S{...}` (count successes) and `F{...}` (count failures) are sugar aliases parsed onto the `count` modifier — they are not independent `ModifierOptions` keys.
+`S{...}` (count successes) and `F{...}` (count failures) are sugar parsed onto the `count` modifier. They are not separate `ModifierOptions` keys.
 :::
 
 This means dice values are capped/constrained first, then values are replaced or rerolled, then explosive mechanics fire, pool size is adjusted (drop/keep), and finally arithmetic is applied.
@@ -107,7 +108,7 @@ roll({
   }
 })`} />
 
-<NotationRoller defaultNotation="4d20C{>18}" client:only="react" />
+<ModifierRoller modifier="cap" defaultNotation="4d20C{>18}" />
 
 **ComparisonOptions:**
 
@@ -154,7 +155,7 @@ roll({
   }
 })`} />
 
-<NotationRoller defaultNotation="4d6L" client:only="react" />
+<ModifierRoller modifier="drop" defaultNotation="4d6L" />
 
 **DropOptions:**
 
@@ -188,7 +189,7 @@ roll({
   }
 })`} />
 
-<NotationRoller defaultNotation="4d6K3" client:only="react" />
+<ModifierRoller modifier="keep" defaultNotation="4d6K3" />
 
 **KeepOptions:**
 
@@ -233,7 +234,7 @@ roll({
   }
 })`} />
 
-<NotationRoller defaultNotation="4d20V{8=12}" client:only="react" />
+<ModifierRoller modifier="replace" defaultNotation="4d20V{8=12}" />
 
 **ReplaceOptions:**
 
@@ -252,14 +253,17 @@ Reroll dice matching certain conditions.
 
 <CodeExample code={`import { roll } from '@randsum/roller'
 
-roll('4d20R{<5}') // 4-20
+roll('4d20R{<5}')     // Reroll results under 5
 roll('4d20R{>17}')    // Reroll results over 17
 
 // Reroll exact values
 roll('4d20R{8,12}')   // Reroll 8s and 12s
 
-// With max attempts
-roll('4d20R{<5}3')    // Reroll under 5, max 3 attempts
+// Reroll at most 3 dice
+roll('4d20R{<5}3')    // Reroll under 5, at most 3 dice
+
+// Reroll once: each matching die is rerolled a single time
+roll('4d6ro{1}')      // Reroll each 1 once, keep the new result
 
 // Options object
 roll({
@@ -270,14 +274,16 @@ roll({
   }
 })`} />
 
-<NotationRoller defaultNotation="4d20R{<5}" client:only="react" />
+<ModifierRoller modifier="reroll" defaultNotation="4d20R{<5}" />
 
 **RerollOptions:**
 
 <CodeExample code={`interface RerollOptions extends ComparisonOptions {
-  exact?: number[]
-  max?: number
+  max?: number    // reroll at most this many dice
+  once?: boolean  // reroll each matching die once (ro{..})
 }`} />
+
+`R{..}` keeps rerolling a die while it still matches, up to 99 attempts per die. `ro{..}` rerolls each matching die once and keeps the new result.
 
 ## Explode
 
@@ -302,7 +308,7 @@ roll({
   modifiers: { explode: 5 }     // Max depth 5 (options only)
 })`} />
 
-<NotationRoller defaultNotation="4d20!" client:only="react" />
+<ModifierRoller modifier="explode" defaultNotation="4d20!" />
 
 When a die shows its maximum value, a new die is rolled and added as a separate result. Each new maximum continues the chain.
 
@@ -314,7 +320,7 @@ Compounding exploding dice add to the triggering die instead of creating new dic
 
 <CodeExample code={`import { roll } from '@randsum/roller'
 
-roll('3d6!!')    // Compound once
+roll('3d6!!')    // Compound while the added roll is a max
 roll('3d6!!5')   // Max depth 5
 roll('3d6!!0')   // Unlimited (capped at 100)
 
@@ -325,19 +331,19 @@ roll({
   modifiers: { compound: true }
 })`} />
 
-<NotationRoller defaultNotation="3d6!!" client:only="react" />
+<ModifierRoller modifier="compound" defaultNotation="3d6!!" />
 
-Unlike regular exploding, compound does not create new dice -- it modifies the existing die value.
+Unlike regular exploding, compound does not create new dice: it adds to the existing die.
 
 ## Penetrate
 
-Penetrating exploding dice subtract 1 from each subsequent explosion (Hackmaster-style).
+Penetrating exploding dice count each added roll as 1 less (Hackmaster-style).
 
 **Options key:** `penetrate`
 
 <CodeExample code={`import { roll } from '@randsum/roller'
 
-roll('3d6!p')    // Penetrate once
+roll('3d6!p')    // Penetrate while the added roll is a max
 roll('3d6!p5')   // Max depth 5
 roll('3d6!p0')   // Unlimited (capped at 100)
 
@@ -348,9 +354,9 @@ roll({
   modifiers: { penetrate: true }
 })`} />
 
-<NotationRoller defaultNotation="3d6!p" client:only="react" />
+<ModifierRoller modifier="penetrate" defaultNotation="3d6!p" />
 
-Each subsequent penetration subtracts 1 from the result before adding, creating diminishing returns.
+Each added roll has 1 subtracted before it is added, with no minimum.
 
 ## Explode Sequence
 
@@ -361,30 +367,30 @@ Roll additional dice using a custom die-size sequence when the current die shows
 | Notation | Description |
 |---|---|
 | `!s{N1,N2,...}` | Explode through die sizes in sequence |
-| `!i` | Sugar: inflate through standard die set (d4 &rarr; d6 &rarr; d8 &rarr; d10 &rarr; d12 &rarr; d20) |
-| `!r` | Sugar: reduce through standard die set (d20 &rarr; d12 &rarr; d10 &rarr; d8 &rarr; d6 &rarr; d4) |
+| `!i` | Sugar: inflate through each larger standard die (d4 &rarr; d6 &rarr; d8 &rarr; d10 &rarr; d12 &rarr; d20 &rarr; d100) |
+| `!r` | Sugar: reduce through each smaller standard die (d100 &rarr; d20 &rarr; d12 &rarr; d10 &rarr; d8 &rarr; d6 &rarr; d4) |
 
 `!r` takes no condition block. `!` followed by `R{...}` or `ro{...}` is Explode then Reroll: `4d6!R{<3}` explodes sixes and rerolls anything under 3, and `1d20!RR{<3}` is Reduction followed by that reroll.
 
 <CodeExample code={`import { roll } from '@randsum/roller'
 
-roll('1d4!s{4,6,8,10}') // Explode d4 -> d6 -> d8 -> d10
+roll('1d4!s{6,8,10}')   // On a 4, roll a d6, then a d8, then d10s
 roll('1d6!s{8,12}')     // Explode to d8, then d12
-roll('1d4!i')           // Inflate through standard die set
-roll('1d20!r')          // Reduce through standard die set
+roll('1d4!i')           // Same as 1d4!s{6,8,10,12,20,100}
+roll('1d20!r')          // Same as 1d20!s{12,10,8,6,4}
 
 // Options object
 roll({
   sides: 4,
   quantity: 1,
-  modifiers: { explodeSequence: [4, 6, 8, 10] }
+  modifiers: { explodeSequence: [6, 8, 10] }
 })`} />
 
-<NotationRoller defaultNotation="1d4!s{4,6,8,10}" client:only="react" />
+<ModifierRoller modifier="explodeSequence" defaultNotation="1d4!s{6,8,10}" />
 
 When the die shows its maximum, a new die of the next size in the sequence is rolled and added. The sequence steps forward with each successive explosion; once the last size is reached, it repeats (capped at the default explosion depth).
 
-**Example:** `1d4!s{4,6,8,10}` rolls a d4. On a 4 (max), rolls a d6. On a 6 (max), rolls a d8. On a 7 — not max — the sequence stops.
+**Example:** `1d4!s{6,8,10}` rolls a d4. On a 4 (max), it rolls a d6. On a 6 (max), it rolls a d8. On a 7, which is not the max, the sequence stops.
 
 ## Wild Die
 
@@ -407,11 +413,11 @@ roll({
   modifiers: { wildDie: true }
 })`} />
 
-<NotationRoller defaultNotation="5d6W" client:only="react" />
+<ModifierRoller modifier="wildDie" defaultNotation="5d6W" />
 
 **Wild die behavior:**
 
-- **Wild die = max value (6):** The wild die compound-explodes -- keep rolling and adding while the maximum is rolled.
+- **Wild die = max value (6):** The wild die compound-explodes: keep rolling and adding while the maximum is rolled.
 - **Wild die = 1:** Remove the wild die AND the highest non-wild die from the pool.
 - **Otherwise:** No special effect, the wild die acts as a normal die.
 
@@ -445,7 +451,7 @@ roll({
   }
 })`} />
 
-<NotationRoller defaultNotation="4d20U" client:only="react" />
+<ModifierRoller modifier="unique" defaultNotation="4d20U" />
 
 **UniqueOptions:**
 
@@ -470,7 +476,7 @@ roll({
   modifiers: { multiply: 2, plus: 3 }
 })`} />
 
-<NotationRoller defaultNotation="2d6*2+3" client:only="react" />
+<ModifierRoller modifier="multiply" defaultNotation="2d6*2+3" />
 
 ## Plus / Minus
 
@@ -496,9 +502,9 @@ roll({
   modifiers: { minus: 2 }
 })`} />
 
-<NotationRoller defaultNotation="4d6+5" client:only="react" />
+<ModifierRoller modifier="plus" defaultNotation="4d6+5" />
 
-<NotationRoller defaultNotation="2d8-2" client:only="react" />
+<ModifierRoller modifier="minus" defaultNotation="2d8-2" />
 
 ## Sort
 
@@ -529,7 +535,7 @@ roll({
   modifiers: { sort: 'desc' }
 })`} />
 
-<NotationRoller defaultNotation="4d6sa" client:only="react" />
+<ModifierRoller modifier="sort" defaultNotation="4d6sa" />
 
 Sort reorders the dice results for display without changing the total. Useful for readability when reviewing large pools.
 
@@ -555,7 +561,7 @@ roll({
   modifiers: { integerDivide: 2 }
 })`} />
 
-<NotationRoller defaultNotation="4d6//2" client:only="react" />
+<ModifierRoller modifier="integerDivide" defaultNotation="4d6//2" />
 
 **Example:** `4d6//2` rolls [3, 5, 4, 2] = 14. Integer divided by 2 = 7.
 
@@ -583,7 +589,7 @@ roll({
   modifiers: { modulo: 3 }
 })`} />
 
-<NotationRoller defaultNotation="4d6%3" client:only="react" />
+<ModifierRoller modifier="modulo" defaultNotation="4d6%3" />
 
 **Example:** `4d6%3` rolls [3, 5, 4, 2] = 14. 14 % 3 = 2.
 
@@ -597,7 +603,7 @@ Count dice matching a condition instead of summing values. Used in dice pool sys
 
 | Notation | Description |
 |---|---|
-| `#{condition}` | Primary notation — count dice matching a comparison condition |
+| `#{condition}` | Primary notation: count dice matching a comparison condition |
 | `S{N}` | Sugar: count dice &gt;= N (successes) |
 | `S{N,B}` | Sugar: count dice &gt;= N, subtract dice &lt;= B (successes minus botches) |
 | `F{N}` | Sugar: count dice &lt;= N (failures) |
@@ -612,7 +618,7 @@ Count dice matching a condition instead of summing values. Used in dice pool sys
 
 // Primary notation: #{condition}
 roll('5d10#{>=7}')      // Count dice >= 7
-roll('5d10#{>3,<1}')    // Count >3, subtract <1 (deduct mode)
+roll('5d10#{>=7,<=1}')  // Count >= 7, subtract <= 1 (deduct mode)
 
 // Sugar: S{} for successes
 roll('5d10S{7}')        // Count dice >= 7
@@ -646,11 +652,11 @@ roll({
   }
 })`} />
 
-<NotationRoller defaultNotation="5d10#{>=7}" client:only="react" />
+<ModifierRoller modifier="count" defaultNotation="5d10#{>=7}" />
 
 **Example:** `5d10#{>=7}` rolls [8, 2, 10, 1, 9]. Dice &gt;= 7: [8, 10, 9] = 3.
 
-**Example (deduct):** `5d10#{>3,<1}` counts dice &gt; 3 and subtracts dice &lt; 1. If above = 4 and below = 1, total = 3.
+**Example (deduct):** `5d10#{>=7,<=1}` counts dice &gt;= 7 and subtracts dice &lt;= 1. With [8, 1, 10, 4, 9], that is 3 &minus; 1 = 2.
 
 **CountOptions:**
 
@@ -686,7 +692,7 @@ roll({
   modifiers: { plus: 3, multiplyTotal: 2 }
 })`} />
 
-<NotationRoller defaultNotation="2d6+3**2" client:only="react" />
+<ModifierRoller modifier="multiplyTotal" defaultNotation="2d6+3**2" />
 
 ## Order of operations
 
@@ -699,7 +705,7 @@ The full calculation order is:
 5. Apply explode/compound/penetrate/explodeSequence (add dice or modify values)
 6. Apply wild die behavior (compound on max, remove on 1)
 7. Apply unique (ensure no duplicates)
-8. Apply drop/keep (adjust pool size — runs after explosions)
+8. Apply drop/keep (adjust pool size, after explosions)
 9. Apply count if applicable (#&#123;...&#125;, or sugar S&#123;...&#125;/F&#123;...&#125;)
 10. Sum remaining dice
 11. Apply pre-arithmetic multiply (`*`)
@@ -709,6 +715,6 @@ The full calculation order is:
 15. Sort results if applicable (`sa`/`sd`)
 16. Apply total multiply (`**`)
 
-<NotationRoller defaultNotation="4d6K3!*2+3**2" client:only="react" />
+<NotationRoller defaultNotation="4d6K3!*2+3**2" />
 
-See the full [Randsum Dice Notation Spec](/notation/randsum-dice-notation/) for the complete syntax reference.
+See the full [Notation Syntax Guide](/notation/randsum-dice-notation/) for the complete syntax reference.

@@ -11,13 +11,13 @@ export const LANDING_FAQ: readonly FaqEntry[] = [
   {
     question: 'What is RANDSUM?',
     answer:
-      'RANDSUM is an open-source dice engine for TypeScript and JavaScript. Its core package, @randsum/roller, parses dice notation such as 4d6L or 2d20H, rolls it, and returns the total with every step that produced it. Around it sit ready-made game rules, an open notation spec, a public HTTP API, a Discord bot and a plugin for AI agents.',
+      'RANDSUM is an open-source dice engine for TypeScript and JavaScript. Its core package, @randsum/roller, parses dice notation such as 4d6L or 2d20H, rolls it, and returns the total with every step that produced it. Around it sit ready-made game rules, drop-in roller components, a public HTTP API, an installable Roller app, a Discord bot, a plugin for AI agents and an open notation spec.',
     link: { label: 'Read the introduction', href: '/welcome/introduction/' }
   },
   {
     question: 'Which dice notation does it support?',
     answer:
-      'Everything in RANDSUM Dice Notation: basic NdS rolls and arithmetic, plus 26 modifiers including drop and keep, reroll, exploding, compounding and penetrating dice, caps, unique results, and counting successes or failures. Fate, percentile, wild, geometric and draw dice are built in.',
+      'Everything in RANDSUM Dice Notation: basic NdS rolls and arithmetic, plus modifiers for drop and keep, reroll, exploding, compounding and penetrating dice, caps, unique results, and counting successes or failures. Fate, percentile, wild, geometric and draw dice are built in.',
     link: { label: 'See the notation reference', href: '/notation/randsum-dice-notation/' }
   },
   {
@@ -35,7 +35,7 @@ export const LANDING_FAQ: readonly FaqEntry[] = [
   {
     question: 'Can I roll dice without writing code?',
     answer:
-      'Yes. Add the Discord bot to your server for game night, call the public API at api.randsum.dev with no key, or install the plugin so Claude and other agents roll real dice instead of guessing.',
+      'Yes. Install the Roller app on your phone, add the Discord bot to your server for game night, call the public API at api.randsum.dev with no key, or install the plugin so Claude and other agents roll real dice instead of guessing.',
     link: { label: 'See the agent tools', href: '/tools/agents/' }
   },
   {

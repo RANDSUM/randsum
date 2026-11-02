@@ -59,7 +59,7 @@ const results = Array.from({ length: 100_000 }, () =>
 | `1dN`, `NdS` sums | Exact math |
 | Drop/keep (small pools) | Exact enumeration |
 | Rerolls, exploding, caps | Monte Carlo simulation |
-| Comparing two strategies | Both -- exact if possible, simulation otherwise |
+| Comparing two strategies | Both: exact if possible, simulation otherwise |
 
 ## Common Distributions
 
@@ -114,40 +114,40 @@ See [references/PROBABILITY_TABLES.md](references/PROBABILITY_TABLES.md) for ful
 | Cap (`C{>N}`) | Decreases (truncates top) | Decreases |
 | Cap (`C{<N}`) | Increases (truncates bottom) | Decreases |
 
-**Modifier execution order matters.** Cap applies before drop/keep (priority 10 vs 65/66), so `4d6C{>4}L` caps first, then drops -- the dropped die is from the capped pool.
+**Modifier execution order matters.** Cap applies before drop/keep (priority 10 vs 65/66), so `4d6C{>4}L` caps first, then drops, so the dropped die is from the capped pool.
 
 ## Comparison Framework
 
 When users ask "which is better?", compare along three axes:
 
-1. **Expected value** -- which averages higher?
-2. **P(success)** -- for a given target, which succeeds more often?
-3. **Consistency** -- which has lower variance / tighter spread?
+1. **Expected value**: which averages higher?
+2. **P(success)**: for a given target, which succeeds more often?
+3. **Consistency**: which has lower variance / tighter spread?
 
 Present results as: "Strategy A averages X (std dev Y) vs Strategy B averaging X' (std dev Y'). Against DC 15, A succeeds Z% of the time vs B at Z'%."
 
-Example -- advantage vs flat +2 on 1d20:
+Example: advantage vs flat +2 on 1d20:
 - `2d20L` (advantage): E = 13.82. P(>=15) = 51.0%
 - `1d20+2`: E = 12.5. P(>=15) = 40.0%
-- Advantage is better at mid-range DCs. The +2 bonus is better at extreme DCs (very low or very high targets).
+- Advantage is better from DC 4 to DC 18. The +2 bonus wins only at the extremes: DC 19 and above, and DC 3 or below when a natural 1 does not automatically fail.
 
 ## Game System Probabilities
 
 ### D&D 5e
 
 - **P(hit)** = (21 - AC + modifier) / 20, clamped to [0.05, 0.95] (nat 1 always misses, nat 20 always hits)
-- **Advantage impact**: roughly equivalent to +3.3 to the roll on average, but non-linear -- strongest near 50% base chance
+- **Advantage impact**: roughly equivalent to +3.3 to the roll on average, but non-linear: strongest near 50% base chance
 - **4d6L ability scores**: see tables in references
 
 ### Blades in the Dark (Nd6, keep highest)
 
 | Pool | P(Critical) | P(Success) | P(Partial) | P(Failure) |
 |---|---|---|---|---|
-| 0 (2d6kl) | 0% | 2.8% | 25.0% | 72.2% |
+| 0 (2d6kl) | 0% | 2.8% | 22.2% | 75.0% |
 | 1d6 | 0% | 16.7% | 33.3% | 50.0% |
-| 2d6 | 2.8% | 25.0% | 44.4% | 27.8% |
-| 3d6 | 7.4% | 29.6% | 44.4% | 18.5% |
-| 4d6 | 13.2% | 31.6% | 39.9% | 15.3% |
+| 2d6 | 2.8% | 27.8% | 44.4% | 25.0% |
+| 3d6 | 7.4% | 34.7% | 45.4% | 12.5% |
+| 4d6 | 13.2% | 38.6% | 42.0% | 6.2% |
 
 Critical = two or more 6s. Success = highest is 6. Partial = highest is 4-5. Failure = highest is 1-3.
 
@@ -161,12 +161,12 @@ Critical = two or more 6s. Success = highest is 6. Partial = highest is 4-5. Fai
 | +2 | 41.7% | 41.7% | 16.7% |
 | +3 | 58.3% | 33.3% | 8.3% |
 
-### Salvage Union (1d20, roll under target)
+### Salvage Union (1d20 on a table)
 
-P(success) = target / 20. Critical success on 1 (5%). Critical failure on 20 (5%).
+Each result is a flat 1-in-20 per face: 20 Nailed it (5%), 11-19 Success (45%), 6-10 Tough Choice (25%), 2-5 Failure (20%), 1 Cascade Failure (5%).
 
 ## References
 
-- [Full probability tables](references/PROBABILITY_TABLES.md) -- 4d6L distribution, advantage/disadvantage curves, Blades and PbtA lookup tables
-- [RANDSUM Dice Notation Specification](https://randsum.dev/spec/) -- complete modifier syntax and taxonomy
-- [Game system mechanics](../dice-rolling/references/GAME_SYSTEMS.md) -- how each game interprets rolls
+- [Full probability tables](references/PROBABILITY_TABLES.md): 4d6L distribution, advantage/disadvantage curves, Blades and PbtA lookup tables
+- [RANDSUM Dice Notation Specification](https://notation.randsum.dev/): complete modifier syntax and taxonomy
+- [Game system mechanics](../dice-rolling/references/GAME_SYSTEMS.md): how each game interprets rolls

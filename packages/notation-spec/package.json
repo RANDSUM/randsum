@@ -1,0 +1,68 @@
+{
+  "name": "@randsum/notation-spec",
+  "description": "The RANDSUM Dice Notation (RDN) specification, its conformance vectors, and rdn-conformance, a runner that proves any implementation's conformance level",
+  "version": "0.1.0",
+  "private": false,
+  "author": {
+    "name": "Alex Jarvis",
+    "url": "https://alxjrvs.com/"
+  },
+  "license": "(MIT AND CC-BY-4.0)",
+  "homepage": "https://notation.randsum.dev/",
+  "bugs": "https://github.com/RANDSUM/notation-spec/issues",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RANDSUM/randsum.git",
+    "directory": "packages/notation-spec"
+  },
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      }
+    },
+    "./vectors/*.json": "./vectors/*.json",
+    "./schema/*.json": "./schema/*.json",
+    "./spec/*.md": "./spec/*.md",
+    "./package.json": "./package.json"
+  },
+  "bin": {
+    "rdn-conformance": "dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "!dist/**/*.map",
+    "spec",
+    "vectors",
+    "schema",
+    "examples",
+    "LICENSE",
+    "README.md"
+  ],
+  "keywords": [
+    "dice",
+    "dice-notation",
+    "specification",
+    "conformance",
+    "test-vectors",
+    "rpg",
+    "ttrpg",
+    "randsum"
+  ],
+  "devDependencies": {
+    "@randsum/roller": "workspace:~"
+  },
+  "scripts": {
+    "build": "bunup && chmod +x dist/cli.js",
+    "test": "bun test",
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "bun ../../scripts/ensure-bun-publish.ts && bun run build",
+    "check": "bun run build && bun run typecheck && bun run test"
+  },
+  "engines": {
+    "bun": ">=1.3.10",
+    "node": ">=18.0.0"
+  }
+}

@@ -112,4 +112,4 @@ roll(input: { tableName: string })
 // result: { key, label, description, tableName, table, roll }
 ```
 
-`VALID_TABLE_NAMES` lists every table; an unknown name throws a `SchemaError` with code `NO_TABLE_MATCH`. On `Core Mechanic`, 20 is Nailed It, 11–19 Success, 6–10 Tough Choice, 2–5 Failure and 1 Cascade Failure.
+`VALID_TABLE_NAMES` lists every table; an unknown name throws a `SchemaError` with code `NO_TABLE_MATCH`. On `Core Mechanic`, 20 is Nailed it, 11–19 Success, 6–10 Tough Choice, 2–5 Failure and 1 Cascade Failure.

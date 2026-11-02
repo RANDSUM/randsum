@@ -31,7 +31,7 @@ const style = product
   <header class="rs-section-header">
     {product && (
       <p class="rs-section-product">
-        <PipMark variant="knockout" size={20} />
+        <PipMark variant="knockout" product={product} size={20} />
         {PRODUCT_LABELS[product]}
       </p>
     )}

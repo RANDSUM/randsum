@@ -1,37 +1,18 @@
 export type {
-  CustomFacesNotation,
-  DiceNotation,
-  DrawDieNotation,
-  GeometricDieNotation,
-  FateDieNotation,
-  PercentileDie,
   RandomFn,
-  RollOptions,
   RequiredNumericRollParameters,
   RollArgument,
-  RollConfig,
-  ZeroBiasNotation
+  RollConfig
 } from './core'
 
-export type {
-  ComparisonOptions,
-  CountOptions,
-  DropOptions,
-  KeepOptions,
-  RerollOptions,
-  ReplaceOptions,
-  UniqueOptions,
-  ModifierConfig,
-  ModifierOptions,
-  ModifierLog,
-  NumericRollBonus
-} from './modifiers'
+export type { ModifierLog } from './modifiers'
 
 export type { RollParams, RollRecord, RollerRollResult } from './results'
 
 export type {
-  ValidValidationResult,
-  InvalidValidationResult,
-  ValidationErrorInfo,
-  ValidationResult
+  ComparisonOptions,
+  DiceNotation,
+  ModifierConfig,
+  ModifierOptions,
+  RollOptions
 } from '../notation/types'

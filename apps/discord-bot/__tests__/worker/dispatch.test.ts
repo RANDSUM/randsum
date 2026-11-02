@@ -217,7 +217,7 @@ describe('dispatchInteraction', () => {
     // so a missing menu would be a reference page with no way to change
     // category — working, but silently missing the entire interaction.
     const payload = JSON.stringify(response.data?.components)
-    expect(payload).toContain('randsum.dev/spec/')
+    expect(payload).toContain('notation.randsum.dev/')
     expect(payload).toContain('notation-category')
   })
 
@@ -237,7 +237,7 @@ describe('dispatchInteraction', () => {
     // message carries it, and omitting it makes Discord read the container as a
     // malformed action row.
     expect(response.data?.flags).toBe(32768)
-    expect(JSON.stringify(response.data?.components)).toContain('randsum.dev/spec/')
+    expect(JSON.stringify(response.data?.components)).toContain('notation.randsum.dev/')
   })
 
   test('an unrecognised category falls back rather than rendering empty', () => {
@@ -264,7 +264,7 @@ describe('dispatchInteraction', () => {
       interaction({
         type: 2,
         data: { name: 'root', options: [{ name: 'stat', value: 1 }] },
-        member: { user: { username: 'legacyuser' } }
+        member: { user: { username: 'memberuser' } }
       }),
       commands
     ) as Rendered
@@ -296,7 +296,7 @@ describe('dispatchInteraction', () => {
     })
 
     test('the IsComponentsV2 flag is always set on a view response', () => {
-      // Without it Discord reads `components` as legacy action rows and rejects
+      // Without it Discord reads `components` as classic action rows and rejects
       // the container outright, so this flag is load-bearing, not cosmetic.
       expect(invokeView().data?.flags).toBe(32768)
     })

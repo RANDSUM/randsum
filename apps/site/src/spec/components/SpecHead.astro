@@ -1,0 +1,63 @@
+---
+// The document header a formal specification opens with (W3C and IETF style):
+// title, status and date, then the addresses and contacts as a definition list.
+import type { CollectionEntry } from 'astro:content'
+import { longDate, versionLabel } from '../document'
+import { specPath, specUrl } from '../urls'
+
+interface Props {
+  entry: CollectionEntry<'specs'>
+  versions: string[]
+}
+
+const { entry, versions } = Astro.props
+const { title, version, status, date, editor } = entry.data
+const previous = versions.filter(v => v !== version).reverse()
+const thisVersion = specUrl(`/v/${version}/`)
+const latest = specUrl('/')
+---
+
+<header class="spec-head">
+  <p class="spec-head-series">RANDSUM Community Specification</p>
+  <h1 class="spec-head-title">{title}</h1>
+  <p class="spec-head-status">
+    Version {versionLabel(entry)} · {status}, <time datetime={date}>{longDate(date)}</time>
+  </p>
+  <dl class="spec-head-meta">
+    <dt>This version</dt>
+    <dd><a href={thisVersion}>{thisVersion}</a></dd>
+    <dt>Latest published version</dt>
+    <dd><a href={latest}>{latest}</a></dd>
+    {previous.length > 0 && (
+      <>
+        <dt>Previous versions</dt>
+        {previous.map(v => (
+          <dd>
+            <a href={specPath(`/v/${v}/`)}>{v}</a>
+          </dd>
+        ))}
+      </>
+    )}
+    <dt>Editor</dt>
+    <dd>{editor} (RANDSUM)</dd>
+    <dt>Feedback</dt>
+    <dd>
+      <a href="https://github.com/RANDSUM/randsum/issues">GitHub RANDSUM/randsum</a>{' '}
+      (issues and pull requests)
+    </dd>
+    <dt>Test suite</dt>
+    <dd>
+      <a href={specPath(`/conformance/v${version}.json`)}
+        >Conformance vectors for {version} (JSON)</a
+      >
+    </dd>
+    <dt>Reference implementation</dt>
+    <dd>
+      <a href="https://www.npmjs.com/package/@randsum/roller"><code>@randsum/roller</code></a>
+    </dd>
+    <dt>Conformance badges</dt>
+    <dd><a href={specPath('/conformance/')}>Levels and badges for implementations</a></dd>
+    <dt>Also available as</dt>
+    <dd><a href={specPath('/llms-full.txt')}>Plain-text Markdown</a></dd>
+  </dl>
+</header>

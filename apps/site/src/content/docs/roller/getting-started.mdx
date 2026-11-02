@@ -1,11 +1,11 @@
 ---
 title: Getting Started with Roller
-description: Install @randsum/roller and roll your first die in under a minute.
+description: "Install @randsum/roller with bun, npm or yarn and roll your first dice in TypeScript in under a minute: numbers, notation strings and options objects."
 ---
 
 import { Tabs, TabItem } from '@astrojs/starlight/components'
 import CodeExample from '../../../components/live-repl/CodeExample.astro'
-import { NotationRoller } from '../../../components/NotationRoller'
+import NotationRoller from '../../../components/rollers/NotationRoller.astro'
 
 Install `@randsum/roller` and roll your first die in under a minute.
 
@@ -32,11 +32,11 @@ console.log(result.total) // a number between 1 and 20`} />
 
 Pass a number to `roll()` and it rolls one die with that many sides. The return value is a typed result object with a `total` property.
 
-<NotationRoller defaultNotation="1d20" client:only="react" />
+<NotationRoller defaultNotation="1d20" />
 
 ## Notation strings
 
-RANDSUM supports standard dice notation. The format is `NdS` -- **N** dice with **S** sides.
+RANDSUM supports standard dice notation. The format is `NdS`: **N** dice with **S** sides.
 
 <CodeExample code={`import { roll } from '@randsum/roller'
 
@@ -46,11 +46,11 @@ roll('1d20+5')   // one d20, add 5 to the total
 roll('4d6L')     // four d6, drop the lowest
 roll('5d6W')     // D6 System wild die
 roll('4d6Lx6')   // six ability scores (repeat operator)
-roll('g6')       // geometric die (roll until 1)`} />
+roll('g6')       // geometric die (roll again on each 6, sum all)`} />
 
-<NotationRoller defaultNotation="4d6L" client:only="react" />
+<NotationRoller defaultNotation="4d6L" />
 
-Try changing the notation in the playground above. See the [Randsum Dice Notation Spec](/notation/randsum-dice-notation/) for the full syntax.
+Try changing the notation in the playground above. See the [Notation Syntax Guide](/notation/randsum-dice-notation/) for the full syntax.
 
 ## Options object
 
@@ -77,12 +77,12 @@ See [Roll Options](/roller/roll-options/) for the full options API.
 const result = roll('4d6L+2')
 
 result.total   // Final total after all modifiers
-result.values  // String representations of die values, e.g. ['3', '5']
+result.values  // Die values as numbers, e.g. [3, 5]
 result.rolls   // Array of RollRecord objects with full history`} />
 
 Each entry in `result.rolls` is a `RollRecord` containing the original rolls, modifier logs, and final values for that dice group.
 
-<NotationRoller defaultNotation="4d6L+2" client:only="react" />
+<NotationRoller defaultNotation="4d6L+2" />
 
 ## Multiple groups
 
@@ -113,11 +113,11 @@ function seededRandom(seed: number) {
 const result = roll('2d6', { randomFn: seededRandom(42) })
 // Same seed always produces the same total`} />
 
-The `randomFn` must return a number in `[0, 1)` -- the same contract as `Math.random()`. Pass it as the last argument in a `RollConfig` object.
+The `randomFn` must return a number in `[0, 1)`, the same contract as `Math.random()`. Pass it as the last argument in a `RollConfig` object.
 
 ## What's next
 
-- [Roll Options](/roller/roll-options/) -- all options object fields and argument types
-- [Modifiers](/roller/modifiers/) -- drop, keep, reroll, explode, cap, and more
-- [Error Handling](/roller/error-handling/) -- how `roll()` validates input and what errors to expect
-- [API Reference](/roller/api-reference/) -- complete list of exports from `@randsum/roller`
+- [Roll Options](/roller/roll-options/): all options object fields and argument types
+- [Modifiers](/roller/modifiers/): drop, keep, reroll, explode, cap, and more
+- [Error Handling](/roller/error-handling/): how `roll()` validates input and what errors to expect
+- [API Reference](/roller/api-reference/): complete list of exports from `@randsum/roller`

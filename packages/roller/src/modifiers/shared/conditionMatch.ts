@@ -4,7 +4,7 @@ import { matchesComparison } from '../../lib/comparison/matchesComparison'
 /**
  * Build a trigger predicate from explode options.
  *
- * - `true` -> trigger on max value (backward compat)
+ * - `true` -> trigger on max value (plain `!`)
  * - `ComparisonOptions` -> trigger on condition match
  *
  * Returns a function (value, sides) => boolean.

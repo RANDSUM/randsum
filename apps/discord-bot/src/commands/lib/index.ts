@@ -2,7 +2,6 @@ export type { CommandContext } from './context.js'
 export type { ViewFact } from './view.js'
 export {
   TEXT_DISPLAY_LIMIT,
-  clampContent,
   measureContainer,
   renderTrace,
   rollContainer

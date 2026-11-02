@@ -1,6 +1,6 @@
 ---
 title: Claude Connector & MCP Server
-description: Add RANDSUM to Claude as a connector, or to any MCP client by URL. The hosted server at api.randsum.dev/mcp gives AI agents roll, validate, and roll_game tools with seeded reproducibility.
+description: Add RANDSUM to Claude as a connector, or to any MCP client by URL. The hosted server at api.randsum.dev/mcp gives agents roll, validate and roll_game tools.
 ---
 
 import CodeExample from '../../../components/live-repl/CodeExample.astro'
@@ -65,7 +65,7 @@ Add the server to `claude_desktop_config.json`:
 }
 ```
 
-Any MCP client that can spawn a stdio server works — point it at the
+Any MCP client that can spawn a stdio server works: point it at the
 `randsum-mcp` binary (or `bunx @randsum/mcp` / `npx @randsum/mcp`).
 
 ## Tools
@@ -82,7 +82,7 @@ Every tool is annotated read-only and closed-world (`readOnlyHint: true`, `openW
 
 ### `roll`
 
-Rolls [RANDSUM dice notation](/spec/) (e.g. `4d6L`,
+Rolls [RANDSUM dice notation](https://notation.randsum.dev/) (e.g. `4d6L`,
 `2d20+5`, `1d100`). Pass an integer `seed` for a deterministic, reproducible
 roll. Invalid notation returns a tool error (`isError: true`) with the reason and an error `code`; call `validate` for a suggested fix.
 
@@ -133,9 +133,15 @@ the chosen game before it rolls.
 
 The `roll` tool accepts an optional integer `seed`. With a seed, the server uses
 a deterministic random number generator, so the same `notation` + `seed` always
-produces the same dice — ideal for tests, examples, and shareable results.
+produces the same dice, which suits tests, examples, and shareable results.
 Omit `seed` for a fresh random roll each call. (`validate` and `roll_game` do
 not take a seed.)
+
+## Privacy
+
+The server needs no account and keeps nothing: it sees only the arguments of
+each tool call, never your conversation. Cloudflare keeps short-lived request
+logs for operations. See the [privacy policy](/privacy/).
 
 ## Links
 

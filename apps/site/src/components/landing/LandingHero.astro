@@ -1,31 +1,28 @@
 ---
 // The top of randsum.dev: the promise on the left, the live roller on the right,
 // so the first thing a visitor can do is roll.
-import { ClickableTagline } from '../HeroInteractive'
-import { HeroRoller } from '../HeroRoller/HeroRoller'
+import { APP_URL } from '../rollers/links'
+import { HeroRoller, LANDING_PRESETS } from '../rollers/HeroRoller'
+import ServerRoller from '../rollers/ServerRoller.astro'
 import PipMark from '../PipMark.astro'
 import Button from '../ui/Button.astro'
-
-const proof = [
-  { value: '0', label: 'runtime dependencies' },
-  { value: '26', label: 'notation modifiers' },
-  { value: '7', label: 'games, ready to roll' },
-  { value: 'MIT', label: 'open source' }
-] as const
 ---
 
-<section class="hero not-content" aria-labelledby="hero-title">
+<section id="_top" class="hero not-content" aria-labelledby="hero-title">
   <div class="hero-inner">
     <div class="hero-text">
       <p class="hero-kicker">
         <PipMark variant="knockout" size={18} />
         The TypeScript dice engine
       </p>
-      <ClickableTagline client:load />
+      <h1 id="hero-title" class="clickable-tagline">
+        Throw Dice, <br>
+        Not Exceptions.
+      </h1>
       <p class="hero-subtitle">
         Parse and roll any dice notation, from <code>1d20+5</code> to exploding, rerolling,
         drop-lowest pools, and get every step back as typed data. Zero dependencies, with ready-made
-        rules for D&amp;D 5e, Blades in the Dark and five more games.
+        rules for D&amp;D 5e, Blades in the Dark and more.
       </p>
       <div class="hero-actions">
         <Button href="/roller/getting-started/">Get started</Button>
@@ -62,15 +59,24 @@ const proof = [
         </h2>
         <span class="hero-roller-note">Runs in your browser</span>
       </div>
-      <HeroRoller client:only="react" />
+      <HeroRoller client:only="react">
+        <ServerRoller
+          slot="fallback"
+          size="compact"
+          notation={LANDING_PRESETS[0]?.notation ?? '4d6L'}
+          presets={LANDING_PRESETS}
+          appLink={APP_URL}
+        />
+      </HeroRoller>
     </div>
   </div>
-  <dl class="hero-proof">
-    {proof.map(item => (
-      <div>
-        <dt>{item.label}</dt>
-        <dd>{item.value}</dd>
-      </div>
-    ))}
-  </dl>
 </section>
+
+<script>
+// The tagline's easter egg: a click fires 'die-rolled', which HeroRoller answers
+// by spinning through its presets. A plain h1 and a listener, so the tagline
+// needs no React island.
+document.getElementById('hero-title')?.addEventListener('click', () => {
+  window.dispatchEvent(new CustomEvent('die-rolled'))
+})
+</script>

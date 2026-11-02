@@ -55,9 +55,6 @@ pre-push:
           - name: codegen-check
             run: bun run --filter @randsum/games gen:check
             fail_text: Run `bun run --filter @randsum/games gen`, then commit packages/games/src/*.generated.ts
-          - name: conformance-check
-            run: bun run --filter @randsum/site conformance:check
-            fail_text: Run `bun run --filter @randsum/site conformance:gen`, then commit apps/site/public/conformance/
           - name: test
             run: bun run test
             fail_text: Fix the failing tests above (`bun run test`)

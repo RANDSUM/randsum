@@ -1,6 +1,6 @@
 ---
 name: randsum-library
-description: Writes code that rolls dice with the RANDSUM npm packages, @randsum/roller (notation engine) and @randsum/games (game mechanics), or with the api.randsum.dev REST API from other languages. Use when adding dice rolling to an app, bot, game, VTT or script, when code imports @randsum/*, or when the user asks how to call roll(), validate user-typed notation, seed rolls for tests, or roll a game system's mechanics in code. To roll dice for the user in chat, use dice-rolling.
+description: Writes code that rolls dice with the RANDSUM npm packages, @randsum/roller (notation engine), @randsum/games (game mechanics) and @randsum/ui (dice roller Web Components with React and Vue wrappers), or with the api.randsum.dev REST API from other languages. Use when adding dice rolling to an app, bot, game, VTT or script, when code imports @randsum/*, when an app needs a dice roller UI, or when the user asks how to call roll(), validate user-typed notation, seed rolls for tests, or roll a game system's mechanics in code. To roll dice for the user in chat, use dice-rolling.
 license: MIT
 metadata:
   author: RANDSUM
@@ -17,6 +17,7 @@ metadata:
 | A supported game's outcome (D&D 5e, Blades, Daggerheart, Fate, PbtA, Root RPG, Salvage Union) | `@randsum/games/<game>` |
 | Dice from Python, Go, Ruby, a shell script, or anything not JS | REST API, `https://api.randsum.dev/v1` |
 | To check notation as the user types, without the roll engine | `@randsum/roller/tokenize` or `@randsum/roller/validate` |
+| A ready-made dice roller UI in a web page or app (HTML, htmx, Astro, React, Vue, Svelte) | `@randsum/ui` |
 
 ```bash
 npm install @randsum/roller        # or: bun add @randsum/roller
@@ -50,7 +51,7 @@ result.rolls[0].label         // 'fire' from '2d6[fire]'
 
 `4d6Lx6` repeats a roll: `result.rolls` has six records, one per ability score, and `total` sums them, so read each record's `total`.
 
-Notation is a superset of common VTT syntax: `L`/`H` drop, `K`/`kl` keep, `R{<3}` reroll, `!` explode, `S{7}` count successes, `C{>18}` cap, `4dF` Fate dice, `d%`. The full grammar is at https://randsum.dev/spec/; the plugin's `dice-rolling` skill has a quick reference.
+Notation is a superset of common VTT syntax: `L`/`H` drop, `K`/`kl` keep, `R{<3}` reroll, `!` explode, `S{7}` count successes, `C{>18}` cap, `4dF` Fate dice, `d%`. The full grammar is at https://notation.randsum.dev/; the plugin's `dice-rolling` skill has a quick reference.
 
 ## User-typed notation
 
@@ -97,6 +98,33 @@ attack.details.criticals?.isNatural20
 ```
 
 Every game's input type, ranges, result values and details: [references/GAMES.md](references/GAMES.md).
+
+## A dice roller UI: `@randsum/ui`
+
+`@randsum/ui` is the roller as Web Components (custom elements, built with Lit, styles in Shadow DOM). Don't hand-build a roller form when this fits.
+
+```html
+<script type="module">
+  import '@randsum/ui/roller'
+</script>
+<randsum-roller size="compact" notation="2d20H+5"></randsum-roller>
+```
+
+- One element, `<randsum-roller>`, with `size="mini"` (the field and Roll, with a keys button below), `"compact"` (the default, a panel) or `"max"` (adds recent rolls and history; `storage-key` keeps them in localStorage).
+- Events: `randsum-change` (detail `{ notation }`) on each edit, `randsum-roll` (detail: the result, with `total` and `records`) after each roll. Method: `roll()`.
+- `presets` and `keys` take JSON attributes or properties; `modifierKeys(name)` (`@randsum/ui/keys`) and `modifierPresets(name)` (`@randsum/ui/presets`) give each modifier's own set.
+- Parts are elements too (`notation-field`, `roll-button`, `status-line`, `key-pad`, `preset-list`, `readout`, `roll-steps`); inside a `<randsum-scope notation="…">` they share one roller with no script.
+- Theme with `--rsui-*` custom properties (`--rsui-accent`, `--rsui-font`, …) on the element or any ancestor.
+- Every element and wrapper is its own subpath; there is no root import.
+
+| Stack | Use |
+|---|---|
+| Plain HTML, htmx, Astro | The tags directly; no wrapper |
+| React 18/19 | `import { Roller } from '@randsum/ui/react/roller'`: `<Roller size="mini" defaultNotation="4d6L" onRoll={r => …} />`; `useRoller` (`@randsum/ui/react/use-roller`) and each part (`@randsum/ui/react/key-pad`, `@randsum/ui/react/readout`, …) |
+| Vue 3 | `import { Roller } from '@randsum/ui/vue/roller'`: `<Roller v-model="notation" @roll="…" />` |
+| Svelte 5 | The tags directly (`onrandsum-roll={…}`); `import type {} from '@randsum/ui/svelte'` for types |
+| Server rendering | `renderToString(markup)` from `@randsum/ui/ssr` (needs `@lit-labs/ssr`) returns the elements as Declarative Shadow DOM, so they show before scripts load |
+| React Native / Expo | `import { Roller } from '@randsum/ui/native/roller'`: native views, same props as the React `Roller`; `useRoller` (`@randsum/ui/native/use-roller`), each part (`@randsum/ui/native/key-pad`, …), and `RollerThemeProvider` (`@randsum/ui/native/theme`). Max history: `initialHistory` in, `onHistoryChange` out, to persist with AsyncStorage |
 
 ## Deterministic rolls for tests and replays
 

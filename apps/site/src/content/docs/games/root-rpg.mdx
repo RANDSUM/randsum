@@ -1,6 +1,6 @@
 ---
 title: Root RPG
-description: TypeScript package for Root RPG dice mechanics. Rolls 2d6+bonus and returns Strong Hit, Weak Hit, or Miss outcomes for woodland adventure games.
+description: "Roll Root RPG dice in TypeScript with @randsum/games/root-rpg: 2d6 plus a bonus, returning a Strong Hit, Weak Hit or Miss."
 head:
   - tag: script
     attrs:
@@ -12,7 +12,6 @@ head:
         "name": "@randsum/games/root-rpg",
         "applicationCategory": "DeveloperApplication",
         "programmingLanguage": "TypeScript",
-        "version": "1.3.0",
         "description": "TypeScript dice package for Root RPG. 2d6 resolution returning Strong Hit, Weak Hit, or Miss outcomes for woodland adventure games.",
         "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
         "downloadUrl": "https://www.npmjs.com/package/@randsum/games",
@@ -44,12 +43,12 @@ The `@randsum/games/root-rpg` subpath provides mechanics for [Root RPG](https://
 <CodeExample code={`import { roll } from '@randsum/games/root-rpg'
 
 // Roll with a stat bonus
-const { result, total } = roll(2)
+const { result, total } = roll({ bonus: 2 })
 // result: 'strong_hit' | 'weak_hit' | 'miss'`} />
 
 <CodeExample code={`import { roll } from '@randsum/games/root-rpg'
 
-const { result } = roll(0)
+const { result } = roll({ bonus: 0 })
 
 switch (result) {
   case 'strong_hit':
@@ -65,55 +64,60 @@ switch (result) {
 
 <CodeExample code={`import { roll } from '@randsum/games/root-rpg'
 
-roll(2)   // Strong stat
-roll(0)   // No bonus
-roll(-1)  // Penalty`} />
+roll({ bonus: 2 })   // Strong stat
+roll({ bonus: 0 })   // No bonus
+roll({ bonus: -1 })  // Penalty
+
+// Advantage and disadvantage roll 3d6 and keep the best or worst two
+roll({ bonus: 1, rollingWith: 'Advantage' })
+roll({ bonus: 1, rollingWith: 'Disadvantage' })`} />
 
 ## API
 
-### `roll(bonus: number)`
+### `roll(input: { bonus: number, rollingWith?: 'Advantage' | 'Disadvantage' })`
 
 **Input:**
 
-| Parameter | Type | Description |
+| Property | Type | Description |
 |---|---|---|
-| `bonus` | `number` | Stat modifier (-20 to +20) |
+| `bonus` | `number` | Stat modifier, an integer from -3 to +5 |
+| `rollingWith` | `'Advantage' \| 'Disadvantage' \| undefined` | Roll 3d6, keep the 2 highest or lowest |
 
 **Returns:** `GameRollResult` with:
 
 | Property | Type | Description |
 |---|---|---|
 | `result` | `RootRpgRollResult` | `'strong_hit' \| 'weak_hit' \| 'miss'` |
-| `total` | `number` | Sum of 2d6 + bonus |
+| `total` | `number` | Sum of the kept dice + bonus |
 | `rolls` | `RollRecord[]` | Raw dice data from the core roller |
 
 ## Outcomes
 
 | Outcome | Total | Description |
 |---|---|---|
-| `strong_hit` | 10+ | Complete success -- you achieve your goal |
-| `weak_hit` | 7-9 | Partial success -- you do it, but with a cost or complication |
-| `miss` | 6- | Failure -- things go badly |
+| `strong_hit` | 10+ | Complete success: you achieve your goal |
+| `weak_hit` | 7-9 | Partial success: you do it, but with a cost or complication |
+| `miss` | 6- | Failure: things go badly |
 
 ## Error handling
 
 Game `roll()` can throw two types of errors:
 
-- **`ValidationError`** (from `@randsum/roller`) -- numeric input out of range or not finite (e.g., `bonus: 999` when max is 20)
-- **`SchemaError`** (from `@randsum/games/root-rpg`) -- game-specific issues like unmatched outcome tables
+- **`ValidationError`** (from `@randsum/roller`): numeric input out of range, not an integer, or not finite (e.g., `bonus: 9` when the maximum is 5)
+- **`SchemaError`** (from `@randsum/games/root-rpg`): game-specific issues like an invalid `rollingWith` value
 
 <CodeExample code={`import { roll, SchemaError } from '@randsum/games/root-rpg'
 import { ValidationError } from '@randsum/roller'
 
 try {
-  roll(999)
+  roll({ bonus: 9 })
 } catch (error) {
   if (error instanceof ValidationError) {
-    // Out-of-range bonus (must be -20 to 20)
+    // Out-of-range bonus (must be -3 to 5)
     console.log(error.code)    // 'VALIDATION_ERROR'
   } else if (error instanceof SchemaError) {
-    // Game-specific error
-    console.log(error.code)    // 'NO_TABLE_MATCH'
+    // e.g., invalid rollingWith enum value
+    console.log(error.code)    // 'INVALID_INPUT_TYPE'
   }
 }`} />
 
@@ -124,7 +128,7 @@ import { SchemaError } from '@randsum/games/root-rpg'`} />
 
 ## Schema
 
-This game is powered by a `.randsum.json` spec that defines the 2d6+bonus resolution and outcome tiers. The TypeScript code is generated from this spec at build time. See [Schema Overview](/games/schema/overview/) for how game specs work.
+This game is powered by a `.randsum.json` spec that defines the 2d6+bonus resolution, advantage and disadvantage, and outcome tiers. The TypeScript code is generated from this spec at build time. See [Schema Overview](/games/schema/overview/) for how game specs work.
 
 ## Links
 

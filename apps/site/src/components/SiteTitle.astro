@@ -1,47 +1,74 @@
 ---
 import PipMark from './PipMark.astro'
-import { PRODUCT_LABELS, productForPath } from '../utils/product'
+import { PIPS, PRODUCT_LABELS, productForPath } from '../utils/product'
 const { siteTitleHref } = Astro.locals.starlightRoute
 const product = productForPath(Astro.url.pathname)
+const home = product ?? 'roller'
 ---
 
-<a href={siteTitleHref} class="site-title-link" data-pip-roll>
-  <PipMark size={30} class="site-title-mark" />
+<a
+  href={siteTitleHref}
+  class="site-title-link"
+  data-pip-roll={JSON.stringify(PIPS)}
+  data-pip-home={home}
+>
+  <PipMark size={30} product={home} class="site-title-mark" />
   <span class="site-title-text" translate="no">RANDSUM</span>
   {product && <span class="site-title-product">{PRODUCT_LABELS[product]}</span>}
 </a>
 
 <script>
-// Hover the mark: the pips tumble through two random faces, then land back on R
-const SLOTS = [28, 50, 72]
+// Hover the mark: the die tumbles through four other members of the family,
+// each in its own pips and colour (PIPS, read from data-pip-roll), holding each
+// for DWELL ms, then lands back on this page's product. Pips a face does not
+// use shrink away at the centre; spare pips wait there with no radius until a
+// face needs them, since patterns run from three pips to eight.
+const DWELL = 300
+const ROLLS = 4
+const MID = 50
+type Faces = Record<string, readonly (readonly [number, number])[]>
+const pickFaces = (ids: readonly string[], home: string): readonly string[] =>
+  Array.from({ length: ROLLS }).reduce<string[]>(acc => {
+    const prev = acc.at(-1) ?? home
+    const pool = ids.filter(id => id !== prev && id !== home && !acc.includes(id))
+    return [...acc, pool[Math.floor(Math.random() * pool.length)] ?? prev]
+  }, [])
 for (const link of document.querySelectorAll<HTMLAnchorElement>('[data-pip-roll]')) {
-  const circles = [...link.querySelectorAll<SVGCircleElement>('circle')]
-  const home = circles.map(c => [c.getAttribute('cx') ?? '', c.getAttribute('cy') ?? ''] as const)
+  const faces = JSON.parse(link.dataset.pipRoll ?? '{}') as Faces
+  const homeId = link.dataset.pipHome ?? 'roller'
+  const mark = link.querySelector<SVGSVGElement>('svg')
+  const found = [...link.querySelectorAll<SVGCircleElement>('circle')]
+  const most = Math.max(...Object.values(faces).map(face => face.length))
+  const spares = Array.from({ length: Math.max(0, most - found.length) }, () => {
+    const spare = found[0]?.cloneNode() as SVGCircleElement | undefined
+    spare?.setAttribute('cx', String(MID))
+    spare?.setAttribute('cy', String(MID))
+    spare?.setAttribute('r', '0')
+    if (spare) found[0]?.parentNode?.appendChild(spare)
+    return spare
+  })
+  const circles = [...found, ...spares.filter(c => c !== undefined)]
   const busy = { now: false }
+  const show = (id: string): void => {
+    const cells = faces[id] ?? []
+    circles.forEach((c, i) => {
+      const cell = cells[i]
+      c.setAttribute('cx', String(cell?.[0] ?? MID))
+      c.setAttribute('cy', String(cell?.[1] ?? MID))
+      c.setAttribute('r', cell ? '8' : '0')
+    })
+    if (mark) mark.style.color = id === homeId ? '' : `var(--product-${id})`
+  }
   link.addEventListener('mouseenter', () => {
     if (busy.now || matchMedia('(prefers-reduced-motion: reduce)').matches) return
     busy.now = true
-    const shuffle = (): void => {
-      const cells = SLOTS.flatMap(x => SLOTS.map(y => [x, y] as const)).sort(
-        () => Math.random() - 0.5
-      )
-      circles.forEach((c, i) => {
-        const cell = cells[i]
-        if (!cell) return
-        c.setAttribute('cx', String(cell[0]))
-        c.setAttribute('cy', String(cell[1]))
-      })
-    }
-    shuffle()
-    setTimeout(shuffle, 200)
+    pickFaces(Object.keys(faces), homeId).forEach((id, step) => {
+      setTimeout(() => show(id), step * DWELL)
+    })
     setTimeout(() => {
-      circles.forEach((c, i) => {
-        const [cx, cy] = home[i] ?? ['', '']
-        c.setAttribute('cx', cx)
-        c.setAttribute('cy', cy)
-      })
+      show(homeId)
       busy.now = false
-    }, 420)
+    }, ROLLS * DWELL)
   })
 }
 </script>
@@ -59,7 +86,12 @@ for (const link of document.querySelectorAll<HTMLAnchorElement>('[data-pip-roll]
 .site-title-link :global(.site-title-mark circle) {
   transition:
     cx 0.2s cubic-bezier(0.3, 1.3, 0.5, 1),
-    cy 0.2s cubic-bezier(0.3, 1.3, 0.5, 1);
+    cy 0.2s cubic-bezier(0.3, 1.3, 0.5, 1),
+    r 0.2s ease-out;
+}
+
+.site-title-link :global(.site-title-mark) {
+  transition: color 0.2s ease-out;
 }
 
 .site-title-text {
@@ -80,6 +112,7 @@ for (const link of document.querySelectorAll<HTMLAnchorElement>('[data-pip-roll]
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .site-title-link :global(.site-title-mark),
   .site-title-link :global(.site-title-mark circle) {
     transition: none;
   }

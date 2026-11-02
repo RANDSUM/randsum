@@ -236,7 +236,7 @@ function index(origin: string): unknown {
     description:
       'Roll dice in RANDSUM notation, roll for tabletop game systems, and draw random integers. Every endpoint is public, CORS-enabled and needs no key.',
     docs: 'https://randsum.dev/api/introduction/',
-    notation: 'https://randsum.dev/spec/',
+    notation: 'https://notation.randsum.dev/',
     mcp: `${origin}/mcp`,
     endpoints: [
       {

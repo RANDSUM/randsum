@@ -20,6 +20,8 @@ jobs:
       roller: ${{ steps.filter.outputs.roller }}
       games: ${{ steps.filter.outputs.games }}
       mcp: ${{ steps.filter.outputs.mcp }}
+      ui: ${{ steps.filter.outputs.ui }}
+      notation-spec: ${{ steps.filter.outputs.notation-spec }}
       site: ${{ steps.filter.outputs.site }}
       skill: ${{ steps.filter.outputs.skill }}
       discord-bot: ${{ steps.filter.outputs.discord-bot }}
@@ -44,11 +46,12 @@ jobs:
               - 'package.json'
               - 'tsconfig*.json'
               - 'bunfig.toml'
+              - '.bun-version'
               - '.github/actions/**'
             roller:
               - 'packages/roller/**'
               # Roller tests also guard published docs: the site's modifier
-              # application-order table and the Level 4 conformance claim check.
+              # application-order table.
               - 'apps/site/src/content/docs/**'
               - 'README.md'
               - 'llms.txt'
@@ -59,10 +62,25 @@ jobs:
               - 'packages/roller/**'
               - 'packages/games/**'
               - '.github/workflows/ci.yml'
+            ui:
+              - 'packages/roller/**'
+              - 'packages/ui/**'
+              - '.github/workflows/ci.yml'
             mcp:
               - 'packages/roller/**'
               - 'packages/games/**'
               - 'packages/mcp/**'
+              - '.github/workflows/ci.yml'
+            notation-spec:
+              # The spec, its vectors and runner, proved against roller through
+              # the reference adapter.
+              - 'packages/notation-spec/**'
+              - 'packages/roller/**'
+              # The mirror tree and the check that proves it before a sync.
+              - 'scripts/sync-notation-spec.ts'
+              - 'scripts/check-notation-mirror.ts'
+              - 'scripts/notation-spec-mirror/**'
+              - '.bun-version'
               - '.github/workflows/ci.yml'
             site:
               - 'packages/**'
@@ -76,6 +94,7 @@ jobs:
               # The plugin's /roll mod commits a bundle of roller's roll().
               - 'packages/roller/src/**'
               - 'scripts/build-plugin-roller.ts'
+              - 'scripts/check-plugin-*.ts'
               - '.claude-plugin/**'
               - '.claude/**'
               - '.mcp.json'
@@ -110,6 +129,8 @@ jobs:
             {"pkg":"roller","coverage":"roller","size":true},
             {"pkg":"games","coverage":"games","size":true},
             {"pkg":"mcp"},
+            {"pkg":"ui","coverage":"ui","size":true},
+            {"pkg":"notation-spec"},
             {"pkg":"discord-bot"},
             {"pkg":"api"},
             {"pkg":"site","node":"24"}
@@ -119,7 +140,7 @@ jobs:
             '$all | map(select($changed[.pkg] == "true" or $changed.shared == "true"))')
           echo "matrix={\"include\":$include}" >> "$GITHUB_OUTPUT"
 
-  # The per-package jobs (roller, games, mcp, discord-bot, api, site) were
+  # The per-package jobs (roller, games, mcp, ui, notation-spec, discord-bot, api, site) were
   # near-identical, differing only in filter name, node version, and coverage
   # flags. They are folded into one matrix, populated dynamically by the
   # `changes` job so only changed packages get a leg. The `include` entries
@@ -160,6 +181,12 @@ jobs:
         env:
           PKG: ${{ matrix.pkg }}
         run: bun run --filter "@randsum/$PKG" check
+      - name: Check the notation-spec mirror
+        # The mirror's own CI (bun install, bun run check) on the tree the sync
+        # would push, so main never syncs a commit the mirror's required
+        # `check` fails.
+        if: matrix.pkg == 'notation-spec'
+        run: bun run check:notation-mirror
       - name: Upload coverage to Codecov
         if: matrix.coverage && hashFiles(format('packages/{0}/coverage/lcov.info', matrix.pkg)) != ''
         uses: codecov/codecov-action@303a32d7a59b442fa8d48b6a1cc6825c09c847a5 # v7.1.1
@@ -231,16 +258,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          # check:plugin-version diffs against the base branch's merge base.
+          fetch-depth: 0
+          persist-credentials: false
       - name: Install Claude Code
         run: npm install -g @anthropic-ai/claude-code@2.1.284
       - name: Verify project agent config
         run: claude plugin validate --strict .claude
-      # Plugin and marketplace stay non-strict on purpose. plugin.json has no
-      # `version`, so installers track the marketplace commit instead of a pin
-      # nobody bumps; `--strict` turns the resulting 'No version specified'
-      # warning into exit 1 for both. Errors still fail the step.
+      # Strict, so a warning fails CI too: Anthropic's plugin directory runs the
+      # same checks (and more) on every version it ingests from main.
       - name: Verify plugin
-        run: claude plugin validate plugins/randsum
+        run: claude plugin validate --strict plugins/randsum
       # Hooks modules are early access; this pinned build runs them only when asked.
       - name: Test the plugin's /roll mod
         run: claude plugin test plugins/randsum
@@ -249,8 +278,15 @@ jobs:
       - uses: ./.github/actions/bun-setup
       - name: Plugin roller bundle is fresh
         run: bun run check:plugin-roller
+      - name: No plugin directory scan patterns
+        run: bun run check:plugin-scan
+      - name: Plugin changes bump its version
+        if: github.event_name == 'pull_request'
+        run: bun run check:plugin-version "origin/$BASE_REF"
+        env:
+          BASE_REF: ${{ github.base_ref }}
       - name: Verify marketplace
-        run: claude plugin validate .claude-plugin/marketplace.json
+        run: claude plugin validate --strict .claude-plugin/marketplace.json
 
   publish-dry-run:
     name: publish (dry run)
@@ -282,7 +318,7 @@ jobs:
           for tgz in "$RUNNER_TEMP"/tarballs/*.tgz; do
             echo "::group::$(basename "$tgz")"
             bunx publint@0.3.21 "$tgz"
-            bunx @arethetypeswrong/cli@0.18.4 --profile esm-only "$tgz"
+            bunx @arethetypeswrong/cli@0.18.4 "$tgz" --profile esm-only
             echo "::endgroup::"
           done
 
@@ -332,13 +368,13 @@ jobs:
     name: CI Success
     if: always()
     # `package` is the consolidated matrix job: its single `result` aggregates
-    # every leg (roller, games, mcp, discord-bot, api, site) — if
+    # every leg (roller, games, mcp, ui, notation-spec, discord-bot, api, site) — if
     # any leg fails, the aggregate is `failure`, so listing it once still covers
-    # all six packages. `repo` runs the repo-wide gates, including the
+    # all eight packages. `repo` runs the repo-wide gates, including the
     # `ci-aggregator` step that guards this very list.
     #
     # `changes` is listed even though nothing here reads its outputs: a failure in
-    # it leaves its four dependents `skipped` rather than `failure`, and the loop
+    # it leaves its three dependents `skipped` rather than `failure`, and the loop
     # below treats skipped as a pass — so without it, a broken matrix build was a
     # green gate. (Found by `ci-aggregator` on its first run.)
     needs:

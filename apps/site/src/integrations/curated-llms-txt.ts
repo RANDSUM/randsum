@@ -8,7 +8,7 @@ import { fileURLToPath } from 'node:url'
  *
  * starlight-page-actions writes dist/llms.txt in its own astro:build:done hook
  * (because `baseUrl` is set), and that overwrote any public/ copy: the live
- * file was a bare URL list with no /api/roll contract. This integration runs
+ * file was a bare URL list with no curated API section. This integration runs
  * after it (it is listed after `starlight()`, and Starlight splices plugin
  * integrations in directly behind itself), keeps the generated page list, and
  * prepends the curated text from the one hand-edited source, the repo root.

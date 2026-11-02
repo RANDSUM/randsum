@@ -2,7 +2,7 @@
 
 TTRPG game packages for the RANDSUM dice ecosystem. Each game subpath wraps [@randsum/roller](https://www.npmjs.com/package/@randsum/roller) with game-specific input validation, roll configuration, and result interpretation.
 
-ESM-only. The only dependency is `@randsum/roller`, which is **[RDN Level 3 (Extended) Conformant](https://randsum.dev/spec/)**. Game subpaths never depend on each other.
+ESM-only. The only dependency is `@randsum/roller`, which is **[RDN Level 4 (Full) Conformant](https://notation.randsum.dev/)**. Game subpaths never depend on each other.
 
 ## Install
 
@@ -16,7 +16,7 @@ npm install @randsum/games
 
 | Subpath                       | Game System               | Dice              |
 | ----------------------------- | ------------------------- | ----------------- |
-| `@randsum/games/blades`       | Blades in the Dark        | 0-4d6 pool        |
+| `@randsum/games/blades`       | Blades in the Dark        | 0-10d6 pool       |
 | `@randsum/games/daggerheart`  | Daggerheart               | 2d12 Hope + Fear  |
 | `@randsum/games/fate`         | Fate Core                 | 4dF + modifier    |
 | `@randsum/games/fifth`        | D&D 5th Edition           | 1d20 + modifier   |
@@ -64,7 +64,7 @@ const { result } = roll({ modifier: 3 })
 ```typescript
 import { roll } from "@randsum/games/root-rpg"
 
-const { result } = roll({ modifier: 2 })
+const { result } = roll({ bonus: 2 })
 // result: 'strong_hit' | 'weak_hit' | 'miss'
 ```
 
@@ -77,15 +77,18 @@ const { result } = roll("Core Mechanic")
 
 ## Error Handling
 
-All game subpaths throw `SchemaError` on invalid input:
+Game subpaths throw `ValidationError` (from `@randsum/roller`) for numeric input that is out of range, not an integer or not finite, and `SchemaError` for game-specific problems such as an invalid enum value or table name:
 
 ```typescript
 import { roll, SchemaError } from "@randsum/games/fifth"
+import { ValidationError } from "@randsum/roller"
 
 try {
   roll({ modifier: Infinity })
 } catch (error) {
-  if (error instanceof SchemaError) {
+  if (error instanceof ValidationError) {
+    console.log(error.code) // 'VALIDATION_ERROR'
+  } else if (error instanceof SchemaError) {
     console.log(error.code) // e.g. 'INVALID_INPUT_TYPE'
   }
 }
@@ -96,13 +99,13 @@ try {
 Each subpath exports its own game-specific result type (e.g. `BladesRollResult`,
 `FateRollResult`, `FifthRollResult`) plus the shared types:
 
-- `GameRollResult` -- the full return type from `roll()`
-- `RollRecord` -- raw dice data from the core roller
-- `SchemaErrorCode` -- union type of error codes
+- `GameRollResult`: the full return type from `roll()`
+- `RollRecord`: raw dice data from the core roller
+- `SchemaErrorCode`: union type of error codes
 
 and the value:
 
-- `SchemaError` -- error class thrown on invalid input
+- `SchemaError`: error class thrown on invalid input
 
 ```typescript
 import { roll, SchemaError } from "@randsum/games/blades"
@@ -128,12 +131,12 @@ import {
 } from "@randsum/games/schema"
 ```
 
-It also exports the spec types (`RandSumSpec`, `ValidationResult`, `ValidationError`,
+It also exports the spec types (`RandSumSpec`, `ValidationResult`, `SpecValidationIssue`,
 `SchemaErrorCode`, and the spec-section types).
 
 ## Documentation
 
-Full documentation at [randsum.dev](https://randsum.dev/games/overview/).
+Full documentation at [randsum.dev](https://randsum.dev/games/introduction/).
 
 ## License
 

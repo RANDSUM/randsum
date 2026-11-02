@@ -1,0 +1,48 @@
+---
+// @randsum/ui on the landing page: the Mini roller, live, beside the two lines
+// that put it in an app.
+import Button from '../ui/Button.astro'
+import CodeFrame from '../ui/CodeFrame.astro'
+import Section from '../ui/Section.astro'
+import ServerRoller from '../rollers/ServerRoller.astro'
+
+const codeExample = [
+  '<script type="module">',
+  "  import '@randsum/ui/roller'",
+  '</script>',
+  '',
+  '<randsum-roller size="mini" notation="4d6L"></randsum-roller>'
+].join('\n')
+---
+
+<Section
+  id="ui"
+  product="ui"
+  title="Put the roller in your app"
+  lede="The roller on this page is a Web Component: one element in Max, Compact and Mini sizes, for any page or framework. @randsum/ui ships it, every part it is built from, React and Vue wrappers, Svelte types and React Native components, each as an import of its own."
+>
+  <Button slot="actions" href="/ui/getting-started/" variant="product" product="ui">
+    Get the components
+  </Button>
+  <Button slot="actions" href="/ui/components/" variant="secondary">Every component</Button>
+  <div class="ui-section">
+    <CodeFrame label="index.html" code={codeExample} lang="html" />
+    <ServerRoller class="not-content ui-demo" size="mini" notation="4d6L" />
+  </div>
+</Section>
+
+<style>
+.ui-section {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+  align-items: center;
+  gap: 2.5rem;
+}
+
+@media (max-width: 900px) {
+  .ui-section {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+}
+</style>

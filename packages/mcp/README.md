@@ -22,7 +22,7 @@ Every tool is annotated read-only and closed-world (`readOnlyHint: true`, `openW
 
 ### `roll`
 
-Rolls [RANDSUM dice notation](https://randsum.dev/spec/) (e.g. `4d6L`,
+Rolls [RANDSUM dice notation](https://notation.randsum.dev/) (e.g. `4d6L`,
 `2d20+5`, `1d100`). Pass an integer `seed` for a deterministic, reproducible
 roll.
 

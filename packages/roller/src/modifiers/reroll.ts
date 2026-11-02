@@ -4,7 +4,6 @@ import { ModifierError } from '../errors'
 import { matchesComparison, validateComparisonOptions } from '../lib/comparison'
 import { MAX_REROLL_ATTEMPTS } from '../lib/constants'
 import type { ModifierDefinition } from './schema'
-import { assertRollFn } from './schema'
 
 function rerollSingle(
   roll: number,
@@ -12,7 +11,7 @@ function rerollSingle(
   rollOne: () => number,
   attempt = 0
 ): number {
-  if (attempt >= MAX_REROLL_ATTEMPTS) {
+  if (attempt >= (options.once ? 1 : MAX_REROLL_ATTEMPTS)) {
     return roll
   }
 
@@ -28,7 +27,7 @@ export const rerollModifier: ModifierDefinition<RerollOptions> = {
   requiresRollFn: true,
 
   apply: (rolls, options, ctx) => {
-    const { rollOne } = assertRollFn(ctx)
+    const { rollOne } = ctx
     const { max } = options
 
     // Linear single-pass accumulation: push into one array instead of

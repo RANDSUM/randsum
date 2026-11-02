@@ -15,33 +15,44 @@
         "src/trace/index.ts",
         "src/docs/index.ts"
       ],
-      "project": ["src/**/*.ts", "!src/**/*.test.ts"],
-      "includeEntryExports": true
+      "project": ["src/**/*.ts", "!src/**/*.test.ts"]
     },
     "packages/games": {
       "entry": ["src/index.ts", "src/schema.ts", "src/*.generated.ts", "__tests__/**/*.ts"],
-      "project": ["src/**/*.ts", "__tests__/**/*.ts"],
-      "includeEntryExports": true
+      "project": ["src/**/*.ts", "__tests__/**/*.ts"]
     },
     "packages/mcp": {
-      "entry": ["src/index.ts", "src/remote.ts", "__tests__/**/*.test.ts"],
-      "project": ["src/**/*.ts", "__tests__/**/*.ts"],
-      "includeEntryExports": true
+      "entry": ["src/remote.ts", "__tests__/**/*.test.ts"],
+      "project": ["src/**/*.ts", "__tests__/**/*.ts"]
+    },
+    "packages/notation-spec": {
+      "entry": ["src/index.ts", "src/cli.ts", "examples/**/*.ts", "__tests__/**/*.test.ts"],
+      "project": ["src/**/*.ts", "examples/**/*.ts", "__tests__/**/*.ts"]
+    },
+    "packages/ui": {
+      "entry": [
+        "src/*.ts",
+        "src/native/*.ts",
+        "src/react/*.ts",
+        "src/vue/*.ts",
+        "scripts/*.ts",
+        "__tests__/**/*.{ts,tsx}"
+      ],
+      "project": ["src/**/*.ts", "scripts/*.ts", "__tests__/**/*.{ts,tsx}"]
     },
     "apps/api": {
-      "entry": ["src/index.ts"],
       "project": ["src/**/*.ts"]
     },
     "apps/discord-bot": {
-      "entry": ["src/worker/index.ts", "src/deploy-commands.ts"],
-      "project": ["src/**/*.ts"]
+      "entry": ["__tests__/**/*.ts"],
+      "project": ["src/**/*.ts", "__tests__/**/*.ts"]
     },
     "apps/site": {
+      "entry": ["scripts/*.ts", "src/routeData.ts", "src/components/rollers/UiDemo.tsx"],
       "ignoreDependencies": ["@astrojs/ts-content-mapper", "satteri"]
     }
   },
-  "ignoreBinaries": ["skills-ref"],
-  "ignore": ["**/bunup.config.ts", "**/*.generated.ts", "apps/site/public/app/sw.js"],
+  "ignore": ["**/*.generated.ts", "apps/site/public/app/sw.js", "apps/site/app-public/sw.js"],
   "exclude": ["optionalPeerDependencies", "unresolved"],
   "ignoreExportsUsedInFile": true
 }

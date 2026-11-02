@@ -21,7 +21,8 @@ const columns = [
     links: [
       { label: 'GitHub', href: 'https://github.com/RANDSUM/randsum' },
       { label: 'npm', href: 'https://www.npmjs.com/org/randsum' },
-      { label: 'Discord bot', href: '/discord/' }
+      { label: 'Discord bot', href: '/tools/discord-bot/' },
+      { label: 'Privacy', href: '/privacy/' }
     ]
   }
 ] as const
@@ -43,7 +44,7 @@ const year = new Date().getFullYear()
           {PRODUCTS.map(product => (
             <li style={`--p: var(--product-${product.id}-fill)`}>
               <a href={product.href} class="footer-product">
-                <PipMark variant="knockout" size={14} />
+                <PipMark variant="knockout" product={product.id} size={14} />
                 {PRODUCT_LABELS[product.id]}
               </a>
             </li>
@@ -70,7 +71,10 @@ const year = new Date().getFullYear()
       ))}
     </nav>
   </div>
-  <p class="footer-legal">&copy; {year} RANDSUM. Open source under the MIT license.</p>
+  <p class="footer-legal">
+    &copy; {year} RANDSUM, made by <a href="https://alxjrvs.com/" rel="author">Alex Jarvis</a>. Open
+    source under the MIT license.
+  </p>
 </footer>
 
 <style>
@@ -157,6 +161,14 @@ const year = new Date().getFullYear()
   margin: 2.5rem 0 0;
   font-size: var(--rs-text-xs);
   color: var(--rs-gray-3);
+}
+
+.footer-legal a {
+  color: var(--rs-gray-2);
+}
+
+.footer-legal a:hover {
+  color: var(--rs-fg);
 }
 
 @media (max-width: 900px) {

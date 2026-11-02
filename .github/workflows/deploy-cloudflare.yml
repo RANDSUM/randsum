@@ -190,9 +190,12 @@ jobs:
             changed=ALL
           fi
 
+          # The site build also reads outside apps/: the repo-root llms.txt (its
+          # dist/llms.txt) and plugins/ (the Claude Code plugin page embeds the
+          # skill's Markdown). .bun-version is the runtime every deploy builds on.
           deploy=false
           commands=false
-          if [ "$changed" = ALL ] || grep -qE '^(apps/(site|discord-bot|api)/|packages/|bun\.lock$|\.github/workflows/deploy-cloudflare\.yml$)' <<< "$changed"; then
+          if [ "$changed" = ALL ] || grep -qE '^(apps/(site|discord-bot|api)/|packages/|plugins/|llms\.txt$|\.bun-version$|bun\.lock$|\.github/workflows/deploy-cloudflare\.yml$)' <<< "$changed"; then
             deploy=true
           fi
           # Only the command sources trigger registration. A command schema that
@@ -229,9 +232,24 @@ jobs:
       - name: Build
         run: bun run --filter '@randsum/site...' build
 
-      # The site's `deploy` script ships apps/site/wrangler.jsonc: static assets
-      # from dist plus the /api/roll Worker in apps/site/worker, which wrangler
-      # bundles itself, like the bot.
+      # notation.randsum.dev serves the spec: static assets in dist-notation/,
+      # which the site build above writes (scripts/build-notation.ts). It runs
+      # before the site deploy, whose _redirects send randsum.dev/spec/* here,
+      # so a redirect never lands on a host that does not serve the page yet.
+      # The assets go to the existing `randsum-rdn` Worker, which keeps the
+      # hostname's Custom Domain (docs/operations.md).
+      - name: Deploy notation.randsum.dev
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: |
+          if [ -z "$CLOUDFLARE_API_TOKEN" ]; then
+            echo "::error::CLOUDFLARE_API_TOKEN is not set — cannot deploy."
+            exit 1
+          fi
+          bun run --filter @randsum/site deploy:notation
+
+      # The site's `deploy` script ships apps/site/wrangler.jsonc: an assets-only
+      # Worker serving dist, with redirects from dist/_redirects.
       - name: Deploy
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
@@ -242,11 +260,10 @@ jobs:
           fi
           bun run --filter @randsum/site deploy
 
-      # notation.randsum.dev answers with a 301 to randsum.dev/spec. It runs
-      # after the site deploy so the redirect never points at pages that are
-      # not live yet. The script goes to the existing `randsum-rdn` Worker, which
-      # keeps the hostname's Custom Domain (docs/operations.md).
-      - name: Deploy notation.randsum.dev redirect
+      # app.randsum.dev is the installable Roller: static assets in dist-app/,
+      # which the site build above writes (scripts/build-app.ts). Its custom
+      # domain route creates the hostname's DNS record on the first deploy.
+      - name: Deploy app.randsum.dev
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
         run: |
@@ -254,7 +271,7 @@ jobs:
             echo "::error::CLOUDFLARE_API_TOKEN is not set — cannot deploy."
             exit 1
           fi
-          bun run --filter @randsum/site deploy:notation
+          bun run --filter @randsum/site deploy:app
 
   bot:
     name: bot.randsum.dev

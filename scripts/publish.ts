@@ -34,7 +34,15 @@ process.env['RANDSUM_PUBLISH_SCRIPT'] = '1'
  * Packages must be published in dependency order so that downstream
  * packages can resolve their dependencies on the registry.
  */
-const PUBLISH_ORDER: readonly string[] = ['packages/roller', 'packages/games', 'packages/mcp']
+const PUBLISH_ORDER: readonly string[] = [
+  'packages/roller',
+  'packages/games',
+  'packages/mcp',
+  // React components over roller; nothing depends on it.
+  'packages/ui',
+  // Depends on roller only for its tests and reference adapter, so its place is free.
+  'packages/notation-spec'
+]
 
 interface PublishablePackage {
   readonly name: string
@@ -67,11 +75,8 @@ async function getPublishablePackages(): Promise<PublishablePackage[]> {
  * semver range at pack time — `bun pm pack` does this. If a tarball ever ships `workspace:~`
  * to the registry, `npm install` of that package hard-fails with
  * `EUNSUPPORTEDPROTOCOL Unsupported URL Type "workspace:"`, making it completely uninstallable.
- *
- * This exact failure shipped in the legacy standalone game packages (@randsum/salvageunion,
- * daggerheart, blades, fifth, root-rpg, pbta) when they were published with a raw `npm publish`
- * (which does NOT resolve `workspace:`) before this script existed. This guard makes that class
- * of breakage impossible to publish again, independent of which tool packed the tarball.
+ * This guard makes that class of breakage impossible to publish, independent of which tool
+ * packed the tarball.
  */
 async function assertNoWorkspaceProtocol(tgzPath: string, name: string): Promise<void> {
   const manifestText = await $`tar -xzOf ${tgzPath} package/package.json`.text()

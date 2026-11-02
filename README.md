@@ -14,7 +14,7 @@
 
 </div>
 
-**[RDN v0.9.0 Level 3 (Extended) Conformant](https://randsum.dev/spec/)** — Level 4 (Full) is partial: conformance vector 39 (`!s{}`) is a known gap
+**[RDN v0.9.0 Level 4 (Full) Conformant](https://notation.randsum.dev/)**
 
 Built on **[the Butter Stack](https://alxjrvs.github.io/butter/)** — Bun · Unified workspace · TypeScript · TanStack · Edge-deployed · React.
 
@@ -34,10 +34,12 @@ This repository contains multiple packages and applications for dice rolling and
   - `@randsum/games/root-rpg` - Root RPG
   - `@randsum/games/salvageunion` - Salvage Union
 
+- **[@randsum/ui](packages/ui)** - the roller as Lit Web Components in three sizes (max, compact, mini), with React, Vue and React Native wrappers and every part importable on its own
+
 ### Applications (private)
 
 - **[@randsum/discord-bot](apps/discord-bot)** - Discord bot for dice rolling
-- **[@randsum/site](apps/site)** - Documentation site built with Astro + Starlight ([randsum.dev](https://randsum.dev)), including the RANDSUM Dice Notation specification ([randsum.dev/spec](https://randsum.dev/spec/))
+- **[@randsum/site](apps/site)** - Documentation site built with Astro + Starlight ([randsum.dev](https://randsum.dev)), including the RANDSUM Dice Notation specification ([notation.randsum.dev](https://notation.randsum.dev/))
 
 ### For AI agents
 
@@ -139,7 +141,7 @@ Bun automatically handles inter-package dependencies through workspace linking, 
 
 ### Key Resources
 
-- [RANDSUM Dice Notation (RDN) Specification](https://randsum.dev/spec/) - Formal spec for dice notation syntax
+- [RANDSUM Dice Notation (RDN) Specification](https://notation.randsum.dev/) - Formal spec for dice notation syntax
 - [Documentation](https://randsum.dev)
 - [Sophie's Dice Notation](https://sophiehoulden.com/dice/documentation/notation.html) - a great dice notation guide that helped me along the way
 - [\_why's poignant guide to ruby](https://poignant.guide/) - \_why not?
@@ -157,7 +159,7 @@ steps — see [`docs/operations.md`](docs/operations.md).
 
 RANDSUM is actively evolving. Track in-flight epics on the [public project board](https://github.com/orgs/RANDSUM/projects/2/views/1) — published packages, upcoming game systems (Pathfinder 2e, Ironsworn), the typed notation template literal layer, and the dice mechanic spec format are all queued there.
 
-- **Discord:** [randsum.dev/discord](https://randsum.dev/discord/) — questions, feedback, game requests
+- **Discord bot:** [randsum.dev/tools/discord-bot](https://randsum.dev/tools/discord-bot/)
 - **Issues & ideas:** [GitHub Issues](https://github.com/RANDSUM/randsum/issues)
 - **Open PRs:** see [`CONTRIBUTING.md`](CONTRIBUTING.md) for the dev loop
 

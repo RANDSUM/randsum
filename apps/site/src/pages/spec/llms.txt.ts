@@ -1,7 +1,8 @@
 import type { APIRoute } from 'astro'
 import { getLatestVersion } from '../../spec/versions'
+import { NOTATION_ORIGIN, SITE_ORIGIN } from '../../spec/urls'
 
-const SPEC = 'https://randsum.dev/spec'
+const SPEC = NOTATION_ORIGIN
 
 export const GET: APIRoute = async () => {
   const latest = await getLatestVersion()
@@ -21,9 +22,10 @@ ${SPEC}/llms-full.txt
 ## Links
 
 - Specification: ${SPEC}/
-- Documentation: https://randsum.dev
-- GitHub: https://github.com/RANDSUM/randsum
-- npm: https://www.npmjs.com/package/@randsum/roller
+- Conformance vectors: ${SPEC}/conformance/v${latest}.json
+- Documentation: ${SITE_ORIGIN}
+- GitHub: https://github.com/RANDSUM/notation-spec
+- npm: https://www.npmjs.com/package/@randsum/notation-spec
 `
   return new Response(body, { headers: { 'Content-Type': 'text/plain; charset=utf-8' } })
 }

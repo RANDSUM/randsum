@@ -1,0 +1,91 @@
+/* The @randsum/ui elements wear the site theme: each --rsui-* token is mapped
+   onto the matching --rs-* token from theme.css. Tokens inherit through the
+   elements' Shadow DOM, so they are set on the element or a wrapper around
+   its parts. The accent is the Roller's colour, and the App's inside the
+   installable app. */
+randsum-roller,
+.site-rsui {
+  --rsui-accent: var(--product-roller-fill);
+  --rsui-on-accent: var(--rs-ink);
+  --rsui-bg: var(--rs-bg);
+  --rsui-surface: var(--rs-code-bg);
+  --rsui-raised: var(--rs-bg);
+  --rsui-subtle: var(--rs-gray-6);
+  --rsui-border: var(--rs-gray-5);
+  --rsui-border-strong: var(--rs-gray-3);
+  --rsui-ink: var(--rs-fg);
+  --rsui-muted: var(--rs-gray-2);
+  --rsui-faint: var(--rs-gray-3);
+  --rsui-valid: var(--rs-success);
+  --rsui-invalid: var(--rs-error);
+  --rsui-disabled-bg: var(--rs-gray-5);
+  --rsui-disabled-ink: var(--rs-gray-3);
+  --rsui-tip-bg: var(--rs-fg);
+  --rsui-tip-ink: var(--rs-bg);
+  --rsui-shadow-pop: var(--rs-shadow-overlay);
+  --rsui-font: var(--rs-font-sans);
+  --rsui-font-mono: var(--rs-font-mono);
+  --rsui-radius-sm: var(--rs-radius-sm);
+  --rsui-radius-md: var(--rs-radius-md);
+  --rsui-radius-lg: var(--rs-radius-lg);
+  --rsui-weight-regular: var(--rs-weight-regular);
+  --rsui-weight-medium: var(--rs-weight-medium);
+  --rsui-weight-semibold: var(--rs-weight-semibold);
+  --rsui-weight-bold: var(--rs-weight-bold);
+  --rsui-weight-heavy: var(--rs-weight-heavy);
+}
+
+html[data-product='app'] :where(randsum-roller, .site-rsui) {
+  --rsui-accent: var(--product-app-fill);
+}
+
+/* The UI demos, in the docs and on the landing page, wear the UI product's colour */
+.ui-demo :is(randsum-roller, .site-rsui) {
+  --rsui-accent: var(--product-ui-fill);
+}
+
+/* Starlight styles bare links and lists inside docs content; the rollers are
+   rendered with .not-content, and their footer action is a plain text button. */
+.site-roller-action {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--rs-gray-2);
+  font: inherit;
+  cursor: pointer;
+}
+
+.site-roller-action:hover {
+  color: var(--rs-fg);
+}
+
+/* The installable app: Max fills the page under the app bar */
+.app-roller {
+  flex: 1;
+  width: 100%;
+  max-width: 72rem;
+  margin-inline: auto;
+  padding: 1rem;
+  align-content: start;
+}
+
+/* The UI docs' demos sit in the page flow with room around them */
+.ui-demo {
+  margin-block: 1.5rem;
+}
+
+.ui-demo-parts {
+  display: grid;
+  gap: 1rem;
+}
+
+.ui-demo-row {
+  display: flex;
+  gap: 0.5rem;
+  align-items: stretch;
+}
+
+.ui-demo-grow {
+  flex: 1;
+  min-width: 0;
+}

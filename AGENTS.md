@@ -9,10 +9,12 @@ Bun workspace monorepo for a dice rolling ecosystem targeting tabletop RPGs. All
 - **`@randsum/roller`** (`packages/roller/`): zero-dependency dice engine with built-in notation parsing and validation. Every other package depends on it via `workspace:~`.
 - **`@randsum/games`** (`packages/games/`): code-generated game interpretations as subpath exports: `blades`, `daggerheart`, `fate`, `fifth` (D&D 5e), `pbta`, `root-rpg`, `salvageunion`, plus `schema` (the codegen/validation API).
 - **`@randsum/mcp`** (`packages/mcp/`): MCP server exposing `roll`, `validate` and `roll_game`.
+- **`@randsum/ui`** (`packages/ui/`): the roller as Lit Web Components (`<randsum-roller size="mini|compact|max">` plus each part as its own element), one subpath per element (lodash style), with `react/`, `vue/`, `native/` (React Native), `svelte` types and `ssr`; no root entry. Depends on roller and lit; React, React Native, Vue, Svelte and `@lit-labs/ssr` are optional peers.
+- **`@randsum/notation-spec`** (`packages/notation-spec/`): the RANDSUM Dice Notation spec, its conformance vectors (JSON) and the `rdn-conformance` runner. Source of truth for all three; mirrored to github.com/RANDSUM/notation-spec.
 - **`@randsum/api`** (`apps/api/`, private): Cloudflare Worker at api.randsum.dev serving the `/v1` REST API and `/mcp`, the hosted `@randsum/mcp` behind the Claude connector.
 - **`@randsum/discord-bot`** (`apps/discord-bot/`, private): Discord bot, a Cloudflare Worker at bot.randsum.dev.
-- **`@randsum/site`** (`apps/site/`, private): Astro + Starlight docs site at randsum.dev. It also serves the notation spec at `/spec` and the installable Roller app at `/app`, and owns the web-only React dice components in `src/components/dice-ui/`.
-- **Claude Code plugin** (`plugins/randsum/`): the `randsum` plugin that the root `.claude-plugin/marketplace.json` publishes. Four skills, a `/roll` mod in `hooks/` (it rolls with a committed bundle of roller's `roll()`, rebuilt by `bun run plugin:roller`), and its own `.mcp.json`, which connects only the hosted MCP at `https://api.randsum.dev/mcp`. The root `.mcp.json` holds the maintainers' ops servers and never ships.
+- **`@randsum/site`** (`apps/site/`, private): Astro + Starlight docs site at randsum.dev. It builds the notation spec, served at notation.randsum.dev (randsum.dev 301s `/spec` there), and the Roller app at app.randsum.dev, whose product page is `/app`. Its rollers are `@randsum/ui` components, wrapped in `src/components/rollers/` and server-rendered by `ServerRoller.astro`.
+- **Claude Code plugin** (`plugins/randsum/`): the `randsum` plugin that the root `.claude-plugin/marketplace.json` publishes. Four skills, a `/roll` mod in `hooks/` (it rolls with a committed bundle of roller's `roll()`, rebuilt by `bun run plugin:roller`), and its own `.mcp.json`, which connects only the hosted MCP at `https://api.randsum.dev/mcp`. The root `.mcp.json` holds the maintainers' ops servers and never ships. Maintainer notes are in `plugins/AGENTS.md`; the plugin's README is its directory listing.
 
 Game packages never depend on each other, only on `@randsum/roller`.
 
@@ -57,9 +59,8 @@ Run `bun run check` before you push. `bun test` does not typecheck, so a passing
 
 - `bun:test` (`import { describe, expect, test } from 'bun:test'`), in `__tests__/` directories
 - Property-based tests use `fast-check` with a `.property.test.ts` suffix
-- Stress tests use 9999 iterations
+- Stress tests import `STRESS_ITERATIONS` from `__tests__/stressIterations.ts`
 - Seeded random: `createSeededRandom(42)` from test-utils
-- Coverage target: 80% project, 70% patch (Codecov)
 
 ## Build Output
 
@@ -67,7 +68,7 @@ Publishable packages produce ESM only: `dist/<entry>.js` plus `dist/<entry>.d.ts
 
 ## Releases
 
-Releases are automated with changesets and npm Trusted Publishing. Your part is one step: add a changeset with `bun run changeset` when a published package (`roller`, `games`, `mcp`) changes. `roller` and `games` are linked and version together; `bun run check:changesets` fails when a changeset releases roller or games without also releasing mcp, which bundles them.
+Releases are automated with changesets and npm Trusted Publishing. Your part is one step: add a changeset with `bun run changeset` when a published package (`roller`, `games`, `mcp`, `ui`, `notation-spec`) changes. `roller` and `games` are linked and version together; `bun run check:changesets` fails when a changeset releases roller or games without also releasing mcp, which bundles them.
 
 Never run `npm publish` or `bun publish` yourself: npm would ship the literal `workspace:~` range. Publishing goes only through `scripts/publish.ts`. The release workflow is described in `CONTRIBUTING.md`.
 
@@ -75,7 +76,7 @@ Never run `npm publish` or `bun publish` yourself: npm would ship the literal `w
 
 - **Code-generated games**: each game is a `.randsum.json` spec compiled by `packages/games/codegen.ts` into `packages/games/src/<game>.generated.ts`. Edit the spec, then `bun run --filter @randsum/games gen`; never edit generated files.
 - **Modifier registry**: `MODIFIER_SCHEMAS` in `packages/roller/src/notation/definitions/index.ts` is the single source of truth for which modifiers exist and their execution order. Each modifier is split into a schema (`src/notation/definitions/<mod>.ts`) and a behavior (`src/modifiers/<mod>.ts`). See `packages/roller/AGENTS.md`.
-- **Notation spec**: https://randsum.dev/spec/ is the formal specification (taxonomy, pipeline, conformance, syntax).
+- **Notation spec**: https://notation.randsum.dev/ is the formal specification (taxonomy, pipeline, conformance, syntax). Its source is `packages/notation-spec/spec/`; the conformance vectors are `packages/notation-spec/vectors/`.
 
 ```typescript
 roll(20) // Number: 1d20
@@ -99,12 +100,13 @@ Key syntax: `NdS`, `+X`/`-X`, `L`/`H` (drop lowest/highest), `R{<3}` (reroll), `
 ## Git Hooks (Lefthook)
 
 - **pre-commit**: `bun install --frozen-lockfile`, then in parallel Biome (`check --write`), typecheck and `gen:check`.
-- **pre-push**: build, then in parallel `gen:check`, conformance check (`@randsum/site conformance:check`), tests and knip.
+- **pre-push**: build, then in parallel `gen:check`, tests and knip.
 
 A failing step prints its own fix (`fail_text` in `lefthook.yml`). Do not `--no-verify` past a real failure. CI never installs the hooks.
 
 ## Troubleshooting
 
+- **Fresh tree**: `@randsum/*` resolve to `dist/`, so run `bun run build` before typecheck or tests; TS2307 or `Cannot find module '@randsum/roller'` means it has not run.
 - **Biome**: the common failures are the `no-let` plugin, `useImportType`, the `as unknown as T` plugin, and the site's design-token plugins (`no-raw-color`, `no-raw-type`, `no-raw-shape`, `no-uppercase-labels`, `no-decorative-gradient`), which reject raw design values outside `apps/site/src/styles/theme.css` (see `apps/site/AGENTS.md`).
 - **Types**: `isolatedDeclarations` wants explicit return types; `exactOptionalPropertyTypes` rejects assigning `undefined` to an optional property whose type lacks `| undefined`; `noUncheckedIndexedAccess` makes index access return `T | undefined`.
 - **Bundle size**: usually a heavy import leaked into an entry. For roller's `dist/tokenize.js`, see `packages/roller/AGENTS.md`.

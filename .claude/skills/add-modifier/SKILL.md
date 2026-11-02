@@ -24,7 +24,7 @@ Confirm all of the following before writing code. If any are missing, ask:
 
 ## Classify
 
-Use the spec's derivation status (Primitive / Alias / Macro — https://randsum.dev/spec/, source `apps/site/src/content/specs/v0.9.0.md`):
+Use the spec's derivation status (Primitive / Alias / Macro — https://notation.randsum.dev/, source `packages/notation-spec/spec/v0.9.0.md`):
 
 - **Primitive** — irreducible behavior. Gets its own `apply`.
 - **Alias** — same behavior as an existing primitive at a different priority or with a trivial transform. Reuse an existing behavior factory instead of duplicating logic: `createScaleBehavior` (`modifiers/shared/scale.ts`) or `createAccumulatingExplosionBehavior` (`modifiers/shared/explosion.ts`). `minus` and `multiplyTotal` are both `createScaleBehavior` with a different operation.
@@ -60,7 +60,7 @@ import { type NotationSchema, defineNotationSchema } from '../schema'
 export const <name>Schema: NotationSchema<<TOptions>> = defineNotationSchema<<TOptions>>({
   name: '<name>',
   priority: <n>,
-  tokenKey: '<token key>', // stable lexer token key, e.g. 'C{..}', 'drop', '+'
+  lexemeKey: '<lexeme key>', // stable lexer lexeme key, e.g. 'C{..}', 'drop', '+'
   category: '<Category>',
   pattern: /.../, // no 'g' flag
   parse: notation => {
@@ -122,8 +122,12 @@ Minimum bar: notation → options, options → notation (round-trip), one behavi
 
 ## Spec and public docs
 
-- Document the notation in the spec at `apps/site/src/content/specs/v0.9.0.md` (served at https://randsum.dev/spec/): taxonomy table, priority table, syntax section. Add a new `vX.Y.Z.md` only for a version bump; otherwise edit in place.
+- Document the notation in the spec at `packages/notation-spec/spec/v0.9.0.md` (served at https://notation.randsum.dev/): taxonomy table, priority table, syntax section. Add a new `vX.Y.Z.md` only for a version bump; otherwise edit in place.
 - Update `llms.txt` at the repo root if the public notation surface materially changes.
+- Add conformance vectors in `packages/notation-spec/vectors/v0.9.0.json` and run `bun run --filter @randsum/notation-spec test`.
+- Update `plugins/randsum/skills/dice-rolling/references/NOTATION.md` and the quick reference in `plugins/randsum/skills/dice-rolling/SKILL.md`.
+- Run `bun run plugin:roller` so the plugin's `/roll` bundle picks up the modifier.
+- Add a changeset (`bun run changeset`) releasing `@randsum/roller`, `@randsum/games` and `@randsum/mcp`.
 
 ## Verification (in order)
 

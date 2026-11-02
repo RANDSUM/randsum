@@ -15,57 +15,16 @@ Each game's `roll()` returns a `GameRollResult<TResult, TDetails, TRollRecord>` 
 
 Every enum-like `result` string is `snake_case` across all games (e.g. `strong_hit`, `weak_hit`, `miss`, `critical_hope`, `legendary`). This is a stable, machine-friendly contract — switch on these values in code, and derive any human-readable label (e.g. `"Strong Hit"`) at the display layer. Free-text strings pulled from data tables (e.g. Salvage Union's `remoteTableLookup` result text) are data, not enums, and are left verbatim.
 
-## Directory Structure
+## Layout
 
-```
-packages/games/
-  *.randsum.json          # Game specs (one per game, at package root)
-  randsum.json            # Meta-schema for spec validation
-  codegen.ts              # Codegen entry point
-  src/
-    *.generated.ts        # Generated game modules (DO NOT EDIT)
-    index.ts              # Root export (re-exports AVAILABLE_GAMES, GameRollResult, SchemaError)
-    availableGames.generated.ts  # Generated AVAILABLE_GAMES constant (do not edit)
-    types.ts              # GameRollResult generic type
-    schema.ts             # ./schema subpath: validateSpec, resolveExternalRefs, generateCode, specToFilename, lookupByRange, SchemaError + spec types
-    lib/
-      codegen/            # Code generation pipeline (body/details/modifiers/outcome emitters)
-      codegen.ts          # generateCode() function
-      normalizer.ts       # Spec normalization to IR
-      normalizedTypes.ts  # NormalizedRollDefinition IR types
-      types.ts            # Internal spec types (RandSumSpec)
-      errors.ts           # SchemaError class
-      lookupByRange.ts    # Range-based table lookup helper
-      validator.ts        # Spec validation via ajv
-      refResolver.ts      # $ref resolution within specs
-      externalRefResolver.ts  # Remote URL resolution
-  __tests__/
-    <shortcode>.test.ts           # Unit tests per game
-    <shortcode>.property.test.ts  # Property-based tests per game
-    build-smoke.test.ts           # Build output verification
-  __fixtures__/
-    salvageunion-tables.json      # Checked-in remote table snapshot (codegen reads this by default)
-```
+- `src/schema.ts`: the `./schema` subpath (validateSpec, resolveExternalRefs, generateCode, specToFilename, lookupByRange, SchemaError, spec types)
+- `__fixtures__/salvageunion-tables.json`: checked-in remote table snapshot that codegen reads by default
 
 ## .randsum.json Spec Format
 
-Each spec declares a four-stage pipeline: Dice -> Modify -> Resolve -> Outcome.
+Format guide: `docs/randsum-json-schema.md`. Specs reference sections with `{ "$ref": "#/tables/coreMechanic" }` and inputs with `{ "$input": "rating" }`. The meta-schema `randsum.json` (`$id` https://randsum.dev/schemas/v1/randsum.json) is authoritative.
 
-Key sections:
-
-- **`pools`** - Named dice pool definitions (`{ sides: N }`)
-- **`tables`** - Lookup tables with range/exact/poolCondition entries
-- **`outcomes`** - Result resolution via `tableLookup` or inline ranges
-- **`roll.inputs`** - Typed user inputs (integer, string) with validation
-- **`roll.dice`** - Pool ref + quantity (can reference inputs)
-- **`roll.modify`** - Modifier chain (keepHighest, keepLowest, etc.)
-- **`roll.resolve`** - Resolution strategy (`"sum"` or `remoteTableLookup`)
-- **`roll.outcome`** - Outcome ref for result classification
-- **`roll.when`** - Conditional overrides based on input values
-
-Specs reference internal sections via `{ "$ref": "#/tables/coreMechanic" }` and inputs via `{ "$input": "rating" }`.
-
-Meta-schema: `randsum.json` at package root. Declared `$id`: `https://randsum.dev/schemas/v1/randsum.json`.
+After changing `randsum.json`, copy it byte-for-byte to `apps/site/public/schemas/v1/randsum.json` (`apps/site/__tests__/schema-sync.test.ts` fails otherwise), then run `bun run --filter @randsum/games gen:check`.
 
 ## Codegen Pipeline
 
@@ -100,6 +59,7 @@ Read [`docs/randsum-json-schema.md`](./docs/randsum-json-schema.md) first — it
 3. Add a subpath export in `package.json` under `"exports"` (follow existing pattern). The `exports` field is hand-maintained — bunup's `exports: true` auto-writer is intentionally disabled because its common-prefix inference breaks when entries are added. `__tests__/exports-sync.test.ts` guards against drift.
 4. Write `__tests__/<shortcode>.test.ts` and `__tests__/<shortcode>.property.test.ts`
 5. Run `bun run --filter @randsum/games check` to verify everything passes
+6. Run the root `bun run typecheck`, which enforces `GAME_INPUTS` in `packages/mcp/src/tools/rollGame.ts`. Nothing enforces these, so update them by hand: the `roll_game` description in `packages/mcp/src/server.ts`, the plugin's `plugins/randsum/skills/dice-rolling/references/GAME_SYSTEMS.md`, `plugins/randsum/skills/randsum-library/references/GAMES.md` and the dice-rolling skill description, a bot command in `apps/discord-bot/src/commands/`, the site's `gamePackages` (`apps/site/src/utils/packageData.ts`) and `apps/site/src/utils/gameSchemas.ts`, `llms.txt`, and the games list in the root `AGENTS.md`.
 
 To change the codegen pipeline itself (new resolve strategy, new pool shape, new condition type), see `docs/codegen-extension.md`.
 
@@ -130,10 +90,8 @@ bun run --filter @randsum/games check        # Full check (build + typecheck + t
 - Bundle size budgets come from `.size-limit.ts`, which derives one entry per `src/*.generated.ts`, so a new game needs no entry.
 - Remote data (e.g., Salvage Union tables) is read from the checked-in `__fixtures__/` snapshot at codegen time and baked into generated code. Codegen is hermetic (no network) unless `--refresh-remote` is passed; zero runtime network calls either way.
 
-For the formal modifier taxonomy and classification system, see https://randsum.dev/spec/.
+For the formal modifier taxonomy and classification system, see https://notation.randsum.dev/.
 
 ## Publishing
 
-Publish only via `bun scripts/publish.ts` (see `CONTRIBUTING.md`). Never `npm publish` or a direct `bun publish`. In-repo `sideEffects` stays `true` (bunup self-DCE otherwise breaks `dist/index.js`); that script flips it to `false` in the tarball. See ADR-018.
-
-See the root `AGENTS.md` for monorepo-wide conventions (TypeScript style, testing framework, build output).
+In-repo `sideEffects` stays `true` (bunup self-DCE otherwise breaks `dist/index.js`); that script flips it to `false` in the tarball. See ADR-018.

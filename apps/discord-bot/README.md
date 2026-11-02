@@ -3,7 +3,7 @@
 Discord bot for rolling dice using RANDSUM game mechanics. Runs as a Cloudflare Worker on
 Discord's HTTP interactions, at `bot.randsum.dev`.
 
-Powered by `@randsum/roller` — **[RDN v0.9.0 Level 3 (Extended) Conformant](https://randsum.dev/spec/)**
+Powered by `@randsum/roller` — **[RDN v0.9.0 Level 3 (Extended) Conformant](https://notation.randsum.dev/)**
 
 ## Features
 
@@ -142,7 +142,7 @@ src/
 2. Export a `Command` object literal with `data` (SlashCommandBuilder) and a `buildView(context)`
    renderer that returns Components V2 containers — usually via `rollContainer()` in `src/commands/lib/`
 3. Add the import and entry to `src/commands/index.ts` — the command barrel is the single source of truth (both `src/worker/index.ts` and `src/deploy-commands.ts` import from it)
-4. List it on the public pages: `apps/site/src/pages/discord.astro`, `apps/site/src/content/docs/tools/discord-bot.mdx`, `LISTING.md` and this README (`__tests__/public-copy.test.ts` checks)
+4. List it on the public pages: `apps/site/src/content/docs/tools/discord-bot.mdx`, `LISTING.md` and this README (`__tests__/public-copy.test.ts` checks)
 5. Merge — the deploy job registers it (see [Slash Commands](#slash-commands))
 
 ### Testing

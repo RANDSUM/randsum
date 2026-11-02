@@ -5,6 +5,8 @@
 ---
 
 <script>
+import sdk from '@stackblitz/sdk'
+
 // Install copy-to-clipboard
 document.querySelectorAll<HTMLButtonElement>('.install-cmd').forEach(btn => {
   btn.addEventListener('click', async () => {
@@ -34,20 +36,24 @@ document
         name: 'randsum-playground',
         version: '1.0.0',
         private: true,
+        type: 'module',
         scripts: { start: 'tsx index.ts' },
         dependencies: { '@randsum/roller': 'latest', tsx: 'latest' }
       },
       null,
       2
     )
-    const params = new URLSearchParams({
-      title: `RANDSUM — ${notation}`,
-      description: `Rolling ${notation} with @randsum/roller`,
-      template: 'node'
-    })
-    params.set('file[index.ts]', code)
-    params.set('file[package.json]', packageJson)
-    window.open(`https://stackblitz.com/run?${params.toString()}`, '_blank', 'noopener,noreferrer')
+    // StackBlitz's /run endpoint only accepts a POSTed form; a GET lands on its
+    // homepage. The SDK posts the form for us.
+    sdk.openProject(
+      {
+        title: `RANDSUM — ${notation}`,
+        description: `Rolling ${notation} with @randsum/roller`,
+        template: 'node',
+        files: { 'index.ts': code, 'package.json': packageJson }
+      },
+      { newWindow: true, openFile: 'index.ts' }
+    )
   })
 
 // Fetch npm versions live and update version badges

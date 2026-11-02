@@ -182,7 +182,7 @@ describe('explode followed by reroll (! then R{..}) is not reduction', () => {
   test('!ro{..} parses as explode + reroll once', () => {
     const modifiers = notationToOptions('4d6!ro{1}')[0]?.modifiers
     expect(modifiers?.explode).toBe(true)
-    expect(modifiers?.reroll).toEqual({ exact: [1], max: 1 })
+    expect(modifiers?.reroll).toEqual({ exact: [1], once: true })
   })
 
   test('conditional explode followed by reroll', () => {

@@ -1,0 +1,13 @@
+---
+// The inline roller in the docs: a mini roller, for any notation a page teaches.
+// Server-rendered, so it needs no React and shows before any script runs.
+import ServerRoller from './ServerRoller.astro'
+
+interface Props {
+  readonly defaultNotation: string
+}
+
+const { defaultNotation } = Astro.props
+---
+
+<ServerRoller size="mini" notation={defaultNotation} class="not-content notation-roller" />

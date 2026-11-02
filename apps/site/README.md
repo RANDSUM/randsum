@@ -25,9 +25,9 @@ bun run preview
 ```text
 src/
   content/docs/   # Starlight docs (.mdx), auto-routed
-  content/specs/  # Notation spec versions, rendered at /spec
-  pages/          # Custom landing page (index.astro) + /discord + /spec
-  spec/           # /spec layout, components and conformance vectors (not Starlight)
+  pages/          # Custom landing page (index.astro) + /spec + /conformance
+  spec/           # /spec layout and components (not Starlight); the spec text and
+                  # vectors live in packages/notation-spec
   components/     # Starlight overrides + React/Astro components
     landing/      # Landing page sections
   utils/          # packageData.ts (package metadata)
@@ -43,9 +43,8 @@ with its own layout (`src/spec/`). All other docs are Starlight pages under
 
 ## Deployment
 
-Deployed automatically to Cloudflare Workers once CI is green on `main` (static
-assets plus the `/api/roll` Worker in `worker/`, from
-`.github/workflows/deploy-cloudflare.yml`).
+Deployed automatically to Cloudflare Workers once CI is green on `main` as an
+assets-only Worker (`.github/workflows/deploy-cloudflare.yml`).
 
 ## More
 

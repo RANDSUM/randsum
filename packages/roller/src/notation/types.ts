@@ -1,3 +1,4 @@
+import type { ErrorCode } from '../errors'
 export interface ComparisonOptions {
   /** Threshold for "greater than" comparisons (strict: roll > N) */
   greaterThan?: number
@@ -26,8 +27,10 @@ export interface KeepOptions {
 }
 
 export interface RerollOptions extends ComparisonOptions {
-  /** Maximum number of rerolls allowed */
+  /** Maximum number of dice rerolled */
   max?: number
+  /** Reroll each matching die once and keep the new result (`ro{..}`) */
+  once?: boolean
 }
 
 export interface ReplaceOptions {
@@ -77,7 +80,7 @@ export interface ModifierOptions {
   reroll?: RerollOptions
   /** Ensure unique values (true or options) */
   unique?: boolean | UniqueOptions
-  /** Exploding dice: reroll and add on max value (single pass) */
+  /** Exploding dice: add a die on max value, and again while new dice explode */
   explode?: boolean | ComparisonOptions
   /** Compounding exploding: add to triggering die instead of creating new dice */
   compound?: boolean | number | ComparisonOptions
@@ -212,6 +215,12 @@ export interface ValidationErrorInfo {
    * unexpected/invalid token). Populated by the single-pass parser.
    */
   position?: number
+  /**
+   * Which check failed: `INVALID_NOTATION` when the string is not notation (or
+   * breaks a repeat limit), otherwise the code of the error `roll()` would throw
+   * for it, such as `MODIFIER_ERROR` for `2d6L3`.
+   */
+  code?: ErrorCode
 }
 
 /**

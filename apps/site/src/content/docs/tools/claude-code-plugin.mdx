@@ -1,15 +1,16 @@
 ---
-title: Claude Plugin
+title: Claude Code Plugin
 description: Claude Code plugin with skills for dice rolling, coding with RANDSUM, probability analysis, and game spec authoring, plus a /roll command that rolls without a model turn.
 ---
 
 import { Tabs, TabItem, Card, CardGrid } from '@astrojs/starlight/components'
 import CodeExample from '../../../components/live-repl/CodeExample.astro'
-import SkillContent from '../../../../../../plugins/randsum/skills/dice-rolling/SKILL.md'
-import NotationContent from '../../../../../../plugins/randsum/skills/dice-rolling/references/NOTATION.md'
-import GameSystemsContent from '../../../../../../plugins/randsum/skills/dice-rolling/references/GAME_SYSTEMS.md'
+import { compiledContent as skillContent } from '../../../../../../plugins/randsum/skills/dice-rolling/SKILL.md'
+import { compiledContent as notationContent } from '../../../../../../plugins/randsum/skills/dice-rolling/references/NOTATION.md'
+import { compiledContent as gameSystemsContent } from '../../../../../../plugins/randsum/skills/dice-rolling/references/GAME_SYSTEMS.md'
+import EmbeddedMarkdown from '../../../components/EmbeddedMarkdown.astro'
 
-RANDSUM provides a **Claude Code plugin** with four skills that give AI agents specialized knowledge for tabletop RPG dice mechanics, and a `/roll` command for rolling your own dice. It is one of the ways to [give an AI agent RANDSUM](/tools/agents/). In claude.ai, Claude Desktop or mobile, add the [Claude connector](/tools/mcp/) instead, at `https://api.randsum.dev/mcp`.
+RANDSUM provides a **Claude Code plugin** with skills that give AI agents specialized knowledge for tabletop RPG dice mechanics, and a `/roll` command for rolling your own dice. It is one of the ways to [give an AI agent RANDSUM](/tools/agents/). In claude.ai, Claude Desktop or mobile, add the [Claude connector](/tools/mcp/) instead, at `https://api.randsum.dev/mcp`.
 
 ## Available skills
 
@@ -30,7 +31,7 @@ RANDSUM provides a **Claude Code plugin** with four skills that give AI agents s
 
 ## What is a Claude Code skill?
 
-A skill is a markdown document that gives Claude specialized knowledge. When Claude loads a RANDSUM skill, it learns domain-specific concepts — dice notation syntax, probability math, or the `.randsum.json` spec format — and can apply them to your questions without you needing to explain the domain.
+A skill is a markdown document that gives Claude specialized knowledge. When Claude loads a RANDSUM skill, it learns domain-specific concepts (dice notation syntax, probability math, or the `.randsum.json` spec format) and can apply them to your questions without you needing to explain the domain.
 
 Skills activate automatically based on context. Ask naturally:
 
@@ -109,15 +110,15 @@ Paste skill content directly into any LLM conversation. Each skill is self-conta
 The core skill for an agent rolling dice in conversation. It turns a natural-language request into a call to the RANDSUM MCP tools (`roll`, `roll_game`, `validate`) or the [HTTP API](/api/introduction/), and reports the result for seven supported game systems: D&D 5e, Blades in the Dark, Daggerheart, Fate Core, PbtA, Root RPG, and Salvage Union.
 
 **What the agent learns:**
-- Never to invent a roll, and which tool to reach for first (MCP, then the HTTP API, then a local RNG)
+- Never to invent a roll, and which tool to reach for first (the MCP tools, then the HTTP API)
 - How common phrasings map to calls ("roll stats" is `4d6Lx6`, "Blades with 3 dice" is `roll_game` with `rating: 3`)
 - RANDSUM notation (`4d6L`, `2d20H+5`, `3d6!`, `d%`, `4dF`, etc.) and each game's inputs and outcomes
 - How to report dice, total and meaning in one compact block
 
 **Files:**
-- [`plugins/randsum/skills/dice-rolling/SKILL.md`](https://github.com/RANDSUM/randsum/blob/main/plugins/randsum/skills/dice-rolling/SKILL.md) — main skill definition
-- [`plugins/randsum/skills/dice-rolling/references/NOTATION.md`](https://github.com/RANDSUM/randsum/blob/main/plugins/randsum/skills/dice-rolling/references/NOTATION.md) — full notation reference
-- [`plugins/randsum/skills/dice-rolling/references/GAME_SYSTEMS.md`](https://github.com/RANDSUM/randsum/blob/main/plugins/randsum/skills/dice-rolling/references/GAME_SYSTEMS.md) — game system mechanics
+- [`plugins/randsum/skills/dice-rolling/SKILL.md`](https://github.com/RANDSUM/randsum/blob/main/plugins/randsum/skills/dice-rolling/SKILL.md): main skill definition
+- [`plugins/randsum/skills/dice-rolling/references/NOTATION.md`](https://github.com/RANDSUM/randsum/blob/main/plugins/randsum/skills/dice-rolling/references/NOTATION.md): full notation reference
+- [`plugins/randsum/skills/dice-rolling/references/GAME_SYSTEMS.md`](https://github.com/RANDSUM/randsum/blob/main/plugins/randsum/skills/dice-rolling/references/GAME_SYSTEMS.md): game system mechanics
 
 ### RANDSUM Library
 
@@ -130,8 +131,8 @@ For an agent writing code. Teaches which package fits (`@randsum/roller`, a `@ra
 - Seeded rolls for tests, narrow subpath imports for small bundles, and when to use the REST API
 
 **Files:**
-- [`plugins/randsum/skills/randsum-library/SKILL.md`](https://github.com/RANDSUM/randsum/blob/main/plugins/randsum/skills/randsum-library/SKILL.md) — main skill definition
-- [`plugins/randsum/skills/randsum-library/references/GAMES.md`](https://github.com/RANDSUM/randsum/blob/main/plugins/randsum/skills/randsum-library/references/GAMES.md) — every game's API
+- [`plugins/randsum/skills/randsum-library/SKILL.md`](https://github.com/RANDSUM/randsum/blob/main/plugins/randsum/skills/randsum-library/SKILL.md): main skill definition
+- [`plugins/randsum/skills/randsum-library/references/GAMES.md`](https://github.com/RANDSUM/randsum/blob/main/plugins/randsum/skills/randsum-library/references/GAMES.md): every game's API
 
 ### Dice Probability
 
@@ -144,12 +145,12 @@ Teaches an agent to analyze probability distributions for dice rolls. Handles ex
 - Game-system outcome probabilities (e.g., "chance of critical success in Blades")
 
 **Files:**
-- [`plugins/randsum/skills/dice-probability/SKILL.md`](https://github.com/RANDSUM/randsum/blob/main/plugins/randsum/skills/dice-probability/SKILL.md) — main skill definition
-- [`plugins/randsum/skills/dice-probability/references/PROBABILITY_TABLES.md`](https://github.com/RANDSUM/randsum/blob/main/plugins/randsum/skills/dice-probability/references/PROBABILITY_TABLES.md) — precomputed reference tables
+- [`plugins/randsum/skills/dice-probability/SKILL.md`](https://github.com/RANDSUM/randsum/blob/main/plugins/randsum/skills/dice-probability/SKILL.md): main skill definition
+- [`plugins/randsum/skills/dice-probability/references/PROBABILITY_TABLES.md`](https://github.com/RANDSUM/randsum/blob/main/plugins/randsum/skills/dice-probability/references/PROBABILITY_TABLES.md): precomputed reference tables
 
 ### Game Spec Creator
 
-Teaches an agent the `.randsum.json` spec format — a declarative JSON Schema for describing tabletop RPG dice mechanics. Specs define a four-stage pipeline (Dice → Modify → Resolve → Outcome) and generate typed TypeScript `roll()` functions via codegen.
+Teaches an agent the `.randsum.json` spec format: a declarative JSON Schema for describing tabletop RPG dice mechanics. Specs define a four-stage pipeline (Dice → Modify → Resolve → Outcome) and generate typed TypeScript `roll()` functions via codegen.
 
 **What the agent learns:**
 - The full `.randsum.json` schema (pools, modifiers, conditions, outcome tables)
@@ -158,8 +159,8 @@ Teaches an agent the `.randsum.json` spec format — a declarative JSON Schema f
 - Validation rules and common patterns across game systems
 
 **Files:**
-- [`plugins/randsum/skills/game-spec-creator/SKILL.md`](https://github.com/RANDSUM/randsum/blob/main/plugins/randsum/skills/game-spec-creator/SKILL.md) — main skill definition
-- [`plugins/randsum/skills/game-spec-creator/references/SPEC_EXAMPLES.md`](https://github.com/RANDSUM/randsum/blob/main/plugins/randsum/skills/game-spec-creator/references/SPEC_EXAMPLES.md) — example specs for existing game systems
+- [`plugins/randsum/skills/game-spec-creator/SKILL.md`](https://github.com/RANDSUM/randsum/blob/main/plugins/randsum/skills/game-spec-creator/SKILL.md): main skill definition
+- [`plugins/randsum/skills/game-spec-creator/references/SPEC_EXAMPLES.md`](https://github.com/RANDSUM/randsum/blob/main/plugins/randsum/skills/game-spec-creator/references/SPEC_EXAMPLES.md): example specs for existing game systems
 
 ## Programmatic usage
 
@@ -171,7 +172,7 @@ If you're building a custom agent, you can also use `@randsum/roller` directly:
 
 const result = roll('4d6L')
 console.log(result.total)  // Sum after dropping lowest
-console.log(result.rolls)  // Individual die results`} />
+console.log(result.values) // Kept die values, e.g. [6, 4, 3]`} />
 
 See the [Roller documentation](/roller/introduction/) for the full API.
 
@@ -179,15 +180,22 @@ See the [Roller documentation](/roller/introduction/) for the full API.
 
 The full skill file that agents receive:
 
-<SkillContent />
+<EmbeddedMarkdown content={skillContent} />
 
 ## Notation reference
 
-<NotationContent />
+<EmbeddedMarkdown content={notationContent} />
 
 ## Game systems reference
 
-<GameSystemsContent />
+<EmbeddedMarkdown content={gameSystemsContent} />
+
+## Privacy
+
+The plugin collects no personal data. Its only network calls go to
+`api.randsum.dev` (the MCP server, or the HTTP API as a fallback) with the
+notation and game parameters of a roll, and `/roll` makes none. See the
+[privacy policy](/privacy/).
 
 ## Links
 

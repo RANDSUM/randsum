@@ -1,0 +1,49 @@
+/* The only file in @randsum/ui that spells a raw value. Each element reads
+   its public --rsui-* token, falling back to the default here, into a private
+   --_* name its styles use. Custom properties inherit through Shadow DOM, so a
+   host page restyles every element with a plain rule on any ancestor:
+   `.my-page { --rsui-accent: … }`. Colours follow the page's color-scheme. */
+:host {
+  --_accent: var(--rsui-accent, #ef656b);
+  --_on-accent: var(--rsui-on-accent, #18181b);
+  --_bg: var(--rsui-bg, light-dark(#ffffff, #18181b));
+  --_surface: var(--rsui-surface, light-dark(#fafafa, #111113));
+  --_raised: var(--rsui-raised, light-dark(#ffffff, #232326));
+  --_subtle: var(--rsui-subtle, light-dark(#f4f4f5, #27272a));
+  --_border: var(--rsui-border, light-dark(#d4d4d8, #3f3f46));
+  --_border-strong: var(--rsui-border-strong, light-dark(#71717a, #a1a1aa));
+  --_ink: var(--rsui-ink, light-dark(#18181b, #fafafa));
+  --_muted: var(--rsui-muted, light-dark(#52525b, #a1a1aa));
+  --_faint: var(--rsui-faint, light-dark(#71717a, #8b8b94));
+  --_valid: var(--rsui-valid, light-dark(#15803d, #4ade80));
+  --_invalid: var(--rsui-invalid, light-dark(#b91c1c, #f87171));
+  --_disabled-bg: var(--rsui-disabled-bg, light-dark(#e4e4e7, #2e2e33));
+  --_disabled-ink: var(--rsui-disabled-ink, light-dark(#71717a, #8b8b94));
+  --_tip-bg: var(--rsui-tip-bg, light-dark(#18181b, #fafafa));
+  --_tip-ink: var(--rsui-tip-ink, light-dark(#fafafa, #18181b));
+  --_shadow-pop: var(--rsui-shadow-pop, 0 8px 24px light-dark(#18181b1f, #00000066));
+  --_focus-ring: var(
+    --rsui-focus-ring,
+    0 0 0 3px color-mix(in srgb, var(--_accent) 45%, transparent)
+  );
+
+  --_font: var(--rsui-font, system-ui, -apple-system, 'Segoe UI', sans-serif);
+  --_font-mono: var(--rsui-font-mono, ui-monospace, 'SF Mono', Menlo, Consolas, monospace);
+  --_text-xs: var(--rsui-text-xs, 0.8125rem);
+  --_text-sm: var(--rsui-text-sm, 0.875rem);
+  --_text-base: var(--rsui-text-base, 1rem);
+  --_text-md: var(--rsui-text-md, 1.125rem);
+  --_text-lg: var(--rsui-text-lg, 1.375rem);
+  --_text-input: var(--rsui-text-input, 1.5rem);
+  --_total-compact: var(--rsui-total-compact, 4.5rem);
+  --_total-max: var(--rsui-total-max, 6.5rem);
+  --_weight-regular: var(--rsui-weight-regular, 400);
+  --_weight-medium: var(--rsui-weight-medium, 500);
+  --_weight-semibold: var(--rsui-weight-semibold, 600);
+  --_weight-bold: var(--rsui-weight-bold, 700);
+  --_weight-heavy: var(--rsui-weight-heavy, 800);
+  --_radius-sm: var(--rsui-radius-sm, 6px);
+  --_radius-md: var(--rsui-radius-md, 8px);
+  --_radius-lg: var(--rsui-radius-lg, 12px);
+  --_radius-xl: var(--rsui-radius-xl, 16px);
+}

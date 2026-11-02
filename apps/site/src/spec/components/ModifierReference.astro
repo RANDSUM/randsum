@@ -30,10 +30,12 @@ const sortedCategories = categoryOrder.filter(c => grouped.has(c))
 ---
 
 <section class="modifier-reference" id="appendix-h">
-  <h2>Appendix H: Notation Quick Reference</h2>
+  <h2><span class="secno">Appendix H</span> Notation Quick Reference (Informative)</h2>
+  <p class="informative">This section is non-normative.</p>
   <p class="modifier-reference-intro">
-    Auto-generated from <code>@randsum/roller/docs</code>. This section is the single source of
-    truth for notation syntax, forms, and examples.
+    Generated from the reference implementation's <code>@randsum/roller/docs</code>, so it lists
+    every form the roller accepts today. Where it and the normative sections differ, the normative
+    sections govern.
   </p>
 
   {sortedCategories.map(category => (

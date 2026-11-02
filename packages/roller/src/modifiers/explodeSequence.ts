@@ -1,9 +1,7 @@
 import { explodeSequenceSchema } from '../notation/definitions/explodeSequence'
 import { DEFAULT_EXPLOSION_DEPTH } from '../lib/constants'
 import { coreRandom } from '../lib/random'
-import { ModifierError } from '../errors'
 import type { ModifierDefinition } from './schema'
-import { assertParameters } from './schema'
 
 /**
  * Walk through the die size sequence, rolling each die and continuing
@@ -36,20 +34,12 @@ export const explodeSequenceModifier: ModifierDefinition<number[]> = {
   requiresRandomFn: true,
 
   apply: (rolls, options, ctx) => {
-    const { parameters } = assertParameters(ctx)
-
     if (!Array.isArray(options) || options.length === 0) {
       return { rolls }
     }
 
-    const { sides } = parameters
+    const { sides } = ctx.parameters
     const rng = ctx.randomFn
-    if (rng === undefined) {
-      throw new ModifierError(
-        'explodeSequence',
-        'randomFn function required for explodeSequence modifier'
-      )
-    }
     const rollOneSized = (rollSides: number): number => coreRandom(rollSides, rng) + 1
     const additionalRolls: number[] = []
 

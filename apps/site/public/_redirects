@@ -1,40 +1,9 @@
-# Legacy 301 redirects for old URL shapes, served by Workers Static Assets.
-#
-# Each path is listed with and without its trailing slash, because matching is
-# exact. Workers Static Assets issues 307 for its own trailing-slash handling,
-# and that status is not configurable, so "the site returns 307 sometimes" is
-# expected and is a different mechanism from these 301s.
+# Redirects served by Workers Static Assets.
 #
 # `astro dev` does not read this file; check redirects with `wrangler dev`.
 
-# Old package URLs -> new game/tool pages
-/packages/fifth/                   /games/fifth/                       301
-/packages/fifth                    /games/fifth/                       301
-/packages/blades/                  /games/blades/                      301
-/packages/blades                   /games/blades/                      301
-/packages/daggerheart/             /games/daggerheart/                 301
-/packages/daggerheart              /games/daggerheart/                 301
-/packages/pbta/                    /games/pbta/                        301
-/packages/pbta                     /games/pbta/                        301
-/packages/root-rpg/                /games/root-rpg/                    301
-/packages/root-rpg                 /games/root-rpg/                    301
-/packages/salvageunion/            /games/salvageunion/                301
-/packages/salvageunion             /games/salvageunion/                301
-/packages/discord-bot/             /tools/discord-bot/                 301
-/packages/discord-bot              /tools/discord-bot/                 301
-
-# Old docs URLs -> new reference pages
-/docs/notation/                    /notation/randsum-dice-notation/    301
-/docs/notation                     /notation/randsum-dice-notation/    301
-/docs/errors/                      /roller/error-handling/             301
-/docs/errors                       /roller/error-handling/             301
-
-# Old getting-started URLs -> new locations
-/getting-started/notation/         /roller/getting-started/            301
-/getting-started/notation          /roller/getting-started/            301
-/getting-started/game-packages/    /games/introduction/                301
-/getting-started/game-packages     /games/introduction/                301
-
-# Retired @randsum/cli docs -> its successor
-/tools/cli/                        /tools/mcp/                         301
-/tools/cli                         /tools/mcp/                         301
+# The notation spec's home is its own host, notation.randsum.dev
+# (scripts/build-notation.ts); its badges and conformance files moved with it.
+/spec                              https://notation.randsum.dev/                  301
+/spec/*                            https://notation.randsum.dev/:splat            301
+/conformance/*                     https://notation.randsum.dev/conformance/:splat 301

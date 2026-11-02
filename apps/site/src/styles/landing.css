@@ -3,8 +3,8 @@
  * Every other section keeps its rules in its own <style> block.
  */
 
-/* The splash page renders its own hero, so Starlight's title is hidden */
-body:has(.landing) .content-panel:has(#_top) {
+/* The splash page renders its own hero, so Starlight's empty title panel is hidden */
+body:has(.landing) .content-panel:has(.landing-title-slot) {
   display: none !important;
 }
 
@@ -121,13 +121,13 @@ body:has(.landing) .content-panel:has(#_top) {
   color: var(--sl-color-white);
 }
 
-/* The live roller's frame; the roller itself is components/HeroRoller */
+/* The live roller: a title row over the @randsum/ui Compact panel
+   (components/rollers/HeroRoller), which draws its own frame */
 .hero-roller {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
   min-width: 0;
-  padding: 1.25rem;
-  border: var(--rs-border);
-  border-radius: var(--rs-radius-lg);
-  background: var(--sl-color-bg-nav);
 }
 
 .hero-roller-top {
@@ -136,7 +136,6 @@ body:has(.landing) .content-panel:has(#_top) {
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 0.5rem;
-  margin-bottom: 1rem;
 }
 
 .hero-roller .hero-roller-title {
@@ -171,41 +170,6 @@ body:has(.landing) .content-panel:has(#_top) {
   color: var(--sl-color-gray-3);
 }
 
-/* Facts that make the case at a glance */
-.hero-proof {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  margin: 3rem 0 0;
-  border: var(--rs-border);
-  border-radius: var(--rs-radius-md);
-}
-
-.hero-proof div {
-  display: flex;
-  flex-direction: column-reverse;
-  gap: 0.15rem;
-  padding: 1rem 1.25rem;
-}
-
-.hero-proof div + div {
-  border-left: var(--rs-border);
-}
-
-.hero-proof dd {
-  margin: 0;
-  font-family: var(--rs-font-heading);
-  font-size: var(--rs-text-xl);
-  font-weight: var(--rs-weight-heavy);
-  letter-spacing: var(--rs-tracking-heading);
-  line-height: var(--rs-leading-tight);
-  color: var(--sl-color-white);
-}
-
-.hero-proof dt {
-  font-size: var(--rs-text-sm);
-  color: var(--sl-color-gray-3);
-}
-
 /* ===== Responsive ===== */
 @media (max-width: 900px) {
   .hero {
@@ -215,17 +179,5 @@ body:has(.landing) .content-panel:has(#_top) {
   .hero-inner {
     grid-template-columns: 1fr;
     gap: 2rem;
-  }
-
-  .hero-proof {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .hero-proof div:nth-child(3) {
-    border-left: 0;
-  }
-
-  .hero-proof div:nth-child(n + 3) {
-    border-top: var(--rs-border);
   }
 }

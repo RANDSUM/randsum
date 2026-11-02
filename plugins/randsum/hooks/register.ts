@@ -13,9 +13,6 @@ import { roll } from './roller.generated.js'
 
 const DEFAULT_NOTATION = '1d20'
 
-/** Uniform in [0, 1) from the sandbox's CSPRNG rather than Math.random. */
-const randomFn = (): number => (crypto.getRandomValues(new Uint32Array(1))[0] ?? 0) / 2 ** 32
-
 /**
  * `/roll` arguments as roll() arguments: `1d20 + 5, 2d6` is `['1d20+5', '2d6']`.
  * Spaces around an operator join its sides; other spaces and commas separate rolls.
@@ -45,7 +42,7 @@ export const register: Register = on => {
     const notations = parseArgs(e.args ?? '')
     const asked = notations.join(' ')
     try {
-      const result = roll(...notations, { randomFn })
+      const result = roll(...notations)
       const groups = result.rolls.map(record => {
         const dropped = record.initialRolls.length !== record.rolls.length
         const kept = `[${list(record.rolls)}]`
@@ -64,7 +61,7 @@ export const register: Register = on => {
     } catch (error) {
       const reason = error instanceof Error ? error.message : String(error)
       return {
-        text: `Could not roll ${asked}: ${reason}\nNotation reference: https://randsum.dev/spec/`
+        text: `Could not roll ${asked}: ${reason}\nNotation reference: https://notation.randsum.dev/`
       }
     }
   })

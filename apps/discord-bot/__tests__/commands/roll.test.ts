@@ -363,7 +363,7 @@ describe('rollCommand', () => {
         }
       ]
     }))
-    expect(accentsOf(render('1d6'))[0]).toBe(0x00b4ca)
+    expect(accentsOf(render('1d6'))[0]).toBe(0x5865f2)
   })
 
   test('a reroll button carries the notation, on the first container only', () => {

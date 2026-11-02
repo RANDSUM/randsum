@@ -1,4 +1,5 @@
 import { describe, expect, test } from 'bun:test'
+import { contextOf } from '../../support/modifierContext'
 import { wildDieModifier } from '../../../src/modifiers/wildDie'
 import { DEFAULT_EXPLOSION_DEPTH } from '../../../src/lib/constants'
 
@@ -7,7 +8,7 @@ describe('wildDie modifier behavior', () => {
     test('returns rolls unchanged when wild die is in normal range', () => {
       const rolls = [3, 4, 5, 2, 3] // last die (3) is wild, not 1 or 6
       const rollOne = (): number => 4
-      const ctx = { rollOne, parameters: { sides: 6, quantity: 5 } }
+      const ctx = contextOf({ rollOne, parameters: { sides: 6, quantity: 5 } })
       const result = wildDieModifier.apply(rolls, true, ctx)
 
       expect(result.rolls).toEqual([3, 4, 5, 2, 3])
@@ -19,7 +20,7 @@ describe('wildDie modifier behavior', () => {
       // Wild die (last) is 6 (max for d6), rollOne returns 3 (no further explosion)
       const rolls = [3, 4, 5, 2, 6]
       const rollOne = (): number => 3
-      const ctx = { rollOne, parameters: { sides: 6, quantity: 5 } }
+      const ctx = contextOf({ rollOne, parameters: { sides: 6, quantity: 5 } })
       const result = wildDieModifier.apply(rolls, true, ctx)
 
       // Last die should be 6+3=9 (compound)
@@ -36,7 +37,7 @@ describe('wildDie modifier behavior', () => {
         callIdx++
         return v
       }
-      const ctx = { rollOne, parameters: { sides: 6, quantity: 5 } }
+      const ctx = contextOf({ rollOne, parameters: { sides: 6, quantity: 5 } })
       const result = wildDieModifier.apply(rolls, true, ctx)
 
       // 6 + 6 + 3 = 15
@@ -48,7 +49,7 @@ describe('wildDie modifier behavior', () => {
     test('removes wild die and highest non-wild die when wild is 1', () => {
       const rolls = [3, 4, 5, 2, 1] // wild die is 1, highest non-wild is 5
       const rollOne = (): number => 4
-      const ctx = { rollOne, parameters: { sides: 6, quantity: 5 } }
+      const ctx = contextOf({ rollOne, parameters: { sides: 6, quantity: 5 } })
       const result = wildDieModifier.apply(rolls, true, ctx)
 
       // Remove wild (1) and highest non-wild (5): [3, 4, 2]
@@ -58,7 +59,7 @@ describe('wildDie modifier behavior', () => {
     test('removes only wild die when pool has just 1 die', () => {
       const rolls = [1] // only the wild die, and it is 1
       const rollOne = (): number => 4
-      const ctx = { rollOne, parameters: { sides: 6, quantity: 1 } }
+      const ctx = contextOf({ rollOne, parameters: { sides: 6, quantity: 1 } })
       const result = wildDieModifier.apply(rolls, true, ctx)
 
       // Remove wild die, nothing else to remove
@@ -68,7 +69,7 @@ describe('wildDie modifier behavior', () => {
     test('removes correct highest when there are ties', () => {
       const rolls = [5, 5, 3, 1] // wild is 1, two 5s tied for highest
       const rollOne = (): number => 4
-      const ctx = { rollOne, parameters: { sides: 6, quantity: 4 } }
+      const ctx = contextOf({ rollOne, parameters: { sides: 6, quantity: 4 } })
       const result = wildDieModifier.apply(rolls, true, ctx)
 
       // Remove wild (1) and one of the 5s: [5, 3]
@@ -80,7 +81,7 @@ describe('wildDie modifier behavior', () => {
     test('works with d6 (standard wild die sides)', () => {
       const rolls = [4, 3, 2]
       const rollOne = (): number => 4
-      const ctx = { rollOne, parameters: { sides: 6, quantity: 3 } }
+      const ctx = contextOf({ rollOne, parameters: { sides: 6, quantity: 3 } })
       const result = wildDieModifier.apply(rolls, true, ctx)
 
       expect(result.rolls).toEqual([4, 3, 2])
@@ -90,7 +91,7 @@ describe('wildDie modifier behavior', () => {
       // Wild die should use the actual sides for max detection
       const rolls = [4, 3, 8] // 8 is max for d8
       const rollOne = (): number => 2
-      const ctx = { rollOne, parameters: { sides: 8, quantity: 3 } }
+      const ctx = contextOf({ rollOne, parameters: { sides: 8, quantity: 3 } })
       const result = wildDieModifier.apply(rolls, true, ctx)
 
       // 8 + 2 = 10 (compound)
@@ -103,7 +104,7 @@ describe('wildDie modifier behavior', () => {
       // at DEFAULT_EXPLOSION_DEPTH.
       const rolls = [6] // wild die is 6 (max for d6)
       const rollOne = (): number => 6 // always returns max
-      const ctx = { rollOne, parameters: { sides: 6, quantity: 1 } }
+      const ctx = contextOf({ rollOne, parameters: { sides: 6, quantity: 1 } })
       const result = wildDieModifier.apply(rolls, true, ctx)
 
       // Initial 6 + (DEFAULT_EXPLOSION_DEPTH * 6)

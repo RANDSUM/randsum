@@ -1,0 +1,208 @@
+---
+// How an implementation advertises its RDN conformance level (spec §10.6,
+// §10.7): the badge for each level, with Markdown and HTML to paste.
+import { getLatestVersion, getVersions } from '../../../spec/versions'
+import { LEVELS } from '../../../spec/badges'
+import CONFORMANCE_FILE from '@randsum/notation-spec/vectors/v0.9.0.json'
+import SpecLayout from '../../../spec/SpecLayout.astro'
+import SpecContent from '../../../spec/components/SpecContent.astro'
+import { specPath, specUrl as notationUrl } from '../../../spec/urls'
+
+const version = await getLatestVersion()
+const versions = await getVersions()
+const specUrl = notationUrl('/')
+const levelsUrl = `${specUrl}#10-conformance-levels`
+const required = [
+  CONFORMANCE_FILE.conformanceLevels.level1_core,
+  CONFORMANCE_FILE.conformanceLevels.level2_vtt,
+  CONFORMANCE_FILE.conformanceLevels.level3_extended,
+  CONFORMANCE_FILE.conformanceLevels.level4_full
+]
+const errorCount = CONFORMANCE_FILE.conformanceLevels.errorCases.length
+const SUMMARY: Record<number, string> = {
+  1: 'Standard dice, additional pools, arithmetic, and drop and keep by position.',
+  2: 'Adds condition expressions: reroll, explode, count successes and failures, conditional drop.',
+  3: 'Adds cap, replace, compound, penetrate, unique, keep middle, sort, annotations, and percentile, Fate and custom-faces dice.',
+  4: 'Every feature: zero-bias, geometric and draw dice, explode sequences, wild die, margin of success, repeat.'
+}
+const badges = LEVELS.map(level => {
+  const path = specPath(`/badges/v${version}/level-${level.level}.svg`)
+  const src = notationUrl(`/badges/v${version}/level-${level.level}.svg`)
+  const alt = `RDN ${version} Level ${level.level}: ${level.name}`
+  return {
+    ...level,
+    path,
+    src,
+    alt,
+    vectors: (required[level.level - 1]?.length ?? 0) + errorCount,
+    markdown: `[![${alt}](${src})](${levelsUrl})`,
+    html: `<a href="${levelsUrl}"><img src="${src}" alt="${alt}"></a>`
+  }
+})
+---
+
+<SpecLayout
+  title="RDN Conformance Badges"
+  version={version}
+  versions={versions}
+  isLatest={true}
+  canonicalPath="/conformance/"
+  description="Badges for implementations of the RANDSUM Dice Notation spec: one per conformance level, with Markdown and HTML to paste into a README."
+>
+  <div slot="sidebar" class="sidebar-inner">
+    <p class="sidebar-title">Contents</p>
+    <nav aria-label="Page sections">
+      <ol class="sidebar-list" role="list">
+        <li>
+          <a class="sidebar-link" href="#claiming"><span>Claiming a level</span></a>
+        </li>
+        <li>
+          <a class="sidebar-link" href="#levels"><span>Levels and badges</span></a>
+        </li>
+        <li>
+          <a class="sidebar-link" href="#reference"><span>The reference implementation</span></a>
+        </li>
+        <li>
+          <a class="sidebar-link" href={specUrl}><span>The specification</span></a>
+        </li>
+      </ol>
+    </nav>
+  </div>
+  <header slot="content" class="spec-head">
+    <p class="spec-head-series">RANDSUM Dice Notation {version}</p>
+    <h1 class="spec-head-title">Conformance Badges</h1>
+    <p class="spec-head-status">One badge for each conformance level</p>
+  </header>
+  <SpecContent slot="content">
+    <p>
+      An implementation of the <a href={specUrl}>RANDSUM Dice Notation Specification</a> conforms at
+      one of four levels, each a superset of the one before it (<a href={levelsUrl}>Section 10</a>).
+      These badges let a dice library, bot or virtual tabletop say which level it reaches, and link
+      readers to what that level promises.
+    </p>
+
+    <h2 id="claiming">Claiming a level</h2>
+    <ol>
+      <li>
+        Implement every feature of the level and of the levels below it, as listed in Table 10.1.
+      </li>
+      <li>
+        Run the <a href={specPath(`/conformance/v${version}.json`)}>conformance vectors</a> for that
+        level, including all {errorCount} error vectors, and pass every one (Section 11.3).
+      </li>
+      <li>
+        State the claim with the version and level, for example
+        <code>RDN {version} Level 2 (VTT Baseline) conformant</code>, and show that level's badge.
+      </li>
+    </ol>
+    <p>
+      Show only the badge for the level you conform at. Supporting a few features from a higher
+      level does not earn its badge.
+    </p>
+
+    <h2 id="levels">Levels and badges</h2>
+    {badges.map(badge => (
+      <section class="badge-level" aria-labelledby={`level-${badge.level}`}>
+        <h3 id={`level-${badge.level}`}>
+          <span class="secno">Level {badge.level}</span> {badge.name}
+        </h3>
+        <p class="badge-preview">
+          <img src={badge.path} alt={badge.alt} height="20" />
+        </p>
+        <p>
+          {SUMMARY[badge.level]} Requires {badge.vectors} vectors.
+        </p>
+        <div class="badge-snippets">
+          <div class="badge-snippet">
+            <div class="badge-snippet-bar">
+              <span>Markdown</span>
+              <button type="button" class="badge-copy" data-copy={badge.markdown}>
+                Copy
+              </button>
+            </div>
+            <pre set:text={badge.markdown} />
+          </div>
+          <div class="badge-snippet">
+            <div class="badge-snippet-bar">
+              <span>HTML</span>
+              <button type="button" class="badge-copy" data-copy={badge.html}>
+                Copy
+              </button>
+            </div>
+            <pre set:text={badge.html} />
+          </div>
+        </div>
+      </section>
+    ))}
+
+    <h2 id="reference">The reference implementation</h2>
+    <p>
+      <a href="https://www.npmjs.com/package/@randsum/roller"><code>@randsum/roller</code></a>
+      conforms at Level 4, and its test suite runs every vector:
+    </p>
+    <p class="badge-preview">
+      <img src={badges[3]?.path} alt={badges[3]?.alt} height="20">
+    </p>
+  </SpecContent>
+</SpecLayout>
+
+<style>
+.badge-level {
+  margin-bottom: 2.5rem;
+}
+
+.badge-preview {
+  line-height: 0;
+}
+
+.badge-snippets {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.badge-snippets .badge-snippet pre {
+  margin: 0;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.badge-snippet-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.35rem 0.75rem;
+  font-family: var(--rs-font-sans);
+  font-size: var(--rs-text-xs);
+  color: var(--text-secondary);
+  border: var(--rs-border);
+  border-bottom: none;
+  border-radius: var(--rs-radius-sm) var(--rs-radius-sm) 0 0;
+}
+
+.badge-copy {
+  font: inherit;
+  color: var(--accent);
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.badge-copy:hover {
+  text-decoration: underline;
+}
+</style>
+
+<script>
+for (const button of Array.from(document.querySelectorAll<HTMLButtonElement>('[data-copy]'))) {
+  button.addEventListener('click', () => {
+    void navigator.clipboard.writeText(button.dataset.copy ?? '').then(() => {
+      button.textContent = 'Copied'
+      setTimeout(() => {
+        button.textContent = 'Copy'
+      }, 1500)
+    })
+  })
+}
+</script>
