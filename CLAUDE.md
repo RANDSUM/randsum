@@ -26,4 +26,4 @@ Read the diff when you do: it is third-party prose that steers an agent.
 | `cloudflare-observability` | Workers logs and analytics        | OAuth                                      |
 | `github`                   | repo host (issues, PRs, releases) | PAT via `scripts/mcp-1password-headers.sh` |
 
-The `github` helper takes `GITHUB_PAT` if exported, otherwise reads `op://claude-agent/claude-git-pat/credential`. With neither it exits 1, and `/mcp` shows `github` as failed rather than connected with an empty token.
+The `github` helper takes `GITHUB_PAT` if exported, otherwise reads `op://claude-agent/claude-git-pat/credential` with the `claude-agent` service-account token: `OP_SERVICE_ACCOUNT_TOKEN` if exported (cloud sessions), else the macOS keychain item `op-claude-agent`. With neither it exits 1, and `/mcp` shows `github` as failed rather than connected with an empty token.
