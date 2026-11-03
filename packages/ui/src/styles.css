@@ -446,6 +446,25 @@
   font-weight: var(--_weight-semibold);
 }
 
+/* The initial roll leads: ink label, larger dice, and a rule before the
+   modifier steps that follow it */
+.rsui-step[data-step='initial'] .rsui-step-label {
+  color: var(--_ink);
+  font-weight: var(--_weight-bold);
+}
+
+.rsui-step[data-step='initial']:not(:last-child) {
+  padding-bottom: 0.875rem;
+  border-bottom: 1px solid var(--_border);
+}
+
+.rsui-step[data-step='initial'] .rsui-die {
+  min-width: 2.75rem;
+  height: 2.75rem;
+  font-size: var(--_text-lg);
+  font-weight: var(--_weight-bold);
+}
+
 .rsui-dice {
   display: flex;
   flex-wrap: wrap;

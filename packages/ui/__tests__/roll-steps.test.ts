@@ -81,3 +81,19 @@ describe('explosion chains', () => {
     expect(host.textContent).not.toContain('15')
   })
 })
+
+describe('initial roll', () => {
+  test('the first step is marked initial and the modifier steps are not', () => {
+    const host = document.createElement('div')
+    render(rollSteps([record('4d6L', 6, [3, 5, 1, 6])]), host)
+    const marks = [...host.querySelectorAll('.rsui-step')].map(s => s.getAttribute('data-step'))
+    expect(marks).toEqual(['initial', 'modifier'])
+  })
+
+  test('a plain pool in a multi-pool roll is its own initial row', () => {
+    const host = document.createElement('div')
+    render(rollSteps([record('1d20', 20, [12]), record('1d6', 6, [4])]), host)
+    const marks = [...host.querySelectorAll('.rsui-step')].map(s => s.getAttribute('data-step'))
+    expect(marks).toEqual(['initial', 'initial'])
+  })
+})
