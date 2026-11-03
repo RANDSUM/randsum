@@ -3,6 +3,12 @@ import { AVAILABLE_GAMES } from '@randsum/games'
 import { rollGame } from '../src/tools/rollGame'
 
 describe('rollGame', () => {
+  test('reports the dice as first rolled beside the ones that count', () => {
+    const result = rollGame('blades', { rating: 3 })
+    expect(result.initialRolls).toHaveLength(3)
+    expect(result.rolls).toHaveLength(1)
+  })
+
   test('exposes the full game list', () => {
     expect(AVAILABLE_GAMES).toContain('blades')
     expect(AVAILABLE_GAMES).toContain('daggerheart')

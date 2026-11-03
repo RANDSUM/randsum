@@ -16,7 +16,7 @@ URL instead, such as a Claude connector.
 | ----------- | ----------------------------------------- | -------------------------------------------------------------------- |
 | `roll`      | `{ notation: string, seed?: number }`     | `total`, per-pool `pools`, and a human-readable `description`        |
 | `validate`  | `{ notation: string }`                    | `valid`, `description` (when valid), `suggestion`/`error` (when not) |
-| `roll_game` | `{ game: GameShortcode, params: object }` | game-interpreted `total`, `result`, `details`, and the kept `rolls`  |
+| `roll_game` | `{ game: GameShortcode, params: object }` | game-interpreted `total`, `result`, `details`, `initialRolls` and the kept `rolls` |
 
 Every tool is annotated read-only and closed-world (`readOnlyHint: true`, `openWorldHint: false`), which clients may use to skip confirmation prompts, and the server sends `instructions` telling the model to call a tool for every roll instead of inventing one.
 

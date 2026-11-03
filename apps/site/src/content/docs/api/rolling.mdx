@@ -20,6 +20,7 @@ curl "https://api.randsum.dev/v1/roll?notation=2d20H%2B5"
   "pools": [
     {
       "notation": "2d20H+5",
+      "initialRolls": [16, 19],
       "rolls": [16],
       "total": 21,
       "description": "Roll 2 20-sided dice, Drop highest, Add 5"
@@ -53,8 +54,9 @@ curl -X POST https://api.randsum.dev/v1/roll \
 | `pools`       | array    | One entry per dice pool (see below)                              |
 | `description` | string   | A human-readable description of the whole roll                   |
 
-Each entry in `pools` has its own `notation`, `rolls` (the die values left
-after modifiers, so dropped dice are gone), `total` and `description`.
+Each entry in `pools` has its own `notation`, `initialRolls` (every die as
+first rolled, dropped dice included), `rolls` (the die values left after
+modifiers, so dropped dice are gone), `total` and `description`.
 Notation with several pools, such as `1d20+1d4`, returns one entry for each.
 
 ## Short form and long form
