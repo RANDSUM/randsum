@@ -97,17 +97,17 @@ describe(parseArguments, () => {
         expect(params).toMatchObject({
           argument,
           ...argument,
-          notation: '4d6C{>5}V{6=1}!U{1,2}LD{>2,<6,2,3}+2-1',
+          notation: '4d6C{>5}V{6=1}!U{1,2}D{>2,<6,2,3}L+2-1',
           description: [
             'Roll 4 6-sided dice',
             'No Rolls greater than 5',
             'Replace 6 with 1',
             'Exploding Dice',
             'No Duplicates (except 1 and 2)',
-            'Drop lowest',
             'Drop 2 and 3',
             'Drop greater than 2',
             'Drop less than 6',
+            'Drop lowest',
             'Add 2',
             'Subtract 1'
           ]
@@ -496,7 +496,7 @@ describe(parseArguments, () => {
               plus: 5,
               minus: 5
             },
-            notation: '10d20C{>18,<2}V{1=2,>2=6}R{5,2,<6}3!U{5}H2LD{>5,<2,2,4}+5-5',
+            notation: '10d20C{>18,<2}V{1=2,>2=6}R{5,2,<6}3!U{5}D{>5,<2,2,4}LH2+5-5',
             description: [
               'Roll 10 20-sided dice',
               'No Rolls greater than 18',
@@ -506,11 +506,11 @@ describe(parseArguments, () => {
               'Reroll 5 and 2, less than 6 (up to 3 times)',
               'Exploding Dice',
               'No Duplicates (except 5)',
-              'Drop highest 2',
-              'Drop lowest',
               'Drop 2 and 4',
               'Drop greater than 5',
               'Drop less than 2',
+              'Drop lowest',
+              'Drop highest 2',
               'Add 5',
               'Subtract 5'
             ]

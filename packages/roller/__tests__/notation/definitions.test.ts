@@ -194,7 +194,7 @@ describe('dropSchema', () => {
     })
 
     test('formats combined highest and lowest', () => {
-      expect(dropSchema.toNotation({ highest: 1, lowest: 1 })).toBe('HL')
+      expect(dropSchema.toNotation({ highest: 1, lowest: 1 })).toBe('LH')
     })
   })
 

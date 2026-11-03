@@ -258,14 +258,20 @@ var capSchema = defineNotationSchema({
     return capList.length ? `C{${capList.join(",")}}` : undefined;
   },
   toDescription: (options) => {
-    const { exact, ...comparisonOpts } = options;
-    const descriptions = [];
-    if (exact?.length) {
-      descriptions.push(...exact.map((v) => `No Rolls Greater Than ${v}`));
-    }
-    const comparison = formatComparisonDescription(comparisonOpts);
-    descriptions.push(...comparison.map((str) => `No Rolls ${str}`));
-    return descriptions;
+    const { exact, greaterThan, greaterThanOrEqual, lessThan, lessThanOrEqual } = options;
+    const upper = formatComparisonDescription({
+      ...greaterThan !== undefined && { greaterThan },
+      ...greaterThanOrEqual !== undefined && { greaterThanOrEqual }
+    });
+    const lower = formatComparisonDescription({
+      ...lessThan !== undefined && { lessThan },
+      ...lessThanOrEqual !== undefined && { lessThanOrEqual }
+    });
+    return [
+      ...upper.map((str) => `No Rolls ${str}`),
+      ...(exact ?? []).map((v) => `No Rolls Greater Than ${v}`),
+      ...lower.map((str) => `No Rolls ${str}`)
+    ];
   }
 });
 
@@ -443,12 +449,6 @@ var dropSchema = defineNotationSchema({
   toNotation: (options) => {
     const { highest, lowest, greaterThan, greaterThanOrEqual, lessThan, lessThanOrEqual, exact } = options;
     const parts = [];
-    if (highest) {
-      parts.push(highest === 1 ? "H" : `H${highest}`);
-    }
-    if (lowest) {
-      parts.push(lowest === 1 ? "L" : `L${lowest}`);
-    }
     const dropList = [];
     if (greaterThanOrEqual !== undefined)
       dropList.push(`>=${greaterThanOrEqual}`);
@@ -463,17 +463,17 @@ var dropSchema = defineNotationSchema({
     if (dropList.length > 0) {
       parts.push(`D{${dropList.join(",")}}`);
     }
+    if (lowest) {
+      parts.push(lowest === 1 ? "L" : `L${lowest}`);
+    }
+    if (highest) {
+      parts.push(highest === 1 ? "H" : `H${highest}`);
+    }
     return parts.length ? parts.join("") : undefined;
   },
   toDescription: (options) => {
     const { highest, lowest, greaterThan, greaterThanOrEqual, lessThan, lessThanOrEqual, exact } = options;
     const descriptions = [];
-    if (highest) {
-      descriptions.push(highest > 1 ? `Drop highest ${highest}` : "Drop highest");
-    }
-    if (lowest) {
-      descriptions.push(lowest > 1 ? `Drop lowest ${lowest}` : "Drop lowest");
-    }
     if (exact) {
       descriptions.push(`Drop ${formatHumanList(exact)}`);
     }
@@ -488,6 +488,12 @@ var dropSchema = defineNotationSchema({
     }
     if (lessThan !== undefined) {
       descriptions.push(`Drop less than ${lessThan}`);
+    }
+    if (lowest) {
+      descriptions.push(lowest > 1 ? `Drop lowest ${lowest}` : "Drop lowest");
+    }
+    if (highest) {
+      descriptions.push(highest > 1 ? `Drop highest ${highest}` : "Drop highest");
     }
     return descriptions;
   }
