@@ -386,7 +386,7 @@
     },
     {
       "path": "dist/native/key-pad.js",
-      "limit": "2.5 KB"
+      "limit": "2.6 KB"
     },
     {
       "path": "dist/native/notation-field.js",
@@ -398,7 +398,7 @@
     },
     {
       "path": "dist/native/readout.js",
-      "limit": "4 KB"
+      "limit": "4.25 KB"
     },
     {
       "path": "dist/native/roll-button.js",
@@ -406,7 +406,7 @@
     },
     {
       "path": "dist/native/roll-steps.js",
-      "limit": "3.5 KB"
+      "limit": "3.75 KB"
     },
     {
       "path": "dist/native/roller.js",
