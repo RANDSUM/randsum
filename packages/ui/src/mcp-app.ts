@@ -14,6 +14,7 @@ import { define, freshShadowRoot } from './internal/element'
 import { applyHostContext, McpHost } from './internal/mcp-host'
 import type { ToolResult } from './internal/mcp-host'
 import { readout } from './internal/parts/readout'
+import { poolName } from './internal/steps'
 import { sheet } from './internal/styles'
 
 export type { RollResult } from './check'
@@ -70,7 +71,7 @@ export function toRollResult(result: ToolResult): RollResult | null {
     return {
       total: data['total'],
       records: shown,
-      notation: shown.map(record => record.notation).join(' + ') || title,
+      notation: shown.map(record => poolName(record).text).join(' + ') || title,
       description: said === undefined ? title : `${title}: ${said}`
     }
   }

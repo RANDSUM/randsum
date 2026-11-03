@@ -1,8 +1,8 @@
 import type { RollRecord } from '@randsum/roller'
 import { html, nothing } from 'lit'
 import type { TemplateResult } from 'lit'
-import { diceLayout, visibleSteps } from '../steps'
-import type { DiceLayout, ShownStep } from '../steps'
+import { diceLayout, poolName, visibleSteps } from '../steps'
+import type { DiceLayout, PoolName, ShownStep } from '../steps'
 
 type DieVariant = 'kept' | 'removed' | 'added'
 
@@ -23,7 +23,12 @@ function chain(item: DiceLayout['chains'][number]): TemplateResult {
   >`
 }
 
-function step(item: ShownStep, label?: string): TemplateResult {
+/** A pool's name: notation in code, a label as plain words. */
+function name(pool: PoolName): TemplateResult {
+  return pool.notation ? html`<code>${pool.text}</code>` : html`<span>${pool.text}</span>`
+}
+
+function step(item: ShownStep, label?: PoolName): TemplateResult {
   if (item.kind === 'arithmetic') {
     return html`<li class="rsui-step">
       <span class="rsui-step-label">${item.label}</span>
@@ -36,7 +41,9 @@ function step(item: ShownStep, label?: string): TemplateResult {
     ${
       label === undefined
         ? html`<span class="rsui-step-label">${item.label}</span>`
-        : html`<code class="rsui-step-label">${label}</code>`
+        : label.notation
+          ? html`<code class="rsui-step-label">${label.text}</code>`
+          : html`<span class="rsui-step-label">${label.text}</span>`
     }
     <span class="rsui-dice">
       ${layout.chains.map(chain)}
@@ -59,17 +66,18 @@ export function rollSteps(records: readonly RollRecord[]): TemplateResult {
   const multiPool = records.length > 1
   return html`<div class="rsui-steps">
     ${records.map(record => {
+      const pool = poolName(record)
       const steps = visibleSteps(record)
       const [only] = steps
-      // A plain pool in a multi-pool roll is one row: its notation and its dice
+      // A plain pool in a multi-pool roll is one row: its name and its dice
       if (multiPool && steps.length === 1 && only !== undefined) {
-        return html`<ol class="rsui-pool">${step(only, record.notation)}</ol>`
+        return html`<ol class="rsui-pool">${step(only, pool)}</ol>`
       }
-      return html`<section class="rsui-pool-group" aria-label=${record.notation}>
+      return html`<section class="rsui-pool-group" aria-label=${pool.text}>
         ${
           multiPool
             ? html`<h3 class="rsui-pool-heading">
-              <code>${record.notation}</code><span>${record.total}</span>
+              ${name(pool)}<span>${record.total}</span>
             </h3>`
             : nothing
         }

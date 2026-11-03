@@ -290,3 +290,19 @@ describe('roll', () => {
     })
   })
 })
+
+describe('record labels', () => {
+  test('labels the Hope and Fear dice', () => {
+    const { rolls } = roll()
+    expect(rolls.map(record => record.label)).toEqual(['Hope', 'Fear'])
+  })
+
+  test('labels the advantage and disadvantage die', () => {
+    expect(roll({ rollingWith: 'Advantage' }).rolls.map(record => record.label)).toEqual([
+      'Hope',
+      'Fear',
+      'Advantage'
+    ])
+    expect(roll({ rollingWith: 'Disadvantage' }).rolls[2]?.label).toBe('Disadvantage')
+  })
+})
