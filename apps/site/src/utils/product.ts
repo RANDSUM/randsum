@@ -129,6 +129,9 @@ export interface ProductInfo {
   readonly summary: string
   readonly href: string
   readonly snippet: { readonly lang: string; readonly code: string }
+  // A real screenshot for a product you look at, shown on the landing carousel in
+  // place of the snippet: public/landing/<id>-dark.webp and -light.webp, same size
+  readonly screenshot?: { readonly alt: string; readonly width: number; readonly height: number }
   // The hero's buttons: the first is the main one
   readonly actions: readonly [ProductAction, ...ProductAction[]]
 }
@@ -175,6 +178,11 @@ export const PRODUCTS: readonly ProductInfo[] = [
       lang: 'html',
       code: '<script type="module">\n  import \'@randsum/ui/roller\'\n</script>\n\n<randsum-roller size="mini" notation="4d6L"></randsum-roller>'
     },
+    screenshot: {
+      alt: 'The roller element at two sizes: Mini, one row with a dice-keys button, and Compact, with its dice keys below the field',
+      width: 1000,
+      height: 734
+    },
     actions: [
       { label: 'Get started', href: '/ui/getting-started/' },
       { label: 'npm', href: 'https://www.npmjs.com/package/@randsum/ui' }
@@ -205,6 +213,11 @@ export const PRODUCTS: readonly ProductInfo[] = [
       lang: 'text',
       code: '4d6L    → 14   [6, 5, 3] dropped 1\n1d20+5  → 17\n2d8!    → 11   exploded on 8'
     },
+    screenshot: {
+      alt: 'The Roller app after rolling 4d6L+2 for 17: the dice 6, 4, 1 and 5, the 1 dropped, plus 2, beside the dice keys',
+      width: 1000,
+      height: 667
+    },
     actions: [
       { label: 'Open the app', href: APP_URL },
       { label: 'Notation guide', href: '/notation/getting-started/' }
@@ -231,6 +244,11 @@ export const PRODUCTS: readonly ProductInfo[] = [
     snippet: {
       lang: 'bash',
       code: '/plugin marketplace add RANDSUM/randsum\n/plugin install randsum@randsum'
+    },
+    screenshot: {
+      alt: 'The roll card RANDSUM shows in Claude for 4d6L+2: the total, each die, the dropped one, and Roll again',
+      width: 1000,
+      height: 497
     },
     actions: [
       { label: 'Set it up', href: '/tools/claude-code-plugin/#setup' },

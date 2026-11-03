@@ -3,6 +3,8 @@
 // list on the left names every product; the window on the right slides up to the
 // one that is chosen, and moves on by itself until a visitor takes over.
 // Every pane is in the HTML, so search engines and no-JS readers get them all.
+// A product you look at shows a real screenshot, in the visitor's theme; the
+// rest show code.
 import PipMark from '../PipMark.astro'
 import Button from '../ui/Button.astro'
 import CodePanel from '../ui/CodePanel.astro'
@@ -42,7 +44,7 @@ import { PRODUCT_LABELS, PRODUCTS } from '../../utils/product'
         {PRODUCTS.map(product => (
           <article
             id={`product-${product.id}`}
-            class="carousel-pane"
+            class:list={['carousel-pane', { 'carousel-pane--shot': product.screenshot }]}
             role="tabpanel"
             aria-labelledby={`product-tab-${product.id}`}
             style={`--p: var(--product-${product.id}-fill); --p-text: var(--product-${product.id})`}
@@ -58,7 +60,23 @@ import { PRODUCT_LABELS, PRODUCTS } from '../../utils/product'
                 Explore {PRODUCT_LABELS[product.id]}
               </Button>
             </div>
-            <CodePanel code={product.snippet.code} lang={product.snippet.lang} />
+            {product.screenshot ? (
+              <figure class="carousel-shot">
+                {(['dark', 'light'] as const).map(theme => (
+                  <img
+                    class={`carousel-shot-${theme}`}
+                    src={`/landing/${product.id}-${theme}.webp`}
+                    alt={product.screenshot?.alt}
+                    width={product.screenshot?.width}
+                    height={product.screenshot?.height}
+                    loading="lazy"
+                    decoding="async"
+                  >
+                ))}
+              </figure>
+            ) : (
+              <CodePanel code={product.snippet.code} lang={product.snippet.lang} />
+            )}
           </article>
         ))}
       </div>
@@ -282,6 +300,11 @@ for (const root of document.querySelectorAll<HTMLElement>('[data-carousel]')) {
   scroll-margin-top: calc(var(--sl-nav-height, 4rem) + 1rem);
 }
 
+/* A screenshot is read at a glance, not line by line: give it the wider half */
+.carousel-pane--shot {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
+}
+
 .carousel:not(.is-ready) .carousel-pane + .carousel-pane {
   border-top: var(--rs-border);
 }
@@ -312,6 +335,25 @@ for (const root of document.querySelectorAll<HTMLElement>('[data-carousel]')) {
   letter-spacing: var(--rs-tracking-heading);
   line-height: var(--rs-leading-snug);
   color: var(--sl-color-white);
+}
+
+.carousel-shot {
+  margin: 0;
+  border: var(--rs-border);
+  border-radius: var(--rs-radius-md);
+  overflow: hidden;
+}
+
+.carousel-shot img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* Starlight stamps the chosen theme on <html>: show the screenshot taken in it */
+:global(:root[data-theme='light']) .carousel-shot-dark,
+:global(:root:not([data-theme='light'])) .carousel-shot-light {
+  display: none;
 }
 
 .carousel-summary {
