@@ -142,3 +142,43 @@ describe('agent guidance', () => {
     expect(hints['roll_game']?.idempotentHint).toBe(false)
   })
 })
+
+describe('MCP Apps view', () => {
+  const VIEW = 'ui://randsum/roll.html'
+
+  test('roll and roll_game point at the view; validate does not', async () => {
+    const client = await connect()
+    const { tools } = await client.listTools()
+    const meta = (name: string) => tools.find(t => t.name === name)?._meta
+    for (const name of ['roll', 'roll_game']) {
+      expect(meta(name)).toEqual({ ui: { resourceUri: VIEW }, 'ui/resourceUri': VIEW })
+    }
+    expect(meta('validate')).toBeUndefined()
+  })
+
+  test('serves the view as one mcp-app page, borderless', async () => {
+    const client = await connect()
+    const { resources } = await client.listResources()
+    expect(resources.map(r => r.uri)).toContain(VIEW)
+    const { contents } = await client.readResource({ uri: VIEW })
+    const [page] = contents
+    expect(page?.mimeType).toBe('text/html;profile=mcp-app')
+    expect(page && 'text' in page ? page.text : '').toContain('<randsum-mcp-app>')
+    expect(page?._meta).toMatchObject({ ui: { prefersBorder: false } })
+  })
+
+  test('a roll carries its records in _meta for the view, outside the structured result', async () => {
+    const client = await connect()
+    const result = await client.callTool({ name: 'roll', arguments: { notation: '4d6L' } })
+    const records = result._meta?.['randsum/records']
+    expect(Array.isArray(records) && records.length).toBe(1)
+    expect(result.structuredContent).not.toHaveProperty('records')
+    const game = await client.callTool({
+      name: 'roll_game',
+      arguments: { game: 'blades', params: { rating: 2 } }
+    })
+    expect(Array.isArray(game._meta?.['randsum/records'])).toBe(true)
+    const invalid = await client.callTool({ name: 'roll', arguments: { notation: 'nope' } })
+    expect(invalid._meta).toBeUndefined()
+  })
+})

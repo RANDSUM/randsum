@@ -20,6 +20,15 @@ URL instead, such as a Claude connector.
 
 Every tool is annotated read-only and closed-world (`readOnlyHint: true`, `openWorldHint: false`), which clients may use to skip confirmation prompts, and the server sends `instructions` telling the model to call a tool for every roll instead of inventing one.
 
+### In Claude and other MCP Apps hosts
+
+`roll` and `roll_game` come with an [MCP App](https://modelcontextprotocol.io/extensions/apps): a
+card that shows the total and every step of the dice, themed to match the host, with a Roll again
+button that asks the server for a fresh roll. It is the `<randsum-mcp-app>` element from
+[`@randsum/ui`](https://www.npmjs.com/package/@randsum/ui), served inline as the
+`ui://randsum/roll.html` resource. Clients without MCP Apps support get the same text and
+structured results as before.
+
 ### `roll`
 
 Rolls [RANDSUM dice notation](https://notation.randsum.dev/) (e.g. `4d6L`,

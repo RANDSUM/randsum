@@ -1,4 +1,4 @@
-import type { RollArgument, RollConfig } from '@randsum/roller'
+import type { RollArgument, RollConfig, RollRecord } from '@randsum/roller'
 import { suggestNotationFix } from '@randsum/roller'
 import { ERROR_CODES, RandsumError } from '@randsum/roller/errors'
 import { roll } from '@randsum/roller/roll'
@@ -33,6 +33,18 @@ export interface RollToolResult {
  * Throws with a suggestion when the notation is invalid.
  */
 export function rollNotation(input: RollToolInput): RollToolResult {
+  return rollNotationWithRecords(input).result
+}
+
+/**
+ * `rollNotation`, plus the roller's full record of each pool: every die
+ * before and after each modifier. The MCP tool hands the records to its UI
+ * view, which draws the steps; the model and the REST API get only the result.
+ */
+export function rollNotationWithRecords(input: RollToolInput): {
+  readonly result: RollToolResult
+  readonly records: readonly RollRecord[]
+} {
   if (!isDiceNotation(input.notation)) {
     const suggestion = suggestNotationFix(input.notation)
     const base = `Invalid dice notation: "${input.notation}"`
@@ -58,9 +70,12 @@ export function rollNotation(input: RollToolInput): RollToolResult {
   }))
 
   return {
-    notation: input.notation,
-    total: result.total,
-    pools,
-    description: pools.map(pool => pool.description).join('; ')
+    result: {
+      notation: input.notation,
+      total: result.total,
+      pools,
+      description: pools.map(pool => pool.description).join('; ')
+    },
+    records: result.rolls
   }
 }

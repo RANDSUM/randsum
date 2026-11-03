@@ -68,6 +68,12 @@ export interface RollGameToolResult {
   readonly rolls: readonly number[]
 }
 
+/** A game roll, plus the roller's records behind it (see `rollNotationWithRecords`). */
+export interface RolledGame {
+  readonly result: RollGameToolResult
+  readonly records: readonly RollRecord[]
+}
+
 function normalize(
   game: GameShortcode,
   result: {
@@ -76,13 +82,16 @@ function normalize(
     readonly rolls: readonly RollRecord[]
     readonly details?: unknown
   }
-): RollGameToolResult {
+): RolledGame {
   return {
-    game,
-    total: result.total,
-    result: result.result,
-    details: 'details' in result ? result.details : undefined,
-    rolls: result.rolls.flatMap(record => record.rolls)
+    result: {
+      game,
+      total: result.total,
+      result: result.result,
+      details: 'details' in result ? result.details : undefined,
+      rolls: result.rolls.flatMap(record => record.rolls)
+    },
+    records: result.rolls
   }
 }
 
@@ -93,6 +102,11 @@ function normalize(
  * values, which is the shape each `roll()` input type describes.
  */
 export function rollGame(game: GameShortcode, params: GameParams): RollGameToolResult {
+  return rollGameWithRecords(game, params).result
+}
+
+/** `rollGame`, plus the roller's records, for the MCP tool's UI view. */
+export function rollGameWithRecords(game: GameShortcode, params: GameParams): RolledGame {
   const input = gameInput(game, params)
   switch (game) {
     case 'blades':

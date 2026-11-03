@@ -13,6 +13,17 @@ Three tools, each backed by a pure, directly-testable handler:
 - `validate` — `{ notation }` → valid, description, suggestion (`validateNotation` + `suggestNotationFix`)
 - `roll_game` — `{ game, params }` → game-interpreted result (`@randsum/games` subpaths)
 
+## MCP App (`ui://` view)
+
+`roll` and `roll_game` carry `_meta.ui.resourceUri` (plus the older flat `ui/resourceUri`), pointing
+at the resource `ui://randsum/roll.html` (`text/html;profile=mcp-app`). Hosts that support MCP Apps
+(Claude among them) render it in a sandboxed frame; other clients ignore it. The page is
+`<randsum-mcp-app>` from `@randsum/ui`, imported as one string from `@randsum/ui/mcp-app-page` and
+inlined into `dist` at build time, so nothing is fetched at run time. Each roll's `RollRecord`s go
+in the result's `_meta['randsum/records']` for the view to draw the steps; `structuredContent`, the
+model's text and the REST API are unchanged (`rollNotationWithRecords` and `rollGameWithRecords`
+wrap the plain handlers).
+
 ## Structure
 
 - `src/index.ts` — Bin entry: creates the server, connects `StdioServerTransport`, `main()`
@@ -20,7 +31,8 @@ Three tools, each backed by a pure, directly-testable handler:
   serves the same server statelessly over Streamable HTTP, and re-exports the tool handlers. Used by
   `apps/api` (api.randsum.dev `/mcp` and `/v1`). There is no `.` export: importing the bin would
   start a stdio server.
-- `src/server.ts` — `createServer()`: registers the three tools; owns the Zod input and output schemas
+- `src/server.ts` — `createServer()`: registers the three tools and the view resource; owns the Zod
+  input and output schemas
 - `src/tools/roll.ts` — `rollNotation()` pure handler
 - `src/tools/validate.ts` — `validateNotationInput()` pure handler
 - `src/tools/rollGame.ts` — `rollGame()` pure handler
@@ -46,6 +58,6 @@ Smoke-test the live server by piping a JSON-RPC `initialize` message to `bun src
 
 - `@modelcontextprotocol/sdk` (exact-pinned) and `zod` (its required peer, exact-pinned) are
   **regular runtime dependencies** — external, NOT bundled.
-- `@randsum/roller` and `@randsum/games` are **dev dependencies** (`workspace:~`), bundled into
+- `@randsum/roller`, `@randsum/games` and `@randsum/ui` (only for the view page) are **dev dependencies** (`workspace:~`), bundled into
   `dist/index.js` and `dist/remote.js` via bunup `noExternal: [/^@randsum\//]`. This keeps
   the published surface to just the SDK + zod.
