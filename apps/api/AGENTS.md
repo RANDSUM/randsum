@@ -23,6 +23,7 @@ apps/api/
     v1.ts      # handleV1(): decoded request -> { status, body }. Pure, never throws.
     random.ts  # Unbiased crypto integers (rejection sampling); injectable word source for tests
     longform.ts  # roll() options object (dotted/bracketed query keys) -> notation for /v1
+    oauth.ts   # No-op OAuth server (discovery, /register, /authorize, /token) for clients that insist on sign-in
   __tests__/   # v1 routes, random, and the Worker end to end (MCP included)
   wrangler.jsonc
 ```
@@ -53,6 +54,11 @@ bun run check      # typecheck + test
   is `no-store`.
 - **Dice randomness** is the roller's default (`Math.random`); `/v1/random` uses
   `crypto.getRandomValues`.
+- **OAuth shim**: the directory listing declares OAuth, so Claude runs discovery, dynamic client
+  registration and the code flow before connecting. `oauth.ts` answers every step without storing
+  anything or asking the user; `/mcp` never reads the token and keeps working with none.
+  `/authorize` only redirects to `claude.ai`/`claude.com` over https and to loopback, so it is not
+  an open redirect.
 - Adding a route: extend `handleV1` and the `index()` listing in `v1.ts`, test it in
   `__tests__/v1.test.ts`, and document it under `apps/site/src/content/docs/api/` and
   the `dice-rolling` skill.

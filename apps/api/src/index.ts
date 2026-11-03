@@ -9,9 +9,12 @@
  *   drift apart.
  *
  * Everything is public and keyless. The rate limiter, when bound, is the only
- * gate, keyed by client IP.
+ * gate, keyed by client IP. `oauth.ts` answers OAuth discovery, registration
+ * and token requests for clients that insist on signing in, but `/mcp` never
+ * reads the token.
  */
 import { handleMcpRequest } from '@randsum/mcp/remote'
+import { handleOAuth, OAUTH_PATHS } from './oauth'
 import { handleV1 } from './v1'
 
 /** Cloudflare's Workers rate limiting binding (wrangler.jsonc `ratelimits`). */
@@ -84,6 +87,8 @@ async function route(request: Request): Promise<Response> {
     }
     return handleMcpRequest(request)
   }
+
+  if (OAUTH_PATHS.has(pathname)) return handleOAuth(request, url)
 
   if (pathname === '/') return Response.redirect(`${url.origin}/v1`, 302)
 
