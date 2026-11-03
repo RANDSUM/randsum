@@ -446,16 +446,19 @@
   font-weight: var(--_weight-semibold);
 }
 
-/* The initial roll leads: ink label, larger dice, and a rule before the
-   modifier steps that follow it */
+/* The initial rolls lead: ink label, larger dice, framed by a quiet border.
+   The frame reaches out into the readout's padding, so the label and dice
+   columns stay aligned with the modifier steps below */
 .rsui-step[data-step='initial'] .rsui-step-label {
   color: var(--_ink);
   font-weight: var(--_weight-bold);
 }
 
-.rsui-step[data-step='initial']:not(:last-child) {
-  padding-bottom: 0.875rem;
-  border-bottom: 1px solid var(--_border);
+.rsui-step[data-step='initial'] {
+  margin-inline: -0.75rem;
+  padding: 0.625rem 0.75rem;
+  border: 1px solid var(--_border-strong);
+  border-radius: var(--_radius-lg);
 }
 
 .rsui-step[data-step='initial'] .rsui-die {

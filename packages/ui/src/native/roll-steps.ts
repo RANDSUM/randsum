@@ -93,8 +93,7 @@ function step(
   item: ShownStep,
   key: string,
   initial: boolean,
-  label?: PoolName,
-  divided = false
+  label?: PoolName
 ): React.ReactNode {
   const labelStyle = [styles.stepLabel, initial ? styles.stepLabelInitial : null]
   const heading =
@@ -117,7 +116,7 @@ function step(
   const layout = diceLayout(item)
   return h(
     View,
-    { key, style: [styles.step, divided ? styles.stepDivided : null] },
+    { key, style: [styles.step, initial ? styles.stepInitial : null] },
     heading,
     h(
       View,
@@ -168,9 +167,7 @@ export function RollSteps({ records, style }: RollStepsProps): React.JSX.Element
               h(Text, { style: styles.poolHeadingText }, record.total)
             )
           : null,
-        steps.map((s, i) =>
-          step(styles, s, `step-${i}`, i === 0, undefined, i === 0 && steps.length > 1)
-        )
+        steps.map((s, i) => step(styles, s, `step-${i}`, i === 0))
       )
     })
   )

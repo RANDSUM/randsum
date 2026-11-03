@@ -10,9 +10,16 @@ function shown(step: RollTraceStep): step is ShownStep {
   return step.kind !== 'divider' && step.kind !== 'finalRolls'
 }
 
+/** The heading of a pool's first step, the dice as they were first rolled. */
+const INITIAL_ROLLS_LABEL = 'Initial Rolls'
+
 /** What was rolled, what changed and what was added; no dividers or final rolls. */
 export function visibleSteps(record: RollRecord): readonly ShownStep[] {
-  return traceRoll(record).filter(shown)
+  return traceRoll(record)
+    .filter(shown)
+    .map((step, i) =>
+      i === 0 && step.kind === 'rolls' ? { ...step, label: INITIAL_ROLLS_LABEL } : step
+    )
 }
 
 /** A pool's name in a multi-pool roll. */
