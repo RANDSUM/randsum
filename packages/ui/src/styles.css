@@ -487,6 +487,21 @@
   background: color-mix(in srgb, var(--_accent) 14%, var(--_raised));
 }
 
+/* An explosion chain: the die that exploded, then each die it rolled */
+.rsui-chain {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem;
+  /* Space between chains, so one ends visibly before the next begins */
+  margin-inline-end: 0.75rem;
+}
+
+.rsui-chain-link {
+  color: var(--_muted);
+  font-weight: var(--_weight-semibold);
+}
+
 .rsui-quiet-button {
   min-height: 2.5rem;
   padding-inline: 0.875rem;

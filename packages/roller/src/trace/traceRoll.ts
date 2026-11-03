@@ -1,4 +1,7 @@
 import type { RollRecord } from '../types'
+import type { ExplosionChain } from '../types/modifiers'
+
+export type { ExplosionChain }
 
 /**
  * The subset of RollRecord fields required by traceRoll.
@@ -17,6 +20,8 @@ export type RollTraceStep =
       removed: readonly number[]
       added: readonly number[]
       replacements?: readonly { readonly from: number; readonly to: number }[]
+      /** Explosion modifiers: which die triggered which new dice */
+      explosions?: readonly ExplosionChain[]
     }
   | { kind: 'divider' }
   | { kind: 'arithmetic'; label: string; display: string }
@@ -187,6 +192,9 @@ export function traceRoll(record: TraceableRollRecord): readonly RollTraceStep[]
     }
     if (log.replacements !== undefined && log.replacements.length > 0) {
       step.replacements = log.replacements
+    }
+    if (log.explosions !== undefined && log.explosions.length > 0) {
+      step.explosions = log.explosions
     }
     modifierSteps.push(step)
   }

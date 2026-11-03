@@ -22,15 +22,15 @@ export const wildDieModifier: ModifierDefinition<boolean> = {
     // Wild die shows max: compound explode via shared utility
     if (wildValue === sides) {
       const result = [...rolls]
-      const compoundTotal = applyAccumulatingExplosion(
+      const chain = applyAccumulatingExplosion(
         wildValue,
         sides,
         rollOne,
         DEFAULT_EXPLOSION_DEPTH,
         ExplosionStrategies.compound
       )
-      result[wildIndex] = compoundTotal
-      return { rolls: result }
+      result[wildIndex] = chain.to
+      return { rolls: result, explosions: [chain] }
     }
 
     // Wild die shows 1: remove wild die AND highest non-wild die

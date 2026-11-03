@@ -41,16 +41,11 @@ export const explodeSequenceModifier: ModifierDefinition<number[]> = {
     const { sides } = ctx.parameters
     const rng = ctx.randomFn
     const rollOneSized = (rollSides: number): number => coreRandom(rollSides, rng) + 1
-    const additionalRolls: number[] = []
+    // Each die that hit max starts the sequence
+    const explosions = rolls
+      .filter(roll => roll === sides)
+      .map(from => ({ from, rolls: explodeThroughSequence(options, rollOneSized) }))
 
-    for (const roll of rolls) {
-      if (roll !== sides) continue
-
-      // This die hit max, start the sequence
-      const seqRolls = explodeThroughSequence(options, rollOneSized)
-      additionalRolls.push(...seqRolls)
-    }
-
-    return { rolls: [...rolls, ...additionalRolls] }
+    return { rolls: [...rolls, ...explosions.flatMap(e => e.rolls)], explosions }
   }
 }

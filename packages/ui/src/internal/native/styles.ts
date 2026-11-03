@@ -62,6 +62,8 @@ type StyleName =
   | 'die'
   | 'dieRemoved'
   | 'dieAdded'
+  | 'chain'
+  | 'chainLink'
   | 'dieText'
   | 'dieTextRemoved'
   | 'arrow'
@@ -253,6 +255,14 @@ function build(t: RollerTheme): RollerStyles {
     },
     dieRemoved: { borderStyle: 'dashed', backgroundColor: 'transparent' },
     dieAdded: { borderWidth: 2, borderColor: t.accent, backgroundColor: t.addedBg },
+    chain: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      alignItems: 'center',
+      gap: 4,
+      marginRight: 12
+    },
+    chainLink: { ...text, color: t.muted, fontWeight: '600' },
     dieText: { ...text, fontSize: t.textMd, fontWeight: '600', fontVariant: ['tabular-nums'] },
     dieTextRemoved: { color: t.faint, fontWeight: '400', textDecorationLine: 'line-through' },
     arrow: { ...text, color: t.muted },

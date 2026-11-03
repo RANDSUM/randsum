@@ -1642,16 +1642,19 @@ function resolveExplosionDepth(options) {
 }
 function applyAccumulatingExplosion(initial, sides, rollOne, maxDepth, strategy, trigger) {
   const shouldContinue = trigger ?? strategy.shouldContinue ?? ((roll, max) => roll === max);
+  const rolled = [];
   const recurse = (total, depth) => {
     if (depth >= maxDepth)
       return total;
     const newRoll = rollOne();
+    rolled.push(newRoll);
     const newTotal = strategy.accumulate(total, newRoll, depth);
     if (!shouldContinue(newRoll, sides))
       return newTotal;
     return recurse(newTotal, depth + 1);
   };
-  return recurse(initial, 0);
+  const to = recurse(initial, 0);
+  return { from: initial, rolls: rolled, to };
 }
 function createAccumulatingExplosionBehavior(strategy) {
   return (rolls, options, ctx) => {
@@ -1659,8 +1662,16 @@ function createAccumulatingExplosionBehavior(strategy) {
     const { sides } = parameters;
     const maxDepth = resolveExplosionDepth(options);
     const trigger = buildExplosionTrigger(typeof options === "number" ? true : options);
-    const result = rolls.map((roll) => trigger(roll, sides) ? applyAccumulatingExplosion(roll, sides, rollOne, maxDepth, strategy, trigger) : roll);
-    return { rolls: result };
+    const explosions = [];
+    const result = rolls.map((roll) => {
+      if (!trigger(roll, sides))
+        return roll;
+      const chain = applyAccumulatingExplosion(roll, sides, rollOne, maxDepth, strategy, trigger);
+      if (chain.rolls.length > 0)
+        explosions.push(chain);
+      return chain.to;
+    });
+    return { rolls: result, explosions };
   };
 }
 
@@ -1751,8 +1762,8 @@ var explodeModifier = {
       const next = rollOne();
       return trigger(next, sides) ? [next, ...chain(depth + 1)] : [next];
     };
-    const explosions = rolls.filter((roll) => trigger(roll, sides)).flatMap(() => chain(0));
-    return { rolls: [...rolls, ...explosions] };
+    const explosions = rolls.filter((roll) => trigger(roll, sides)).map((from) => ({ from, rolls: chain(0) }));
+    return { rolls: [...rolls, ...explosions.flatMap((e) => e.rolls)], explosions };
   }
 };
 
@@ -1794,14 +1805,8 @@ var explodeSequenceModifier = {
     const { sides } = ctx.parameters;
     const rng = ctx.randomFn;
     const rollOneSized = (rollSides) => coreRandom(rollSides, rng) + 1;
-    const additionalRolls = [];
-    for (const roll of rolls) {
-      if (roll !== sides)
-        continue;
-      const seqRolls = explodeThroughSequence(options, rollOneSized);
-      additionalRolls.push(...seqRolls);
-    }
-    return { rolls: [...rolls, ...additionalRolls] };
+    const explosions = rolls.filter((roll) => roll === sides).map((from) => ({ from, rolls: explodeThroughSequence(options, rollOneSized) }));
+    return { rolls: [...rolls, ...explosions.flatMap((e) => e.rolls)], explosions };
   }
 };
 
@@ -2093,9 +2098,9 @@ var wildDieModifier = {
       return { rolls };
     if (wildValue === sides) {
       const result = [...rolls];
-      const compoundTotal = applyAccumulatingExplosion(wildValue, sides, rollOne, DEFAULT_EXPLOSION_DEPTH, ExplosionStrategies.compound);
-      result[wildIndex] = compoundTotal;
-      return { rolls: result };
+      const chain = applyAccumulatingExplosion(wildValue, sides, rollOne, DEFAULT_EXPLOSION_DEPTH, ExplosionStrategies.compound);
+      result[wildIndex] = chain.to;
+      return { rolls: result, explosions: [chain] };
     }
     if (wildValue === 1) {
       const nonWild = rolls.slice(0, wildIndex);
@@ -2144,7 +2149,7 @@ function createArithmeticLog(modifier, options) {
     removed: []
   };
 }
-function createModifierLog(modifier, options, initialRolls, newRolls, replacements) {
+function createModifierLog(modifier, options, initialRolls, newRolls, replacements, explosions) {
   const baseLog = { modifier, options };
   if (initialRolls === newRolls) {
     return { ...baseLog, added: [], removed: [] };
@@ -2186,6 +2191,9 @@ function createModifierLog(modifier, options, initialRolls, newRolls, replacemen
   if (replacements !== undefined && replacements.length > 0) {
     log.replacements = replacements;
   }
+  if (explosions !== undefined && explosions.length > 0) {
+    log.explosions = explosions;
+  }
   return log;
 }
 
@@ -2198,7 +2206,7 @@ function applyModifier(name, options, rolls, ctx) {
   const modifier = MODIFIERS_BY_NAME[name];
   const initialRolls = [...rolls];
   const applied = modifier.apply(rolls, options, ctx);
-  const log = modifier.mutatesRolls === false ? createArithmeticLog(name, options) : createModifierLog(name, options, initialRolls, applied.rolls, applied.replacements);
+  const log = modifier.mutatesRolls === false ? createArithmeticLog(name, options) : createModifierLog(name, options, initialRolls, applied.rolls, applied.replacements, applied.explosions);
   return applied.transformTotal ? { rolls: applied.rolls, log, transformTotal: applied.transformTotal } : { rolls: applied.rolls, log };
 }
 function applyAllModifiers(modifiers, initialRolls, ctx) {

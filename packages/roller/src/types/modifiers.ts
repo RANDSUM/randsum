@@ -30,6 +30,29 @@ export interface ModifierLog {
   removed: number[]
   /** Paired replacements for modifiers that do 1:1 substitution (e.g. unique, reroll, replace) */
   replacements?: readonly { readonly from: number; readonly to: number }[]
+  /** Explosion modifiers: each die that triggered, and the dice its chain rolled */
+  explosions?: readonly ExplosionChain[]
+}
+
+/**
+ * One explosion chain: the die that triggered it and the dice it rolled, in
+ * order. Each die in `rolls` but the last triggered the one after it (the last
+ * stops the chain, or hits the depth limit). Compounding modifiers (compound,
+ * penetrate, the wild die) fold the chain into one die, `to`.
+ *
+ * @example
+ * ```ts
+ * // 3d6! rolls [6, 2, 6]; the first 6 explodes into a 6 then a 1, the second into a 4:
+ * // explosions = [{ from: 6, rolls: [6, 1] }, { from: 6, rolls: [4] }]
+ *
+ * // 1d6!! rolls [6], compounds a 6 then a 3:
+ * // explosions = [{ from: 6, rolls: [6, 3], to: 15 }]
+ * ```
+ */
+export interface ExplosionChain {
+  readonly from: number
+  readonly rolls: readonly number[]
+  readonly to?: number
 }
 
 /**

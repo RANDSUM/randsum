@@ -408,3 +408,16 @@ describe('native theme', () => {
     expect(tokenColour(dark.container)).toBe(doc.color)
   })
 })
+
+describe('native <RollSteps>', () => {
+  test('draws an explosion chain: the die, then each die it rolled', async () => {
+    const { RollSteps } = await import('../src/native/roll-steps')
+    const { roll } = await import('@randsum/roller')
+    // 2d6! rolls 6, 3; the 6 explodes into a 6, then a 2
+    const queue = [6, 3, 6, 2]
+    const result = roll('2d6!', { randomFn: () => ((queue.shift() ?? 1) - 0.5) / 6 })
+    const { container } = render(<RollSteps records={result.rolls} />)
+    const chain = container.querySelector('[aria-label="6 exploded: 6, 2"]')
+    expect(chain?.textContent).toBe('6→6→2')
+  })
+})
