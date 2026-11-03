@@ -493,20 +493,13 @@
   flex-wrap: wrap;
   align-items: center;
   gap: 0.25rem;
-  padding: 0.1875rem;
-  border-radius: var(--_radius-lg);
-  background: color-mix(in srgb, var(--_exploded) 10%, transparent);
+  /* Space between chains, so one ends visibly before the next begins */
+  margin-inline-end: 0.75rem;
 }
 
 .rsui-chain-link {
-  color: var(--_exploded);
+  color: var(--_muted);
   font-weight: var(--_weight-semibold);
-}
-
-.rsui-die[data-variant='exploded'] {
-  border: 2px solid var(--_exploded);
-  background: color-mix(in srgb, var(--_exploded) 14%, var(--_raised));
-  color: var(--_ink);
 }
 
 .rsui-quiet-button {

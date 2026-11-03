@@ -51,7 +51,7 @@ describe('explosion chains', () => {
     expect(layout.unchanged).toEqual([])
   })
 
-  test('the steps draw the chain: the die, then its explosion dice in green', () => {
+  test('the steps draw the chain: the die, then an arrow to each die it rolled', () => {
     const host = document.createElement('div')
     render(rollSteps([record('2d6!', 6, [6, 3, 6, 2])]), host)
     const chain = host.querySelector('.rsui-chain')
@@ -62,17 +62,22 @@ describe('explosion chains', () => {
     ])
     expect(dice).toEqual([
       ['6', 'kept'],
-      ['6', 'exploded'],
-      ['2', 'exploded']
+      ['6', 'kept'],
+      ['2', 'kept']
     ])
     expect(chain?.querySelectorAll('.rsui-chain-link').length).toBe(2)
   })
 
-  test('a compound chain ends with what the die became', () => {
+  test('a compound chain shows its dice, not what the die became', () => {
     const host = document.createElement('div')
     render(rollSteps([record('1d6!!', 6, [6, 6, 3])]), host)
     const chain = host.querySelector('.rsui-chain')
-    expect(chain?.getAttribute('aria-label')).toBe('6 exploded: 6, 3, making 15')
-    expect(chain?.querySelector('[data-variant="added"]')?.textContent).toBe('15')
+    expect(chain?.getAttribute('aria-label')).toBe('6 exploded: 6, 3')
+    expect([...(chain?.querySelectorAll('.rsui-die') ?? [])].map(d => d.textContent)).toEqual([
+      '6',
+      '6',
+      '3'
+    ])
+    expect(host.textContent).not.toContain('15')
   })
 })

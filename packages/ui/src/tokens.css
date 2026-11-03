@@ -17,7 +17,6 @@
   --_faint: var(--rsui-faint, light-dark(#71717a, #8b8b94));
   --_valid: var(--rsui-valid, light-dark(#15803d, #4ade80));
   --_invalid: var(--rsui-invalid, light-dark(#b91c1c, #f87171));
-  --_exploded: var(--rsui-exploded, light-dark(#15803d, #4ade80));
   --_disabled-bg: var(--rsui-disabled-bg, light-dark(#e4e4e7, #2e2e33));
   --_disabled-ink: var(--rsui-disabled-ink, light-dark(#71717a, #8b8b94));
   --_tip-bg: var(--rsui-tip-bg, light-dark(#18181b, #fafafa));

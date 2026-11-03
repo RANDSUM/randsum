@@ -4,7 +4,7 @@ import type { TemplateResult } from 'lit'
 import { diceLayout, visibleSteps } from '../steps'
 import type { DiceLayout, ShownStep } from '../steps'
 
-type DieVariant = 'kept' | 'removed' | 'added' | 'exploded'
+type DieVariant = 'kept' | 'removed' | 'added'
 
 function dice(values: readonly number[], variant: DieVariant): readonly TemplateResult[] {
   return values.map(value => die(value, variant))
@@ -14,21 +14,12 @@ function die(value: number, variant: DieVariant): TemplateResult {
   return html`<span class="rsui-die" data-variant=${variant}>${value}</span>`
 }
 
-/** The die that exploded, linked to each die its chain rolled (and what a compound became). */
+/** The die that exploded, linked to each die its chain rolled. */
 function chain(item: DiceLayout['chains'][number]): TemplateResult {
-  const label =
-    item.to === undefined
-      ? `${item.from} exploded: ${item.rolls.join(', ')}`
-      : `${item.from} exploded: ${item.rolls.join(', ')}, making ${item.to}`
-  return html`<span class="rsui-chain" role="group" aria-label=${label}
+  return html`<span class="rsui-chain" role="group" aria-label=${`${item.from} exploded: ${item.rolls.join(', ')}`}
     >${die(item.from, 'kept')}${item.rolls.map(
-      value =>
-        html`<span class="rsui-chain-link" aria-hidden="true">→</span>${die(value, 'exploded')}`
-    )}${
-      item.to === undefined
-        ? nothing
-        : html`<span class="rsui-chain-link" aria-hidden="true">=</span>${die(item.to, 'added')}`
-    }</span
+      value => html`<span class="rsui-chain-link" aria-hidden="true">→</span>${die(value, 'kept')}`
+    )}</span
   >`
 }
 

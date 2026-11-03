@@ -30,12 +30,6 @@ export interface RollerTheme {
   readonly scrim: string
   /** The added-die fill: the accent over `raised`, which CSS mixes for itself. */
   readonly addedBg: string
-  /** Explosion dice: their border, and the chain's links */
-  readonly exploded: string
-  /** The exploded-die fill: `exploded` over `raised` */
-  readonly explodedBg: string
-  /** The tint behind an explosion chain */
-  readonly chainBg: string
   /** Undefined uses the platform's system font. */
   readonly font: string | undefined
   readonly fontMono: string
@@ -91,10 +85,7 @@ export const lightTheme: RollerTheme = {
   disabledBg: '#e4e4e7',
   disabledInk: '#71717a',
   scrim: 'rgba(24, 24, 27, 0.4)',
-  addedBg: '#fde9ea',
-  exploded: '#15803d',
-  explodedBg: '#deede4',
-  chainBg: 'rgba(21, 128, 61, 0.1)'
+  addedBg: '#fde9ea'
 }
 
 export const darkTheme: RollerTheme = {
@@ -114,10 +105,7 @@ export const darkTheme: RollerTheme = {
   disabledBg: '#2e2e33',
   disabledInk: '#8b8b94',
   scrim: 'rgba(0, 0, 0, 0.6)',
-  addedBg: '#402c30',
-  exploded: '#4ade80',
-  explodedBg: '#293d33',
-  chainBg: 'rgba(74, 222, 128, 0.1)'
+  addedBg: '#402c30'
 }
 
 const ThemeContext = createContext<Partial<RollerTheme> | null>(null)

@@ -16,7 +16,7 @@ export interface RollStepsProps {
   readonly style?: StyleProp<ViewStyle>
 }
 
-type DieVariant = 'kept' | 'removed' | 'added' | 'exploded'
+type DieVariant = 'kept' | 'removed' | 'added'
 
 function die(
   styles: RollerStyles,
@@ -32,8 +32,7 @@ function die(
       style: [
         styles.die,
         variant === 'removed' ? styles.dieRemoved : null,
-        variant === 'added' ? styles.dieAdded : null,
-        variant === 'exploded' ? styles.dieExploded : null
+        variant === 'added' ? styles.dieAdded : null
       ]
     },
     h(
@@ -52,32 +51,29 @@ function dice(
   return values.map((value, i) => die(styles, value, variant, `${variant}-${i}`))
 }
 
-function link(styles: RollerStyles, sign: string, key: string): React.ReactNode {
-  return h(Text, { key, accessibilityElementsHidden: true, style: styles.chainLink }, sign)
+function link(styles: RollerStyles, key: string): React.ReactNode {
+  return h(Text, { key, accessibilityElementsHidden: true, style: styles.chainLink }, '→')
 }
 
-/** The die that exploded, linked to each die its chain rolled (and what a compound became). */
+/** The die that exploded, linked to each die its chain rolled. */
 function chain(
   styles: RollerStyles,
   item: DiceLayout['chains'][number],
   key: string
 ): React.ReactNode {
-  const rolled = item.rolls.join(', ')
-  const label =
-    item.to === undefined
-      ? `${item.from} exploded: ${rolled}`
-      : `${item.from} exploded: ${rolled}, making ${item.to}`
   return h(
     View,
-    { key, accessible: true, accessibilityLabel: label, style: styles.chain },
+    {
+      key,
+      accessible: true,
+      accessibilityLabel: `${item.from} exploded: ${item.rolls.join(', ')}`,
+      style: styles.chain
+    },
     die(styles, item.from, 'kept', 'from'),
     item.rolls.flatMap((value, i) => [
-      link(styles, '→', `link-${i}`),
-      die(styles, value, 'exploded', `roll-${i}`)
-    ]),
-    item.to === undefined
-      ? null
-      : [link(styles, '=', 'equals'), die(styles, item.to, 'added', 'to')]
+      link(styles, `link-${i}`),
+      die(styles, value, 'kept', `roll-${i}`)
+    ])
   )
 }
 
