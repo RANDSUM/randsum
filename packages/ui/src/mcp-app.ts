@@ -107,6 +107,7 @@ const hostTokens = css`
     --rsui-faint: var(--color-text-tertiary);
     --rsui-valid: var(--color-text-success);
     --rsui-invalid: var(--color-text-danger);
+    --rsui-exploded: var(--color-text-success);
     --rsui-disabled-bg: var(--color-background-disabled);
     --rsui-disabled-ink: var(--color-text-disabled);
     --rsui-tip-bg: var(--color-background-inverse);

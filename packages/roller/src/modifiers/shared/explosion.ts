@@ -9,6 +9,7 @@
 
 import { DEFAULT_EXPLOSION_DEPTH } from '../../lib/constants'
 import type { ComparisonOptions } from '../../notation/types'
+import type { ExplosionChain } from '../../types/modifiers'
 import type { ModifierApplyResult, ModifierContext } from '../schema'
 import { buildExplosionTrigger } from './conditionMatch'
 
@@ -92,7 +93,7 @@ function resolveExplosionDepth(options: boolean | number | ComparisonOptions): n
  * @param maxDepth - Maximum recursion depth
  * @param strategy - How to accumulate results
  * @param trigger - Predicate that determines whether a roll triggers continuation
- * @returns The final accumulated value
+ * @returns The chain: the initial die, the dice rolled and the accumulated value
  */
 export function applyAccumulatingExplosion(
   initial: number,
@@ -101,20 +102,23 @@ export function applyAccumulatingExplosion(
   maxDepth: number,
   strategy: ExplosionStrategy,
   trigger?: (value: number, sides: number) => boolean
-): number {
+): ExplosionChain & { readonly to: number } {
   const shouldContinue = trigger ?? strategy.shouldContinue ?? ((roll, max) => roll === max)
+  const rolled: number[] = []
 
   const recurse = (total: number, depth: number): number => {
     if (depth >= maxDepth) return total
 
     const newRoll = rollOne()
+    rolled.push(newRoll)
     const newTotal = strategy.accumulate(total, newRoll, depth)
 
     if (!shouldContinue(newRoll, sides)) return newTotal
     return recurse(newTotal, depth + 1)
   }
 
-  return recurse(initial, 0)
+  const to = recurse(initial, 0)
+  return { from: initial, rolls: rolled, to }
 }
 
 /**
@@ -135,12 +139,14 @@ export function createAccumulatingExplosionBehavior(
     const maxDepth = resolveExplosionDepth(options)
     const trigger = buildExplosionTrigger(typeof options === 'number' ? true : options)
 
-    const result = rolls.map(roll =>
-      trigger(roll, sides)
-        ? applyAccumulatingExplosion(roll, sides, rollOne, maxDepth, strategy, trigger)
-        : roll
-    )
+    const explosions: ExplosionChain[] = []
+    const result = rolls.map(roll => {
+      if (!trigger(roll, sides)) return roll
+      const chain = applyAccumulatingExplosion(roll, sides, rollOne, maxDepth, strategy, trigger)
+      if (chain.rolls.length > 0) explosions.push(chain)
+      return chain.to
+    })
 
-    return { rolls: result }
+    return { rolls: result, explosions }
   }
 }

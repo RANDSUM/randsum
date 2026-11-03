@@ -1,4 +1,5 @@
 import type { ModifierLog, RequiredNumericRollParameters } from '../types'
+import type { ExplosionChain } from '../types/modifiers'
 import type { NotationSchema } from '../notation/schema'
 
 /**
@@ -43,6 +44,8 @@ export interface ModifierApplyResult {
   transformTotal?: TotalTransformer
   /** Paired replacements for modifiers that do 1:1 substitution */
   replacements?: readonly { readonly from: number; readonly to: number }[]
+  /** Explosion chains, for modifiers that roll new dice off a triggering die */
+  explosions?: readonly ExplosionChain[]
 }
 
 /**

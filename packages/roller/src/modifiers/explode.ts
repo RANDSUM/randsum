@@ -20,8 +20,10 @@ export const explodeModifier: ModifierDefinition<boolean | ComparisonOptions> = 
       const next = rollOne()
       return trigger(next, sides) ? [next, ...chain(depth + 1)] : [next]
     }
-    const explosions = rolls.filter(roll => trigger(roll, sides)).flatMap(() => chain(0))
+    const explosions = rolls
+      .filter(roll => trigger(roll, sides))
+      .map(from => ({ from, rolls: chain(0) }))
 
-    return { rolls: [...rolls, ...explosions] }
+    return { rolls: [...rolls, ...explosions.flatMap(e => e.rolls)], explosions }
   }
 }

@@ -1,4 +1,5 @@
 import type { ModifierConfig, ModifierLog } from '../types'
+import type { ExplosionChain } from '../types/modifiers'
 
 export function createArithmeticLog(
   modifier: string,
@@ -32,7 +33,8 @@ export function createModifierLog(
   options: ModifierConfig | undefined,
   initialRolls: number[],
   newRolls: number[],
-  replacements?: readonly { readonly from: number; readonly to: number }[]
+  replacements?: readonly { readonly from: number; readonly to: number }[],
+  explosions?: readonly ExplosionChain[]
 ): ModifierLog {
   const baseLog = { modifier, options }
 
@@ -84,6 +86,9 @@ export function createModifierLog(
   const log: ModifierLog = { ...baseLog, added, removed }
   if (replacements !== undefined && replacements.length > 0) {
     log.replacements = replacements
+  }
+  if (explosions !== undefined && explosions.length > 0) {
+    log.explosions = explosions
   }
   return log
 }

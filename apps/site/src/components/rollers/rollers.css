@@ -18,6 +18,7 @@ randsum-roller,
   --rsui-faint: var(--rs-gray-3);
   --rsui-valid: var(--rs-success);
   --rsui-invalid: var(--rs-error);
+  --rsui-exploded: var(--rs-success);
   --rsui-disabled-bg: var(--rs-gray-5);
   --rsui-disabled-ink: var(--rs-gray-3);
   --rsui-tip-bg: var(--rs-fg);

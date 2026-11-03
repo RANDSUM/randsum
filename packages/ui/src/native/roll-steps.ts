@@ -7,8 +7,8 @@ import { Text, View } from 'react-native'
 import type { StyleProp, ViewStyle } from 'react-native'
 import type { RollerStyles } from '../internal/native/styles'
 import { useStyles } from '../internal/native/styles'
-import { visibleSteps } from '../internal/steps'
-import type { ShownStep } from '../internal/steps'
+import { diceLayout, visibleSteps } from '../internal/steps'
+import type { DiceLayout, ShownStep } from '../internal/steps'
 
 export interface RollStepsProps {
   /** A roll's records: `result.records` from the roller. */
@@ -16,7 +16,7 @@ export interface RollStepsProps {
   readonly style?: StyleProp<ViewStyle>
 }
 
-type DieVariant = 'kept' | 'removed' | 'added'
+type DieVariant = 'kept' | 'removed' | 'added' | 'exploded'
 
 function die(
   styles: RollerStyles,
@@ -32,7 +32,8 @@ function die(
       style: [
         styles.die,
         variant === 'removed' ? styles.dieRemoved : null,
-        variant === 'added' ? styles.dieAdded : null
+        variant === 'added' ? styles.dieAdded : null,
+        variant === 'exploded' ? styles.dieExploded : null
       ]
     },
     h(
@@ -51,6 +52,35 @@ function dice(
   return values.map((value, i) => die(styles, value, variant, `${variant}-${i}`))
 }
 
+function link(styles: RollerStyles, sign: string, key: string): React.ReactNode {
+  return h(Text, { key, accessibilityElementsHidden: true, style: styles.chainLink }, sign)
+}
+
+/** The die that exploded, linked to each die its chain rolled (and what a compound became). */
+function chain(
+  styles: RollerStyles,
+  item: DiceLayout['chains'][number],
+  key: string
+): React.ReactNode {
+  const rolled = item.rolls.join(', ')
+  const label =
+    item.to === undefined
+      ? `${item.from} exploded: ${rolled}`
+      : `${item.from} exploded: ${rolled}, making ${item.to}`
+  return h(
+    View,
+    { key, accessible: true, accessibilityLabel: label, style: styles.chain },
+    die(styles, item.from, 'kept', 'from'),
+    item.rolls.flatMap((value, i) => [
+      link(styles, '→', `link-${i}`),
+      die(styles, value, 'exploded', `roll-${i}`)
+    ]),
+    item.to === undefined
+      ? null
+      : [link(styles, '=', 'equals'), die(styles, item.to, 'added', 'to')]
+  )
+}
+
 function step(styles: RollerStyles, item: ShownStep, key: string, label?: string): React.ReactNode {
   const heading =
     label === undefined
@@ -65,6 +95,7 @@ function step(styles: RollerStyles, item: ShownStep, key: string, label?: string
     )
   }
   const replacements = item.replacements ?? []
+  const layout = diceLayout(item)
   return h(
     View,
     { key, style: styles.step },
@@ -72,6 +103,7 @@ function step(styles: RollerStyles, item: ShownStep, key: string, label?: string
     h(
       View,
       { style: styles.dice },
+      layout.chains.map((c, i) => chain(styles, c, `chain-${i}`)),
       replacements.map((r, i) =>
         h(
           View,
@@ -81,9 +113,9 @@ function step(styles: RollerStyles, item: ShownStep, key: string, label?: string
           die(styles, r.to, 'added', 'to')
         )
       ),
-      replacements.length === 0 ? dice(styles, item.removed, 'removed') : null,
-      replacements.length === 0 ? dice(styles, item.added, 'added') : null,
-      dice(styles, item.unchanged, 'kept')
+      replacements.length === 0 ? dice(styles, layout.removed, 'removed') : null,
+      replacements.length === 0 ? dice(styles, layout.added, 'added') : null,
+      dice(styles, layout.unchanged, 'kept')
     )
   )
 }

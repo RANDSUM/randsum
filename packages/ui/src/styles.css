@@ -487,6 +487,28 @@
   background: color-mix(in srgb, var(--_accent) 14%, var(--_raised));
 }
 
+/* An explosion chain: the die that exploded, then each die it rolled */
+.rsui-chain {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.1875rem;
+  border-radius: var(--_radius-lg);
+  background: color-mix(in srgb, var(--_exploded) 10%, transparent);
+}
+
+.rsui-chain-link {
+  color: var(--_exploded);
+  font-weight: var(--_weight-semibold);
+}
+
+.rsui-die[data-variant='exploded'] {
+  border: 2px solid var(--_exploded);
+  background: color-mix(in srgb, var(--_exploded) 14%, var(--_raised));
+  color: var(--_ink);
+}
+
 .rsui-quiet-button {
   min-height: 2.5rem;
   padding-inline: 0.875rem;

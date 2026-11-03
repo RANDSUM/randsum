@@ -182,7 +182,7 @@ These appear inside result objects but are not exported.
 |---|---|
 | `RollParams<T>` | Fully resolved parameters (extends `RollOptions`, adds `faces`, `argument`, `description`, `notation`) |
 | `RequiredNumericRollParameters` | `{ quantity: number, sides: number }` |
-| `ModifierLog` | `{ modifier, options, added, removed }`: the log entry for one modifier |
+| `ModifierLog` | `{ modifier, options, added, removed, replacements?, explosions? }`: the log entry for one modifier; `explosions` lists each die that exploded and the dice its chain rolled |
 | `NumericRollBonus` | `{ rolls: number[], logs: ModifierLog[] }`: intermediate modifier state |
 
 ## Validation result types

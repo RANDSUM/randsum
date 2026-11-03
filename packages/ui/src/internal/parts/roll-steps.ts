@@ -1,13 +1,35 @@
 import type { RollRecord } from '@randsum/roller'
 import { html, nothing } from 'lit'
 import type { TemplateResult } from 'lit'
-import { visibleSteps } from '../steps'
-import type { ShownStep } from '../steps'
+import { diceLayout, visibleSteps } from '../steps'
+import type { DiceLayout, ShownStep } from '../steps'
 
-type DieVariant = 'kept' | 'removed' | 'added'
+type DieVariant = 'kept' | 'removed' | 'added' | 'exploded'
 
 function dice(values: readonly number[], variant: DieVariant): readonly TemplateResult[] {
-  return values.map(value => html`<span class="rsui-die" data-variant=${variant}>${value}</span>`)
+  return values.map(value => die(value, variant))
+}
+
+function die(value: number, variant: DieVariant): TemplateResult {
+  return html`<span class="rsui-die" data-variant=${variant}>${value}</span>`
+}
+
+/** The die that exploded, linked to each die its chain rolled (and what a compound became). */
+function chain(item: DiceLayout['chains'][number]): TemplateResult {
+  const label =
+    item.to === undefined
+      ? `${item.from} exploded: ${item.rolls.join(', ')}`
+      : `${item.from} exploded: ${item.rolls.join(', ')}, making ${item.to}`
+  return html`<span class="rsui-chain" role="group" aria-label=${label}
+    >${die(item.from, 'kept')}${item.rolls.map(
+      value =>
+        html`<span class="rsui-chain-link" aria-hidden="true">→</span>${die(value, 'exploded')}`
+    )}${
+      item.to === undefined
+        ? nothing
+        : html`<span class="rsui-chain-link" aria-hidden="true">=</span>${die(item.to, 'added')}`
+    }</span
+  >`
 }
 
 function step(item: ShownStep, label?: string): TemplateResult {
@@ -18,6 +40,7 @@ function step(item: ShownStep, label?: string): TemplateResult {
     </li>`
   }
   const replacements = item.replacements ?? []
+  const layout = diceLayout(item)
   return html`<li class="rsui-step">
     ${
       label === undefined
@@ -25,6 +48,7 @@ function step(item: ShownStep, label?: string): TemplateResult {
         : html`<code class="rsui-step-label">${label}</code>`
     }
     <span class="rsui-dice">
+      ${layout.chains.map(chain)}
       ${replacements.map(
         r => html`<span class="rsui-swap"
           ><span class="rsui-die" data-variant="removed">${r.from}</span
@@ -32,9 +56,9 @@ function step(item: ShownStep, label?: string): TemplateResult {
           ><span class="rsui-die" data-variant="added">${r.to}</span></span
         >`
       )}
-      ${replacements.length === 0 ? dice(item.removed, 'removed') : nothing}
-      ${replacements.length === 0 ? dice(item.added, 'added') : nothing}
-      ${dice(item.unchanged, 'kept')}
+      ${replacements.length === 0 ? dice(layout.removed, 'removed') : nothing}
+      ${replacements.length === 0 ? dice(layout.added, 'added') : nothing}
+      ${dice(layout.unchanged, 'kept')}
     </span>
   </li>`
 }
