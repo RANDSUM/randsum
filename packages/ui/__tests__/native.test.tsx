@@ -410,15 +410,28 @@ describe('native theme', () => {
 })
 
 describe('native <RollSteps>', () => {
-  test('draws an explosion chain: the die, then each die it rolled', async () => {
+  test('lanes: an exploded die, an arrow to each die it rolled, and a Result row', async () => {
     const { RollSteps } = await import('../src/native/roll-steps')
     const { roll } = await import('@randsum/roller')
     // 2d6! rolls 6, 3; the 6 explodes into a 6, then a 2
     const queue = [6, 3, 6, 2]
     const result = roll('2d6!', { randomFn: () => ((queue.shift() ?? 1) - 0.5) / 6 })
     const { container } = render(<RollSteps records={result.rolls} />)
-    const chain = container.querySelector('[aria-label="6 exploded: 6, 2"]')
-    expect(chain?.textContent).toBe('6→6→2')
+    expect(container.querySelector('[aria-label="6 exploded: 6, 2"]')?.textContent).toBe('6')
+    expect(container.textContent).toContain('Result')
+    expect(container.textContent?.split('→')).toHaveLength(3)
+  })
+
+  test('stacks: the kept dice in one row, what a die was above it', async () => {
+    const { RollSteps } = await import('../src/native/roll-steps')
+    const { roll } = await import('@randsum/roller')
+    // 2d6R{1}+3 rolls 1, 4; the 1 rerolls to 5
+    const queue = [1, 4, 5]
+    const result = roll('2d6R{1}+3', { randomFn: () => ((queue.shift() ?? 1) - 0.5) / 6 })
+    const { container } = render(<RollSteps records={result.rolls} layout="stacks" />)
+    expect(container.querySelector('[aria-label="Add +3"]')?.textContent).toBe('+3')
+    expect(container.textContent).toContain('Reroll')
+    expect(container.textContent).not.toContain('Result')
   })
 })
 

@@ -163,6 +163,7 @@ function ResultCard({
 }): React.JSX.Element {
   return h(Readout, {
     roller,
+    layout: 'stacks',
     actions: h(
       View,
       { style: styles.cardActions },

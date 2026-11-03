@@ -421,15 +421,6 @@
   font-weight: var(--_weight-semibold);
 }
 
-.rsui-pool {
-  display: flex;
-  flex-direction: column;
-  gap: 0.625rem;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
 .rsui-step {
   display: grid;
   grid-template-columns: minmax(6.5rem, max-content) minmax(0, 1fr);
@@ -442,43 +433,11 @@
   font-size: var(--_text-sm);
 }
 
-.rsui-step-math {
-  font-weight: var(--_weight-semibold);
-}
-
-/* The initial rolls lead: ink label, larger dice, framed by a quiet border.
-   The frame reaches out into the readout's padding, so the label and dice
-   columns stay aligned with the modifier steps below */
-.rsui-step[data-step='initial'] .rsui-step-label {
-  color: var(--_ink);
-  font-weight: var(--_weight-bold);
-}
-
-.rsui-step[data-step='initial'] {
-  margin-inline: -0.75rem;
-  padding: 0.625rem 0.75rem;
-  border: 1px solid var(--_border-strong);
-  border-radius: var(--_radius-lg);
-}
-
-.rsui-step[data-step='initial'] .rsui-die {
-  min-width: 2.75rem;
-  height: 2.75rem;
-  font-size: var(--_text-lg);
-  font-weight: var(--_weight-bold);
-}
-
 .rsui-dice {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: 0.375rem;
-}
-
-.rsui-swap {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.25rem;
 }
 
 .rsui-die {
@@ -498,15 +457,35 @@
 
 .rsui-die[data-variant='removed'] {
   border-style: dashed;
-  background: transparent;
-  color: var(--_faint);
+  border-color: var(--_ink-filter);
+  background: var(--_bg);
+  color: var(--_ink-filter);
   font-weight: var(--_weight-regular);
   text-decoration: line-through;
 }
 
-.rsui-die[data-variant='added'] {
-  border: 2px solid var(--_accent);
-  background: color-mix(in srgb, var(--_accent) 14%, var(--_raised));
+/* What a die was before a step changed it, small and faint above it */
+.rsui-die[data-variant='was'] {
+  min-width: 1.5rem;
+  height: 1.5rem;
+  border-style: dashed;
+  border-color: var(--_line);
+  background: var(--_bg);
+  color: var(--_faint);
+  font-size: var(--_text-xs);
+  font-weight: var(--_weight-regular);
+}
+
+/* An arithmetic step is a cell too: green adds, red subtracts, plain scales */
+.rsui-math {
+  padding-inline: 0.5rem;
+  border-color: var(--_step-ink);
+  color: var(--_step-ink);
+  font-weight: var(--_weight-bold);
+}
+
+.rsui-math[data-ink='plain'] {
+  border-color: var(--_border-strong);
 }
 
 /* An explosion chain: the die that exploded, then each die it rolled */
@@ -515,13 +494,285 @@
   flex-wrap: wrap;
   align-items: center;
   gap: 0.25rem;
-  /* Space between chains, so one ends visibly before the next begins */
-  margin-inline-end: 0.75rem;
 }
 
 .rsui-chain-link {
   color: var(--_muted);
   font-weight: var(--_weight-semibold);
+}
+
+/* Lanes: each die owns a column. A die shows only on the rows where a step
+   touched it; between them a line carries it down. Rows have no gap, so the
+   halves of each cell's line meet the next cell's */
+.rsui-lanes-scroll {
+  overflow-x: auto;
+  margin-inline: -0.75rem;
+  padding-inline: 0.75rem;
+}
+
+.rsui-lanes {
+  display: grid;
+  grid-template-columns:
+    minmax(1.25rem, max-content) repeat(var(--lanes), minmax(3rem, max-content))
+    minmax(3rem, 1fr);
+  align-items: stretch;
+}
+
+.rsui-lanes > .rsui-step-label {
+  align-self: center;
+  min-width: 0;
+  padding-inline-end: 0.75rem;
+  overflow: hidden;
+}
+
+.rsui-step-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Narrow (Max's readout, a phone): rows keep their pips, names move to a legend */
+.rsui-steps {
+  container: rsui-steps / inline-size;
+}
+
+.rsui-lanes-legend.rsui-legend {
+  display: none;
+  margin-top: 0.75rem;
+}
+
+@container rsui-steps (width < 36rem) {
+  .rsui-lanes:not([data-few]) .rsui-step-text {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+
+  .rsui-lanes:not([data-few]) + .rsui-lanes-legend {
+    display: flex;
+  }
+}
+
+/* Three lanes or fewer leave room for the names down to a phone's width */
+@container rsui-steps (width < 22rem) {
+  .rsui-lanes .rsui-step-text {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+
+  .rsui-lanes + .rsui-lanes-legend {
+    display: flex;
+  }
+}
+
+.rsui-lanes-frame {
+  margin-inline: -0.75rem;
+  border: 1px solid var(--_border-strong);
+  border-radius: var(--_radius-lg);
+  pointer-events: none;
+}
+
+.rsui-lanes-rule {
+  margin-top: 0.375rem;
+  border-top: 1px solid var(--_border);
+}
+
+.rsui-lane {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: 2.25rem;
+  padding: 0.3125rem 0.25rem;
+}
+
+/* Every die in a lane centres on the lane's axis, the middle of a large die,
+   so a compounding chain hangs off its first die */
+.rsui-lane > .rsui-die,
+.rsui-lane > .rsui-chain {
+  margin-inline-start: 0.25rem;
+}
+
+.rsui-lane[data-row] > .rsui-die,
+.rsui-lane > .rsui-math {
+  margin-inline-start: 0;
+}
+
+.rsui-lane:has(> .rsui-math) {
+  justify-content: flex-end;
+}
+
+.rsui-lane[data-row='initial'] {
+  padding-block: 0.625rem;
+}
+
+.rsui-lane[data-row='result'] {
+  padding-top: 0.875rem;
+}
+
+.rsui-lane > * {
+  position: relative;
+  z-index: 1;
+}
+
+.rsui-lane[data-in]::before,
+.rsui-lane[data-out]::after {
+  content: '';
+  position: absolute;
+  inset-inline-start: calc(0.25rem + 1.375rem - 1px);
+  border-inline-start: 2px solid var(--_line);
+}
+
+.rsui-lane[data-in]::before {
+  border-color: var(--_in, var(--_line));
+  top: 0;
+  height: 50%;
+}
+
+.rsui-lane[data-out]::after {
+  border-color: var(--_out, var(--_line));
+  top: 50%;
+  bottom: 0;
+}
+
+.rsui-lane[data-in='removed']::before,
+.rsui-lane[data-out='removed']::after {
+  border-inline-start-style: dashed;
+  border-color: var(--_ink-filter);
+}
+
+/* A die an explosion rolled: a plain arrow from the die to its left */
+.rsui-lane-arrow {
+  position: absolute;
+  inset-inline-start: -0.375rem;
+  color: var(--_muted);
+  font-weight: var(--_weight-semibold);
+}
+
+/* Stacks: the dice as they ended up, in one row; a die a step changed keeps
+   what it was above it, joined by a line in that step's ink */
+.rsui-stacks {
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+}
+
+.rsui-stack-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 0.375rem;
+}
+
+.rsui-stack {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.rsui-stack-link {
+  height: 0.625rem;
+  border-inline-start: 2px solid var(--_step-ink);
+}
+
+.rsui-stack-arrow {
+  display: inline-flex;
+  align-items: center;
+  height: 2.25rem;
+  color: var(--_muted);
+  font-weight: var(--_weight-semibold);
+}
+
+.rsui-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: var(--_text-xs);
+}
+
+/* The initial rolls lead: ink label, larger dice, framed by a quiet border.
+   The frame reaches out into the readout's padding, so the label and dice
+   columns stay aligned with the steps below */
+.rsui-step[data-step='initial'] .rsui-step-label {
+  color: var(--_ink);
+  font-weight: var(--_weight-bold);
+}
+
+.rsui-step[data-step='initial'] {
+  margin-inline: -0.75rem;
+  padding: 0.625rem 0.75rem;
+  border: 1px solid var(--_border-strong);
+  border-radius: var(--_radius-lg);
+}
+
+.rsui-step[data-step='initial'] .rsui-die,
+.rsui-lane[data-row] .rsui-die {
+  min-width: 2.75rem;
+  height: 2.75rem;
+  font-size: var(--_text-lg);
+  font-weight: var(--_weight-bold);
+}
+
+/* A step's label carries its modifier's ink, and a pip before it. Dice never
+   take the ink: red on a die still means only that it was removed */
+.rsui-step-label[data-ink] {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--_step-ink);
+  font-weight: var(--_weight-medium);
+}
+
+.rsui-step-label[data-ink]::before {
+  content: '';
+  flex: none;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: var(--_step-ink);
+}
+
+.rsui-step-label[data-ink][data-strong] {
+  font-weight: var(--_weight-bold);
+}
+
+[data-ink] {
+  --_step-ink: var(--_muted);
+}
+
+[data-ink='plain'] {
+  --_step-ink: var(--_ink);
+}
+
+[data-ink='clamp'] {
+  --_step-ink: var(--_ink-clamp);
+}
+
+[data-ink='substitute'] {
+  --_step-ink: var(--_ink-substitute);
+}
+
+[data-ink='generate'] {
+  --_step-ink: var(--_ink-generate);
+}
+
+[data-ink='filter'] {
+  --_step-ink: var(--_ink-filter);
+}
+
+[data-ink='add'] {
+  --_step-ink: var(--_ink-add);
+}
+
+[data-ink='subtract'] {
+  --_step-ink: var(--_ink-subtract);
 }
 
 .rsui-quiet-button {

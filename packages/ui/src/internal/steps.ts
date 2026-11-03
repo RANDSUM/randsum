@@ -39,50 +39,193 @@ export function poolName(record: RollRecord): PoolName {
     : { text: record.label, notation: false }
 }
 
-/** A dice step laid out for display: its explosion chains, then the other dice. */
-export interface DiceLayout {
-  /** Each chain: the die that triggered it, the dice it rolled, and what it became */
-  readonly chains: readonly {
-    readonly from: number
-    readonly rolls: readonly number[]
-    readonly to?: number
-  }[]
-  readonly removed: readonly number[]
-  readonly added: readonly number[]
-  readonly unchanged: readonly number[]
+/**
+ * The ink a step is drawn in: its modifier's spec category. Dice stay plain;
+ * only a step's label, its pip and the lane segments into the dice it changed
+ * take the ink. `filter` and `subtract` are red, which means removal.
+ */
+export type StepInk = 'plain' | 'clamp' | 'substitute' | 'generate' | 'filter' | 'add' | 'subtract'
+
+const MODIFIER_INKS: Readonly<Record<string, StepInk>> = {
+  cap: 'clamp',
+  replace: 'substitute',
+  reroll: 'substitute',
+  unique: 'substitute',
+  explode: 'generate',
+  explodeSequence: 'generate',
+  compound: 'generate',
+  penetrate: 'generate',
+  wildDie: 'generate',
+  drop: 'filter',
+  keep: 'filter',
+  plus: 'add',
+  minus: 'subtract'
 }
 
-/** Takes one of `value` out of the first pool that has it. */
-function take(value: number, ...pools: number[][]): void {
-  for (const pool of pools) {
-    const at = pool.indexOf(value)
-    if (at !== -1) {
-      pool.splice(at, 1)
-      return
-    }
-  }
+/** A row of the timeline: the initial roll, then one per modifier step. */
+export interface TimelineRow {
+  readonly label: string
+  readonly ink: StepInk
+  /** An arithmetic step's term, such as `+3`; it changes no die */
+  readonly math?: string
 }
 
 /**
- * Lays out a dice step so each die that exploded sits beside the dice it
- * rolled. The chain dice leave `added` (they show in the chain), the
- * triggering die leaves `unchanged` (or `removed`, when a compound folds it
- * into a new die), and what is left shows as before.
+ * Where a die shows on a row: `rolled` on the initial row, `changed` when a
+ * step gave it a new value, `trigger` when it set off an explosion, `born` when
+ * a step added it, `removed` when a step took it away (its lane ends there).
  */
-export function diceLayout(step: ShownStep & { readonly kind: 'rolls' }): DiceLayout {
-  const chains = step.explosions ?? []
-  const removed = [...step.removed]
-  const added = [...step.added]
-  const unchanged = [...step.unchanged]
-  for (const chain of chains) {
-    if (chain.to === undefined) {
-      for (const value of chain.rolls) take(value, added)
-      take(chain.from, unchanged)
-    } else {
-      // A compounded die that came out unchanged (penetrate on a 1) is still in `unchanged`
-      take(chain.from, removed, unchanged)
-      take(chain.to, added, unchanged)
-    }
+export interface LaneNode {
+  readonly row: number
+  readonly value: number
+  readonly kind: 'rolled' | 'changed' | 'trigger' | 'born' | 'removed'
+  /** What it was before a `changed` node */
+  readonly was?: number
+  /** A compounding explosion's dice: the die that set it off, then each roll */
+  readonly chain?: readonly number[]
+  /** The dice its explosion rolled, on a `trigger` node */
+  readonly exploded?: readonly number[]
+}
+
+/** One die's journey: the rows where something happened to it. */
+export interface Lane {
+  readonly nodes: readonly LaneNode[]
+  /** Its value in the result, or undefined when a step removed it */
+  readonly final: number | undefined
+  /** Rolled by the explosion of the lane to its left, so an arrow joins them */
+  readonly chained: boolean
+}
+
+export interface Timeline {
+  readonly rows: readonly TimelineRow[]
+  readonly lanes: readonly Lane[]
+  /** Whether any step changed the dice, so a Result row is worth showing */
+  readonly changed: boolean
+}
+
+interface Building {
+  nodes: LaneNode[]
+  value: number
+  alive: boolean
+  chained: boolean
+}
+
+/** Takes one of each of `values` out of `pool`, where it has one. */
+function without(pool: readonly number[], values: readonly number[]): number[] {
+  const left = [...pool]
+  for (const value of values) {
+    const at = left.indexOf(value)
+    if (at !== -1) left.splice(at, 1)
   }
-  return { chains, removed, added, unchanged }
+  return left
+}
+
+/** The modifier behind each step after the initial roll, as traceRoll splits them. */
+function stepModifiers(record: RollRecord): readonly string[] {
+  return record.modifierLogs.flatMap(log => {
+    const options =
+      typeof log.options === 'object' && log.options !== null
+        ? (log.options as Record<string, unknown>)
+        : {}
+    const both =
+      (log.modifier === 'drop' || log.modifier === 'keep') &&
+      typeof options['lowest'] === 'number' &&
+      typeof options['highest'] === 'number'
+    return both ? [log.modifier, log.modifier] : [log.modifier]
+  })
+}
+
+/**
+ * Follows each die through a roll's steps. The roller logs which values a
+ * step removed and added, not which die, so dice pair up by value: two dice
+ * showing the same number look the same, whichever one moved.
+ */
+export function timeline(record: RollRecord): Timeline {
+  const steps = visibleSteps(record)
+  const modifiers = stepModifiers(record)
+  const lanes: Building[] = []
+  const rows: TimelineRow[] = []
+  steps.forEach((step, row) => {
+    const ink = row === 0 ? 'plain' : (MODIFIER_INKS[modifiers[row - 1] ?? ''] ?? 'plain')
+    if (step.kind === 'arithmetic') {
+      rows.push({ label: step.label, ink, math: step.display })
+      return
+    }
+    rows.push({ label: step.label, ink })
+    if (row === 0) {
+      for (const value of step.unchanged) {
+        lanes.push({ nodes: [{ row, value, kind: 'rolled' }], value, alive: true, chained: false })
+      }
+      return
+    }
+    const used = new Set<Building>()
+    const pick = (value: number): Building | undefined => {
+      const lane = lanes.find(l => l.alive && l.value === value && !used.has(l))
+      if (lane !== undefined) used.add(lane)
+      return lane
+    }
+    const born = (value: number, after: Building | undefined, chained: boolean): Building => {
+      const lane: Building = { nodes: [{ row, value, kind: 'born' }], value, alive: true, chained }
+      lanes.splice(after === undefined ? lanes.length : lanes.indexOf(after) + 1, 0, lane)
+      used.add(lane)
+      return lane
+    }
+    const change = (lane: Building, value: number, chain?: readonly number[]): void => {
+      lane.nodes.push({
+        row,
+        value,
+        kind: 'changed',
+        was: lane.value,
+        ...(chain === undefined ? {} : { chain })
+      })
+      lane.value = value
+    }
+    const replacements = step.replacements ?? []
+    const chains = step.explosions ?? []
+    const removed = without(step.removed, [
+      ...replacements.map(r => r.from),
+      ...chains.filter(c => c.to !== undefined).map(c => c.from)
+    ])
+    const added = without(step.added, [
+      ...replacements.map(r => r.to),
+      ...chains.flatMap(c => (c.to === undefined ? c.rolls : [c.to]))
+    ])
+    for (const r of replacements) {
+      const lane = pick(r.from)
+      if (lane === undefined) born(r.to, undefined, false)
+      else change(lane, r.to)
+    }
+    for (const c of chains) {
+      const lane = pick(c.from)
+      if (c.to !== undefined) {
+        if (lane === undefined) born(c.to, undefined, false)
+        else change(lane, c.to, [c.from, ...c.rolls])
+        continue
+      }
+      if (lane !== undefined) {
+        lane.nodes.push({ row, value: c.from, kind: 'trigger', exploded: c.rolls })
+      }
+      c.rolls.reduce<Building | undefined>(
+        (prev, value) => born(value, prev, prev !== undefined),
+        lane
+      )
+    }
+    for (const value of removed) {
+      const lane = pick(value)
+      if (lane === undefined) continue
+      lane.nodes.push({ row, value, kind: 'removed' })
+      lane.alive = false
+    }
+    for (const value of added) born(value, undefined, false)
+  })
+  return {
+    rows,
+    lanes: lanes.map(l => ({
+      nodes: l.nodes,
+      final: l.alive ? l.value : undefined,
+      chained: l.chained
+    })),
+    changed:
+      lanes.some(l => l.nodes.length > 1 || !l.alive) || lanes.some(l => l.nodes[0]?.row !== 0)
+  }
 }
