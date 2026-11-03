@@ -39,17 +39,22 @@ export const capSchema: NotationSchema<ComparisonOptions> = defineNotationSchema
     },
 
     toDescription: options => {
-      const { exact, ...comparisonOpts } = options
-      const descriptions: string[] = []
+      // In the order Cap applies them: upper bounds, then lower bounds
+      const { exact, greaterThan, greaterThanOrEqual, lessThan, lessThanOrEqual } = options
+      const upper = formatComparisonDescription({
+        ...(greaterThan !== undefined && { greaterThan }),
+        ...(greaterThanOrEqual !== undefined && { greaterThanOrEqual })
+      })
+      const lower = formatComparisonDescription({
+        ...(lessThan !== undefined && { lessThan }),
+        ...(lessThanOrEqual !== undefined && { lessThanOrEqual })
+      })
 
-      if (exact?.length) {
-        descriptions.push(...exact.map(v => `No Rolls Greater Than ${v}`))
-      }
-
-      const comparison = formatComparisonDescription(comparisonOpts)
-      descriptions.push(...comparison.map(str => `No Rolls ${str}`))
-
-      return descriptions
+      return [
+        ...upper.map(str => `No Rolls ${str}`),
+        ...(exact ?? []).map(v => `No Rolls Greater Than ${v}`),
+        ...lower.map(str => `No Rolls ${str}`)
+      ]
     }
   }
 )

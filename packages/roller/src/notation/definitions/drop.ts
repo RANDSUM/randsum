@@ -53,14 +53,6 @@ export const dropSchema: NotationSchema<DropOptions> = defineNotationSchema<Drop
       options
     const parts: string[] = []
 
-    if (highest) {
-      parts.push(highest === 1 ? 'H' : `H${highest}`)
-    }
-
-    if (lowest) {
-      parts.push(lowest === 1 ? 'L' : `L${lowest}`)
-    }
-
     const dropList: string[] = []
 
     if (greaterThanOrEqual !== undefined) dropList.push(`>=${greaterThanOrEqual}`)
@@ -69,8 +61,17 @@ export const dropSchema: NotationSchema<DropOptions> = defineNotationSchema<Drop
     if (lessThan !== undefined) dropList.push(`<${lessThan}`)
     if (exact) exact.forEach(roll => dropList.push(`${roll}`))
 
+    // In the order Drop applies them: conditions, then lowest, then highest
     if (dropList.length > 0) {
       parts.push(`D{${dropList.join(',')}}`)
+    }
+
+    if (lowest) {
+      parts.push(lowest === 1 ? 'L' : `L${lowest}`)
+    }
+
+    if (highest) {
+      parts.push(highest === 1 ? 'H' : `H${highest}`)
     }
 
     return parts.length ? parts.join('') : undefined
@@ -79,15 +80,8 @@ export const dropSchema: NotationSchema<DropOptions> = defineNotationSchema<Drop
   toDescription: options => {
     const { highest, lowest, greaterThan, greaterThanOrEqual, lessThan, lessThanOrEqual, exact } =
       options
+    // In the order Drop applies them: conditions, then lowest, then highest
     const descriptions: string[] = []
-
-    if (highest) {
-      descriptions.push(highest > 1 ? `Drop highest ${highest}` : 'Drop highest')
-    }
-
-    if (lowest) {
-      descriptions.push(lowest > 1 ? `Drop lowest ${lowest}` : 'Drop lowest')
-    }
 
     if (exact) {
       descriptions.push(`Drop ${formatHumanList(exact)}`)
@@ -107,6 +101,14 @@ export const dropSchema: NotationSchema<DropOptions> = defineNotationSchema<Drop
 
     if (lessThan !== undefined) {
       descriptions.push(`Drop less than ${lessThan}`)
+    }
+
+    if (lowest) {
+      descriptions.push(lowest > 1 ? `Drop lowest ${lowest}` : 'Drop lowest')
+    }
+
+    if (highest) {
+      descriptions.push(highest > 1 ? `Drop highest ${highest}` : 'Drop highest')
     }
 
     return descriptions
