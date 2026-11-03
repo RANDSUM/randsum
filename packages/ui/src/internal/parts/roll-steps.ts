@@ -64,6 +64,13 @@ function lineInk(rows: readonly TimelineRow[], lane: Lane, row: number, at: bool
   return 'plain'
 }
 
+/** A lane line's ink as a custom property; plain and removed lines are styled by attribute. */
+function inkVar(side: 'in' | 'out', ink: string | undefined): string {
+  return ink === undefined || ink === 'plain' || ink === 'removed'
+    ? ''
+    : `; --_${side}: var(--_ink-${ink})`
+}
+
 function label(text: string, ink: StepInk, row: number, strong: boolean): TemplateResult {
   return html`<span
     class="rsui-step-label"
@@ -82,7 +89,7 @@ function lanes(t: Timeline): TemplateResult {
   return html`<div class="rsui-lanes-scroll">
     <div
       class="rsui-lanes"
-      data-lanes=${t.lanes.length > 12 ? 'many' : t.lanes.length}
+      data-few=${ifDefined(t.lanes.length <= 3 ? '' : undefined)}
       style=${`--lanes: ${Math.max(t.lanes.length, 1)}`}
     >
       <span class="rsui-lanes-frame" style="grid-area: 1 / 1 / 2 / -1"></span>
@@ -120,7 +127,7 @@ function lanes(t: Timeline): TemplateResult {
                 : nothing
           return html`<span
             class="rsui-lane"
-            style=${`grid-area: ${r + 1} / ${i + 2}`}
+            style=${`grid-area: ${r + 1} / ${i + 2}${inkVar('in', inInk)}${inkVar('out', outInk)}`}
             data-row=${ifDefined(r === 0 ? 'initial' : r === t.rows.length ? 'result' : undefined)}
             data-in=${ifDefined(inInk)}
             data-out=${ifDefined(outInk)}

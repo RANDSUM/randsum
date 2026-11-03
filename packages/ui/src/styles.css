@@ -518,11 +518,6 @@
   align-items: stretch;
 }
 
-.rsui-lanes {
-  /* A narrow readout shortens the step names before it scrolls the dice */
-  min-width: 0;
-}
-
 .rsui-lanes > .rsui-step-label {
   align-self: center;
   min-width: 0;
@@ -536,34 +531,18 @@
   white-space: nowrap;
 }
 
-/* When the dice leave no room for the step names beside them, each row keeps
-   only its pip and the names move to a legend below. A container query can't
-   read the lane count, so there is one query per count; past 12 lanes the
-   names always move */
+/* Narrow (Max's readout, a phone): rows keep their pips, names move to a legend */
 .rsui-steps {
   container: rsui-steps / inline-size;
 }
 
-/* Beats .rsui-legend's display, which comes later */
-.rsui-legend.rsui-lanes-legend {
+.rsui-lanes-legend.rsui-legend {
   display: none;
   margin-top: 0.75rem;
 }
 
-.rsui-lanes[data-lanes='many'] .rsui-step-text {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  clip-path: inset(50%);
-}
-
-.rsui-lanes-scroll:has(> .rsui-lanes[data-lanes='many']) > .rsui-lanes-legend {
-  display: flex;
-}
-
-@container rsui-steps (width < 14rem) {
-  .rsui-lanes[data-lanes='1'] .rsui-step-text {
+@container rsui-steps (width < 36rem) {
+  .rsui-lanes:not([data-few]) .rsui-step-text {
     position: absolute;
     width: 1px;
     height: 1px;
@@ -571,13 +550,14 @@
     clip-path: inset(50%);
   }
 
-  .rsui-lanes-scroll:has(> .rsui-lanes[data-lanes='1']) > .rsui-lanes-legend {
+  .rsui-lanes:not([data-few]) + .rsui-lanes-legend {
     display: flex;
   }
 }
 
-@container rsui-steps (width < 17rem) {
-  .rsui-lanes[data-lanes='2'] .rsui-step-text {
+/* Three lanes or fewer leave room for the names down to a phone's width */
+@container rsui-steps (width < 22rem) {
+  .rsui-lanes .rsui-step-text {
     position: absolute;
     width: 1px;
     height: 1px;
@@ -585,147 +565,7 @@
     clip-path: inset(50%);
   }
 
-  .rsui-lanes-scroll:has(> .rsui-lanes[data-lanes='2']) > .rsui-lanes-legend {
-    display: flex;
-  }
-}
-
-@container rsui-steps (width < 20rem) {
-  .rsui-lanes[data-lanes='3'] .rsui-step-text {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip-path: inset(50%);
-  }
-
-  .rsui-lanes-scroll:has(> .rsui-lanes[data-lanes='3']) > .rsui-lanes-legend {
-    display: flex;
-  }
-}
-
-@container rsui-steps (width < 23rem) {
-  .rsui-lanes[data-lanes='4'] .rsui-step-text {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip-path: inset(50%);
-  }
-
-  .rsui-lanes-scroll:has(> .rsui-lanes[data-lanes='4']) > .rsui-lanes-legend {
-    display: flex;
-  }
-}
-
-@container rsui-steps (width < 26rem) {
-  .rsui-lanes[data-lanes='5'] .rsui-step-text {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip-path: inset(50%);
-  }
-
-  .rsui-lanes-scroll:has(> .rsui-lanes[data-lanes='5']) > .rsui-lanes-legend {
-    display: flex;
-  }
-}
-
-@container rsui-steps (width < 29rem) {
-  .rsui-lanes[data-lanes='6'] .rsui-step-text {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip-path: inset(50%);
-  }
-
-  .rsui-lanes-scroll:has(> .rsui-lanes[data-lanes='6']) > .rsui-lanes-legend {
-    display: flex;
-  }
-}
-
-@container rsui-steps (width < 32rem) {
-  .rsui-lanes[data-lanes='7'] .rsui-step-text {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip-path: inset(50%);
-  }
-
-  .rsui-lanes-scroll:has(> .rsui-lanes[data-lanes='7']) > .rsui-lanes-legend {
-    display: flex;
-  }
-}
-
-@container rsui-steps (width < 35rem) {
-  .rsui-lanes[data-lanes='8'] .rsui-step-text {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip-path: inset(50%);
-  }
-
-  .rsui-lanes-scroll:has(> .rsui-lanes[data-lanes='8']) > .rsui-lanes-legend {
-    display: flex;
-  }
-}
-
-@container rsui-steps (width < 38rem) {
-  .rsui-lanes[data-lanes='9'] .rsui-step-text {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip-path: inset(50%);
-  }
-
-  .rsui-lanes-scroll:has(> .rsui-lanes[data-lanes='9']) > .rsui-lanes-legend {
-    display: flex;
-  }
-}
-
-@container rsui-steps (width < 41rem) {
-  .rsui-lanes[data-lanes='10'] .rsui-step-text {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip-path: inset(50%);
-  }
-
-  .rsui-lanes-scroll:has(> .rsui-lanes[data-lanes='10']) > .rsui-lanes-legend {
-    display: flex;
-  }
-}
-
-@container rsui-steps (width < 44rem) {
-  .rsui-lanes[data-lanes='11'] .rsui-step-text {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip-path: inset(50%);
-  }
-
-  .rsui-lanes-scroll:has(> .rsui-lanes[data-lanes='11']) > .rsui-lanes-legend {
-    display: flex;
-  }
-}
-
-@container rsui-steps (width < 47rem) {
-  .rsui-lanes[data-lanes='12'] .rsui-step-text {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip-path: inset(50%);
-  }
-
-  .rsui-lanes-scroll:has(> .rsui-lanes[data-lanes='12']) > .rsui-lanes-legend {
+  .rsui-lanes + .rsui-lanes-legend {
     display: flex;
   }
 }
@@ -784,46 +624,24 @@
   content: '';
   position: absolute;
   inset-inline-start: calc(0.25rem + 1.375rem - 1px);
-  border-inline-start: 2px solid var(--_lane-ink);
+  border-inline-start: 2px solid var(--_line);
 }
 
 .rsui-lane[data-in]::before {
+  border-color: var(--_in, var(--_line));
   top: 0;
   height: 50%;
 }
 
 .rsui-lane[data-out]::after {
+  border-color: var(--_out, var(--_line));
   top: 50%;
   bottom: 0;
-}
-
-.rsui-lane {
-  --_lane-ink: var(--_line);
 }
 
 .rsui-lane[data-in='removed']::before,
 .rsui-lane[data-out='removed']::after {
   border-inline-start-style: dashed;
-  border-color: var(--_ink-filter);
-}
-
-.rsui-lane[data-in='clamp']::before,
-.rsui-lane[data-out='clamp']::after {
-  border-color: var(--_ink-clamp);
-}
-
-.rsui-lane[data-in='substitute']::before,
-.rsui-lane[data-out='substitute']::after {
-  border-color: var(--_ink-substitute);
-}
-
-.rsui-lane[data-in='generate']::before,
-.rsui-lane[data-out='generate']::after {
-  border-color: var(--_ink-generate);
-}
-
-.rsui-lane[data-in='filter']::before,
-.rsui-lane[data-out='filter']::after {
   border-color: var(--_ink-filter);
 }
 
