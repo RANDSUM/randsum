@@ -30,6 +30,15 @@ export interface RollerTheme {
   readonly scrim: string
   /** The added-die fill: the accent over `raised`, which CSS mixes for itself. */
   readonly addedBg: string
+  /** A lane's line, carrying a die down the steps. */
+  readonly line: string
+  /** Step inks, one per spec category family: a step's label, its pip and its lane lines, never a die. */
+  readonly inkClamp: string
+  readonly inkSubstitute: string
+  readonly inkGenerate: string
+  readonly inkFilter: string
+  readonly inkAdd: string
+  readonly inkSubtract: string
   /** Undefined uses the platform's system font. */
   readonly font: string | undefined
   readonly fontMono: string
@@ -85,7 +94,14 @@ export const lightTheme: RollerTheme = {
   disabledBg: '#e4e4e7',
   disabledInk: '#71717a',
   scrim: 'rgba(24, 24, 27, 0.4)',
-  addedBg: '#fde9ea'
+  addedBg: '#fde9ea',
+  line: '#a1a1aa',
+  inkClamp: '#00807b',
+  inkSubstitute: '#0070b0',
+  inkGenerate: '#8d6000',
+  inkFilter: '#ab4046',
+  inkAdd: '#267d30',
+  inkSubtract: '#ab4046'
 }
 
 export const darkTheme: RollerTheme = {
@@ -105,7 +121,14 @@ export const darkTheme: RollerTheme = {
   disabledBg: '#2e2e33',
   disabledInk: '#8b8b94',
   scrim: 'rgba(0, 0, 0, 0.6)',
-  addedBg: '#402c30'
+  addedBg: '#402c30',
+  line: '#52525b',
+  inkClamp: '#47d6cf',
+  inkSubstitute: '#6fc8ff',
+  inkGenerate: '#e1b75c',
+  inkFilter: '#ff9d9e',
+  inkAdd: '#8bd28d',
+  inkSubtract: '#ff9d9e'
 }
 
 const ThemeContext = createContext<Partial<RollerTheme> | null>(null)

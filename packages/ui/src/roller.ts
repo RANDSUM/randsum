@@ -256,7 +256,7 @@ export class RandsumRoller extends LitElement {
         Close
       </button>
     </span>`
-    return html`<div class=${className}>${readout(this.state, actions)}</div>`
+    return html`<div class=${className}>${readout(this.state, actions, 'stacks')}</div>`
   }
 
   #mini(): TemplateResult {

@@ -9,13 +9,17 @@ import { useStyles } from '../internal/native/styles'
 import { useWatch } from '../internal/native/watch'
 import type { RollerState } from '../roller-state'
 import { RollSteps } from './roll-steps'
+import type { StepsLayout } from './roll-steps'
 
 export type { RollerState } from '../roller-state'
+export type { StepsLayout }
 
 export interface ReadoutProps {
   readonly roller: RollerState
   /** Shown beside the total, such as a Roll again button. */
   readonly actions?: React.ReactNode
+  /** `lanes` (the default) gives each die a column down the steps; `stacks` keeps one row of dice. */
+  readonly layout?: StepsLayout
   /** The larger total that the max roller shows. */
   readonly large?: boolean
   readonly style?: StyleProp<ViewStyle>
@@ -25,6 +29,7 @@ export function Readout({
   roller,
   actions,
   large = false,
+  layout = 'lanes',
   style
 }: ReadoutProps): React.JSX.Element {
   useWatch(roller)
@@ -63,6 +68,6 @@ export function Readout({
       ),
       actions
     ),
-    h(RollSteps, { records: result.records, style: stale ? styles.stale : undefined })
+    h(RollSteps, { records: result.records, layout, style: stale ? styles.stale : undefined })
   )
 }

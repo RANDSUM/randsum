@@ -4,6 +4,7 @@ import { ifDefined } from 'lit/directives/if-defined.js'
 import type { RollerState } from '../../roller-state'
 import { EMPTY_COPY } from '../copy'
 import { rollSteps } from './roll-steps'
+import type { StepsLayout } from './roll-steps'
 
 /** The parts of a roller the readout shows; a server's roll can fill them too. */
 export type ReadoutSource = Pick<RollerState, 'result' | 'check' | 'notation'>
@@ -11,7 +12,8 @@ export type ReadoutSource = Pick<RollerState, 'result' | 'check' | 'notation'>
 /** The total and its steps, or what to do before there is one. */
 export function readout(
   roller: ReadoutSource,
-  actions: TemplateResult | typeof nothing = nothing
+  actions: TemplateResult | typeof nothing = nothing,
+  layout: StepsLayout = 'lanes'
 ): TemplateResult {
   const { result, check, notation } = roller
   if (result === null) {
@@ -36,6 +38,6 @@ export function readout(
       </span>
       ${actions}
     </div>
-    ${rollSteps(result.records)}
+    ${rollSteps(result.records, layout)}
   </section>`
 }

@@ -27,6 +27,16 @@ Importing an entry registers its tag.
 A part renders from its `roller` property, or else from the `<randsum-scope>`
 around it.
 
+The readout and the roll steps take a `layout`. `lanes`, the default and what
+Max and the MCP App card show, gives each die its own column: a die appears
+on each step that changed it, and a line carries it down between them to a
+Result row. `stacks`, what Compact and Mini show, keeps one row of the dice
+as they ended up, with what a changed die was stacked above it. Each step's
+name and pip take its modifier's ink (`--rsui-ink-clamp`,
+`--rsui-ink-substitute`, `--rsui-ink-generate`, `--rsui-ink-filter`,
+`--rsui-ink-add`, `--rsui-ink-subtract`); the dice stay plain, and red on a die
+still means only that it was removed.
+
 ## React
 
 | Import                             | Export          |
