@@ -28,7 +28,8 @@ function name(pool: PoolName): TemplateResult {
   return pool.notation ? html`<code>${pool.text}</code>` : html`<span>${pool.text}</span>`
 }
 
-function step(item: ShownStep, label?: PoolName): TemplateResult {
+/** One step; the initial roll (`initial`) stands out above the modifier steps. */
+function step(item: ShownStep, initial: boolean, label?: PoolName): TemplateResult {
   if (item.kind === 'arithmetic') {
     return html`<li class="rsui-step">
       <span class="rsui-step-label">${item.label}</span>
@@ -37,7 +38,7 @@ function step(item: ShownStep, label?: PoolName): TemplateResult {
   }
   const replacements = item.replacements ?? []
   const layout = diceLayout(item)
-  return html`<li class="rsui-step">
+  return html`<li class="rsui-step" data-step=${initial ? 'initial' : 'modifier'}>
     ${
       label === undefined
         ? html`<span class="rsui-step-label">${item.label}</span>`
@@ -71,7 +72,7 @@ export function rollSteps(records: readonly RollRecord[]): TemplateResult {
       const [only] = steps
       // A plain pool in a multi-pool roll is one row: its name and its dice
       if (multiPool && steps.length === 1 && only !== undefined) {
-        return html`<ol class="rsui-pool">${step(only, pool)}</ol>`
+        return html`<ol class="rsui-pool">${step(only, true, pool)}</ol>`
       }
       return html`<section class="rsui-pool-group" aria-label=${pool.text}>
         ${
@@ -81,7 +82,7 @@ export function rollSteps(records: readonly RollRecord[]): TemplateResult {
             </h3>`
             : nothing
         }
-        <ol class="rsui-pool">${steps.map(s => step(s))}</ol>
+        <ol class="rsui-pool">${steps.map((s, i) => step(s, i === 0))}</ol>
       </section>`
     })}
   </div>`

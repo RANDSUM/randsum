@@ -56,6 +56,8 @@ type StyleName =
   | 'poolHeadingLabel'
   | 'step'
   | 'stepLabel'
+  | 'stepLabelInitial'
+  | 'stepDivided'
   | 'stepLabelMono'
   | 'stepMath'
   | 'dice'
@@ -65,6 +67,8 @@ type StyleName =
   | 'dieAdded'
   | 'chain'
   | 'chainLink'
+  | 'dieInitial'
+  | 'dieTextInitial'
   | 'dieText'
   | 'dieTextRemoved'
   | 'arrow'
@@ -240,6 +244,9 @@ function build(t: RollerTheme): RollerStyles {
     poolHeadingLabel: { fontFamily: t.font },
     step: { gap: 6 },
     stepLabel: { ...text, color: t.muted, fontSize: t.textXs, fontWeight: '600' },
+    // The initial roll leads: ink label, larger dice, a rule before the modifier steps
+    stepLabelInitial: { color: t.ink, fontWeight: '700' },
+    stepDivided: { paddingBottom: 14, borderBottomWidth: 1, borderColor: t.border },
     stepLabelMono: { fontFamily: t.fontMono },
     stepMath: { ...mono, fontSize: t.textBase },
     dice: { flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', gap: 6 },
@@ -255,6 +262,8 @@ function build(t: RollerTheme): RollerStyles {
       alignItems: 'center',
       justifyContent: 'center'
     },
+    dieInitial: { minWidth: 44, height: 44 },
+    dieTextInitial: { fontSize: t.textLg, fontWeight: '700' },
     dieRemoved: { borderStyle: 'dashed', backgroundColor: 'transparent' },
     dieAdded: { borderWidth: 2, borderColor: t.accent, backgroundColor: t.addedBg },
     chain: {

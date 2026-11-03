@@ -22,7 +22,8 @@ function die(
   styles: RollerStyles,
   value: number,
   variant: DieVariant,
-  key: string
+  key: string,
+  initial = false
 ): React.ReactNode {
   return h(
     View,
@@ -32,12 +33,19 @@ function die(
       style: [
         styles.die,
         variant === 'removed' ? styles.dieRemoved : null,
-        variant === 'added' ? styles.dieAdded : null
+        variant === 'added' ? styles.dieAdded : null,
+        initial ? styles.dieInitial : null
       ]
     },
     h(
       Text,
-      { style: [styles.dieText, variant === 'removed' ? styles.dieTextRemoved : null] },
+      {
+        style: [
+          styles.dieText,
+          initial ? styles.dieTextInitial : null,
+          variant === 'removed' ? styles.dieTextRemoved : null
+        ]
+      },
       value
     )
   )
@@ -46,9 +54,10 @@ function die(
 function dice(
   styles: RollerStyles,
   values: readonly number[],
-  variant: DieVariant
+  variant: DieVariant,
+  initial = false
 ): React.ReactNode[] {
-  return values.map((value, i) => die(styles, value, variant, `${variant}-${i}`))
+  return values.map((value, i) => die(styles, value, variant, `${variant}-${i}`, initial))
 }
 
 function link(styles: RollerStyles, key: string): React.ReactNode {
@@ -59,7 +68,8 @@ function link(styles: RollerStyles, key: string): React.ReactNode {
 function chain(
   styles: RollerStyles,
   item: DiceLayout['chains'][number],
-  key: string
+  key: string,
+  initial: boolean
 ): React.ReactNode {
   return h(
     View,
@@ -69,26 +79,30 @@ function chain(
       accessibilityLabel: `${item.from} exploded: ${item.rolls.join(', ')}`,
       style: styles.chain
     },
-    die(styles, item.from, 'kept', 'from'),
+    die(styles, item.from, 'kept', 'from', initial),
     item.rolls.flatMap((value, i) => [
       link(styles, `link-${i}`),
-      die(styles, value, 'kept', `roll-${i}`)
+      die(styles, value, 'kept', `roll-${i}`, initial)
     ])
   )
 }
 
+/** One step; the initial roll (`initial`) stands out above the modifier steps. */
 function step(
   styles: RollerStyles,
   item: ShownStep,
   key: string,
-  label?: PoolName
+  initial: boolean,
+  label?: PoolName,
+  divided = false
 ): React.ReactNode {
+  const labelStyle = [styles.stepLabel, initial ? styles.stepLabelInitial : null]
   const heading =
     label === undefined
-      ? h(Text, { style: styles.stepLabel }, item.label)
+      ? h(Text, { style: labelStyle }, item.label)
       : h(
           Text,
-          { style: [styles.stepLabel, label.notation ? styles.stepLabelMono : null] },
+          { style: [...labelStyle, label.notation ? styles.stepLabelMono : null] },
           label.text
         )
   if (item.kind === 'arithmetic') {
@@ -103,24 +117,24 @@ function step(
   const layout = diceLayout(item)
   return h(
     View,
-    { key, style: styles.step },
+    { key, style: [styles.step, divided ? styles.stepDivided : null] },
     heading,
     h(
       View,
       { style: styles.dice },
-      layout.chains.map((c, i) => chain(styles, c, `chain-${i}`)),
+      layout.chains.map((c, i) => chain(styles, c, `chain-${i}`, initial)),
       replacements.map((r, i) =>
         h(
           View,
           { key: `swap-${i}`, style: styles.swap },
-          die(styles, r.from, 'removed', 'from'),
+          die(styles, r.from, 'removed', 'from', initial),
           h(Text, { accessibilityLabel: 'became', style: styles.arrow }, '→'),
-          die(styles, r.to, 'added', 'to')
+          die(styles, r.to, 'added', 'to', initial)
         )
       ),
-      replacements.length === 0 ? dice(styles, layout.removed, 'removed') : null,
-      replacements.length === 0 ? dice(styles, layout.added, 'added') : null,
-      dice(styles, layout.unchanged, 'kept')
+      replacements.length === 0 ? dice(styles, layout.removed, 'removed', initial) : null,
+      replacements.length === 0 ? dice(styles, layout.added, 'added', initial) : null,
+      dice(styles, layout.unchanged, 'kept', initial)
     )
   )
 }
@@ -137,7 +151,7 @@ export function RollSteps({ records, style }: RollStepsProps): React.JSX.Element
       const [only] = steps
       // A plain pool in a multi-pool roll is one row: its name and its dice
       if (multiPool && steps.length === 1 && only !== undefined) {
-        return step(styles, only, `pool-${r}`, pool)
+        return step(styles, only, `pool-${r}`, true, pool)
       }
       return h(
         View,
@@ -154,7 +168,9 @@ export function RollSteps({ records, style }: RollStepsProps): React.JSX.Element
               h(Text, { style: styles.poolHeadingText }, record.total)
             )
           : null,
-        steps.map((s, i) => step(styles, s, `step-${i}`))
+        steps.map((s, i) =>
+          step(styles, s, `step-${i}`, i === 0, undefined, i === 0 && steps.length > 1)
+        )
       )
     })
   )
