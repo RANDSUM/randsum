@@ -17,6 +17,15 @@
   --_faint: var(--rsui-faint, light-dark(#71717a, #8b8b94));
   --_valid: var(--rsui-valid, light-dark(#15803d, #4ade80));
   --_invalid: var(--rsui-invalid, light-dark(#b91c1c, #f87171));
+  --_line: var(--rsui-line, light-dark(#a1a1aa, #52525b));
+  /* Step inks, one per spec category family (the site's notation inks). Only
+     a step's label, its pip and the lane lines take them, never a die */
+  --_ink-clamp: var(--rsui-ink-clamp, light-dark(#00807b, #47d6cf));
+  --_ink-substitute: var(--rsui-ink-substitute, light-dark(#0070b0, #6fc8ff));
+  --_ink-generate: var(--rsui-ink-generate, light-dark(#8d6000, #e1b75c));
+  --_ink-filter: var(--rsui-ink-filter, light-dark(#ab4046, #ff9d9e));
+  --_ink-add: var(--rsui-ink-add, light-dark(#267d30, #8bd28d));
+  --_ink-subtract: var(--rsui-ink-subtract, light-dark(#ab4046, #ff9d9e));
   --_disabled-bg: var(--rsui-disabled-bg, light-dark(#e4e4e7, #2e2e33));
   --_disabled-ink: var(--rsui-disabled-ink, light-dark(#71717a, #8b8b94));
   --_tip-bg: var(--rsui-tip-bg, light-dark(#18181b, #fafafa));

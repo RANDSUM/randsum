@@ -10,6 +10,7 @@
 import type { HTMLAttributes } from 'svelte/elements'
 import type { RandsumChangeEvent, RandsumRollEvent } from './internal/element'
 import type { PresetsLayout } from './internal/parts/preset-list'
+import type { StepsLayout } from './internal/parts/roll-steps'
 import type { Key } from './keys'
 import type { Preset } from './presets'
 import type { RollerSize } from './roller'
@@ -53,7 +54,7 @@ declare module 'svelte/elements' {
       readonly label?: string
       readonly layout?: PresetsLayout
     }
-    'randsum-readout': PartAttributes
-    'randsum-roll-steps': PartAttributes
+    'randsum-readout': PartAttributes & { readonly layout?: StepsLayout }
+    'randsum-roll-steps': PartAttributes & { readonly layout?: StepsLayout }
   }
 }

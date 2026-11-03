@@ -374,7 +374,7 @@
     },
     {
       "path": "dist/key-pad.js",
-      "limit": "11 KB"
+      "limit": "12.2 KB"
     },
     {
       "path": "dist/keys.js",
@@ -382,11 +382,11 @@
     },
     {
       "path": "dist/mcp-app.js",
-      "limit": "14 KB"
+      "limit": "16 KB"
     },
     {
       "path": "dist/native/key-pad.js",
-      "limit": "2.6 KB"
+      "limit": "3.1 KB"
     },
     {
       "path": "dist/native/notation-field.js",
@@ -394,27 +394,27 @@
     },
     {
       "path": "dist/native/preset-list.js",
-      "limit": "2.5 KB"
+      "limit": "2.9 KB"
     },
     {
       "path": "dist/native/readout.js",
-      "limit": "4.25 KB"
+      "limit": "6.2 KB"
     },
     {
       "path": "dist/native/roll-button.js",
-      "limit": "2.25 KB"
+      "limit": "2.8 KB"
     },
     {
       "path": "dist/native/roll-steps.js",
-      "limit": "3.75 KB"
+      "limit": "5.8 KB"
     },
     {
       "path": "dist/native/roller.js",
-      "limit": "25.5 KB"
+      "limit": "25.9 KB"
     },
     {
       "path": "dist/native/status-line.js",
-      "limit": "2.25 KB"
+      "limit": "2.8 KB"
     },
     {
       "path": "dist/native/theme.js",
@@ -426,11 +426,11 @@
     },
     {
       "path": "dist/notation-field.js",
-      "limit": "16.5 KB"
+      "limit": "17.4 KB"
     },
     {
       "path": "dist/preset-list.js",
-      "limit": "11 KB"
+      "limit": "12 KB"
     },
     {
       "path": "dist/presets.js",
@@ -438,35 +438,35 @@
     },
     {
       "path": "dist/react/key-pad.js",
-      "limit": "11.5 KB"
+      "limit": "12.6 KB"
     },
     {
       "path": "dist/react/notation-field.js",
-      "limit": "17 KB"
+      "limit": "17.8 KB"
     },
     {
       "path": "dist/react/preset-list.js",
-      "limit": "11.25 KB"
+      "limit": "12.4 KB"
     },
     {
       "path": "dist/react/readout.js",
-      "limit": "11.75 KB"
+      "limit": "14.5 KB"
     },
     {
       "path": "dist/react/roll-button.js",
-      "limit": "10.25 KB"
-    },
-    {
-      "path": "dist/react/roll-steps.js",
       "limit": "11.5 KB"
     },
     {
+      "path": "dist/react/roll-steps.js",
+      "limit": "14.2 KB"
+    },
+    {
       "path": "dist/react/roller.js",
-      "limit": "34 KB"
+      "limit": "35.8 KB"
     },
     {
       "path": "dist/react/status-line.js",
-      "limit": "10.25 KB"
+      "limit": "11.5 KB"
     },
     {
       "path": "dist/react/use-roller.js",
@@ -474,15 +474,15 @@
     },
     {
       "path": "dist/readout.js",
-      "limit": "11.5 KB"
+      "limit": "14.2 KB"
     },
     {
       "path": "dist/roll-button.js",
-      "limit": "10 KB"
+      "limit": "11.1 KB"
     },
     {
       "path": "dist/roll-steps.js",
-      "limit": "11 KB"
+      "limit": "13.8 KB"
     },
     {
       "path": "dist/roller-state.js",
@@ -490,15 +490,15 @@
     },
     {
       "path": "dist/roller.js",
-      "limit": "33.5 KB"
+      "limit": "35.3 KB"
     },
     {
       "path": "dist/scope.js",
-      "limit": "22.75 KB"
+      "limit": "23.6 KB"
     },
     {
       "path": "dist/status-line.js",
-      "limit": "10 KB"
+      "limit": "11.1 KB"
     },
     {
       "path": "dist/svelte.js",
@@ -506,35 +506,35 @@
     },
     {
       "path": "dist/vue/key-pad.js",
-      "limit": "11.25 KB"
+      "limit": "12.4 KB"
     },
     {
       "path": "dist/vue/notation-field.js",
-      "limit": "16.75 KB"
+      "limit": "17.7 KB"
     },
     {
       "path": "dist/vue/preset-list.js",
-      "limit": "11.25 KB"
+      "limit": "12.3 KB"
     },
     {
       "path": "dist/vue/readout.js",
-      "limit": "11.5 KB"
+      "limit": "14.3 KB"
     },
     {
       "path": "dist/vue/roll-button.js",
-      "limit": "10.25 KB"
+      "limit": "11.4 KB"
     },
     {
       "path": "dist/vue/roll-steps.js",
-      "limit": "11.25 KB"
+      "limit": "14.1 KB"
     },
     {
       "path": "dist/vue/roller.js",
-      "limit": "33.75 KB"
+      "limit": "35.6 KB"
     },
     {
       "path": "dist/vue/status-line.js",
-      "limit": "10.25 KB"
+      "limit": "11.4 KB"
     },
     {
       "path": "dist/vue/use-roller.js",

@@ -57,21 +57,42 @@ type StyleName =
   | 'step'
   | 'stepLabel'
   | 'stepLabelInitial'
-  | 'stepDivided'
+  | 'stepInitial'
   | 'stepLabelMono'
-  | 'stepMath'
   | 'dice'
-  | 'swap'
   | 'die'
   | 'dieRemoved'
-  | 'dieAdded'
   | 'chain'
   | 'chainLink'
   | 'dieInitial'
   | 'dieTextInitial'
   | 'dieText'
   | 'dieTextRemoved'
-  | 'arrow'
+  | 'stepLabelInk'
+  | 'pip'
+  | 'labelRow'
+  | 'dieWas'
+  | 'dieTextWas'
+  | 'math'
+  | 'mathText'
+  | 'laneRow'
+  | 'laneRowInitial'
+  | 'laneRowResult'
+  | 'laneLabel'
+  | 'lane'
+  | 'laneInitial'
+  | 'laneResult'
+  | 'laneDie'
+  | 'laneLineIn'
+  | 'laneLineOut'
+  | 'laneArrow'
+  | 'laneMath'
+  | 'stacks'
+  | 'stackRow'
+  | 'stack'
+  | 'stackLink'
+  | 'stackArrow'
+  | 'legend'
   | 'quiet'
   | 'quietText'
   | 'tabs'
@@ -244,13 +265,21 @@ function build(t: RollerTheme): RollerStyles {
     poolHeadingLabel: { fontFamily: t.font },
     step: { gap: 6 },
     stepLabel: { ...text, color: t.muted, fontSize: t.textXs, fontWeight: '600' },
-    // The initial roll leads: ink label, larger dice, a rule before the modifier steps
+    // The initial rolls lead: ink label, larger dice, framed by a quiet border
     stepLabelInitial: { color: t.ink, fontWeight: '700' },
-    stepDivided: { paddingBottom: 14, borderBottomWidth: 1, borderColor: t.border },
+    stepInitial: {
+      marginHorizontal: -12,
+      paddingVertical: 10,
+      paddingHorizontal: 12,
+      borderWidth: 1,
+      borderColor: t.borderStrong,
+      borderRadius: t.radiusLg
+    },
     stepLabelMono: { fontFamily: t.fontMono },
-    stepMath: { ...mono, fontSize: t.textBase },
+    stepLabelInk: { fontWeight: '600' },
+    pip: { width: 8, height: 8, borderRadius: 4 },
+    labelRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
     dice: { flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', gap: 6 },
-    swap: { flexDirection: 'row', alignItems: 'center', gap: 4 },
     die: {
       minWidth: 36,
       height: 36,
@@ -264,19 +293,45 @@ function build(t: RollerTheme): RollerStyles {
     },
     dieInitial: { minWidth: 44, height: 44 },
     dieTextInitial: { fontSize: t.textLg, fontWeight: '700' },
-    dieRemoved: { borderStyle: 'dashed', backgroundColor: 'transparent' },
-    dieAdded: { borderWidth: 2, borderColor: t.accent, backgroundColor: t.addedBg },
-    chain: {
-      flexDirection: 'row',
-      flexWrap: 'wrap',
-      alignItems: 'center',
-      gap: 4,
-      marginRight: 12
+    dieRemoved: { borderStyle: 'dashed', borderColor: t.inkFilter, backgroundColor: t.bg },
+    dieWas: {
+      minWidth: 24,
+      height: 24,
+      borderStyle: 'dashed',
+      borderColor: t.line,
+      backgroundColor: t.bg
     },
+    dieTextWas: { color: t.faint, fontSize: t.textXs, fontWeight: '400' },
+    math: { paddingHorizontal: 8, backgroundColor: t.raised },
+    mathText: { fontWeight: '700' },
+    chain: { flexDirection: 'row', alignItems: 'center', gap: 4 },
     chainLink: { ...text, color: t.muted, fontWeight: '600' },
     dieText: { ...text, fontSize: t.textMd, fontWeight: '600', fontVariant: ['tabular-nums'] },
-    dieTextRemoved: { color: t.faint, fontWeight: '400', textDecorationLine: 'line-through' },
-    arrow: { ...text, color: t.muted },
+    dieTextRemoved: { color: t.inkFilter, fontWeight: '400', textDecorationLine: 'line-through' },
+    laneRow: { flexDirection: 'row', alignItems: 'stretch' },
+    laneRowInitial: {
+      marginHorizontal: -12,
+      paddingHorizontal: 12,
+      borderWidth: 1,
+      borderColor: t.borderStrong,
+      borderRadius: t.radiusLg
+    },
+    laneRowResult: { marginTop: 6, borderTopWidth: 1, borderTopColor: t.border },
+    laneLabel: { width: 112, justifyContent: 'center' },
+    lane: { justifyContent: 'center', paddingVertical: 5, paddingLeft: 4 },
+    laneInitial: { paddingVertical: 10 },
+    laneResult: { paddingTop: 14 },
+    laneDie: { marginLeft: 4 },
+    laneLineIn: { position: 'absolute', left: 25, top: 0, height: '50%', borderLeftWidth: 2 },
+    laneLineOut: { position: 'absolute', left: 25, top: '50%', bottom: 0, borderLeftWidth: 2 },
+    laneArrow: { position: 'absolute', left: -6 },
+    laneMath: { flexGrow: 1, alignItems: 'flex-end', justifyContent: 'center' },
+    stacks: { gap: 10 },
+    stackRow: { flexDirection: 'row', flexWrap: 'wrap', alignItems: 'flex-end', gap: 6 },
+    stack: { alignItems: 'center' },
+    stackLink: { height: 10, borderLeftWidth: 2 },
+    stackArrow: { height: 36, justifyContent: 'center' },
+    legend: { flexDirection: 'row', flexWrap: 'wrap', columnGap: 16, rowGap: 4 },
 
     quiet,
     quietText: { ...text, fontSize: t.textSm, fontWeight: '600' },
