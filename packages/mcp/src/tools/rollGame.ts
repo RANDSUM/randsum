@@ -65,6 +65,8 @@ export interface RollGameToolResult {
   readonly total: number
   readonly result: unknown
   readonly details: unknown
+  /** Every die as first rolled, before the game's modifiers: dropped dice included. */
+  readonly initialRolls: readonly number[]
   readonly rolls: readonly number[]
 }
 
@@ -89,6 +91,7 @@ function normalize(
       total: result.total,
       result: result.result,
       details: 'details' in result ? result.details : undefined,
+      initialRolls: result.rolls.flatMap(record => record.initialRolls),
       rolls: result.rolls.flatMap(record => record.rolls)
     },
     records: result.rolls

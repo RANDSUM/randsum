@@ -3,6 +3,14 @@ import { RandsumError } from '@randsum/roller/errors'
 import { rollNotation } from '../src/tools/roll'
 
 describe('rollNotation', () => {
+  test('reports every die as first rolled, dropped dice included', () => {
+    const [pool] = rollNotation({ notation: '4d6L', seed: 7 }).pools
+    expect(pool?.initialRolls).toHaveLength(4)
+    expect(pool?.rolls).toHaveLength(3)
+    const dropped = [...(pool?.initialRolls ?? [])].sort((a, b) => a - b)[0]
+    expect([...(pool?.rolls ?? []), dropped].sort()).toEqual([...(pool?.initialRolls ?? [])].sort())
+  })
+
   test('rolls basic notation within range', () => {
     const result = rollNotation({ notation: '1d20' })
     expect(result.notation).toBe('1d20')

@@ -66,7 +66,10 @@ const rollOutput = {
     .array(
       z.object({
         notation: z.string(),
-        rolls: z.array(z.number()).describe('Die values after modifiers'),
+        initialRolls: z
+          .array(z.number())
+          .describe('Every die as first rolled, before modifiers: dropped dice included'),
+        rolls: z.array(z.number()).describe('Die values after modifiers: the dice that count'),
         total: z.number(),
         description: z.string()
       })
@@ -90,6 +93,9 @@ const rollGameOutput = {
   total: z.number(),
   result: z.unknown().describe("The game's interpreted outcome"),
   details: z.unknown().describe('Game-specific extra detail, when the game provides it'),
+  initialRolls: z
+    .array(z.number())
+    .describe("Every die as first rolled, before the game's modifiers: dropped dice included"),
   rolls: z
     .array(z.number())
     .describe("Die values after the game's modifiers: only the dice that count")
@@ -178,7 +184,7 @@ const VIEW_RESOURCE_META: Record<string, unknown> = {
 
 /** Sent to clients on initialize; most hosts put it in the model's context. */
 const SERVER_INSTRUCTIONS =
-  'RANDSUM rolls tabletop RPG dice with a real random number generator. Call a tool for every roll the user asks for; never invent dice results. Use `roll_game` when the user names a supported game (D&D 5e is `fifth`), `roll` for plain notation such as "4d6L" or "2d20L+5", and `validate` to explain or repair notation. Notation reference: https://notation.randsum.dev/'
+  'RANDSUM rolls tabletop RPG dice with a real random number generator. Call a tool for every roll the user asks for, however simple; never invent dice results or roll them another way, such as with code. Use `roll_game` when the user names a supported game (D&D 5e is `fifth`), `roll` for plain notation such as "4d6L" or "2d20L+5", and `validate` to explain or repair notation. Notation reference: https://notation.randsum.dev/'
 
 /**
  * Every tool only computes: it reads no state, changes nothing, and reaches no
@@ -221,7 +227,7 @@ export function createServer(): McpServer {
     {
       title: 'Roll dice',
       description:
-        'Rolls dice written in RANDSUM notation (e.g. "4d6L", "2d20+5", "1d100") with a real random number generator. An optional integer seed makes the roll deterministic. Returns the total, the rolls of each dice pool, and a description.',
+        'Rolls dice written in RANDSUM notation (e.g. "4d6L", "2d20+5", "1d100") with a real random number generator. An optional integer seed makes the roll deterministic. Returns the total, the dice of each pool as first rolled and as kept after modifiers, and a description.',
       inputSchema: {
         notation: z.string().describe('RANDSUM dice notation, e.g. "4d6L", "2d20+5", "1d20"'),
         seed: z

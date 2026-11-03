@@ -14,6 +14,8 @@ export interface RollToolInput {
 /** Result for a single dice pool within a roll. */
 export interface RollPoolResult {
   readonly notation: string
+  /** Every die as first rolled, before modifiers: dropped and rerolled dice included. */
+  readonly initialRolls: readonly number[]
   readonly rolls: readonly number[]
   readonly total: number
   readonly description: string
@@ -64,6 +66,7 @@ export function rollNotationWithRecords(input: RollToolInput): {
 
   const pools: RollPoolResult[] = result.rolls.map(record => ({
     notation: record.notation,
+    initialRolls: record.initialRolls,
     rolls: record.rolls,
     total: record.total,
     description: record.description.join(', ')
