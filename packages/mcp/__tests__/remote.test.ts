@@ -37,7 +37,7 @@ describe('handleMcpRequest', () => {
           websiteUrl: 'https://randsum.dev',
           icons: [
             { src: 'https://randsum.dev/favicon.svg' },
-            { src: 'https://randsum.dev/brand/randsum-avatar.png' }
+            { src: 'https://randsum.dev/brand/randsum-mark.png' }
           ]
         }
       }
