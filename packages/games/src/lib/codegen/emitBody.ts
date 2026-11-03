@@ -27,6 +27,12 @@ import {
 import { buildDiceOptionsCode } from './emitModifiers'
 import { generateOutcomeLines, resultMappingLeafExpr, resultMappingLeafTsType } from './emitOutcome'
 
+/** A pool's name as the label on its roll record: `hope` → `Hope`, `extraDie` → `Extra die`. */
+function poolLabel(name: string): string {
+  const words = name.replace(/([a-z0-9])([A-Z])/g, '$1 $2').toLowerCase()
+  return (words.charAt(0).toUpperCase() + words.slice(1)).replace(/['\\]/g, '\\$&')
+}
+
 function generateMultiPoolBody(rollDef: NormalizedRollDefinition): string[] {
   const { dicePools, resolve } = rollDef
   if (dicePools === undefined) return []
@@ -53,7 +59,9 @@ function generateMultiPoolBody(rollDef: NormalizedRollDefinition): string[] {
       quantitySource !== undefined
         ? integerOrInputCode(quantitySource, rollDef.inputs, optional)
         : '1'
-    lines.push(`  const ${poolName}Result = executeRoll({ sides: ${sides}, quantity: ${qty} })`)
+    lines.push(
+      `  const ${poolName}Result = executeRoll({ sides: ${sides}, quantity: ${qty}, label: '${poolLabel(poolName)}' })`
+    )
     lines.push(
       `  const ${poolName}Total = ${poolName}Result.rolls.flatMap(r => r.rolls).reduce((s, v) => s + v, 0)`
     )
@@ -94,7 +102,9 @@ function generateMultiPoolBody(rollDef: NormalizedRollDefinition): string[] {
           : '1'
       const sign = cp.arithmetic === 'add' ? '+=' : '-='
       lines.push(`  if (${cond}) {`)
-      lines.push(`    const cpResult = executeRoll({ sides: ${cpSides}, quantity: ${cpQty} })`)
+      lines.push(
+        `    const cpResult = executeRoll({ sides: ${cpSides}, quantity: ${cpQty}, label: '${poolLabel(name)}' })`
+      )
       lines.push(
         `    const cpTotal = cpResult.rolls.flatMap(r => r.rolls).reduce((s, v) => s + v, 0)`
       )

@@ -421,3 +421,20 @@ describe('native <RollSteps>', () => {
     expect(chain?.textContent).toBe('6→6→2')
   })
 })
+
+describe('native <RollSteps>', () => {
+  test('a labelled pool shows its label, not its notation', async () => {
+    const { RollSteps } = await import('../src/native/roll-steps')
+    const { roll } = await import('@randsum/roller')
+    const records = [
+      ...roll({ sides: 12, quantity: 1, label: 'Hope' }).rolls,
+      ...roll({ sides: 12, quantity: 1, label: 'Fear' }).rolls,
+      ...roll('1d6').rolls
+    ]
+    const { container } = render(<RollSteps records={records} />)
+    expect(container.textContent).toContain('Hope')
+    expect(container.textContent).toContain('Fear')
+    expect(container.textContent).toContain('1d6')
+    expect(container.textContent).not.toContain('1d12')
+  })
+})

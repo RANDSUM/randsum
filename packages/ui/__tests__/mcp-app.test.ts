@@ -153,6 +153,18 @@ describe('toRollResult', () => {
     expect(result?.notation).toBe('Blades in the Dark')
   })
 
+  test('names labelled game pools by their labels', () => {
+    const records = [
+      ...roll({ sides: 12, quantity: 1, label: 'Hope' }).rolls,
+      ...roll({ sides: 12, quantity: 1, label: 'Fear' }).rolls
+    ]
+    const result = toRollResult({
+      structuredContent: { game: 'daggerheart', total: 9, result: 'hope' },
+      _meta: { [RECORDS_META_KEY]: records }
+    })
+    expect(result?.notation).toBe('Hope + Fear')
+  })
+
   test('uses a table row label as the outcome', () => {
     const result = toRollResult({
       structuredContent: { game: 'salvageunion', total: 5, result: { label: 'Failure' } }

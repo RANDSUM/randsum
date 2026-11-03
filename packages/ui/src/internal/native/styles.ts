@@ -53,6 +53,7 @@ type StyleName =
   | 'poolGroup'
   | 'poolHeading'
   | 'poolHeadingText'
+  | 'poolHeadingLabel'
   | 'step'
   | 'stepLabel'
   | 'stepLabelInitial'
@@ -240,6 +241,7 @@ function build(t: RollerTheme): RollerStyles {
     poolGroup: { gap: 6 },
     poolHeading: { flexDirection: 'row', justifyContent: 'space-between', gap: 8 },
     poolHeadingText: { ...mono, fontSize: t.textSm, fontWeight: '700' },
+    poolHeadingLabel: { fontFamily: t.font },
     step: { gap: 6 },
     stepLabel: { ...text, color: t.muted, fontSize: t.textXs, fontWeight: '600' },
     // The initial roll leads: ink label, larger dice, a rule before the modifier steps

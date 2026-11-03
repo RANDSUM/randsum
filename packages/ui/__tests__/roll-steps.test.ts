@@ -82,6 +82,52 @@ describe('explosion chains', () => {
   })
 })
 
+describe('pool names', () => {
+  const labelled = (label: string): RollRecord => {
+    const [only] = roll({ sides: 12, quantity: 1, label }).rolls
+    if (only === undefined) throw new Error('no record')
+    return only
+  }
+
+  test('a labelled pool shows its label, not its notation', () => {
+    const host = document.createElement('div')
+    render(rollSteps([labelled('Hope'), labelled('Fear')]), host)
+    const names = [...host.querySelectorAll('.rsui-step-label')].map(el => [
+      el.tagName,
+      el.textContent
+    ])
+    expect(names).toEqual([
+      ['SPAN', 'Hope'],
+      ['SPAN', 'Fear']
+    ])
+    expect(host.textContent).not.toContain('1d12')
+  })
+
+  test('a pool without a label keeps its notation in code', () => {
+    const host = document.createElement('div')
+    render(rollSteps([record('1d6', 6, [3]), labelled('Hope')]), host)
+    const names = [...host.querySelectorAll('.rsui-step-label')].map(el => [
+      el.tagName,
+      el.textContent
+    ])
+    expect(names).toEqual([
+      ['CODE', '1d6'],
+      ['SPAN', 'Hope']
+    ])
+  })
+
+  test('a labelled pool with modifier steps puts its label in the heading', () => {
+    const [hope] = roll('4d6L[Hope]').rolls
+    if (hope === undefined) throw new Error('no record')
+    const host = document.createElement('div')
+    render(rollSteps([hope, labelled('Fear')]), host)
+    const group = host.querySelector('.rsui-pool-group')
+    expect(group?.getAttribute('aria-label')).toBe('Hope')
+    expect(group?.querySelector('.rsui-pool-heading')?.textContent).toContain('Hope')
+    expect(group?.querySelector('.rsui-pool-heading code')).toBeNull()
+  })
+})
+
 describe('initial roll', () => {
   test('the first step is marked initial and the modifier steps are not', () => {
     const host = document.createElement('div')

@@ -42,22 +42,30 @@ export function roll(input?: {
       `Invalid rollingWith value: ${String(input?.rollingWith)}. Must be 'Advantage' or 'Disadvantage'.`,
       'INVALID_INPUT_TYPE'
     )
-  const hopeResult = executeRoll({ sides: input?.amplifyHope ? 20 : 12, quantity: 1 })
+  const hopeResult = executeRoll({
+    sides: input?.amplifyHope ? 20 : 12,
+    quantity: 1,
+    label: 'Hope'
+  })
   const hopeTotal = hopeResult.rolls.flatMap(r => r.rolls).reduce((s, v) => s + v, 0)
-  const fearResult = executeRoll({ sides: input?.amplifyFear ? 20 : 12, quantity: 1 })
+  const fearResult = executeRoll({
+    sides: input?.amplifyFear ? 20 : 12,
+    quantity: 1,
+    label: 'Fear'
+  })
   const fearTotal = fearResult.rolls.flatMap(r => r.rolls).reduce((s, v) => s + v, 0)
   const rolls: RollRecord[] = [...hopeResult.rolls, ...fearResult.rolls]
   const acc = { total: hopeTotal + fearTotal }
   const conditionalPoolTotals: Record<string, number> = {}
   if (input?.rollingWith === 'Advantage') {
-    const cpResult = executeRoll({ sides: 6, quantity: 1 })
+    const cpResult = executeRoll({ sides: 6, quantity: 1, label: 'Advantage' })
     const cpTotal = cpResult.rolls.flatMap(r => r.rolls).reduce((s, v) => s + v, 0)
     conditionalPoolTotals['advantage'] = cpTotal
     acc.total += cpTotal
     rolls.push(...cpResult.rolls)
   }
   if (input?.rollingWith === 'Disadvantage') {
-    const cpResult = executeRoll({ sides: 6, quantity: 1 })
+    const cpResult = executeRoll({ sides: 6, quantity: 1, label: 'Disadvantage' })
     const cpTotal = cpResult.rolls.flatMap(r => r.rolls).reduce((s, v) => s + v, 0)
     conditionalPoolTotals['disadvantage'] = cpTotal
     acc.total -= cpTotal

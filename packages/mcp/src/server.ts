@@ -213,7 +213,7 @@ export function createServer(): McpServer {
       icons: [
         { src: 'https://randsum.dev/favicon.svg', mimeType: 'image/svg+xml', sizes: ['any'] },
         {
-          src: 'https://randsum.dev/brand/randsum-avatar.png',
+          src: 'https://randsum.dev/brand/randsum-mark.png',
           mimeType: 'image/png',
           sizes: ['1024x1024']
         }
