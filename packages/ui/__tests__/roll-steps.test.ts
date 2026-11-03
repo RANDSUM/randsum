@@ -79,8 +79,12 @@ describe('timeline', () => {
     expect(t.lanes[0]?.final).toBe(15)
   })
 
-  test('arithmetic alone changes no die, so there is no Result row', () => {
-    expect(timeline(record('1d20+5', 20, [14])).changed).toBe(false)
+  test('a term alone still earns a Result row, where it shows beside the dice', () => {
+    expect(timeline(record('1d20+5', 20, [14])).changed).toBe(true)
+  })
+
+  test('a roll with no steps after the initial roll has no Result row', () => {
+    expect(timeline(record('1d20', 20, [14])).changed).toBe(false)
   })
 })
 
@@ -96,7 +100,7 @@ describe('lanes', () => {
     const legend = [...host.querySelectorAll('.rsui-lanes-legend li')].map(el => el.textContent)
     expect(legend).toEqual(['Reroll Exactly 1', 'Explode', 'Drop Lowest 1', 'Add'])
     const result = [...host.querySelectorAll('.rsui-lane[data-row="result"] .rsui-die')]
-    expect(result.map(d => d.textContent)).toEqual(['5', '6', '6', '3', '4'])
+    expect(result.map(d => d.textContent)).toEqual(['5', '6', '6', '3', '4', '+3'])
     expect(host.querySelector('[aria-label="6 exploded: 6, 2"]')).not.toBeNull()
     expect(host.querySelectorAll('.rsui-lane-arrow')).toHaveLength(2)
     expect(host.querySelector('.rsui-die[data-variant="removed"]')?.textContent).toBe('2')
@@ -110,6 +114,18 @@ describe('lanes', () => {
     )
     expect(ins).toContain('substitute')
     expect(ins).toContain('removed')
+  })
+
+  test('a term carries a line down to the Result row and shows there', () => {
+    const host = document.createElement('div')
+    render(rollSteps([record('4d6L+3', 6, [1, 6, 3, 4])]), host)
+    const term = [...host.querySelectorAll('.rsui-lane[data-term]')]
+    expect(term.map(c => c.textContent?.trim())).toEqual(['+3', '+3'])
+    expect(term[0]?.hasAttribute('data-out')).toBe(true)
+    expect(term[1]?.getAttribute('data-row')).toBe('result')
+    expect(term[1]?.getAttribute('data-in')).toBe('plain')
+    const result = [...host.querySelectorAll('.rsui-lane[data-row="result"] .rsui-die')]
+    expect(result.map(d => d.textContent)).toEqual(['6', '3', '4', '+3'])
   })
 
   test('plus and minus are cells in their ink', () => {

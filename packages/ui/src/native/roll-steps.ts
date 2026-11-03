@@ -188,11 +188,15 @@ function laneWidth(lane: Lane): number {
   return longest === 1 ? 52 : longest * 36 + (longest - 1) * 16 + 12
 }
 
+/** A term's lane, such as `+5`: wide enough for its cell, its line down the middle. */
+const TERM_WIDTH = 56
+
 /** Each die in its own lane, carried down until a step touches it. */
 function lanes(draw: Draw, t: Timeline): React.ReactNode {
   const { styles, theme } = draw
   const result = t.rows.length
   const shown = t.changed ? [...t.rows, null] : t.rows
+  const terms = t.rows.flatMap((row, at) => (row.math === undefined ? [] : [{ row, at }]))
   return h(
     View,
     { key: 'lanes' },
@@ -264,9 +268,26 @@ function lanes(draw: Draw, t: Timeline): React.ReactNode {
                 : null
           )
         }),
-        row?.math === undefined
-          ? null
-          : h(View, { style: styles.laneMath }, mathCell(draw, row, 'math'))
+        terms.map(({ row: term, at }, k) => {
+          if (r < at) return h(View, { key: `term-${k}`, style: { width: TERM_WIDTH } })
+          const line = (style: ViewStyle): React.ReactNode =>
+            h(View, { style: [style, styles.laneTermLine, { borderLeftColor: theme.line }] })
+          return h(
+            View,
+            {
+              key: `term-${k}`,
+              style: [
+                styles.lane,
+                styles.laneTerm,
+                { width: TERM_WIDTH },
+                isResult ? styles.laneResult : null
+              ]
+            },
+            r > at ? line(styles.laneLineIn) : null,
+            r < result ? line(styles.laneLineOut) : null,
+            r === at || isResult ? mathCell(draw, term, 'math') : null
+          )
+        })
       )
     })
   )

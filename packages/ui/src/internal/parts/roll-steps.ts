@@ -82,25 +82,38 @@ function label(text: string, ink: StepInk, row: number, strong: boolean): Templa
   >`
 }
 
+/**
+ * A term such as `+5` in its own lane: its cell on its step, then a line down
+ * to the Result row, where it shows again beside the dice it adds to.
+ */
+function termLane(t: Timeline, row: TimelineRow, at: number, column: number): TemplateResult[] {
+  const end = t.rows.length
+  return Array.from({ length: end - at + 1 }, (_, k) => {
+    const r = at + k
+    return html`<span
+      class="rsui-lane"
+      data-term=""
+      style=${`grid-area: ${r + 1} / ${column}`}
+      data-row=${ifDefined(r === end ? 'result' : undefined)}
+      data-in=${ifDefined(r > at ? 'plain' : undefined)}
+      data-out=${ifDefined(r < end ? 'plain' : undefined)}
+      >${r === at || r === end ? mathCell(row) : nothing}</span
+    >`
+  })
+}
+
 /** Each die in its own lane, carried down until a step touches it. */
 function lanes(t: Timeline): TemplateResult {
   const resultRow = t.rows.length + 1
-  const mathColumn = t.lanes.length + 2
+  const terms = t.rows.flatMap((row, r) => (row.math === undefined ? [] : [{ row, r }]))
   return html`<div class="rsui-lanes-scroll">
     <div
       class="rsui-lanes"
-      data-few=${ifDefined(t.lanes.length <= 3 ? '' : undefined)}
-      style=${`--lanes: ${Math.max(t.lanes.length, 1)}`}
+      data-few=${ifDefined(t.lanes.length + terms.length <= 3 ? '' : undefined)}
+      style=${`--lanes: ${Math.max(t.lanes.length + terms.length, 1)}`}
     >
       <span class="rsui-lanes-frame" style="grid-area: 1 / 1 / 2 / -1"></span>
       ${t.rows.map((row, r) => label(row.label, row.ink, r + 1, r === 0))}
-      ${t.rows.map((row, r) =>
-        row.math === undefined
-          ? nothing
-          : html`<span class="rsui-lane" style=${`grid-area: ${r + 1} / ${mathColumn}`}
-              >${mathCell(row)}</span
-            >`
-      )}
       ${
         t.changed
           ? html`<span class="rsui-lanes-rule" style=${`grid-area: ${resultRow} / 1 / ${resultRow + 1} / -1`}></span>
@@ -139,6 +152,7 @@ function lanes(t: Timeline): TemplateResult {
           >`
         })
       })}
+      ${terms.map(({ row, r }, k) => termLane(t, row, r, t.lanes.length + k + 2))}
     </div>
     ${legend(t.rows.slice(1), 'rsui-legend rsui-lanes-legend')}
   </div>`
