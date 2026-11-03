@@ -15,6 +15,23 @@ export function visibleSteps(record: RollRecord): readonly ShownStep[] {
   return traceRoll(record).filter(shown)
 }
 
+/** A pool's name in a multi-pool roll. */
+export interface PoolName {
+  readonly text: string
+  /** Whether `text` is notation (shown as code) rather than a label */
+  readonly notation: boolean
+}
+
+/**
+ * What a pool is called in a multi-pool roll: its label when it has one (a
+ * game's "Hope" and "Fear" dice, or `[fire]` in notation), else its notation.
+ */
+export function poolName(record: RollRecord): PoolName {
+  return record.label === undefined || record.label === ''
+    ? { text: record.notation, notation: true }
+    : { text: record.label, notation: false }
+}
+
 /** A dice step laid out for display: its explosion chains, then the other dice. */
 export interface DiceLayout {
   /** Each chain: the die that triggered it, the dice it rolled, and what it became */

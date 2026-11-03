@@ -7,8 +7,8 @@ import { Text, View } from 'react-native'
 import type { StyleProp, ViewStyle } from 'react-native'
 import type { RollerStyles } from '../internal/native/styles'
 import { useStyles } from '../internal/native/styles'
-import { diceLayout, visibleSteps } from '../internal/steps'
-import type { DiceLayout, ShownStep } from '../internal/steps'
+import { diceLayout, poolName, visibleSteps } from '../internal/steps'
+import type { DiceLayout, PoolName, ShownStep } from '../internal/steps'
 
 export interface RollStepsProps {
   /** A roll's records: `result.records` from the roller. */
@@ -77,11 +77,20 @@ function chain(
   )
 }
 
-function step(styles: RollerStyles, item: ShownStep, key: string, label?: string): React.ReactNode {
+function step(
+  styles: RollerStyles,
+  item: ShownStep,
+  key: string,
+  label?: PoolName
+): React.ReactNode {
   const heading =
     label === undefined
       ? h(Text, { style: styles.stepLabel }, item.label)
-      : h(Text, { style: [styles.stepLabel, styles.stepLabelMono] }, label)
+      : h(
+          Text,
+          { style: [styles.stepLabel, label.notation ? styles.stepLabelMono : null] },
+          label.text
+        )
   if (item.kind === 'arithmetic') {
     return h(
       View,
@@ -123,20 +132,25 @@ export function RollSteps({ records, style }: RollStepsProps): React.JSX.Element
     View,
     { style: [styles.steps, style] },
     records.map((record, r) => {
+      const pool = poolName(record)
       const steps = visibleSteps(record)
       const [only] = steps
-      // A plain pool in a multi-pool roll is one row: its notation and its dice
+      // A plain pool in a multi-pool roll is one row: its name and its dice
       if (multiPool && steps.length === 1 && only !== undefined) {
-        return step(styles, only, `pool-${r}`, record.notation)
+        return step(styles, only, `pool-${r}`, pool)
       }
       return h(
         View,
-        { key: `pool-${r}`, accessibilityLabel: record.notation, style: styles.poolGroup },
+        { key: `pool-${r}`, accessibilityLabel: pool.text, style: styles.poolGroup },
         multiPool
           ? h(
               View,
               { style: styles.poolHeading },
-              h(Text, { style: styles.poolHeadingText }, record.notation),
+              h(
+                Text,
+                { style: [styles.poolHeadingText, pool.notation ? null : styles.poolHeadingLabel] },
+                pool.text
+              ),
               h(Text, { style: styles.poolHeadingText }, record.total)
             )
           : null,
