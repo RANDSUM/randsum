@@ -248,7 +248,7 @@ export const PRODUCTS: readonly ProductInfo[] = [
     screenshot: {
       alt: 'The roll card RANDSUM shows in Claude for 4d6L+2: the total, each die, the dropped one, and Roll again',
       width: 1000,
-      height: 497
+      height: 666
     },
     actions: [
       { label: 'Set it up', href: '/tools/claude-code-plugin/#setup' },
