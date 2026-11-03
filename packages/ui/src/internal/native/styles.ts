@@ -86,7 +86,8 @@ type StyleName =
   | 'laneLineIn'
   | 'laneLineOut'
   | 'laneArrow'
-  | 'laneMath'
+  | 'laneTerm'
+  | 'laneTermLine'
   | 'stacks'
   | 'stackRow'
   | 'stack'
@@ -325,7 +326,8 @@ function build(t: RollerTheme): RollerStyles {
     laneLineIn: { position: 'absolute', left: 25, top: 0, height: '50%', borderLeftWidth: 2 },
     laneLineOut: { position: 'absolute', left: 25, top: '50%', bottom: 0, borderLeftWidth: 2 },
     laneArrow: { position: 'absolute', left: -6 },
-    laneMath: { flexGrow: 1, alignItems: 'flex-end', justifyContent: 'center' },
+    laneTerm: { alignItems: 'center', paddingLeft: 0 },
+    laneTermLine: { left: '50%', marginLeft: -1 },
     stacks: { gap: 10 },
     stackRow: { flexDirection: 'row', flexWrap: 'wrap', alignItems: 'flex-end', gap: 6 },
     stack: { alignItems: 'center' },

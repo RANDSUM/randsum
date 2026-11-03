@@ -99,7 +99,10 @@ export interface Lane {
 export interface Timeline {
   readonly rows: readonly TimelineRow[]
   readonly lanes: readonly Lane[]
-  /** Whether any step changed the dice, so a Result row is worth showing */
+  /**
+   * Whether any step changed the dice or added a term such as `+5`, so a
+   * Result row is worth showing
+   */
   readonly changed: boolean
 }
 
@@ -226,6 +229,8 @@ export function timeline(record: RollRecord): Timeline {
       chained: l.chained
     })),
     changed:
-      lanes.some(l => l.nodes.length > 1 || !l.alive) || lanes.some(l => l.nodes[0]?.row !== 0)
+      lanes.some(l => l.nodes.length > 1 || !l.alive) ||
+      lanes.some(l => l.nodes[0]?.row !== 0) ||
+      rows.some(r => r.math !== undefined)
   }
 }

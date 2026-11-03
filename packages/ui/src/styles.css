@@ -602,8 +602,8 @@
   margin-inline-start: 0;
 }
 
-.rsui-lane:has(> .rsui-math) {
-  justify-content: flex-end;
+.rsui-lane[data-term] {
+  justify-content: center;
 }
 
 .rsui-lane[data-row='initial'] {
@@ -637,6 +637,12 @@
   border-color: var(--_out, var(--_line));
   top: 50%;
   bottom: 0;
+}
+
+/* A term's lane centres its line under the cell, whatever the term's width */
+.rsui-lane[data-term]::before,
+.rsui-lane[data-term]::after {
+  inset-inline-start: calc(50% - 1px);
 }
 
 .rsui-lane[data-in='removed']::before,
