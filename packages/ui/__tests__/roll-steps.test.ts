@@ -143,3 +143,10 @@ describe('initial roll', () => {
     expect(marks).toEqual(['initial', 'initial'])
   })
 })
+
+test('the first step reads Initial Rolls', () => {
+  const host = document.createElement('div')
+  render(rollSteps([record('4d6L', 6, [3, 5, 1, 6])]), host)
+  const labels = [...host.querySelectorAll('.rsui-step-label')].map(el => el.textContent)
+  expect(labels[0]).toBe('Initial Rolls')
+})

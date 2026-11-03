@@ -57,7 +57,7 @@ type StyleName =
   | 'step'
   | 'stepLabel'
   | 'stepLabelInitial'
-  | 'stepDivided'
+  | 'stepInitial'
   | 'stepLabelMono'
   | 'stepMath'
   | 'dice'
@@ -244,9 +244,16 @@ function build(t: RollerTheme): RollerStyles {
     poolHeadingLabel: { fontFamily: t.font },
     step: { gap: 6 },
     stepLabel: { ...text, color: t.muted, fontSize: t.textXs, fontWeight: '600' },
-    // The initial roll leads: ink label, larger dice, a rule before the modifier steps
+    // The initial rolls lead: ink label, larger dice, framed by a quiet border
     stepLabelInitial: { color: t.ink, fontWeight: '700' },
-    stepDivided: { paddingBottom: 14, borderBottomWidth: 1, borderColor: t.border },
+    stepInitial: {
+      marginHorizontal: -12,
+      paddingVertical: 10,
+      paddingHorizontal: 12,
+      borderWidth: 1,
+      borderColor: t.borderStrong,
+      borderRadius: t.radiusLg
+    },
     stepLabelMono: { fontFamily: t.fontMono },
     stepMath: { ...mono, fontSize: t.textBase },
     dice: { flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', gap: 6 },
