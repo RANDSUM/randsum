@@ -69,6 +69,9 @@ page and modifier docs all render them through the React wrappers.
   accent. `scripts/mcp-app-html.ts` bundles it into the self-contained
   `dist/mcp-app.html` and `dist/mcp-app-page.js` (the `mcp-app-page` subpath,
   the page as a string), which `@randsum/mcp` inlines.
+- `src/timeline.ts`: `timeline()`, each die's path through a roll's steps
+  (the model behind the Lanes layout, from `src/internal/steps.ts`), for
+  renderers that draw it without the elements. The Discord bot draws it as text.
 - `src/keys.ts`, `src/presets.ts`, `src/check.ts`: data and logic with no
   framework. `presets` builds from the roller's `NOTATION_DOCS` examples, so
   docs and component never drift.

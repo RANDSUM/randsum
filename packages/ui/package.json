@@ -227,6 +227,12 @@
         "default": "./dist/svelte.js"
       }
     },
+    "./timeline": {
+      "import": {
+        "types": "./dist/timeline.d.ts",
+        "default": "./dist/timeline.js"
+      }
+    },
     "./vue/key-pad": {
       "import": {
         "types": "./dist/vue/key-pad.d.ts",
@@ -503,6 +509,10 @@
     {
       "path": "dist/svelte.js",
       "limit": "0.25 KB"
+    },
+    {
+      "path": "dist/timeline.js",
+      "limit": "2 KB"
     },
     {
       "path": "dist/vue/key-pad.js",

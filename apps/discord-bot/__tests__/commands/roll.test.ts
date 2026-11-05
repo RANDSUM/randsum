@@ -127,13 +127,14 @@ describe('rollCommand', () => {
     }))
     const text = textOf(render('1d6'))
     expect(text).toContain('## 5')
-    expect(text).toContain('**Rolled**  5')
-    expect(text).not.toContain('~~')
+    expect(text).toContain('5  Initial Rolls')
+    expect(text).not.toContain('Result')
   })
 
-  test('modified pool: dropped dice are struck through in place', () => {
+  test('modified pool: each die keeps its lane down to the Result row', () => {
     // The old renderer printed "Initial Rolls" and "Modified Rolls" as two
-    // plain lists and left the reader to diff them.
+    // plain lists and left the reader to diff them. The dropped 1 shows on the
+    // step that took it and is missing from Result.
     mockRoll.mockImplementationOnce(() => ({
       total: 9,
       rolls: [
@@ -149,8 +150,30 @@ describe('rollCommand', () => {
       ]
     }))
     const text = textOf(render('3d6L'))
-    expect(text).toContain('~~1~~')
-    expect(text).toContain('Drop Lowest 1')
+    expect(text).toContain(
+      '4   5   1  Initial Rolls\n│   │   1  Drop Lowest 1\n─────────\n4   5      Result'
+    )
+  })
+
+  test('a pool too wide for lanes falls back to the step trace', () => {
+    const dice = Array.from({ length: 20 }, (_, i) => (i % 6) + 1)
+    mockRoll.mockImplementationOnce(() => ({
+      total: 70,
+      rolls: [
+        {
+          notation: '20d6',
+          description: ['Roll 20 6-sided dice'],
+          total: 70,
+          initialRolls: dice,
+          rolls: dice,
+          modifierLogs: [],
+          appliedTotal: 70
+        }
+      ]
+    }))
+    const text = textOf(render('20d6'))
+    expect(text).not.toContain('```')
+    expect(text).toContain('**Rolled**')
   })
 
   test("the roller's own description explains what the notation meant", () => {

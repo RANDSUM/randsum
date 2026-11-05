@@ -57,14 +57,13 @@ describe('roll command integration (un-mocked roller)', () => {
     expect(textOf(view)).toContain('2d6')
   })
 
-  test('arithmetic-only notation renders its dice unmarked', () => {
-    // Regression guard: the real roller emits a modifierLog for every applied
-    // modifier, including non-mutating arithmetic ones (plus/minus/...). The
-    // rolled dice are unchanged for 2d6+3, so no die should be struck through
-    // — a `modifierLogs.length > 0` gate would wrongly mark them.
+  test('arithmetic-only notation gives the term its own lane', () => {
+    // The real roller logs arithmetic (plus/minus) as a modifier too, but it
+    // changes no die: both dice run straight down, and +3 joins the Result row.
     const text = textOf(render('2d6+3'))
-    expect(text).toContain('**Add**  +3')
-    expect(text).not.toContain('~~')
+    expect(text).toMatch(/^│ {3}│ {2}\+3 {2}Add$/m)
+    expect(text).toMatch(/^\d {3}\d {2}\+3 {2}Result$/m)
+    expect(text).not.toContain('╎')
   })
 
   test('total is within the valid range for the notation', () => {
