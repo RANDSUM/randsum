@@ -79,7 +79,7 @@ describe('renderTrace', () => {
     expect(renderTrace(DROP_RECORD)).toEqual([
       '**Rolled**  1 4 2 6',
       '**Drop Lowest 1**  ~~1~~ 4 2 6',
-      '**Total**  2 + 4 + 6'
+      '2 + 4 + 6  **= 12**'
     ])
   })
 
@@ -89,7 +89,7 @@ describe('renderTrace', () => {
     expect(renderTrace(REROLL_RECORD)).toEqual([
       '**Rolled**  2 6 2 6',
       '**Reroll Less than 6**  ~~2~~ ~~2~~ **6** **6** 6 6',
-      '**Total**  6 + 6 + 6 + 6'
+      '6 + 6 + 6 + 6  **= 24**'
     ])
   })
 
@@ -97,7 +97,7 @@ describe('renderTrace', () => {
     expect(renderTrace(ARITHMETIC_RECORD)).toEqual([
       '**Rolled**  3 5',
       '**Add**  +3',
-      '**Total**  3 + 5 + 3'
+      '3 + 5 + 3  **= 11**'
     ])
   })
 })

@@ -225,7 +225,7 @@ describe('rollCommand', () => {
     expect(view).toHaveLength(3) // two pools plus the total
     const text = textOf(view)
     expect(text).toContain('## 4d6L  ·  7')
-    expect(text).toContain('## Total  14')
+    expect(text).toContain('## = 14')
   })
 
   test('a large repeat stays under the 40-component cap', () => {

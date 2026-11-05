@@ -140,7 +140,7 @@ function buildRollView(context: CommandContext): RollView {
       ...containers,
       rollContainer({
         accent: BRAND,
-        headline: `Total  ${result.total}`,
+        headline: `= ${result.total}`,
         ...(omitted > 0
           ? { consequence: `${omitted} further pool${omitted === 1 ? '' : 's'} not shown.` }
           : {}),

@@ -50,7 +50,7 @@ export const register: Register = on => {
           ? `${record.notation} ${kept} from [${list(record.initialRolls)}]`
           : `${record.notation} ${kept}`
       })
-      const line = `${asked} → ${result.total}`
+      const line = `${asked} = ${result.total}`
       $.ui.status(`Last roll: ${line}`)
       return {
         text: `${line}\n${groups.join('\n')}`,

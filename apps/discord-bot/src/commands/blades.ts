@@ -70,7 +70,7 @@ function buildBladesView(context: CommandContext): RollView {
         { label: 'Deciding Die', value: String(decidingDie) }
       ],
       body: lanesOr(result, [markKeptRolls(initialRolls, keptRolls)]),
-      derivation: `${initialRolls.length}d6 → ${decidingDie}`,
+      derivation: `${initialRolls.length}d6 = ${decidingDie}`,
       ...(rerollId !== undefined ? { rerollId } : {})
     })
   ]

@@ -142,7 +142,7 @@ export function renderTrace(record: TraceableRollRecord): readonly string[] {
       case 'arithmetic':
         return [`**${step.label}**  ${step.display}`]
       case 'finalRolls':
-        return [`**Total**  ${formatAsMath(step.rolls, step.arithmeticDelta)}`]
+        return [`${formatAsMath(step.rolls, step.arithmeticDelta)}  **= ${record.total}**`]
       case 'divider':
         return []
     }
