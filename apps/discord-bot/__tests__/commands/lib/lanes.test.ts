@@ -27,10 +27,10 @@ describe('renderLanes', () => {
     expect(lanesFor('2d6!', [6, 3, 2])).toBe(
       [
         '```',
-        '• 6     3',
-        '! 6→ 2  │',
-        '───────────────',
-        'R 6  2  3  = 11',
+        '2d6   6     3',
+        '!     6→ 2  │',
+        '─────────────',
+        '= 11  6  2  3',
         '```',
         '-# `!` Explode'
       ].join('\n')
@@ -39,13 +39,13 @@ describe('renderLanes', () => {
 
   test('a removed die runs a dashed line down to the step that takes it', () => {
     const text = lanesFor('3d6R{1}L', [1, 2, 5, 4])
-    expect(text).toContain('• 1  2  5\nR 4  ╎  │\nL │  2  │\n')
-    expect(text).toContain('R 4     5  = 9')
-    expect(text).toContain('-# `R` Reroll Exactly 1  ·  `L` Drop Lowest 1')
+    expect(text).toContain('3d6   1  2  5\nR{1}  4  ╎  │\nL     │  2  │\n')
+    expect(text).toContain('= 9   4     5')
+    expect(text).toContain('-# `R{1}` Reroll Exactly 1  ·  `L` Drop Lowest 1')
   })
 
   test('an unchanged roll is just its dice, with no Result row or key', () => {
-    expect(lanesFor('2d6', [4, 1])).toBe('```\n• 4  1\n```')
+    expect(lanesFor('2d6', [4, 1])).toBe('```\n2d6  4  1\n```')
   })
 
   test('a grid wider than a phone gets no lanes', () => {

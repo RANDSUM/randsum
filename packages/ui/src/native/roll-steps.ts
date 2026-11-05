@@ -9,6 +9,7 @@ import type { StyleProp, TextStyle, ViewStyle } from 'react-native'
 import type { RollerStyles } from '../internal/native/styles'
 import { useStyles } from '../internal/native/styles'
 import type { StepsLayout } from '../internal/parts/roll-steps'
+import { inkColour } from '../internal/native/ink'
 import { poolName, timeline, visibleSteps } from '../internal/steps'
 import type { Lane, LaneNode, StepInk, Timeline, TimelineRow } from '../internal/steps'
 import type { RollerTheme } from './theme'
@@ -25,26 +26,6 @@ export interface RollStepsProps {
 interface Draw {
   readonly styles: RollerStyles
   readonly theme: RollerTheme
-}
-
-function inkColour(theme: RollerTheme, ink: StepInk | 'removed'): string {
-  switch (ink) {
-    case 'clamp':
-      return theme.inkClamp
-    case 'substitute':
-      return theme.inkSubstitute
-    case 'generate':
-      return theme.inkGenerate
-    case 'filter':
-    case 'removed':
-      return theme.inkFilter
-    case 'add':
-      return theme.inkAdd
-    case 'subtract':
-      return theme.inkSubtract
-    default:
-      return theme.ink
-  }
 }
 
 type DieVariant = 'kept' | 'removed' | 'was'
@@ -109,11 +90,21 @@ function mathCell(draw: Draw, row: TimelineRow, key: string): React.ReactNode {
   )
 }
 
-function stepLabel(draw: Draw, text: string, ink: StepInk, strong: boolean): React.ReactNode {
+/**
+ * A row's label: the notation that made it (`R{1}`), read out as what it did
+ * in words (`Reroll Exactly 1`).
+ */
+function stepLabel(
+  draw: Draw,
+  text: string,
+  words: string,
+  ink: StepInk,
+  strong: boolean
+): React.ReactNode {
   const colour = inkColour(draw.theme, ink)
   return h(
     View,
-    { style: draw.styles.labelRow },
+    { style: draw.styles.labelRow, accessible: true, accessibilityLabel: words },
     h(View, { style: [draw.styles.pip, { backgroundColor: colour }] }),
     h(
       Text,
@@ -216,8 +207,8 @@ function lanes(draw: Draw, t: Timeline): React.ReactNode {
           View,
           { style: styles.laneLabel },
           isResult
-            ? stepLabel(draw, `= ${t.total}`, 'plain', true)
-            : stepLabel(draw, row.label, row.ink, r === 0)
+            ? stepLabel(draw, `= ${t.total}`, `Total ${t.total}`, 'plain', true)
+            : stepLabel(draw, row.notation, row.label, row.ink, r === 0)
         ),
         t.lanes.map((lane, i) => {
           const first = lane.nodes[0]?.row ?? 0
@@ -338,7 +329,11 @@ function stacks(draw: Draw, t: Timeline): React.ReactNode {
           View,
           { style: styles.legend },
           legend.map((row, r) =>
-            h(View, { key: `legend-${r}` }, stepLabel(draw, row.label, row.ink, false))
+            h(
+              View,
+              { key: `legend-${r}` },
+              stepLabel(draw, row.notation, row.label, row.ink, false)
+            )
           )
         )
       : null

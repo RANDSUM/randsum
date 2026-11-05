@@ -42,6 +42,21 @@ describe('<randsum-roller>', () => {
     expect(q(shadow(el), '.rsui-overlay').textContent).toBe('4d6L+2')
   })
 
+  test('each modifier in the input takes the ink its step row takes', async () => {
+    const el = await mount('randsum-roller', { notation: '4d6R{1}!L+2' })
+    const inks = [...shadow(el).querySelectorAll('.rsui-tok')].map(t => [
+      t.textContent,
+      t.getAttribute('data-ink')
+    ])
+    expect(inks).toEqual([
+      ['4d6', null],
+      ['R{1}', 'substitute'],
+      ['!', 'generate'],
+      ['L', 'filter'],
+      ['+2', 'add']
+    ])
+  })
+
   test.each(['mini', 'compact', 'max'] as const)('size=%s renders that layout', async size => {
     const el = await mount('randsum-roller', { size, notation: '1d20' })
     expect(q(shadow(el), `.rsui-${size}`)).toBeDefined()

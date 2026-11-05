@@ -388,7 +388,7 @@
     },
     {
       "path": "dist/mcp-app.js",
-      "limit": "16 KB"
+      "limit": "23 KB"
     },
     {
       "path": "dist/native/key-pad.js",
@@ -396,7 +396,7 @@
     },
     {
       "path": "dist/native/notation-field.js",
-      "limit": "7.5 KB"
+      "limit": "7.95 KB"
     },
     {
       "path": "dist/native/preset-list.js",
@@ -404,7 +404,7 @@
     },
     {
       "path": "dist/native/readout.js",
-      "limit": "6.2 KB"
+      "limit": "13.25 KB"
     },
     {
       "path": "dist/native/roll-button.js",
@@ -412,11 +412,11 @@
     },
     {
       "path": "dist/native/roll-steps.js",
-      "limit": "5.8 KB"
+      "limit": "12.9 KB"
     },
     {
       "path": "dist/native/roller.js",
-      "limit": "25.9 KB"
+      "limit": "26.45 KB"
     },
     {
       "path": "dist/native/status-line.js",
@@ -456,7 +456,7 @@
     },
     {
       "path": "dist/react/readout.js",
-      "limit": "14.5 KB"
+      "limit": "21.45 KB"
     },
     {
       "path": "dist/react/roll-button.js",
@@ -464,11 +464,11 @@
     },
     {
       "path": "dist/react/roll-steps.js",
-      "limit": "14.2 KB"
+      "limit": "21.2 KB"
     },
     {
       "path": "dist/react/roller.js",
-      "limit": "35.8 KB"
+      "limit": "36.3 KB"
     },
     {
       "path": "dist/react/status-line.js",
@@ -480,7 +480,7 @@
     },
     {
       "path": "dist/readout.js",
-      "limit": "14.2 KB"
+      "limit": "21.15 KB"
     },
     {
       "path": "dist/roll-button.js",
@@ -488,7 +488,7 @@
     },
     {
       "path": "dist/roll-steps.js",
-      "limit": "13.8 KB"
+      "limit": "20.85 KB"
     },
     {
       "path": "dist/roller-state.js",
@@ -496,7 +496,7 @@
     },
     {
       "path": "dist/roller.js",
-      "limit": "35.3 KB"
+      "limit": "35.75 KB"
     },
     {
       "path": "dist/scope.js",
@@ -512,7 +512,7 @@
     },
     {
       "path": "dist/timeline.js",
-      "limit": "2 KB"
+      "limit": "9 KB"
     },
     {
       "path": "dist/vue/key-pad.js",
@@ -528,7 +528,7 @@
     },
     {
       "path": "dist/vue/readout.js",
-      "limit": "14.3 KB"
+      "limit": "21.35 KB"
     },
     {
       "path": "dist/vue/roll-button.js",
@@ -536,11 +536,11 @@
     },
     {
       "path": "dist/vue/roll-steps.js",
-      "limit": "14.1 KB"
+      "limit": "21.1 KB"
     },
     {
       "path": "dist/vue/roller.js",
-      "limit": "35.6 KB"
+      "limit": "36.1 KB"
     },
     {
       "path": "dist/vue/status-line.js",

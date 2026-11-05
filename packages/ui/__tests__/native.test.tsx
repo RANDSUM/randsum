@@ -430,7 +430,9 @@ describe('native <RollSteps>', () => {
     const result = roll('2d6R{1}+3', { randomFn: () => ((queue.shift() ?? 1) - 0.5) / 6 })
     const { container } = render(<RollSteps records={result.rolls} layout="stacks" />)
     expect(container.querySelector('[aria-label="Add +3"]')?.textContent).toBe('+3')
-    expect(container.textContent).toContain('Reroll')
+    // The legend shows the notation that made each step, read out in words
+    expect(container.textContent).toContain('R{1}')
+    expect(container.querySelector('[aria-label="Reroll Exactly 1"]')?.textContent).toBe('R{1}')
     expect(container.textContent).not.toContain('= 12')
   })
 })

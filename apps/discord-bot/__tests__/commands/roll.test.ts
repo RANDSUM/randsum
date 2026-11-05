@@ -127,11 +127,11 @@ describe('rollCommand', () => {
     }))
     const text = textOf(render('1d6'))
     expect(text).toContain('## 5')
-    expect(text).toContain('```\n• 5\n```')
+    expect(text).toContain('```\n1d6  5\n```')
     expect(text).not.toContain('Result')
   })
 
-  test('modified pool: each die keeps its lane down to the Result row', () => {
+  test('modified pool: each die keeps its lane down to the = total row', () => {
     // The old renderer printed "Initial Rolls" and "Modified Rolls" as two
     // plain lists and left the reader to diff them. The dropped 1 shows on the
     // step that took it and is missing from Result.
@@ -151,7 +151,7 @@ describe('rollCommand', () => {
     }))
     const text = textOf(render('3d6L'))
     expect(text).toContain(
-      '• 4  5  1\nL │  │  1\n──────────────\nR 4  5     = 9\n```\n-# `L` Drop Lowest 1'
+      '3d6  4  5  1\nL    │  │  1\n────────────\n= 9  4  5\n```\n-# `L` Drop Lowest 1'
     )
   })
 
