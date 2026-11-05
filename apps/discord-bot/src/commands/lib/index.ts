@@ -6,6 +6,7 @@ export {
   renderTrace,
   rollContainer
 } from './view.js'
+export { lanesOr } from './lanes.js'
 export { decodeReroll, encodeReroll, isRerollId } from './reroll.js'
 export { specRange, withSpecChoices, withSpecRange } from './specInputs.js'
 

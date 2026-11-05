@@ -8,11 +8,11 @@
  *
  * The layout it produces, top to bottom:
  *
- *   ## ◆ Full Success — you do it.      <- headline: the outcome, in the game's words
+ *   ## ◆ Full Success — you do it.      <- headline: the outcome (Reroll button beside it)
  *   Position: Risky · Effect: Standard  <- consequence: what it means mechanically
  *   ────────────────────────────────    <- separator
- *   Rolled  6 3 2 1                     <- the trace, one line per modifier step
- *   Keep highest  ~~3~~ ~~2~~ ~~1~~ 6      (with an optional Reroll button beside it)
+ *   Rolled  6 3 2 1                     <- the body: dice lanes, or one line per step
+ *   Keep highest  ~~3~~ ~~2~~ ~~1~~ 6
  *   -# 4d6 keep highest → 6 · rolled …  <- derivation: the audit line
  *
  * Note what is absent: an embed field grid. Components V2 has no `inline`
@@ -152,16 +152,30 @@ export function renderTrace(record: TraceableRollRecord): readonly string[] {
 /**
  * Builds one container. Commands describe *what* to say; this decides how.
  *
- * The reroll button is attached as a `Section` accessory rather than an action
- * row, so it sits beside the dice instead of stranded beneath them — the one
- * layout embeds cannot express at all.
+ * The reroll button is attached as a `Section` accessory beside the headline
+ * rather than in an action row, so it sits next to the total instead of
+ * stranded beneath the dice. It used to sit beside the body, but an accessory
+ * narrows its section, and on a phone that wrapped the dice lanes' code block
+ * and broke every column.
  */
 export function rollContainer(options: RollContainerOptions): ContainerBuilder {
   const container = new ContainerBuilder().setAccentColor(options.accent)
 
-  container.addTextDisplayComponents(
-    new TextDisplayBuilder().setContent(clampContent(`## ${options.headline}`))
-  )
+  const headline = new TextDisplayBuilder().setContent(clampContent(`## ${options.headline}`))
+  const rerollable = options.rerollId !== undefined && options.rerollId.length <= CUSTOM_ID_LIMIT
+
+  if (rerollable) {
+    container.addSectionComponents(
+      new SectionBuilder().addTextDisplayComponents(headline).setButtonAccessory(
+        new ButtonBuilder()
+          .setCustomId(options.rerollId ?? '')
+          .setLabel('Reroll')
+          .setStyle(ButtonStyle.Secondary)
+      )
+    )
+  } else {
+    container.addTextDisplayComponents(headline)
+  }
 
   if (options.consequence !== undefined && options.consequence.length > 0) {
     container.addTextDisplayComponents(
@@ -181,23 +195,11 @@ export function rollContainer(options: RollContainerOptions): ContainerBuilder {
       new SeparatorBuilder().setDivider(true).setSpacing(SeparatorSpacingSize.Small)
     )
 
-    const text = new TextDisplayBuilder().setContent(
-      clampContent(body.join('\n'), options.bodyBudget ?? TEXT_DISPLAY_LIMIT)
-    )
-    const rerollable = options.rerollId !== undefined && options.rerollId.length <= CUSTOM_ID_LIMIT
-
-    if (rerollable) {
-      container.addSectionComponents(
-        new SectionBuilder().addTextDisplayComponents(text).setButtonAccessory(
-          new ButtonBuilder()
-            .setCustomId(options.rerollId ?? '')
-            .setLabel('Reroll')
-            .setStyle(ButtonStyle.Secondary)
-        )
+    container.addTextDisplayComponents(
+      new TextDisplayBuilder().setContent(
+        clampContent(body.join('\n'), options.bodyBudget ?? TEXT_DISPLAY_LIMIT)
       )
-    } else {
-      container.addTextDisplayComponents(text)
-    }
+    )
   }
 
   const derivation =

@@ -7,6 +7,7 @@ import {
   getInitialRolls,
   getKeptRolls,
   markKeptRolls,
+  lanesOr,
   rollContainer,
   specRange,
   withSpecChoices,
@@ -98,7 +99,7 @@ function buildFifthView(context: CommandContext): RollView {
       headline,
       ...(consequence.length > 0 ? { consequence } : {}),
       facts,
-      body: [`**${label}**  ${dice}`],
+      body: lanesOr(result, [`**${label}**  ${dice}`]),
       derivation: `${label} ${formatSignedModifier(modifier)} = ${result.total}`,
       ...(rerollId !== undefined ? { rerollId } : {})
     })

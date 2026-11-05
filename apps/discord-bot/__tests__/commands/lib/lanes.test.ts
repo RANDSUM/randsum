@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, test } from 'bun:test'
 import { roll } from '@randsum/roller/roll'
 import { notation as toNotation } from '@randsum/roller/validate'
-import { renderLanes } from '../../../src/commands/lib/lanes'
+import { lanesOr, renderLanes } from '../../../src/commands/lib/lanes'
 
 const realRandom = Math.random
 
@@ -24,22 +24,28 @@ afterEach(() => {
 
 describe('renderLanes', () => {
   test('an explosion joins its dice with a plain arrow in the next lane', () => {
-    const text = lanesFor('2d6!', [6, 3, 2])
-    expect(text).toContain('6       3  Initial Rolls')
-    expect(text).toContain('6 → 2   │  Explode')
-    expect(text).toContain('6   2   3  Result')
+    expect(lanesFor('2d6!', [6, 3, 2])).toBe(
+      [
+        '```',
+        '• 6     3',
+        'A 6→ 2  │',
+        '  ───────',
+        '• 6  2  3  = 11',
+        '```',
+        '-# **A** Explode'
+      ].join('\n')
+    )
   })
 
   test('a removed die runs a dashed line down to the step that takes it', () => {
     const text = lanesFor('3d6R{1}L', [1, 2, 5, 4])
-    expect(text).toContain('1   2   5  Initial Rolls')
-    expect(text).toContain('4   ╎   │  Reroll Exactly 1')
-    expect(text).toContain('│   2   │  Drop Lowest 1')
-    expect(text).toContain('4       5  Result')
+    expect(text).toContain('• 1  2  5\nA 4  ╎  │\nB │  2  │\n')
+    expect(text).toContain('• 4     5  = 9')
+    expect(text).toContain('-# **A** Reroll Exactly 1  ·  **B** Drop Lowest 1')
   })
 
-  test('an unchanged roll is just its dice, with no Result row', () => {
-    expect(lanesFor('2d6', [4, 1])).toBe('```\n4   1  Initial Rolls\n```')
+  test('an unchanged roll is just its dice, with no Result row or key', () => {
+    expect(lanesFor('2d6', [4, 1])).toBe('```\n• 4  1\n```')
   })
 
   test('a grid wider than a phone gets no lanes', () => {
@@ -47,5 +53,15 @@ describe('renderLanes', () => {
     const record = roll(toNotation('30d6')).rolls[0]
     expect(record).toBeDefined()
     expect(record === undefined ? undefined : renderLanes(record)).toBeUndefined()
+  })
+
+  test('a game roll gets lanes only when a step changed its dice', () => {
+    rigD6([2, 5, 4])
+    const kept = roll(toNotation('3d6L')).rolls
+    expect(lanesOr({ rolls: kept }, ['fallback']).join('\n')).toContain('-# **A** Drop Lowest 1')
+    rigD6([2, 5])
+    const plain = roll(toNotation('2d6')).rolls
+    expect(lanesOr({ rolls: plain }, ['fallback'])).toEqual(['fallback'])
+    expect(lanesOr({ rolls: [...kept, ...plain] }, ['fallback'])).toEqual(['fallback'])
   })
 })

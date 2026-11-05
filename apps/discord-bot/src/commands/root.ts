@@ -7,6 +7,7 @@ import {
   getInitialRolls,
   getKeptRolls,
   markKeptRolls,
+  lanesOr,
   rollContainer,
   specRange,
   withSpecChoices,
@@ -83,7 +84,7 @@ function buildRootView(context: CommandContext): RollView {
       headline: stat !== null ? `${outcome.headline}  ·  ${stat}` : outcome.headline,
       consequence: outcome.consequence,
       facts,
-      body: [dropped ? `**3d6, keep 2**  ${dice}` : `**2d6**  ${dice}`],
+      body: lanesOr(result, [dropped ? `**3d6, keep 2**  ${dice}` : `**2d6**  ${dice}`]),
       derivation: `2d6 ${formatSignedModifier(bonus)} = ${result.total}`,
       ...(rerollId !== undefined ? { rerollId } : {})
     })

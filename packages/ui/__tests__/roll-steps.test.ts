@@ -96,7 +96,7 @@ describe('lanes', () => {
       el => el.textContent
     )
     expect(labels[0]).toBe('Initial Rolls')
-    expect(labels.at(-1)).toBe('Result')
+    expect(labels.at(-1)).toBe('= 27')
     const legend = [...host.querySelectorAll('.rsui-lanes-legend li')].map(el => el.textContent)
     expect(legend).toEqual(['Reroll Exactly 1', 'Explode', 'Drop Lowest 1', 'Add'])
     const result = [...host.querySelectorAll('.rsui-lane[data-row="result"] .rsui-die')]

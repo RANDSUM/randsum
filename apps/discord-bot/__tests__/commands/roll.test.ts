@@ -127,7 +127,7 @@ describe('rollCommand', () => {
     }))
     const text = textOf(render('1d6'))
     expect(text).toContain('## 5')
-    expect(text).toContain('5  Initial Rolls')
+    expect(text).toContain('```\n• 5\n```')
     expect(text).not.toContain('Result')
   })
 
@@ -151,7 +151,7 @@ describe('rollCommand', () => {
     }))
     const text = textOf(render('3d6L'))
     expect(text).toContain(
-      '4   5   1  Initial Rolls\n│   │   1  Drop Lowest 1\n─────────\n4   5      Result'
+      '• 4  5  1\nA │  │  1\n  ───────\n• 4  5     = 9\n```\n-# **A** Drop Lowest 1'
     )
   })
 

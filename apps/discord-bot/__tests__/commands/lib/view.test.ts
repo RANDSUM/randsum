@@ -133,7 +133,7 @@ describe('rollContainer', () => {
     expect(text).toContain('-# 2d6(4,5) +2 = 11 · rolled with 👹 by randsum.dev')
   })
 
-  test('a reroll button is attached beside the body when an id is given', () => {
+  test('a reroll button is attached beside the headline when an id is given', () => {
     const view = [rollContainer({ ...base, body: ['dice'], rerollId: 'reroll:roll:2d6' })]
     expect(buttonIdsOf(view)).toEqual(['reroll:roll:2d6'])
   })
@@ -148,9 +148,9 @@ describe('rollContainer', () => {
     expect(textOf(view)).toContain('dice')
   })
 
-  test('a body-less container attaches no button and still renders', () => {
+  test('a body-less container still gets its button, beside the headline', () => {
     const view = [rollContainer({ ...base, rerollId: 'reroll:x' })]
-    expect(buttonIdsOf(view)).toEqual([])
+    expect(buttonIdsOf(view)).toEqual(['reroll:x'])
     expect(linesOf(view).length).toBeGreaterThan(0)
   })
 })
