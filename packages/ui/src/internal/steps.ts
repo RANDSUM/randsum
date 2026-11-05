@@ -66,6 +66,8 @@ const MODIFIER_INKS: Readonly<Record<string, StepInk>> = {
 export interface TimelineRow {
   readonly label: string
   readonly ink: StepInk
+  /** The modifier behind a step after the initial roll, such as `drop` */
+  readonly modifier?: string
   /** An arithmetic step's term, such as `+3`; it changes no die */
   readonly math?: string
 }
@@ -151,12 +153,14 @@ export function timeline(record: RollRecord): Timeline {
   const lanes: Building[] = []
   const rows: TimelineRow[] = []
   steps.forEach((step, row) => {
-    const ink = row === 0 ? 'plain' : (MODIFIER_INKS[modifiers[row - 1] ?? ''] ?? 'plain')
+    const modifier = row === 0 ? undefined : modifiers[row - 1]
+    const ink = MODIFIER_INKS[modifier ?? ''] ?? 'plain'
+    const named = modifier === undefined ? {} : { modifier }
     if (step.kind === 'arithmetic') {
-      rows.push({ label: step.label, ink, math: step.display })
+      rows.push({ label: step.label, ink, math: step.display, ...named })
       return
     }
-    rows.push({ label: step.label, ink })
+    rows.push({ label: step.label, ink, ...named })
     if (row === 0) {
       for (const value of step.unchanged) {
         lanes.push({ nodes: [{ row, value, kind: 'rolled' }], value, alive: true, chained: false })

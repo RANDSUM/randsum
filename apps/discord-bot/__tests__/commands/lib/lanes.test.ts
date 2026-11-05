@@ -28,20 +28,20 @@ describe('renderLanes', () => {
       [
         '```',
         '• 6     3',
-        'A 6→ 2  │',
-        '  ───────',
-        '• 6  2  3  = 11',
+        '! 6→ 2  │',
+        '───────────────',
+        'R 6  2  3  = 11',
         '```',
-        '-# **A** Explode'
+        '-# `!` Explode'
       ].join('\n')
     )
   })
 
   test('a removed die runs a dashed line down to the step that takes it', () => {
     const text = lanesFor('3d6R{1}L', [1, 2, 5, 4])
-    expect(text).toContain('• 1  2  5\nA 4  ╎  │\nB │  2  │\n')
-    expect(text).toContain('• 4     5  = 9')
-    expect(text).toContain('-# **A** Reroll Exactly 1  ·  **B** Drop Lowest 1')
+    expect(text).toContain('• 1  2  5\nR 4  ╎  │\nL │  2  │\n')
+    expect(text).toContain('R 4     5  = 9')
+    expect(text).toContain('-# `R` Reroll Exactly 1  ·  `L` Drop Lowest 1')
   })
 
   test('an unchanged roll is just its dice, with no Result row or key', () => {
@@ -58,7 +58,7 @@ describe('renderLanes', () => {
   test('a game roll gets lanes only when a step changed its dice', () => {
     rigD6([2, 5, 4])
     const kept = roll(toNotation('3d6L')).rolls
-    expect(lanesOr({ rolls: kept }, ['fallback']).join('\n')).toContain('-# **A** Drop Lowest 1')
+    expect(lanesOr({ rolls: kept }, ['fallback']).join('\n')).toContain('-# `L` Drop Lowest 1')
     rigD6([2, 5])
     const plain = roll(toNotation('2d6')).rolls
     expect(lanesOr({ rolls: plain }, ['fallback'])).toEqual(['fallback'])

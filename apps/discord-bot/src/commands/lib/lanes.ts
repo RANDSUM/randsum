@@ -7,13 +7,13 @@
  * where a monospace grid keeps the columns straight:
  *
  *   • 1  2  3  1  1
- *   A 4  ╎  │  3  6
- *   B │  ╎  │  │  6→ 5
- *   C │  2  │  │  │  │
- *   D │     │  │  │  │  +2
- *     ──────────────────────
- *   • 4     3  3  6  5  +2  = 23
- *   -# A Reroll Exactly 1 · B Explode · C Drop Lowest 1 · D Add
+ *   R 4  ╎  │  3  6
+ *   ! │  ╎  │  │  6→ 5
+ *   L │  2  │  │  │  │
+ *   + │     │  │  │  │  +2
+ *   ──────────────────────────────
+ *   R 4     3  3  6  5  +2  = 23
+ *   -# R Reroll Exactly 1 · ! Explode · L Drop Lowest 1 · + Add
  *
  * The model is `timeline()` from `@randsum/ui/timeline`, the one the site draws,
  * so the two can never disagree about which die went where.
@@ -25,7 +25,7 @@
  */
 import type { RollRecord } from '@randsum/roller'
 import { timeline } from '@randsum/ui/timeline'
-import type { Lane } from '@randsum/ui/timeline'
+import type { Lane, TimelineRow } from '@randsum/ui/timeline'
 
 /**
  * The widest grid drawn as lanes. Past it a phone wraps the code block and the
@@ -39,7 +39,39 @@ const RULE = '─'
 const GAP = '  '
 const ARROW = '→ '
 const PIP = '•'
-const STEP_KEYS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+const RESULT_MARK = 'R'
+
+/**
+ * The notation each step's modifier is written with, so a step row is marked
+ * by what the player typed: `L` for drop lowest, `!` for explode, `+` for add.
+ */
+const NOTATION_MARKS: Readonly<Record<string, string>> = {
+  cap: 'C',
+  compound: '!!',
+  count: '#',
+  explode: '!',
+  explodeSequence: '!s',
+  integerDivide: '//',
+  keep: 'K',
+  minus: '-',
+  modulo: '%',
+  multiply: '*',
+  multiplyTotal: '**',
+  penetrate: '!p',
+  plus: '+',
+  replace: 'V',
+  reroll: 'R',
+  sort: 'S',
+  unique: 'U',
+  wildDie: 'W'
+}
+
+/** A step's mark: its notation, with drop split by which end it takes. */
+function stepMark(row: TimelineRow): string {
+  if (row.modifier === 'drop') return row.label.includes('Highest') ? 'H' : 'L'
+  if (row.modifier === 'keep' && row.label.includes('Lowest')) return 'KL'
+  return NOTATION_MARKS[row.modifier ?? ''] ?? PIP
+}
 
 /** What a lane shows on one row: a die, a line, or nothing. */
 function laneCell(lane: Lane, row: number): string | undefined {
@@ -93,24 +125,27 @@ export function renderLanes(record: RollRecord): readonly string[] | undefined {
   const gridWidth = Math.max(...[...grid, ...result].map(l => l.length))
   // Every character of the widest line counts: the gutter, and the `= 23`
   // that ends the Result row.
-  const totalText = `  = ${total}`
-  if (2 + gridWidth + (changed ? totalText.length : 0) > LANES_MAX_WIDTH) return undefined
+  const steps = changed ? rows.slice(1) : []
+  const marks = [PIP, ...steps.map(stepMark), ...(changed ? [RESULT_MARK] : [])]
+  const gutterWidth = Math.max(...marks.map(m => m.length)) + 1
+  const totalText = changed ? `  = ${total}` : ''
+  const blockWidth = gutterWidth + gridWidth + totalText.length
+  if (blockWidth > LANES_MAX_WIDTH) return undefined
 
   // Step names would make each line too long for a phone, where a wrapped
-  // line breaks every column, so each step row gets a letter in the gutter and
-  // the names go in a key under the block. The initial and Result rows need no
-  // name: they are the top row and the row under the rule, which ends `= 23`.
-  const gutter = (row: number): string => (row === 0 ? PIP : (STEP_KEYS[row - 1] ?? PIP))
-  const steps = changed ? rows.slice(1) : []
-  const key = steps.map((r, i) => `**${STEP_KEYS[i] ?? PIP}** ${r.label}`).join('  ·  ')
+  // line breaks every column, so each step row is marked in the gutter with
+  // its notation (`L`, `!`, `+`) and the names go in a key under the block.
+  // The Result row is `R`, under a rule as wide as the whole block.
+  const mark = (text: string): string => text.padEnd(gutterWidth)
+  const key = steps.map(r => `\`${stepMark(r)}\` ${r.label}`).join('  ·  ')
 
   return [
     '```',
-    ...grid.map((text, row) => `${gutter(row)} ${text}`.trimEnd()),
+    ...grid.map((text, row) => `${mark(marks[row] ?? PIP)}${text}`.trimEnd()),
     ...(changed
       ? [
-          `  ${RULE.repeat(gridWidth)}`,
-          ...result.map(text => `${PIP} ${text.padEnd(gridWidth)}  = ${total}`)
+          RULE.repeat(blockWidth),
+          ...result.map(text => `${mark(RESULT_MARK)}${text.padEnd(gridWidth)}${totalText}`)
         ]
       : []),
     '```',

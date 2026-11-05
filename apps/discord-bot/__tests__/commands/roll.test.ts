@@ -151,7 +151,7 @@ describe('rollCommand', () => {
     }))
     const text = textOf(render('3d6L'))
     expect(text).toContain(
-      '• 4  5  1\nA │  │  1\n  ───────\n• 4  5     = 9\n```\n-# **A** Drop Lowest 1'
+      '• 4  5  1\nL │  │  1\n──────────────\nR 4  5     = 9\n```\n-# `L` Drop Lowest 1'
     )
   })
 
