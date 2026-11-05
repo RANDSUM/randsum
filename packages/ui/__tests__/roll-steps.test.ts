@@ -52,12 +52,12 @@ describe('timeline', () => {
   test('a die carries down until a step changes it', () => {
     // 4d6R{1}!L+3: 1 rerolls to 5; the 6 explodes into a 6, then a 2; the 2 drops
     const t = timeline(record('4d6R{1}!L+3', 6, [1, 6, 3, 4, 5, 6, 2]))
-    expect(t.rows.map(r => [r.label, r.ink])).toEqual([
-      ['Initial Rolls', 'plain'],
-      ['Reroll Exactly 1', 'substitute'],
-      ['Explode', 'generate'],
-      ['Drop Lowest 1', 'filter'],
-      ['Add', 'add']
+    expect(t.rows.map(r => [r.notation, r.label, r.ink])).toEqual([
+      ['4d6', 'Roll 4 6-sided dice', 'plain'],
+      ['R{1}', 'Reroll Exactly 1', 'substitute'],
+      ['!', 'Explode', 'generate'],
+      ['L', 'Drop Lowest 1', 'filter'],
+      ['+3', 'Add', 'add']
     ])
     expect(t.rows[4]?.math).toBe('+3')
     expect(t.lanes.map(l => l.nodes.map(n => `${n.row}:${n.kind}:${n.value}`))).toEqual([
@@ -89,16 +89,26 @@ describe('timeline', () => {
 })
 
 describe('lanes', () => {
-  test('dice show only where a step touched them, and a Result row ends the lanes', () => {
+  test('each row shows the notation that made it, its words on hover, and = total ends the lanes', () => {
     const host = document.createElement('div')
     render(rollSteps([record('4d6R{1}!L+3', 6, [1, 6, 3, 4, 5, 6, 2])]), host)
-    const labels = [...host.querySelectorAll('.rsui-lanes > .rsui-step-label')].map(
-      el => el.textContent
-    )
-    expect(labels[0]).toBe('Initial Rolls')
-    expect(labels.at(-1)).toBe('= 27')
-    const legend = [...host.querySelectorAll('.rsui-lanes-legend li')].map(el => el.textContent)
-    expect(legend).toEqual(['Reroll Exactly 1', 'Explode', 'Drop Lowest 1', 'Add'])
+    const labels = [...host.querySelectorAll('.rsui-lanes > .rsui-step-label')]
+    expect(labels.map(el => el.textContent?.trim())).toEqual([
+      '4d6',
+      'R{1}',
+      '!',
+      'L',
+      '+3',
+      '= 27'
+    ])
+    expect(labels.map(el => el.getAttribute('title'))).toEqual([
+      'Roll 4 6-sided dice',
+      'Reroll Exactly 1',
+      'Explode',
+      'Drop Lowest 1',
+      'Add',
+      'Total 27'
+    ])
     const result = [...host.querySelectorAll('.rsui-lane[data-row="result"] .rsui-die')]
     expect(result.map(d => d.textContent)).toEqual(['5', '6', '6', '3', '4', '+3'])
     expect(host.querySelector('[aria-label="6 exploded: 6, 2"]')).not.toBeNull()

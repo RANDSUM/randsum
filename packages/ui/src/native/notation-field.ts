@@ -5,7 +5,9 @@ import type React from 'react'
 import { createElement as h } from 'react'
 import { Platform, Text, TextInput, View } from 'react-native'
 import type { StyleProp, ViewStyle } from 'react-native'
+import { inkColour } from '../internal/native/ink'
 import { useStyles } from '../internal/native/styles'
+import { tokenInk } from '../internal/ink'
 import { useWatch } from '../internal/native/watch'
 import type { RollerState } from '../roller-state'
 
@@ -34,9 +36,18 @@ export function NotationField({
   // its own colour while it stays one editable value. React Native Web's
   // input cannot hold children, so on the web it is a plain value.
   const spans = tokens.map(token => {
+    // A modifier takes its step's ink, as in the roll's steps; anything else
+    // keeps its docs colour
+    const ink = tokenInk(token)
     const doc = NOTATION_DOCS[token.key]
     const color =
-      doc === undefined ? undefined : theme.scheme === 'dark' ? doc.color : doc.colorLight
+      ink !== undefined
+        ? inkColour(theme, ink)
+        : doc === undefined
+          ? undefined
+          : theme.scheme === 'dark'
+            ? doc.color
+            : doc.colorLight
     return h(
       Text,
       {

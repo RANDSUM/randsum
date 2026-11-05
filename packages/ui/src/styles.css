@@ -145,6 +145,10 @@
   color: light-dark(var(--_tok-light), var(--_tok-dark));
 }
 
+.rsui-tok--ink {
+  color: var(--_step-ink);
+}
+
 .rsui-tok--bad {
   color: var(--_invalid);
   text-decoration: underline wavy;
@@ -531,45 +535,6 @@
   white-space: nowrap;
 }
 
-/* Narrow (Max's readout, a phone): rows keep their pips, names move to a legend */
-.rsui-steps {
-  container: rsui-steps / inline-size;
-}
-
-.rsui-lanes-legend.rsui-legend {
-  display: none;
-  margin-top: 0.75rem;
-}
-
-@container rsui-steps (width < 36rem) {
-  .rsui-lanes:not([data-few]) .rsui-step-text {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip-path: inset(50%);
-  }
-
-  .rsui-lanes:not([data-few]) + .rsui-lanes-legend {
-    display: flex;
-  }
-}
-
-/* Three lanes or fewer leave room for the names down to a phone's width */
-@container rsui-steps (width < 22rem) {
-  .rsui-lanes .rsui-step-text {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip-path: inset(50%);
-  }
-
-  .rsui-lanes + .rsui-lanes-legend {
-    display: flex;
-  }
-}
-
 .rsui-lanes-frame {
   margin-inline: -0.75rem;
   border: 1px solid var(--_border-strong);
@@ -733,6 +698,7 @@
   align-items: center;
   gap: 0.5rem;
   color: var(--_step-ink);
+  font-family: var(--_font-mono);
   font-weight: var(--_weight-medium);
 }
 

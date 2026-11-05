@@ -71,13 +71,24 @@ function inkVar(side: 'in' | 'out', ink: string | undefined): string {
     : `; --_${side}: var(--_ink-${ink})`
 }
 
-function label(text: string, ink: StepInk, row: number, strong: boolean): TemplateResult {
+/**
+ * A row's label: the notation that made it (`R{1}`, `!`, `+2`), with what it
+ * did in words (`Reroll Exactly 1`) on hover and for screen readers.
+ */
+function label(
+  text: string,
+  title: string,
+  ink: StepInk,
+  row: number,
+  strong: boolean
+): TemplateResult {
   return html`<span
     class="rsui-step-label"
     data-ink=${ink}
     data-strong=${ifDefined(strong ? '' : undefined)}
     style=${`grid-area: ${row} / 1`}
-    title=${text}
+    title=${title}
+    aria-label=${title}
     ><span class="rsui-step-text">${text}</span></span
   >`
 }
@@ -109,15 +120,14 @@ function lanes(t: Timeline): TemplateResult {
   return html`<div class="rsui-lanes-scroll">
     <div
       class="rsui-lanes"
-      data-few=${ifDefined(t.lanes.length + terms.length <= 3 ? '' : undefined)}
       style=${`--lanes: ${Math.max(t.lanes.length + terms.length, 1)}`}
     >
       <span class="rsui-lanes-frame" style="grid-area: 1 / 1 / 2 / -1"></span>
-      ${t.rows.map((row, r) => label(row.label, row.ink, r + 1, r === 0))}
+      ${t.rows.map((row, r) => label(row.notation, row.label, row.ink, r + 1, r === 0))}
       ${
         t.changed
           ? html`<span class="rsui-lanes-rule" style=${`grid-area: ${resultRow} / 1 / ${resultRow + 1} / -1`}></span>
-            ${label(`= ${t.total}`, 'plain', resultRow, true)}`
+            ${label(`= ${t.total}`, `Total ${t.total}`, 'plain', resultRow, true)}`
           : nothing
       }
       ${t.lanes.map((lane, i) => {
@@ -154,7 +164,6 @@ function lanes(t: Timeline): TemplateResult {
       })}
       ${terms.map(({ row, r }, k) => termLane(t, row, r, t.lanes.length + k + 2))}
     </div>
-    ${legend(t.rows.slice(1), 'rsui-legend rsui-lanes-legend')}
   </div>`
 }
 
@@ -163,7 +172,12 @@ function legend(rows: readonly TimelineRow[], className: string): TemplateResult
   return rows.length === 0
     ? nothing
     : html`<ul class=${className}>
-        ${rows.map(row => html`<li class="rsui-step-label" data-ink=${row.ink}>${row.label}</li>`)}
+        ${rows.map(
+          row =>
+            html`<li class="rsui-step-label" data-ink=${row.ink} title=${row.label} aria-label=${row.label}>
+              ${row.notation}
+            </li>`
+        )}
       </ul>`
 }
 

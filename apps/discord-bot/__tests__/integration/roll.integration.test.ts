@@ -61,9 +61,9 @@ describe('roll command integration (un-mocked roller)', () => {
     // The real roller logs arithmetic (plus/minus) as a modifier too, but it
     // changes no die: both dice run straight down, and +3 joins the Result row.
     const text = textOf(render('2d6+3'))
-    expect(text).toMatch(/^\+ │ {2}│ {2}\+3$/m)
-    expect(text).toMatch(/^R \d {2}\d {2}\+3 {2}= \d+$/m)
-    expect(text).toContain('-# `+` Add')
+    expect(text).toMatch(/^\+3 {4}│ {2}│ {2}\+3$/m)
+    expect(text).toMatch(/^= \d+ +\d {2}\d {2}\+3$/m)
+    expect(text).toContain('-# `+3` Add')
     expect(text).not.toContain('╎')
   })
 

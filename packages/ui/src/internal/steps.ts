@@ -1,8 +1,14 @@
 // The steps of a roll worth showing, shared by the elements and the native
 // components. Not a public entry.
 import type { RollRecord } from '@randsum/roller'
+import { tokenize } from '@randsum/roller/tokenize'
+import type { Token } from '@randsum/roller/tokenize'
 import { traceRoll } from '@randsum/roller/trace'
 import type { RollTraceStep } from '@randsum/roller/trace'
+import { MODIFIER_INKS, tokenModifier } from './ink'
+import type { StepInk } from './ink'
+
+export type { StepInk } from './ink'
 
 export type ShownStep = Exclude<RollTraceStep, { readonly kind: 'divider' | 'finalRolls' }>
 
@@ -39,31 +45,14 @@ export function poolName(record: RollRecord): PoolName {
     : { text: record.label, notation: false }
 }
 
-/**
- * The ink a step is drawn in: its modifier's spec category. Dice stay plain;
- * only a step's label, its pip and the lane segments into the dice it changed
- * take the ink. `filter` and `subtract` are red, which means removal.
- */
-export type StepInk = 'plain' | 'clamp' | 'substitute' | 'generate' | 'filter' | 'add' | 'subtract'
-
-const MODIFIER_INKS: Readonly<Record<string, StepInk>> = {
-  cap: 'clamp',
-  replace: 'substitute',
-  reroll: 'substitute',
-  unique: 'substitute',
-  explode: 'generate',
-  explodeSequence: 'generate',
-  compound: 'generate',
-  penetrate: 'generate',
-  wildDie: 'generate',
-  drop: 'filter',
-  keep: 'filter',
-  plus: 'add',
-  minus: 'subtract'
-}
-
 /** A row of the timeline: the initial roll, then one per modifier step. */
 export interface TimelineRow {
+  /**
+   * The notation that made the row, which is what a row shows: `5d6` for
+   * the initial roll, `R{1}`, `!`, `L` or `+2` for a step
+   */
+  readonly notation: string
+  /** What the row did in words, for a hover or a key: `Reroll Exactly 1` */
   readonly label: string
   readonly ink: StepInk
   /** The modifier behind a step, such as `drop`; undefined on the initial roll */
@@ -127,6 +116,42 @@ function without(pool: readonly number[], values: readonly number[]): number[] {
   return left
 }
 
+/** The pool's notation in tokens, or none when it does not tokenize. */
+function tokensOf(record: RollRecord): readonly Token[] {
+  try {
+    return tokenize(record.notation)
+  } catch {
+    return []
+  }
+}
+
+/**
+ * The notation behind each row: the core roll for the initial row, then the
+ * token (or tokens, when one step applies several) behind each step. Steps
+ * run in the roller's order, not the order they were typed, so tokens are
+ * matched by the modifier they apply; drop's two ends by which end.
+ */
+function rowNotations(
+  record: RollRecord,
+  steps: readonly ShownStep[],
+  modifiers: readonly string[]
+): readonly (string | undefined)[] {
+  const tokens = tokensOf(record)
+  const used = new Set<Token>()
+  const core = tokens.find(t => t.category === 'Core' || t.category === 'Special')
+  return steps.map((step, row) => {
+    if (row === 0) return core?.text
+    const modifier = modifiers[row - 1]
+    const end = step.label.includes('Lowest') ? 'L' : step.label.includes('Highest') ? 'H' : ''
+    const mine = tokens.filter(t => !used.has(t) && tokenModifier(t) === modifier)
+    const ends = modifier === 'drop' && end !== '' ? mine.filter(t => t.text.startsWith(end)) : []
+    const alone = modifiers.filter(m => m === modifier).length === 1
+    const picked = ends.length > 0 ? ends.slice(0, 1) : alone ? mine : mine.slice(0, 1)
+    for (const t of picked) used.add(t)
+    return picked.length > 0 ? picked.map(t => t.text).join('') : undefined
+  })
+}
+
 /** The modifier behind each step after the initial roll, as traceRoll splits them. */
 function stepModifiers(record: RollRecord): readonly string[] {
   return record.modifierLogs.flatMap(log => {
@@ -150,16 +175,21 @@ function stepModifiers(record: RollRecord): readonly string[] {
 export function timeline(record: RollRecord): Timeline {
   const steps = visibleSteps(record)
   const modifiers = stepModifiers(record)
+  const notations = rowNotations(record, steps, modifiers)
+  const coreDescription = tokensOf(record).find(t => t.category === 'Core')?.description
   const lanes: Building[] = []
   const rows: TimelineRow[] = []
   steps.forEach((step, row) => {
     const modifier = modifiers[row - 1]
     const ink = MODIFIER_INKS[modifier ?? ''] ?? 'plain'
+    const notation = notations[row] ?? (step.kind === 'arithmetic' ? step.display : step.label)
+    // The initial row's words are the core roll's ("Roll 5 6-sided dice")
+    const label = row === 0 ? (coreDescription ?? step.label) : step.label
     if (step.kind === 'arithmetic') {
-      rows.push({ label: step.label, ink, modifier, math: step.display })
+      rows.push({ notation, label, ink, modifier, math: step.display })
       return
     }
-    rows.push({ label: step.label, ink, modifier })
+    rows.push({ notation, label, ink, modifier })
     if (row === 0) {
       for (const value of step.unchanged) {
         lanes.push({ nodes: [{ row, value, kind: 'rolled' }], value, alive: true, chained: false })

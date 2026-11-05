@@ -6,17 +6,19 @@
  * row. Discord has no canvas, so this draws the same picture in a code block,
  * where a monospace grid keeps the columns straight:
  *
- *   • 1  2  3  1  1
- *   R 4  ╎  │  3  6
- *   ! │  ╎  │  │  6→ 5
- *   L │  2  │  │  │  │
- *   + │     │  │  │  │  +2
- *   ──────────────────────────────
- *   R 4     3  3  6  5  +2  = 23
- *   -# R Reroll Exactly 1 · ! Explode · L Drop Lowest 1 · + Add
+ *   5d6   1  2  3  1  1
+ *   R{1}  4  ╎  │  3  6
+ *   !     │  ╎  │  │  6→ 6→ 5
+ *   L     │  2  │  │  │  │  │
+ *   +2    │     │  │  │  │  │  +2
+ *   ─────────────────────────────
+ *   = 29  4     3  3  6  6  5  +2
+ *   -# `R{1}` Reroll Exactly 1 · `!` Explode · `L` Drop Lowest 1 · `+2` Add
  *
  * The model is `timeline()` from `@randsum/ui/timeline`, the one the site draws,
- * so the two can never disagree about which die went where.
+ * so the two can never disagree about which die went where or what a row is
+ * called: each row is labelled by the notation that made it, and the key
+ * holds the words the site shows on hover.
  *
  * No colour: a code block has none that works everywhere, and colour on a
  * roll result means removal anyway. Structure carries the meaning instead. A
@@ -25,7 +27,7 @@
  */
 import type { RollRecord } from '@randsum/roller'
 import { timeline } from '@randsum/ui/timeline'
-import type { Lane, TimelineRow } from '@randsum/ui/timeline'
+import type { Lane } from '@randsum/ui/timeline'
 
 /**
  * The widest grid drawn as lanes. Past it a phone wraps the code block and the
@@ -38,40 +40,6 @@ const REMOVED_LINE = '╎'
 const RULE = '─'
 const GAP = '  '
 const ARROW = '→ '
-const PIP = '•'
-const RESULT_MARK = 'R'
-
-/**
- * The notation each step's modifier is written with, so a step row is marked
- * by what the player typed: `L` for drop lowest, `!` for explode, `+` for add.
- */
-const NOTATION_MARKS: Readonly<Record<string, string>> = {
-  cap: 'C',
-  compound: '!!',
-  count: '#',
-  explode: '!',
-  explodeSequence: '!s',
-  integerDivide: '//',
-  keep: 'K',
-  minus: '-',
-  modulo: '%',
-  multiply: '*',
-  multiplyTotal: '**',
-  penetrate: '!p',
-  plus: '+',
-  replace: 'V',
-  reroll: 'R',
-  sort: 'S',
-  unique: 'U',
-  wildDie: 'W'
-}
-
-/** A step's mark: its notation, with drop split by which end it takes. */
-function stepMark(row: TimelineRow): string {
-  if (row.modifier === 'drop') return row.label.includes('Highest') ? 'H' : 'L'
-  if (row.modifier === 'keep' && row.label.includes('Lowest')) return 'KL'
-  return NOTATION_MARKS[row.modifier ?? ''] ?? PIP
-}
 
 /** What a lane shows on one row: a die, a line, or nothing. */
 function laneCell(lane: Lane, row: number): string | undefined {
@@ -121,36 +89,27 @@ export function renderLanes(record: RollRecord): readonly string[] | undefined {
   // A roll nothing changed is just its dice: rows of bare lines say nothing.
   const shown = changed ? rows : rows.slice(0, 1)
   const grid = shown.map((_, row) => line(row, lane => laneCell(lane, row)))
-  const result = changed ? [line(lastRow, lane => lane.final?.toString())] : []
-  const gridWidth = Math.max(...[...grid, ...result].map(l => l.length))
-  // Every character of the widest line counts: the gutter, and the `= 23`
-  // that ends the Result row.
-  const steps = changed ? rows.slice(1) : []
-  const marks = [PIP, ...steps.map(stepMark), ...(changed ? [RESULT_MARK] : [])]
-  const gutterWidth = Math.max(...marks.map(m => m.length)) + 1
-  const totalText = changed ? `  = ${total}` : ''
-  const blockWidth = gutterWidth + gridWidth + totalText.length
+  const result = changed ? line(lastRow, lane => lane.final?.toString()) : undefined
+  // Each row is labelled as on the site: by the notation that made it (`4d6`,
+  // `R{1}`, `L`, `+2`), and the Result row by its total (`= 23`). The words
+  // for each step, the site's hover, go in a key under the block.
+  const labels = [...shown.map(r => r.notation), ...(changed ? [`= ${total}`] : [])]
+  const gutterWidth = Math.max(...labels.map(l => l.length)) + GAP.length
+  const mark = (text: string): string => text.padEnd(gutterWidth)
+  const lines = [...grid, ...(result === undefined ? [] : [result])].map((text, row) =>
+    `${mark(labels[row] ?? '')}${text}`.trimEnd()
+  )
+  // Every character of the widest line counts, gutter included: past the
+  // limit a phone wraps the block and every column breaks.
+  const blockWidth = Math.max(...lines.map(l => l.length))
   if (blockWidth > LANES_MAX_WIDTH) return undefined
 
-  // Step names would make each line too long for a phone, where a wrapped
-  // line breaks every column, so each step row is marked in the gutter with
-  // its notation (`L`, `!`, `+`) and the names go in a key under the block.
-  // The Result row is `R`, under a rule as wide as the whole block.
-  const mark = (text: string): string => text.padEnd(gutterWidth)
-  const key = steps.map(r => `\`${stepMark(r)}\` ${r.label}`).join('  ·  ')
-
-  return [
-    '```',
-    ...grid.map((text, row) => `${mark(marks[row] ?? PIP)}${text}`.trimEnd()),
-    ...(changed
-      ? [
-          RULE.repeat(blockWidth),
-          ...result.map(text => `${mark(RESULT_MARK)}${text.padEnd(gridWidth)}${totalText}`)
-        ]
-      : []),
-    '```',
-    ...(key.length > 0 ? [`-# ${key}`] : [])
-  ]
+  const key = (changed ? rows.slice(1) : []).map(r => `\`${r.notation}\` ${r.label}`).join('  ·  ')
+  const body =
+    result === undefined
+      ? lines
+      : [...lines.slice(0, -1), RULE.repeat(blockWidth), ...lines.slice(-1)]
+  return ['```', ...body, '```', ...(key.length > 0 ? [`-# ${key}`] : [])]
 }
 
 /**

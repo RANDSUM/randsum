@@ -8,6 +8,7 @@ import { repeat } from 'lit/directives/repeat.js'
 import { styleMap } from 'lit/directives/style-map.js'
 import type { Token } from '@randsum/roller/tokenize'
 import type { RollerState } from '../../roller-state'
+import { tokenInk } from '../ink'
 
 const MARKS = { empty: '', valid: '✓', invalid: '✕' } as const
 const MARK_LABELS = { empty: 'Empty', valid: 'Valid', invalid: 'Invalid' } as const
@@ -25,16 +26,20 @@ function overlay(tokens: readonly Token[]): TemplateResult {
     tokens,
     token => token.start,
     token => {
-      const doc = NOTATION_DOCS[token.key]
+      // A modifier takes its step's ink, so it reads the same here as in the
+      // roll's steps; anything else keeps its docs colour
+      const ink = tokenInk(token)
+      const doc = ink === undefined ? NOTATION_DOCS[token.key] : undefined
       const classes = classMap({
         'rsui-tok': true,
         'rsui-tok--doc': doc !== undefined,
+        'rsui-tok--ink': ink !== undefined,
         'rsui-tok--bad': token.category === 'unknown'
       })
       const style = styleMap(
         doc === undefined ? {} : { '--_tok-dark': doc.color, '--_tok-light': doc.colorLight }
       )
-      return html`<span class=${classes} style=${style}>${token.text}</span>`
+      return html`<span class=${classes} data-ink=${ifDefined(ink)} style=${style}>${token.text}</span>`
     }
   )}</div>`
 }
