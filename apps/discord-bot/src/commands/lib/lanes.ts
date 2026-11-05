@@ -6,13 +6,14 @@
  * row. Discord has no canvas, so this draws the same picture in a code block,
  * where a monospace grid keeps the columns straight:
  *
- *   1   2   3   1   1        Initial Rolls
- *   4   ╎   │   3   6        Reroll Exactly 1
- *   │   ╎   │   │   6 → 5    Explode
- *   │   2   │   │   │   │    Drop Lowest 1
- *   │       │   │   │   │  +2  Add 2
- *   ──────────────────────────
- *   4       3   3   6   5  +2  Result
+ *   • 1  2  3  1  1
+ *   A 4  ╎  │  3  6
+ *   B │  ╎  │  │  6→ 5
+ *   C │  2  │  │  │  │
+ *   D │     │  │  │  │  +2
+ *     ──────────────────────
+ *   • 4     3  3  6  5  +2  = 23
+ *   -# A Reroll Exactly 1 · B Explode · C Drop Lowest 1 · D Add
  *
  * The model is `timeline()` from `@randsum/ui/timeline`, the one the site draws,
  * so the two can never disagree about which die went where.
@@ -30,14 +31,15 @@ import type { Lane } from '@randsum/ui/timeline'
  * The widest grid drawn as lanes. Past it a phone wraps the code block and the
  * columns fall apart, so the caller shows the step-by-step trace instead.
  */
-const LANES_MAX_WIDTH = 40
+const LANES_MAX_WIDTH = 30
 
 const LINE = '│'
 const REMOVED_LINE = '╎'
 const RULE = '─'
-const GAP = '   '
-const ARROW = ' → '
-const RESULT_LABEL = 'Result'
+const GAP = '  '
+const ARROW = '→ '
+const PIP = '•'
+const STEP_KEYS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 
 /** What a lane shows on one row: a die, a line, or nothing. */
 function laneCell(lane: Lane, row: number): string | undefined {
@@ -60,7 +62,7 @@ function arrives(lane: Lane, row: number): boolean {
  * `undefined` when the grid is too wide to stay straight on a phone.
  */
 export function renderLanes(record: RollRecord): readonly string[] | undefined {
-  const { rows, lanes, changed } = timeline(record)
+  const { rows, lanes, changed, total } = timeline(record)
   if (lanes.length === 0 && rows.every(r => r.math === undefined)) return undefined
 
   const width = Math.max(1, ...lanes.flatMap(l => l.nodes.map(n => String(n.value).length)))
@@ -89,15 +91,44 @@ export function renderLanes(record: RollRecord): readonly string[] | undefined {
   const grid = shown.map((_, row) => line(row, lane => laneCell(lane, row)))
   const result = changed ? [line(lastRow, lane => lane.final?.toString())] : []
   const gridWidth = Math.max(...[...grid, ...result].map(l => l.length))
-  if (gridWidth > LANES_MAX_WIDTH) return undefined
+  // Every character of the widest line counts: the gutter, and the `= 23`
+  // that ends the Result row.
+  const totalText = `  = ${total}`
+  if (2 + gridWidth + (changed ? totalText.length : 0) > LANES_MAX_WIDTH) return undefined
 
-  const label = (text: string, labelText: string): string =>
-    `${text.padEnd(gridWidth)}  ${labelText}`.trimEnd()
+  // Step names would make each line too long for a phone, where a wrapped
+  // line breaks every column, so each step row gets a letter in the gutter and
+  // the names go in a key under the block. The initial and Result rows need no
+  // name: they are the top row and the row under the rule, which ends `= 23`.
+  const gutter = (row: number): string => (row === 0 ? PIP : (STEP_KEYS[row - 1] ?? PIP))
+  const steps = changed ? rows.slice(1) : []
+  const key = steps.map((r, i) => `**${STEP_KEYS[i] ?? PIP}** ${r.label}`).join('  ·  ')
 
   return [
     '```',
-    ...grid.map((text, row) => label(text, rows[row]?.label ?? '')),
-    ...(changed ? [RULE.repeat(gridWidth), ...result.map(text => label(text, RESULT_LABEL))] : []),
-    '```'
+    ...grid.map((text, row) => `${gutter(row)} ${text}`.trimEnd()),
+    ...(changed
+      ? [
+          `  ${RULE.repeat(gridWidth)}`,
+          ...result.map(text => `${PIP} ${text.padEnd(gridWidth)}  = ${total}`)
+        ]
+      : []),
+    '```',
+    ...(key.length > 0 ? [`-# ${key}`] : [])
   ]
+}
+
+/**
+ * A game roll's dice as lanes, or `fallback` when lanes add nothing: a game
+ * that rolls several pools (Daggerheart's Hope and Fear) names each pool
+ * itself, a roll no step changed reads better as the game's own line
+ * (`**1d20**  14`), and a grid too wide for a phone keeps that line too.
+ */
+export function lanesOr(
+  result: { readonly rolls: readonly RollRecord[] },
+  fallback: readonly string[]
+): readonly string[] {
+  const [only, ...rest] = result.rolls
+  if (only === undefined || rest.length > 0 || !timeline(only).changed) return fallback
+  return renderLanes(only) ?? fallback
 }

@@ -216,7 +216,7 @@ function lanes(draw: Draw, t: Timeline): React.ReactNode {
           View,
           { style: styles.laneLabel },
           isResult
-            ? stepLabel(draw, 'Result', 'plain', true)
+            ? stepLabel(draw, `= ${t.total}`, 'plain', true)
             : stepLabel(draw, row.label, row.ink, r === 0)
         ),
         t.lanes.map((lane, i) => {

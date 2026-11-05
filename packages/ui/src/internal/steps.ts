@@ -104,6 +104,8 @@ export interface Timeline {
    * Result row is worth showing
    */
   readonly changed: boolean
+  /** The pool's total, shown as `= 18` on the Result row */
+  readonly total: number
 }
 
 interface Building {
@@ -231,6 +233,7 @@ export function timeline(record: RollRecord): Timeline {
     changed:
       lanes.some(l => l.nodes.length > 1 || !l.alive) ||
       lanes.some(l => l.nodes[0]?.row !== 0) ||
-      rows.some(r => r.math !== undefined)
+      rows.some(r => r.math !== undefined),
+    total: record.total
   }
 }

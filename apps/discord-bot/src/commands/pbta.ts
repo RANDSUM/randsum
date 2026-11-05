@@ -7,6 +7,7 @@ import {
   getInitialRolls,
   getKeptRolls,
   markKeptRolls,
+  lanesOr,
   rollContainer,
   specRange,
   withSpecChoices,
@@ -90,13 +91,13 @@ function buildPbtaView(context: CommandContext): RollView {
       headline: outcome.headline,
       consequence: outcome.consequence,
       facts,
-      body: [
+      body: lanesOr(result, [
         // Naming the mechanic in the label is what makes the strikethrough
         // self-explaining rather than something to decode.
         dropped
           ? `**3d6, keep ${rollingWith === 'Disadvantage' ? 'worst' : 'best'} 2**  ${dice}`
           : `**2d6**  ${dice}`
-      ],
+      ]),
       derivation: `${result.details.diceTotal} ${formatSignedModifier(result.total - result.details.diceTotal)} = ${result.total}`,
       ...(rerollId !== undefined ? { rerollId } : {})
     })

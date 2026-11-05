@@ -25,15 +25,15 @@ describe('/roll', () => {
 
     const ran = await $.command.run({ command: 'roll', args: '4d6L' })
 
-    expect(ran.text).toMatch(/^4d6L → \d+\n4d6L \[\d, \d, \d\] from \[\d, \d, \d, \d\]$/)
-    expect(statuses[0]).toMatch(/^Last roll: 4d6L → \d+$/)
+    expect(ran.text).toMatch(/^4d6L = \d+\n4d6L \[\d, \d, \d\] from \[\d, \d, \d, \d\]$/)
+    expect(statuses[0]).toMatch(/^Last roll: 4d6L = \d+$/)
     expect(ran.context?.[0]).toContain('The user rolled 4d6L themselves')
   })
 
   test('the total stays within the dice', async $ => {
     for (const _ of Array.from({ length: 200 })) {
       const ran = await $.command.run({ command: 'roll', args: '2d6+3' })
-      const total = Number(ran.text?.match(/→ (-?\d+)/)?.[1])
+      const total = Number(ran.text?.match(/= (-?\d+)/)?.[1])
       expect(total).toBeGreaterThanOrEqual(5)
       expect(total).toBeLessThanOrEqual(15)
     }
@@ -42,7 +42,7 @@ describe('/roll', () => {
   test('with no notation it rolls a d20', async $ => {
     const ran = await $.command.run({ command: 'roll' })
 
-    expect(ran.text).toMatch(/^1d20 → \d+/)
+    expect(ran.text).toMatch(/^1d20 = \d+/)
   })
 
   test('bad notation explains itself and tells Claude nothing', async $ => {

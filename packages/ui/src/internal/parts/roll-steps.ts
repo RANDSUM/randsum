@@ -117,7 +117,7 @@ function lanes(t: Timeline): TemplateResult {
       ${
         t.changed
           ? html`<span class="rsui-lanes-rule" style=${`grid-area: ${resultRow} / 1 / ${resultRow + 1} / -1`}></span>
-            ${label('Result', 'plain', resultRow, true)}`
+            ${label(`= ${t.total}`, 'plain', resultRow, true)}`
           : nothing
       }
       ${t.lanes.map((lane, i) => {

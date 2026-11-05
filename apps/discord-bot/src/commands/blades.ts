@@ -6,6 +6,7 @@ import {
   getInitialRolls,
   getKeptRolls,
   markKeptRolls,
+  lanesOr,
   rollContainer,
   withSpecRange
 } from './lib/index.js'
@@ -68,8 +69,8 @@ function buildBladesView(context: CommandContext): RollView {
         { label: 'Pool', value: pool },
         { label: 'Deciding Die', value: String(decidingDie) }
       ],
-      body: [markKeptRolls(initialRolls, keptRolls)],
-      derivation: `${initialRolls.length}d6 → ${decidingDie}`,
+      body: lanesOr(result, [markKeptRolls(initialRolls, keptRolls)]),
+      derivation: `${initialRolls.length}d6 = ${decidingDie}`,
       ...(rerollId !== undefined ? { rerollId } : {})
     })
   ]
