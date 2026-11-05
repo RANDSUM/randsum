@@ -37,6 +37,7 @@ export default defineConfig({
     'src/ssr.ts',
     'src/status-line.ts',
     'src/svelte.ts',
+    'src/timeline.ts',
     'src/vue/key-pad.ts',
     'src/vue/notation-field.ts',
     'src/vue/preset-list.ts',

@@ -1,6 +1,6 @@
 # @randsum/discord-bot — RANDSUM Discord Bot
 
-Private Discord bot that exposes RANDSUM dice mechanics as slash commands. Depends on `@randsum/games` (game rolls) and `@randsum/roller` (generic notation rolls). Never published to npm.
+Private Discord bot that exposes RANDSUM dice mechanics as slash commands. Depends on `@randsum/games` (game rolls), `@randsum/roller` (generic notation rolls) and `@randsum/ui/timeline` (the Lanes model; no elements). Never published to npm.
 
 It is a **Cloudflare Worker serving HTTP interactions**. Discord POSTs each interaction to `https://bot.randsum.dev/` and reads the response body. There is no gateway connection, no session and no single-instance constraint, and there is no second transport or fallback: a broken Worker deploy is a user-visible outage. discord.js is not a dependency; ignore any older material that describes a gateway bot.
 
@@ -53,7 +53,7 @@ Each command file exports a named `*Command` object literal typed `Command`:
 
 The bot renders Components V2 only. `IsComponentsV2` forbids `embeds`, so the two shapes cannot be mixed on one message.
 
-**Building a view.** Route through `rollContainer()` in `commands/lib/view.ts`; it owns the headline / consequence / facts / body / derivation layout and the `-#` subtext footer. `renderTrace()` turns a `RollRecord` into step lines via `@randsum/roller/trace`. Components V2 has no inline field grid, so label/value pairs go through `renderFacts` as one line.
+**Building a view.** Route through `rollContainer()` in `commands/lib/view.ts`; it owns the headline / consequence / facts / body / derivation layout and the `-#` subtext footer. `renderTrace()` turns a `RollRecord` into step lines via `@randsum/roller/trace`. `/roll` draws each pool with `renderLanes()` (`commands/lib/lanes.ts`) instead: the site's Lanes layout as a code block, one column per die from Initial Rolls down to a Result row, built from `timeline()` in `@randsum/ui/timeline`. No colour (a removed die's line is dashed, explosions are joined by arrows); a grid too wide for a phone falls back to `renderTrace()`. Components V2 has no inline field grid, so label/value pairs go through `renderFacts` as one line.
 
 **Reroll buttons.** `commands/lib/reroll.ts` encodes the command name and options into the button's `custom_id` (the only state a stateless Worker has) and decodes it back into a `CommandContext`. Pass `encodeReroll('<command>', { ...options })` to `rollContainer`. A `custom_id` caps at 100 characters; when the encoding is longer, `encodeReroll` returns `undefined` and the button is omitted. Never truncate it: a truncated id decodes into a different roll.
 

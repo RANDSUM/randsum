@@ -11,7 +11,9 @@ import {
   renderTrace,
   rollContainer
 } from './lib/index.js'
+import { renderLanes } from './lib/lanes.js'
 import type { CommandContext } from './lib/index.js'
+import type { RollRecord } from '@randsum/roller'
 import type { Command, RollView } from '../types.js'
 
 /**
@@ -57,6 +59,14 @@ const NOTATION_ECHO_LIMIT = 200
 /** Shortens a value for inline display, with an ellipsis rather than a notice. */
 function truncateInline(value: string, limit: number): string {
   return value.length <= limit ? value : `${value.slice(0, limit - 1)}…`
+}
+
+/**
+ * A pool's dice in the Lanes layout the site draws, or as step-by-step trace
+ * lines when the lanes would be too wide to stay straight on a phone.
+ */
+function renderBody(record: RollRecord): readonly string[] {
+  return renderLanes(record) ?? renderTrace(record)
 }
 
 /** Everything the rendered view spends against the message character budget. */
@@ -116,7 +126,7 @@ function buildRollView(context: CommandContext): RollView {
           ? `${truncateInline(record.notation, NOTATION_ECHO_LIMIT)}  ·  ${record.total}`
           : String(result.total),
         ...(description.length > 0 ? { consequence: description } : {}),
-        body: renderTrace(record),
+        body: renderBody(record),
         derivation: multiple ? `Pool ${index + 1} of ${result.rolls.length}` : notationEcho,
         ...(index === 0 && rerollId !== undefined ? { rerollId } : {}),
         ...(bodyBudget !== undefined ? { bodyBudget } : {})
@@ -153,7 +163,7 @@ function buildRollView(context: CommandContext): RollView {
   // the headline, consequence and derivation are not already using.
   const single = render(1)
   const first = capped[0]
-  const bodyLength = first === undefined ? 0 : renderTrace(first).join('\n').length
+  const bodyLength = first === undefined ? 0 : renderBody(first).join('\n').length
   const overhead = measureView(single) - Math.min(bodyLength, TEXT_DISPLAY_LIMIT)
 
   return render(1, Math.max(1, MAX_CHARACTERS - overhead))
