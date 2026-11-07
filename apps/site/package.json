@@ -51,7 +51,7 @@
     "satteri": "0.10.5",
     "starlight-page-actions": "0.7.1",
     "starlight-sidebar-topics": "0.9.0",
-    "typescript": "7.1.0-beta",
+    "typescript": "7.1.0-dev.20261031.1",
     "wrangler": "catalog:"
   }
 }
