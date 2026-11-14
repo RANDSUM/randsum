@@ -23,7 +23,7 @@
     "@randsum/roller": "workspace:~",
     "@randsum/ui": "workspace:~",
     "@stackblitz/sdk": "~1.11.0",
-    "astro": "7.4.4",
+    "astro": "7.4.7",
     "astro-expressive-code": "0.44.3",
     "react": "catalog:",
     "react-dom": "catalog:"
