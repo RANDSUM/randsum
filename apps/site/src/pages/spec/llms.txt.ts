@@ -12,7 +12,7 @@ The RANDSUM Dice Notation Specification defines the syntax and semantics of RAND
 
 ## Latest Version
 
-- **v${latest}**: ${SPEC}/v/${latest}/
+- **v${latest}**: ${SPEC}/ (this exact version stays at ${SPEC}/v/${latest}/)
 
 ## Full Spec for LLMs
 
@@ -23,6 +23,8 @@ ${SPEC}/llms-full.txt
 
 - Specification: ${SPEC}/
 - Conformance vectors: ${SPEC}/conformance/v${latest}.json
+- Vectors JSON Schema: ${SPEC}/conformance/conformance.schema.json
+- Conformance levels and badges: ${SPEC}/conformance/
 - Documentation: ${SITE_ORIGIN}
 - GitHub: https://github.com/RANDSUM/notation-spec
 - npm: https://www.npmjs.com/package/@randsum/notation-spec

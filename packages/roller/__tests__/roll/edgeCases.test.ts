@@ -2,6 +2,7 @@ import { describe, expect, test } from 'bun:test'
 import { roll } from '../../src/roll'
 import { ModifierError, ValidationError } from '../../src/errors'
 import type { RandomFn } from '../../src/index'
+import { createQueueRandom } from '../../src/random'
 
 describe('edge cases', () => {
   describe('validation errors', () => {
@@ -105,14 +106,12 @@ describe('edge cases', () => {
       ).not.toThrow()
     })
 
-    test('reroll with impossible gte/lte conditions throws modifier error', () => {
-      expect(() =>
-        roll({
-          sides: 6,
-          quantity: 3,
-          modifiers: { reroll: { greaterThanOrEqual: 8, lessThanOrEqual: 2 } }
-        })
-      ).toThrow(ModifierError)
+    test('reroll conditions are alternatives, so a high bound and a low bound are valid', () => {
+      const result = roll(
+        { sides: 6, quantity: 4, modifiers: { reroll: { greaterThan: 5, lessThan: 2 } } },
+        { randomFn: createQueueRandom({ sides: 6, rolls: [1, 6, 3, 4], rerollRolls: [3, 2] }) }
+      )
+      expect(result.rolls[0]?.rolls).toEqual([3, 2, 3, 4])
     })
   })
 

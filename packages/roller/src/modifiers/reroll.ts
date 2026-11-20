@@ -1,7 +1,7 @@
 import type { RerollOptions } from '../notation/types'
 import { rerollSchema } from '../notation/definitions/reroll'
 import { ModifierError } from '../errors'
-import { matchesComparison, validateComparisonOptions } from '../lib/comparison'
+import { matchesComparison } from '../lib/comparison'
 import { MAX_REROLL_ATTEMPTS } from '../lib/constants'
 import type { ModifierDefinition } from './schema'
 
@@ -30,19 +30,19 @@ export const rerollModifier: ModifierDefinition<RerollOptions> = {
     const { rollOne } = ctx
     const { max } = options
 
-    // Linear single-pass accumulation: push into one array instead of
-    // spread-copying the accumulator each iteration (was O(n²)).
-    // A reroll happens iff a replacement is recorded, so the reroll count
-    // equals replacements.length — no separate counter needed.
+    // `max` limits the dice rerolled, taken in pool order. A die counts once it
+    // has been rerolled, whether or not its value changed.
     const result: number[] = []
     const replacements: { from: number; to: number }[] = []
+    const rerolled = { count: 0 }
 
     for (const roll of rolls) {
-      if (max !== undefined && replacements.length >= max) {
+      if (max !== undefined && rerolled.count >= max) {
         result.push(roll)
         continue
       }
 
+      if (matchesComparison(roll, options)) rerolled.count += 1
       const newRoll = rerollSingle(roll, options, rollOne)
       if (newRoll !== roll) {
         replacements.push({ from: roll, to: newRoll })
@@ -64,7 +64,7 @@ export const rerollModifier: ModifierDefinition<RerollOptions> = {
         })
       }
     }
-
-    validateComparisonOptions('reroll', options)
+    // Conditions in a list are alternatives (RDN 5.2), so `R{<2,>5}` is a valid
+    // "reroll low or high", not a contradiction.
   }
 }

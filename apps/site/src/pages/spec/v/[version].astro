@@ -2,7 +2,7 @@
 import { getCollection, render } from 'astro:content'
 import { isLatestVersion, getVersions } from '../../../spec/versions'
 import { specMarkdown } from '../../../spec/document'
-import { specHtml } from '../../../spec/specHtml'
+import { specHtml, splitBackMatter } from '../../../spec/specHtml'
 import { withAppendixH } from '../../../spec/sections'
 import SpecLayout from '../../../spec/SpecLayout.astro'
 import SpecHead from '../../../spec/components/SpecHead.astro'
@@ -22,7 +22,7 @@ export async function getStaticPaths() {
 const { entry } = Astro.props
 const { version } = Astro.params
 const { headings: markdownHeadings } = await render(entry)
-const html = specHtml(entry.rendered?.html ?? '')
+const { body, back } = splitBackMatter(specHtml(entry.rendered?.html ?? ''))
 const latest = await isLatestVersion(version)
 const allVersions = await getVersions()
 // Appendix H is generated from today's roller, so only the latest version has it.
@@ -42,7 +42,8 @@ const headings = latest ? withAppendixH(markdownHeadings) : markdownHeadings
   <SpecHead slot="content" entry={entry} versions={allVersions} />
   <SpecToc slot="content" headings={headings} />
   <SpecContent slot="content">
-    <Fragment set:html={html} />
+    <Fragment set:html={body} />
     {latest && <ModifierReference />}
+    <Fragment set:html={back} />
   </SpecContent>
 </SpecLayout>

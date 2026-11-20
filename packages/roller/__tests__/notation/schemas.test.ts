@@ -318,7 +318,7 @@ describe('rerollSchema', () => {
 
   test('toDescription describes reroll with max', () => {
     const result = rerollSchema.toDescription({ exact: [1], max: 3 })
-    expect(result[0]).toContain('up to 3 times')
+    expect(result[0]).toContain('up to 3 dice')
   })
 
   test('toDescription describes reroll with comparison', () => {

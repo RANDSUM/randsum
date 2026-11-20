@@ -154,19 +154,19 @@ function parseComparisonNotation(conditionString) {
     if (part.startsWith(">=")) {
       const num = Number(part.slice(2));
       if (!isNaN(num))
-        result.greaterThanOrEqual = num;
+        result.greaterThanOrEqual = Math.min(num, result.greaterThanOrEqual ?? num);
     } else if (part.startsWith("<=")) {
       const num = Number(part.slice(2));
       if (!isNaN(num))
-        result.lessThanOrEqual = num;
+        result.lessThanOrEqual = Math.max(num, result.lessThanOrEqual ?? num);
     } else if (part.startsWith(">")) {
       const num = Number(part.slice(1));
       if (!isNaN(num))
-        result.greaterThan = num;
+        result.greaterThan = Math.min(num, result.greaterThan ?? num);
     } else if (part.startsWith("<")) {
       const num = Number(part.slice(1));
       if (!isNaN(num))
-        result.lessThan = num;
+        result.lessThan = Math.max(num, result.lessThan ?? num);
     } else if (part.startsWith("=")) {
       const num = Number(part.slice(1));
       if (!isNaN(num))
@@ -500,7 +500,8 @@ var dropSchema = defineNotationSchema({
 });
 
 // packages/roller/src/notation/definitions/explode.ts
-var explodePattern = /(?<!!)!(?!!|[pPsSiI]|[rR](?![oO]?\{))(\{((?:>=|<=|>|<|=)?\d+(?:,(?:>=|<=|>|<|=)?\d+)*)\})?/;
+var explodePattern = /!(?!!|[pPiI]|[sS]\{|[rR](?![oO]?\{))(\{((?:>=|<=|>|<|=)?\d+(?:,(?:>=|<=|>|<|=)?\d+)*)\})?/;
+var explodeParsePattern = new RegExp(`(?<!!)${explodePattern.source}`);
 var explodeSchema = defineNotationSchema({
   name: "explode",
   priority: 50,
@@ -508,7 +509,7 @@ var explodeSchema = defineNotationSchema({
   category: "Generate",
   pattern: explodePattern,
   parse: (notation) => {
-    const match = explodePattern.exec(notation);
+    const match = explodeParsePattern.exec(notation);
     if (!match)
       return {};
     const conditionBlock = match[2];
@@ -547,13 +548,13 @@ var explodeSchema = defineNotationSchema({
 });
 
 // packages/roller/src/notation/definitions/explodeSequence.ts
-var explodeSequencePattern = /![sS]\{[\d,]+\}/;
+var explodeSequencePattern = /![sS]\{[1-9]\d*(?:,[1-9]\d*)*\}/;
 var explodeSequenceSchema = defineNotationSchema({
   name: "explodeSequence",
   priority: 53,
   lexemeKey: "!s",
   category: "Generate",
-  pattern: /![sS]\{[\d,]+\}|![iI]|![rR](?![oO]?\{)/,
+  pattern: /![sS]\{[1-9]\d*(?:,[1-9]\d*)*\}|![iI]|![rR](?![oO]?\{)/,
   parse: (notation) => {
     const match = explodeSequencePattern.exec(notation);
     if (!match)
@@ -606,7 +607,7 @@ var keepSchema = defineNotationSchema({
   priority: 66,
   lexemeKey: "K",
   category: "Filter",
-  pattern: /[Kk]([LlMm])?(\d+)?/,
+  pattern: /[Kk]([LlMm])?([1-9]\d*)?/,
   parse: (notation) => {
     const result = {};
     const middleMatch = keepMiddlePattern.exec(notation);
@@ -877,7 +878,7 @@ var rerollSchema = defineNotationSchema({
   priority: 40,
   lexemeKey: "R{..}",
   category: "Substitute",
-  pattern: /[Rr]([Oo])?\{((?:>=|<=|>|<|=)?\d+(?:,(?:>=|<=|>|<|=)?\d+)*)\}(\d+)?/,
+  pattern: /[Rr](?:[Oo]\{(?:>=|<=|>|<|=)?\d+(?:,(?:>=|<=|>|<|=)?\d+)*\}|\{(?:>=|<=|>|<|=)?\d+(?:,(?:>=|<=|>|<|=)?\d+)*\}(?:[1-9]\d*)?)/,
   parse: (notation) => {
     const matches = Array.from(notation.matchAll(rerollPattern));
     if (matches.length === 0)
@@ -938,14 +939,14 @@ var rerollSchema = defineNotationSchema({
       greaterLessList.push(`less than ${lessThan}`);
     }
     const exactList = formatHumanList(rerollList.map(Number));
-    const greaterLess = greaterLessList.join(" and ");
+    const greaterLess = greaterLessList.join(" or ");
     const conditions = [exactList, greaterLess].filter(Boolean).join(", ");
     if (!conditions)
       return [];
     if (once && max === undefined) {
       return [`Reroll once ${conditions}`];
     }
-    const maxText = max !== undefined ? ` (up to ${max} times)` : "";
+    const maxText = max !== undefined ? ` (up to ${max} dice)` : "";
     return [`Reroll ${conditions}${maxText}`];
   }
 });
@@ -977,7 +978,7 @@ var sortSchema = defineNotationSchema({
 });
 
 // packages/roller/src/notation/definitions/unique.ts
-var uniquePattern = /[Uu](?:\{([^}]{1,50})\})?/;
+var uniquePattern = /[Uu](?:\{(\d+(?:,\d+)*)\})?/;
 var uniqueSchema = defineNotationSchema({
   name: "unique",
   priority: 60,
@@ -1241,12 +1242,15 @@ function modifierKind(lexeme) {
 }
 var LEADING_QUANTITY = /^\d+/;
 var STANDARD_BODY = /^\d*[Dd]([1-9]\d*)$/;
+var SPECIAL_BODY = /^\d*(?:[Gg]|[Dd][Dd]|[Zz])([1-9]\d*)$/;
 function poolMagnitudeValid(kind, body) {
   const quantity = LEADING_QUANTITY.exec(body)?.[0];
   if (quantity !== undefined && !/^[1-9]/.test(quantity))
     return false;
   if (kind === "standard")
     return STANDARD_BODY.test(body);
+  if (kind === "geometric" || kind === "draw" || kind === "zeroBias")
+    return SPECIAL_BODY.test(body);
   return true;
 }
 function invalid(message, position) {
@@ -1284,9 +1288,9 @@ function parseNotation(input) {
   if (strayRepeat) {
     return invalid(`Repeat "${strayRepeat.text}" must be at the end of the notation`, strayRepeat.start + trimOffset);
   }
-  const countFamily = lexemes.filter((t) => t.role === "modifier" && COUNT_FAMILY_KEYS.has(t.key));
-  if (countFamily.length > 1) {
-    return invalid("Only one Count-family modifier (#{}, S{}, F{}) is permitted", (countFamily[1]?.start ?? 0) + trimOffset);
+  const tooBig = lexemes.find((t) => t.role === "modifier" && (t.text.match(/\d+/g) ?? []).some((digits) => !Number.isSafeInteger(Number(digits))));
+  if (tooBig) {
+    return invalid(`"${tooBig.text}" holds a number too large to use`, tooBig.start + trimOffset);
   }
   const badPool = lexemes.find((t) => t.role === "pool" && !poolMagnitudeValid(t.poolKind ?? "standard", t.text.replace(/^[+-]/, "")));
   if (badPool)
@@ -1315,6 +1319,15 @@ function parseNotation(input) {
     return [{ head: tok, bound: lexemes.slice(i + 1, end) }];
   });
   for (const { bound } of groups) {
+    const countFamily = bound.filter((t) => t.role === "modifier" && COUNT_FAMILY_KEYS.has(t.key));
+    if (countFamily.length > 1) {
+      return invalid("Only one Count-family modifier (#{}, S{}, F{}) is permitted", (countFamily[1]?.start ?? 0) + trimOffset);
+    }
+    const keeps = bound.filter((t) => t.key === "K" && /^k(?:l|\d|$)/i.test(t.text));
+    const second = keeps.find((t) => modifierKind(t) !== modifierKind(keeps[0] ?? t));
+    if (second) {
+      return invalid(`"${second.text}" cannot join "${keeps[0]?.text}": keep the highest or the lowest, not both`, second.start + trimOffset);
+    }
     const annotations = bound.filter((t) => t.role === "annotation");
     if (annotations.length > 1) {
       return invalid("A die expression takes one annotation", (annotations[1]?.start ?? 0) + trimOffset);
@@ -1421,6 +1434,10 @@ function parsedToOptions(notationString, parsed) {
       throw new NotationParseError(notationString, `repeat count ${count} exceeds maximum of ${MAX_REPEAT_COUNT}`, undefined, { position, value: count });
     }
   });
+  const product = parsed.repeats.reduce((total, { count }) => total * count, 1);
+  if (product > MAX_REPEAT_COUNT) {
+    throw new NotationParseError(notationString, `repeats multiply to ${product}, over the maximum of ${MAX_REPEAT_COUNT}`, undefined, { position: parsed.repeats[0]?.position ?? 0, value: product });
+  }
   return parsed.repeats.reduce((options, { count }) => Array.from({ length: count }, () => options).flat(), parsed.pools.map(poolToOptions));
 }
 
@@ -1428,12 +1445,22 @@ function parsedToOptions(notationString, parsed) {
 function modifiersToNotation(modifiers) {
   if (!modifiers)
     return "";
-  return MODIFIER_SCHEMAS.map((schema) => {
+  const parts = MODIFIER_SCHEMAS.map((schema) => {
     const options = modifiers[schema.name];
     if (options === undefined)
       return;
     return schema.toNotation(options);
-  }).filter((notation) => typeof notation === "string").join("");
+  }).filter((notation) => typeof notation === "string");
+  const bare = parts.indexOf("!");
+  const family = parts.findLastIndex((part) => part.startsWith("!"));
+  if (bare === -1 || family <= bare)
+    return parts.join("");
+  return [
+    ...parts.slice(0, bare),
+    ...parts.slice(bare + 1, family + 1),
+    "!",
+    ...parts.slice(family + 1)
+  ].join("");
 }
 function modifiersToDescription(modifiers) {
   if (!modifiers)
@@ -1716,6 +1743,17 @@ var countModifier = {
   }
 };
 
+// packages/roller/src/modifiers/poolSelection.ts
+function indicesByRank(rolls, count, direction) {
+  const indexed = rolls.map((value, index) => ({ value, index }));
+  if (direction === "lowest") {
+    indexed.sort((a, b) => a.value - b.value);
+  } else {
+    indexed.sort((a, b) => b.value - a.value);
+  }
+  return new Set(indexed.slice(0, count).map((entry) => entry.index));
+}
+
 // packages/roller/src/modifiers/drop.ts
 var dropModifier = {
   ...dropSchema,
@@ -1725,16 +1763,14 @@ var dropModifier = {
     if (highest === undefined && lowest === undefined) {
       return { rolls: filteredByConditions };
     }
-    const indexedRolls = filteredByConditions.map((roll, index) => ({ roll, index }));
-    indexedRolls.sort((a, b) => a.roll - b.roll);
-    const lowestIndices = lowest !== undefined ? new Set(indexedRolls.slice(0, Math.min(lowest, indexedRolls.length)).map((item) => item.index)) : new Set;
-    const highestIndices = highest !== undefined ? new Set(indexedRolls.slice(Math.max(0, indexedRolls.length - highest)).map((item) => item.index)) : new Set;
-    const indicesToDrop = new Set([...lowestIndices, ...highestIndices]);
-    const result = filteredByConditions.filter((_, index) => !indicesToDrop.has(index));
-    if (lowest !== undefined && highest === undefined) {
-      return { rolls: [...result].sort((a, b) => a - b) };
-    }
-    return { rolls: result };
+    const lowestIndices = indicesByRank(filteredByConditions, lowest ?? 0, "lowest");
+    const afterLowest = filteredByConditions.map((roll, index) => ({ roll, index }));
+    const candidates = afterLowest.filter((item) => !lowestIndices.has(item.index));
+    const highestRanks = indicesByRank(candidates.map((item) => item.roll), highest ?? 0, "highest");
+    const highestIndices = new Set(candidates.filter((_, rank) => highestRanks.has(rank)).map((item) => item.index));
+    return {
+      rolls: filteredByConditions.filter((_, index) => !lowestIndices.has(index) && !highestIndices.has(index))
+    };
   },
   validate: (options, { quantity }) => {
     const totalDrop = (options.lowest ?? 0) + (options.highest ?? 0);
@@ -1838,17 +1874,6 @@ var integerDivideModifier = {
   validate: rejectZeroDivisor("integerDivide")
 };
 
-// packages/roller/src/modifiers/poolSelection.ts
-function indicesByRank(rolls, count, direction) {
-  const indexed = rolls.map((value, index) => ({ value, index }));
-  if (direction === "lowest") {
-    indexed.sort((a, b) => a.value - b.value);
-  } else {
-    indexed.sort((a, b) => b.value - a.value);
-  }
-  return new Set(indexed.slice(0, count).map((entry) => entry.index));
-}
-
 // packages/roller/src/modifiers/keep.ts
 var keepModifier = {
   ...keepSchema,
@@ -1872,6 +1897,12 @@ var keepModifier = {
     return { rolls };
   },
   validate: (options, { quantity }) => {
+    if (options.highest !== undefined && options.lowest !== undefined) {
+      throw new ModifierError("keep", "Cannot keep both the highest and the lowest dice", {
+        path: "modifiers.keep",
+        value: options
+      });
+    }
     if (options.highest !== undefined) {
       if (options.highest > quantity || options.highest < 1) {
         throw new ModifierError("keep", `Cannot keep ${options.highest} highest dice from a pool of ${quantity}`, { path: "modifiers.keep.highest", value: options.highest });
@@ -1994,11 +2025,14 @@ var rerollModifier = {
     const { max } = options;
     const result = [];
     const replacements = [];
+    const rerolled = { count: 0 };
     for (const roll of rolls) {
-      if (max !== undefined && replacements.length >= max) {
+      if (max !== undefined && rerolled.count >= max) {
         result.push(roll);
         continue;
       }
+      if (matchesComparison(roll, options))
+        rerolled.count += 1;
       const newRoll = rerollSingle(roll, options, rollOne);
       if (newRoll !== roll) {
         replacements.push({ from: roll, to: newRoll });
@@ -2018,7 +2052,6 @@ var rerollModifier = {
         });
       }
     }
-    validateComparisonOptions("reroll", options);
   }
 };
 
@@ -2041,11 +2074,11 @@ var uniqueModifier = {
     const exceptions = new Set(typeof options === "object" ? options.notUnique : []);
     const rerollUntilUnique = (value, seen2) => {
       const findUnique = (current, attempts) => {
+        if (exceptions.has(current) || !seen2.has(current))
+          return current;
         if (attempts >= MAX_REROLL_ATTEMPTS) {
           throw new ModifierError("unique", `Could not find a unique value after ${MAX_REROLL_ATTEMPTS} attempts`);
         }
-        if (exceptions.has(current) || !seen2.has(current))
-          return current;
         return findUnique(rollOne(), attempts + 1);
       };
       return findUnique(value, 0);

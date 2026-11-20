@@ -66,6 +66,15 @@ function markKeywords(html: string): string {
     .join('')
 }
 
+/**
+ * The document split where its back matter (Authors' Addresses) begins, so a
+ * generated appendix can sit after the last written one and before it.
+ */
+export function splitBackMatter(html: string): { body: string; back: string } {
+  const at = html.search(/<h2[^>]*\bid="authors-addresses"/)
+  return at === -1 ? { body: html, back: '' } : { body: html.slice(0, at), back: html.slice(at) }
+}
+
 export function specHtml(html: string): string {
   return markKeywords(classifyBlocks(labelInformative(numberHeadings(html))))
 }

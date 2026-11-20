@@ -16,14 +16,14 @@ export const uniqueModifier: ModifierDefinition<boolean | UniqueOptions> = {
 
     const rerollUntilUnique = (value: number, seen: Set<number>): number => {
       const findUnique = (current: number, attempts: number): number => {
+        // An exempt value may repeat, so a reroll that lands on one is kept.
+        if (exceptions.has(current) || !seen.has(current)) return current
         if (attempts >= MAX_REROLL_ATTEMPTS) {
           throw new ModifierError(
             'unique',
             `Could not find a unique value after ${MAX_REROLL_ATTEMPTS} attempts`
           )
         }
-        // An exempt value may repeat, so a reroll that lands on one is kept.
-        if (exceptions.has(current) || !seen.has(current)) return current
         return findUnique(rollOne(), attempts + 1)
       }
       return findUnique(value, 0)

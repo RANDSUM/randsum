@@ -33,6 +33,12 @@ export const keepModifier: ModifierDefinition<KeepOptions> = {
   },
 
   validate: (options, { quantity }) => {
+    if (options.highest !== undefined && options.lowest !== undefined) {
+      throw new ModifierError('keep', 'Cannot keep both the highest and the lowest dice', {
+        path: 'modifiers.keep',
+        value: options
+      })
+    }
     if (options.highest !== undefined) {
       if (options.highest > quantity || options.highest < 1) {
         throw new ModifierError(

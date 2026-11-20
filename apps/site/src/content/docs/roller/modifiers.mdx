@@ -322,7 +322,7 @@ Compounding exploding dice add to the triggering die instead of creating new dic
 
 roll('3d6!!')    // Compound while the added roll is a max
 roll('3d6!!5')   // Max depth 5
-roll('3d6!!0')   // Unlimited (capped at 100)
+roll('3d6!!0')   // Unlimited (capped at 1000)
 
 // Options object
 roll({
@@ -345,7 +345,7 @@ Penetrating exploding dice count each added roll as 1 less (Hackmaster-style).
 
 roll('3d6!p')    // Penetrate while the added roll is a max
 roll('3d6!p5')   // Max depth 5
-roll('3d6!p0')   // Unlimited (capped at 100)
+roll('3d6!p0')   // Unlimited (capped at 1000)
 
 // Options object
 roll({

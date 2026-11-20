@@ -8,13 +8,23 @@ import { MODIFIER_SCHEMAS } from '../definitions'
 export function modifiersToNotation(modifiers: ModifierOptions | undefined): string {
   if (!modifiers) return ''
 
-  return MODIFIER_SCHEMAS.map(schema => {
+  const parts = MODIFIER_SCHEMAS.map(schema => {
     const options = modifiers[schema.name]
     if (options === undefined) return undefined
     return schema.toNotation(options)
-  })
-    .filter((notation): notation is string => typeof notation === 'string')
-    .join('')
+  }).filter((notation): notation is string => typeof notation === 'string')
+
+  // A bare `!` written before `!p` or `!s{..}` would read back as `!!` and a
+  // stray letter, so it goes after the other explosion forms: `!p!`, `!!!`.
+  const bare = parts.indexOf('!')
+  const family = parts.findLastIndex(part => part.startsWith('!'))
+  if (bare === -1 || family <= bare) return parts.join('')
+  return [
+    ...parts.slice(0, bare),
+    ...parts.slice(bare + 1, family + 1),
+    '!',
+    ...parts.slice(family + 1)
+  ].join('')
 }
 
 /**

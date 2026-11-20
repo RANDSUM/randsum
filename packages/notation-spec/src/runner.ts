@@ -87,10 +87,18 @@ function sameValues(a: readonly unknown[], b: readonly unknown[]): boolean {
 
 /** Why a response fails its vector, or undefined when it passes. */
 function failure(vector: ConformanceVector, response: AdapterResponse): string | undefined {
+  if (response.error !== undefined && typeof response.error !== 'string') {
+    return `"error" must be a string, got ${show(response.error)}`
+  }
   if (vector.expectedError) {
-    return typeof response.error === 'string'
+    if (response.error === undefined) {
+      return `expected an error, got pool ${show(response.pool)} total ${show(response.total)}`
+    }
+    if (response.error === '') return 'expected an error message, got an empty string'
+    // Rejected notation produces no result (spec Section 9.5)
+    return response.pool === undefined && response.total === undefined
       ? undefined
-      : `expected an error, got pool ${show(response.pool)} total ${show(response.total)}`
+      : `expected an error alone, got pool ${show(response.pool)} total ${show(response.total)} with it`
   }
   if (typeof response.error === 'string') return `expected a result, got error: ${response.error}`
   if (!Array.isArray(response.pool)) return `expected a pool array, got ${show(response.pool)}`
@@ -112,6 +120,8 @@ function failure(vector: ConformanceVector, response: AdapterResponse): string |
     if (typeof expectedTotal === 'number') {
       const sum = pool.reduce<number>((acc, value) => acc + Number(value), 0)
       if (total !== sum) return `expected the total to be the pool's sum ${sum}, got ${show(total)}`
+    } else if (total !== null) {
+      return `expected no total for string faces, got ${show(total)}`
     }
     return undefined
   }

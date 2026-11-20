@@ -60,17 +60,19 @@ function modifierKind(lexeme: Lexeme): string {
 const LEADING_QUANTITY = /^\d+/
 const STANDARD_BODY = /^\d*[Dd]([1-9]\d*)$/
 
+const SPECIAL_BODY = /^\d*(?:[Gg]|[Dd][Dd]|[Zz])([1-9]\d*)$/
+
 /**
  * True when a pool head satisfies the positive-integer contract. A leading digit
- * run is the quantity and must not start with 0 (rejects `0d6`, `09g6`). Only the
- * standard NdS form additionally constrains sides to a positive integer (rejects
- * `1d0`); the special-die cores historically accepted `g0`/`z0`/`DD0`, so their
- * sides are left to the marker regex to keep acceptance identical.
+ * run is the quantity and must not start with 0 (rejects `0d6`, `09g6`). The
+ * sides of a standard, geometric, draw or zero-bias die are a positive integer
+ * too (rejects `1d0`, `g0`, `z06`, `DD0`).
  */
 function poolMagnitudeValid(kind: PoolKind, body: string): boolean {
   const quantity = LEADING_QUANTITY.exec(body)?.[0]
   if (quantity !== undefined && !/^[1-9]/.test(quantity)) return false
   if (kind === 'standard') return STANDARD_BODY.test(body)
+  if (kind === 'geometric' || kind === 'draw' || kind === 'zeroBias') return SPECIAL_BODY.test(body)
   return true
 }
 
@@ -92,7 +94,7 @@ function buildPool(head: Lexeme, bound: readonly Lexeme[]): PoolNode {
 /**
  * Structural parse of a notation string. Layers grammar rules over the lexer:
  * the string must begin with a pool, every lexeme must be known, magnitudes must
- * be positive integers, and at most one Count-family modifier may appear. The
+ * be positive integers, and a pool takes at most one Count-family modifier. The
  * returned AST (pools + bound modifiers) drives notationToOptions and roll.
  *
  * This is the single acceptance authority — `isDiceNotation` is `parse().valid`.
@@ -139,13 +141,15 @@ export function parseNotation(input: string): ParseResult {
     )
   }
 
-  // At most one Count-family modifier (RDN P5).
-  const countFamily = lexemes.filter(t => t.role === 'modifier' && COUNT_FAMILY_KEYS.has(t.key))
-  if (countFamily.length > 1) {
-    return invalid(
-      'Only one Count-family modifier (#{}, S{}, F{}) is permitted',
-      (countFamily[1]?.start ?? 0) + trimOffset
-    )
+  // An operand is an exact integer: past 2^53 - 1 a number silently rounds, and
+  // a long enough digit run becomes Infinity.
+  const tooBig = lexemes.find(
+    t =>
+      t.role === 'modifier' &&
+      (t.text.match(/\d+/g) ?? []).some(digits => !Number.isSafeInteger(Number(digits)))
+  )
+  if (tooBig) {
+    return invalid(`"${tooBig.text}" holds a number too large to use`, tooBig.start + trimOffset)
   }
 
   // Every pool head must satisfy the positive-integer contract.
@@ -217,6 +221,23 @@ export function parseNotation(input: string): ParseResult {
   // Only the summing forms (+N, -N, ms{N}, L, H) may repeat, and a flag may be
   // written twice.
   for (const { bound } of groups) {
+    // At most one Count-family modifier in a pool (RDN P5).
+    const countFamily = bound.filter(t => t.role === 'modifier' && COUNT_FAMILY_KEYS.has(t.key))
+    if (countFamily.length > 1) {
+      return invalid(
+        'Only one Count-family modifier (#{}, S{}, F{}) is permitted',
+        (countFamily[1]?.start ?? 0) + trimOffset
+      )
+    }
+    // Keep highest and Keep lowest name two different pools to keep.
+    const keeps = bound.filter(t => t.key === 'K' && /^k(?:l|\d|$)/i.test(t.text))
+    const second = keeps.find(t => modifierKind(t) !== modifierKind(keeps[0] ?? t))
+    if (second) {
+      return invalid(
+        `"${second.text}" cannot join "${keeps[0]?.text}": keep the highest or the lowest, not both`,
+        second.start + trimOffset
+      )
+    }
     const annotations = bound.filter(t => t.role === 'annotation')
     if (annotations.length > 1) {
       return invalid(

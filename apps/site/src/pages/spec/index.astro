@@ -4,7 +4,7 @@
 import { getCollection, render } from 'astro:content'
 import { getLatestVersion, getVersions } from '../../spec/versions'
 import { specMarkdown } from '../../spec/document'
-import { specHtml } from '../../spec/specHtml'
+import { specHtml, splitBackMatter } from '../../spec/specHtml'
 import { withAppendixH } from '../../spec/sections'
 import SpecLayout from '../../spec/SpecLayout.astro'
 import SpecHead from '../../spec/components/SpecHead.astro'
@@ -19,7 +19,7 @@ const entries = await getCollection('specs')
 const entry = entries.find(e => e.id === latestId)
 if (!entry) throw new Error(`No spec entry found for version: ${latestId}`)
 const { headings: markdownHeadings } = await render(entry)
-const html = specHtml(entry.rendered?.html ?? '')
+const { body, back } = splitBackMatter(specHtml(entry.rendered?.html ?? ''))
 const headings = withAppendixH(markdownHeadings)
 ---
 
@@ -36,7 +36,8 @@ const headings = withAppendixH(markdownHeadings)
   <SpecHead slot="content" entry={entry} versions={allVersions} />
   <SpecToc slot="content" headings={headings} />
   <SpecContent slot="content">
-    <Fragment set:html={html} />
+    <Fragment set:html={body} />
     <ModifierReference />
+    <Fragment set:html={back} />
   </SpecContent>
 </SpecLayout>

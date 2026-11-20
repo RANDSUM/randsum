@@ -219,7 +219,7 @@ export const compoundDocs: readonly NotationDoc[] = [
     displayBase: '!!',
     forms: [
       { notation: '!!(n)', note: 'Compound up to n times (default: until a roll misses)' },
-      { notation: '!!0', note: 'Unlimited depth (capped at 100)' },
+      { notation: '!!0', note: 'Unlimited depth (capped at 1000)' },
       { notation: '!!{condition}', note: 'Compound on condition match' }
     ],
     comparisons: [
@@ -257,7 +257,7 @@ export const penetrateDocs: readonly NotationDoc[] = [
     displayBase: '!p',
     forms: [
       { notation: '!p(n)', note: 'Penetrate up to n times (default: until a roll misses)' },
-      { notation: '!p0', note: 'Unlimited depth (capped at 100)' },
+      { notation: '!p0', note: 'Unlimited depth (capped at 1000)' },
       { notation: '!p{condition}', note: 'Penetrate on condition match' }
     ],
     comparisons: [
@@ -717,12 +717,12 @@ export const integerDivideDocs: readonly NotationDoc[] = [
     color: '#8bd28d',
     colorLight: '#267d30',
     title: 'Integer Divide',
-    description: 'Divide the total by a number and round down (floor division).',
+    description: 'Divide the total by a number and drop the remainder (rounds toward zero).',
     displayBase: '//',
-    forms: [{ notation: '//n', note: 'Divide total by n, round down' }],
+    forms: [{ notation: '//n', note: 'Divide total by n, drop the remainder' }],
     examples: [
       {
-        description: 'Roll 2d6, halve (round down)',
+        description: 'Roll 2d6, halve (drop the remainder)',
         notation: '2d6//2',
         options: { sides: 6, quantity: 2, modifiers: { integerDivide: 2 } }
       },
