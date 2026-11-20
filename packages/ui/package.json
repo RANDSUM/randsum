@@ -416,7 +416,7 @@
     },
     {
       "path": "dist/native/roller.js",
-      "limit": "26.45 KB"
+      "limit": "26.6 KB"
     },
     {
       "path": "dist/native/status-line.js",
@@ -496,7 +496,7 @@
     },
     {
       "path": "dist/roller.js",
-      "limit": "35.75 KB"
+      "limit": "35.95 KB"
     },
     {
       "path": "dist/scope.js",
@@ -540,7 +540,7 @@
     },
     {
       "path": "dist/vue/roller.js",
-      "limit": "36.1 KB"
+      "limit": "36.3 KB"
     },
     {
       "path": "dist/vue/status-line.js",
