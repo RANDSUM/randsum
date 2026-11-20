@@ -360,7 +360,7 @@
     "@types/react-dom": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
-    "react-native": "0.87.1",
+    "react-native": "0.88.1",
     "svelte": "5.57.3",
     "vue": "3.5.44"
   },
