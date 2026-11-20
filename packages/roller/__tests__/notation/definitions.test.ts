@@ -519,7 +519,7 @@ describe('rerollSchema', () => {
 
     test('describes reroll with max', () => {
       expect(rerollSchema.toDescription({ exact: [1], max: 3 })).toEqual([
-        'Reroll 1 (up to 3 times)'
+        'Reroll 1 (up to 3 dice)'
       ])
     })
 

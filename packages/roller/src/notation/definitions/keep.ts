@@ -10,7 +10,7 @@ export const keepSchema: NotationSchema<KeepOptions> = defineNotationSchema<Keep
   lexemeKey: 'K',
   category: 'Filter',
 
-  pattern: /[Kk]([LlMm])?(\d+)?/,
+  pattern: /[Kk]([LlMm])?([1-9]\d*)?/,
 
   parse: notation => {
     // Each form reads its first match, and the forms combine: `KKm` keeps the

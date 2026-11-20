@@ -19,6 +19,31 @@ function faceIndices(values: readonly number[], faces: readonly number[]): numbe
   })
 }
 
+// Inflation and Reduction walk the standard die set (spec Sections 6.7.9, 6.7.10).
+const STANDARD_SIZES = [4, 6, 8, 10, 12, 20, 100]
+
+/** The die sizes an explode sequence rolls, in order, for a pool of `sides`-sided dice. */
+function sequenceSizes(notation: string, sides: number): number[] {
+  const listed = /!s\{([\d,]+)\}/i.exec(notation)?.[1]
+  if (listed !== undefined) return listed.split(',').map(Number)
+  if (/!i/i.test(notation)) return STANDARD_SIZES.filter(size => size > sides)
+  if (/!r(?!o?\{)/i.test(notation)) return STANDARD_SIZES.filter(size => size < sides).reverse()
+  return []
+}
+
+/**
+ * Several standard pools (`2d6+1d8`) each have their own die size, so the seed
+ * values are scaled pool by pool, in notation order.
+ */
+function poolFractions(notation: string, seedRolls: readonly number[]): number[] | undefined {
+  const pools = [...notation.matchAll(/(?:^|[+-])(\d*)d(\d+)/gi)]
+  if (pools.length < 2) return undefined
+  const sizes = pools.flatMap(([, quantity = '', sides = '']) =>
+    Array.from({ length: Number(quantity || 1) }, () => Number(sides))
+  )
+  return seedRolls.map((value, i) => (value - 1) / (sizes[i] ?? 1))
+}
+
 function queueFor(
   notation: string,
   seedRolls: readonly number[]
@@ -43,7 +68,12 @@ function queueFor(
 }
 
 function replayed(request: VectorRequest): () => number {
-  const { notation } = request
+  const notation = request.notation.trim()
+  const fractions = poolFractions(notation, request.seedRolls ?? [])
+  if (fractions !== undefined) {
+    const next = { i: 0 }
+    return () => fractions[next.i++] ?? 0
+  }
   const { sides, rolls } = queueFor(notation, request.seedRolls ?? [])
   const base = createQueueRandom({
     sides,
@@ -54,8 +84,8 @@ function replayed(request: VectorRequest): () => number {
     ...(request.penetrateRolls === undefined ? {} : { penetrateRolls: request.penetrateRolls })
   })
   // A sequence die has its own size, so its values are mapped through the sizes
-  // in !s{...} rather than the pool's die.
-  const sizes = /!s\{([\d,]+)\}/i.exec(notation)?.[1]?.split(',').map(Number) ?? []
+  // the sequence rolls rather than the pool's die.
+  const sizes = sequenceSizes(notation, sides)
   const sequence = (request.sequenceRolls ?? []).map(
     (v, i) => (v - 1) / (sizes[i] ?? sizes.at(-1) ?? sides)
   )
@@ -73,20 +103,22 @@ function replayed(request: VectorRequest): () => number {
 }
 
 export function evaluate(request: VectorRequest): AdapterResponse {
-  const { id, notation } = request
+  const { id } = request
+  const notation = request.notation.trim()
   // Custom faces and draw dice pick and shuffle in their own way, which the
   // queue cannot replay (spec Section 11.3): roll them at random and say so.
   const unseeded = /^\d*d\{/i.test(notation) || /^\d*DD\d+/i.test(notation)
   try {
     const result = unseeded
-      ? roll(notation as DiceNotation)
-      : roll(notation as DiceNotation, { randomFn: replayed(request) })
+      ? roll(request.notation as DiceNotation)
+      : roll(request.notation as DiceNotation, { randomFn: replayed(request) })
     const record = result.rolls[0]
     if (record === undefined) return { id, error: 'roll() returned no pool' }
     const custom = record.customResults
-    return custom === undefined
-      ? { id, pool: record.rolls, total: result.total, ...(unseeded ? { seeded: false } : {}) }
-      : { id, pool: custom, total: null, seeded: false }
+    if (custom !== undefined) return { id, pool: custom, total: null, seeded: false }
+    // Several pools answer as one: their dice one after another, in notation order
+    const pool = result.rolls.flatMap(pooled => pooled.rolls)
+    return { id, pool, total: result.total, ...(unseeded ? { seeded: false } : {}) }
   } catch (error) {
     return { id, error: error instanceof Error ? error.message : String(error) }
   }

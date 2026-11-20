@@ -1,0 +1,32 @@
+---
+// notation.randsum.dev's not-found page. build-notation.ts lifts it to
+// /404.html, which the Worker serves for any unknown path (wrangler.notation.jsonc).
+import { getLatestVersion, getVersions } from '../../spec/versions'
+import SpecLayout from '../../spec/SpecLayout.astro'
+import SpecContent from '../../spec/components/SpecContent.astro'
+import { specPath } from '../../spec/urls'
+
+const version = await getLatestVersion()
+const versions = await getVersions()
+---
+
+<SpecLayout
+  title="Page not found"
+  version={version}
+  versions={versions}
+  isLatest={true}
+  canonicalPath="/"
+  description="This address is not part of the RANDSUM Dice Notation specification."
+>
+  <header slot="content" class="spec-head">
+    <p class="spec-head-series">RANDSUM Dice Notation {version}</p>
+    <h1 class="spec-head-title">Page not found</h1>
+  </header>
+  <SpecContent slot="content">
+    <p>
+      Nothing is published at this address. The <a href={specPath('/')}>specification</a> and its
+      <a href={specPath('/conformance/')}>conformance badges</a>
+      are the pages this site holds.
+    </p>
+  </SpecContent>
+</SpecLayout>

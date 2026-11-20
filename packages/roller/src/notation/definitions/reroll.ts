@@ -15,7 +15,10 @@ export const rerollSchema: NotationSchema<RerollOptions> = defineNotationSchema<
   lexemeKey: 'R{..}',
   category: 'Substitute',
 
-  pattern: /[Rr]([Oo])?\{((?:>=|<=|>|<|=)?\d+(?:,(?:>=|<=|>|<|=)?\d+)*)\}(\d+)?/,
+  // `ro{..}` takes no count, and a count is a positive integer: `R{1}0` would
+  // otherwise read as "reroll nothing" and render back as the unlimited `R{1}`.
+  pattern:
+    /[Rr](?:[Oo]\{(?:>=|<=|>|<|=)?\d+(?:,(?:>=|<=|>|<|=)?\d+)*\}|\{(?:>=|<=|>|<|=)?\d+(?:,(?:>=|<=|>|<|=)?\d+)*\}(?:[1-9]\d*)?)/,
 
   parse: notation => {
     const matches = Array.from(notation.matchAll(rerollPattern))
@@ -85,7 +88,7 @@ export const rerollSchema: NotationSchema<RerollOptions> = defineNotationSchema<
     }
 
     const exactList = formatHumanList(rerollList.map(Number))
-    const greaterLess = greaterLessList.join(' and ')
+    const greaterLess = greaterLessList.join(' or ')
 
     const conditions = [exactList, greaterLess].filter(Boolean).join(', ')
     if (!conditions) return []
@@ -94,7 +97,7 @@ export const rerollSchema: NotationSchema<RerollOptions> = defineNotationSchema<
       return [`Reroll once ${conditions}`]
     }
 
-    const maxText = max !== undefined ? ` (up to ${max} times)` : ''
+    const maxText = max !== undefined ? ` (up to ${max} dice)` : ''
     return [`Reroll ${conditions}${maxText}`]
   }
 })

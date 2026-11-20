@@ -7,8 +7,15 @@ import {
 } from '../comparison'
 import { type NotationSchema, defineNotationSchema } from '../schema'
 
+// A bare `!` is whatever is left once the longer forms have had their turn
+// (RDN P3): `!!`, `!p`, `!s{`, `!i` and `!r` are never Explode, while `!!!` is
+// Compound then Explode and `!sa` is Explode then Sort.
 const explodePattern =
-  /(?<!!)!(?!!|[pPsSiI]|[rR](?![oO]?\{))(\{((?:>=|<=|>|<|=)?\d+(?:,(?:>=|<=|>|<|=)?\d+)*)\})?/
+  /!(?!!|[pPiI]|[sS]\{|[rR](?![oO]?\{))(\{((?:>=|<=|>|<|=)?\d+(?:,(?:>=|<=|>|<|=)?\d+)*)\})?/
+
+// `parse` may be handed a whole notation string, where a `!` beside another `!`
+// belongs to Compound.
+const explodeParsePattern = new RegExp(`(?<!!)${explodePattern.source}`)
 
 export const explodeSchema: NotationSchema<boolean | ComparisonOptions> = defineNotationSchema<
   boolean | ComparisonOptions
@@ -21,7 +28,7 @@ export const explodeSchema: NotationSchema<boolean | ComparisonOptions> = define
   pattern: explodePattern,
 
   parse: notation => {
-    const match = explodePattern.exec(notation)
+    const match = explodeParsePattern.exec(notation)
     if (!match) return {}
 
     const conditionBlock = match[2]

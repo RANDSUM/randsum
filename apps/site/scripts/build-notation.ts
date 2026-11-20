@@ -15,6 +15,7 @@ import {
   existsSync,
   mkdirSync,
   readdirSync,
+  renameSync,
   rmSync,
   statSync,
   writeFileSync
@@ -37,6 +38,13 @@ mkdirSync(out, { recursive: true })
 cpSync(spec, out, { recursive: true })
 cpSync(join(dist, '_astro'), join(out, '_astro'), { recursive: true })
 for (const file of ['favicon.ico', 'favicon.svg']) cpSync(join(dist, file), join(out, file))
+
+// Astro writes a nested 404 page as a directory; the Worker's not-found
+// handling wants /404.html at the root.
+if (existsSync(join(out, '404', 'index.html'))) {
+  renameSync(join(out, '404', 'index.html'), join(out, '404.html'))
+  rmSync(join(out, '404'), { recursive: true, force: true })
+}
 
 /** Every page's path on the host: a directory with an index.html. */
 function pages(dir: string): string[] {

@@ -104,8 +104,19 @@ describe('Appendix G.15 matches the vectors', () => {
     expect(row?.split('|')[2]?.trim()).toBe(vectors)
   })
 
-  test('the spec counts the vectors the file has', () => {
-    expect(spec).toContain(`all ${CONFORMANCE_FILE.vectors.length} test vectors`)
+  test('every vector has a row in Appendix G', () => {
+    for (const vector of CONFORMANCE_FILE.vectors) {
+      expect(spec, `vector ${vector.id}`).toMatch(new RegExp(`^\\| ${vector.id} +\\| \``, 'm'))
+    }
+  })
+
+  test('the document names one revision throughout', () => {
+    const revision = /^revision: (\d+)$/m.exec(spec)?.[1]
+    const history = [...spec.matchAll(/^\| 0\.9\.0 rev\. (\d+) \| (\d{4}-\d{2}-\d{2}) /gm)].at(-1)
+    expect(history?.[1]).toBe(revision)
+    expect(spec).toContain(`date: '${history?.[2]}'`)
+    // Only the front matter and the history carry the number, so nothing else can go stale
+    expect(spec).not.toMatch(/revision \d/)
   })
 })
 

@@ -9,7 +9,7 @@
 // Wrap tables in scrollable containers for mobile
 const specBody = document.querySelector('.spec-content-body')
 if (specBody) {
-  for (const table of Array.from(specBody.querySelectorAll(':scope > table'))) {
+  for (const table of Array.from(specBody.querySelectorAll('table'))) {
     const wrapper = document.createElement('div')
     wrapper.className = 'table-wrap'
     table.parentNode!.insertBefore(wrapper, table)

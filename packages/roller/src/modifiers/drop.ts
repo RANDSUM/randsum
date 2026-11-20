@@ -3,6 +3,7 @@ import { dropSchema } from '../notation/definitions/drop'
 import { ModifierError } from '../errors'
 import { matchesComparison } from '../lib/comparison/matchesComparison'
 import type { ModifierDefinition } from './schema'
+import { indicesByRank } from './poolSelection'
 
 export const dropModifier: ModifierDefinition<DropOptions> = {
   ...dropSchema,
@@ -16,31 +17,25 @@ export const dropModifier: ModifierDefinition<DropOptions> = {
       return { rolls: filteredByConditions }
     }
 
-    const indexedRolls = filteredByConditions.map((roll, index) => ({ roll, index }))
-    indexedRolls.sort((a, b) => a.roll - b.roll)
+    // Positional drops leave the survivors in pool order. Among equal values the
+    // earliest die goes, as it does for Keep, so an alias and its expansion agree.
+    const lowestIndices = indicesByRank(filteredByConditions, lowest ?? 0, 'lowest')
+    const afterLowest = filteredByConditions.map((roll, index) => ({ roll, index }))
+    const candidates = afterLowest.filter(item => !lowestIndices.has(item.index))
+    const highestRanks = indicesByRank(
+      candidates.map(item => item.roll),
+      highest ?? 0,
+      'highest'
+    )
+    const highestIndices = new Set(
+      candidates.filter((_, rank) => highestRanks.has(rank)).map(item => item.index)
+    )
 
-    const lowestIndices =
-      lowest !== undefined
-        ? new Set(
-            indexedRolls.slice(0, Math.min(lowest, indexedRolls.length)).map(item => item.index)
-          )
-        : new Set<number>()
-
-    const highestIndices =
-      highest !== undefined
-        ? new Set(
-            indexedRolls.slice(Math.max(0, indexedRolls.length - highest)).map(item => item.index)
-          )
-        : new Set<number>()
-
-    const indicesToDrop = new Set([...lowestIndices, ...highestIndices])
-    const result = filteredByConditions.filter((_, index) => !indicesToDrop.has(index))
-
-    if (lowest !== undefined && highest === undefined) {
-      return { rolls: [...result].sort((a, b) => a - b) }
+    return {
+      rolls: filteredByConditions.filter(
+        (_, index) => !lowestIndices.has(index) && !highestIndices.has(index)
+      )
     }
-
-    return { rolls: result }
   },
 
   validate: (options, { quantity }) => {

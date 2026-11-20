@@ -99,7 +99,7 @@ describe('applyModifier', () => {
     test('drops lowest values', () => {
       const result = applyModifier('drop', { lowest: 1 }, [1, 6, 3, 4], mockContext)
 
-      expect(result.rolls).toEqual([3, 4, 6])
+      expect(result.rolls).toEqual([6, 3, 4])
       expect(result.log).not.toBeNull()
       expect(result.log?.modifier).toBe('drop')
     })

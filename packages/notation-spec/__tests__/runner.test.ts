@@ -48,6 +48,27 @@ describe('judge', () => {
     expect(judge(vector(28), { pool: [1], total: 1 }).passed).toBe(false)
   })
 
+  test('an error is a message on its own', () => {
+    expect(judge(vector(28), { error: '' }).reason).toContain('empty')
+    expect(judge(vector(28), { error: 'nope', pool: [1, 2], total: 3 }).reason).toContain('alone')
+  })
+
+  test('string faces have no total, seeded or not', () => {
+    expect(judge(vector(31), { pool: ['ice', 'fire'], total: null, seeded: false }).passed).toBe(
+      true
+    )
+    expect(judge(vector(31), { pool: ['ice', 'fire'], total: 5, seeded: false }).reason).toContain(
+      'no total'
+    )
+  })
+
+  test('several pools answer as one pool, in notation order', () => {
+    const multi = CONFORMANCE_FILE.vectors.find(v => v.notation === '1d20-1d6+3')
+    if (multi === undefined) throw new Error('the multi-pool vector is missing')
+    expect(judge(multi, { pool: [10, 1], total: 6 }).passed).toBe(true)
+    expect(judge(multi, { pool: [10], total: 6 }).passed).toBe(false)
+  })
+
   test('a result vector fails on an error, a wrong pool or a wrong total', () => {
     expect(judge(vector(3), { pool: [3, 5, 2], total: 10 }).passed).toBe(true)
     expect(judge(vector(3), { error: 'nope' }).passed).toBe(false)

@@ -1,6 +1,6 @@
 import { type NotationSchema, defineNotationSchema } from '../schema'
 
-const explodeSequencePattern = /![sS]\{[\d,]+\}/
+const explodeSequencePattern = /![sS]\{[1-9]\d*(?:,[1-9]\d*)*\}/
 
 export const explodeSequenceSchema: NotationSchema<number[]> = defineNotationSchema<number[]>({
   name: 'explodeSequence',
@@ -8,7 +8,7 @@ export const explodeSequenceSchema: NotationSchema<number[]> = defineNotationSch
   lexemeKey: '!s',
   category: 'Generate',
 
-  pattern: /![sS]\{[\d,]+\}|![iI]|![rR](?![oO]?\{)/,
+  pattern: /![sS]\{[1-9]\d*(?:,[1-9]\d*)*\}|![iI]|![rR](?![oO]?\{)/,
 
   parse: notation => {
     const match = explodeSequencePattern.exec(notation)

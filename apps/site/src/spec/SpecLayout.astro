@@ -116,9 +116,9 @@ const jsonLd = JSON.stringify({
     <HeroHeader version={version} versions={versions} isLatest={isLatest} />
     <VersionBanner isLatest={isLatest} />
     <div class="spec-layout">
-      <nav class="spec-sidebar" aria-label="Spec sections">
+      <div class="spec-sidebar">
         <slot name="sidebar" />
-      </nav>
+      </div>
       <main
         id="main-content"
         class="spec-content"

@@ -47,6 +47,11 @@ const badges = LEVELS.map(level => {
   versions={versions}
   isLatest={true}
   canonicalPath="/conformance/"
+  headings={[
+    { depth: 2, slug: 'claiming', text: 'Claiming a level' },
+    { depth: 2, slug: 'levels', text: 'Levels and badges' },
+    { depth: 2, slug: 'reference', text: 'The reference implementation' }
+  ]}
   description="Badges for implementations of the RANDSUM Dice Notation spec: one per conformance level, with Markdown and HTML to paste into a README."
 >
   <div slot="sidebar" class="sidebar-inner">

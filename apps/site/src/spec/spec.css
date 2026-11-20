@@ -14,7 +14,6 @@
 /* === Scroll behavior === */
 html {
   scroll-behavior: smooth;
-  overflow-x: hidden;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -464,7 +463,7 @@ pre,
 
 /* === MobileMenu === */
 
-/* Hamburger trigger button — fixed top-left, only visible below 1024px */
+/* Hamburger trigger button — fixed top-right, only visible below 1024px */
 .mobile-menu-trigger {
   display: none;
   position: fixed;
@@ -536,11 +535,16 @@ pre,
   overflow-y: auto;
   padding: 1.25rem 1rem;
   transform: translateX(100%);
-  transition: transform 0.25s ease;
+  /* Hidden, not just off-screen: a closed menu takes no focus */
+  visibility: hidden;
+  transition:
+    transform 0.25s ease,
+    visibility 0.25s;
 }
 
 .mobile-menu-overlay.is-open {
   transform: translateX(0);
+  visibility: visible;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1025,4 +1029,51 @@ body.mobile-menu-open {
 
 .prop-card p:last-child {
   margin-bottom: 0;
+}
+
+/* Long URLs in the references wrap instead of widening the page */
+.spec-content-body a {
+  overflow-wrap: anywhere;
+}
+
+.sidebar-group + .sidebar-group {
+  margin-top: 1rem;
+}
+
+/* === Print: the document alone, in the light theme === */
+@media print {
+  :root {
+    color-scheme: light;
+  }
+
+  .spec-sidebar,
+  .spec-hero,
+  .share-actions,
+  .mobile-menu,
+  .spec-footer,
+  .version-banner,
+  .self-link {
+    display: none;
+  }
+
+  .spec-layout {
+    display: block;
+  }
+
+  .spec-content {
+    max-width: none;
+    padding: 0;
+  }
+
+  pre,
+  table,
+  .prop-card {
+    break-inside: avoid;
+  }
+
+  h2,
+  h3,
+  h4 {
+    break-after: avoid;
+  }
 }

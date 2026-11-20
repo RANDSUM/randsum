@@ -129,8 +129,7 @@ import {
 | `2d6+3[fire]` | Annotated roll                                     |
 
 Modifiers run in a fixed priority order regardless of their position in the
-source string, but the tokenizer still requires syntactically valid ordering
-(e.g. `4d6R{<3}!`, not `4d6!R{<3}`). See the
+source string: `4d6R{<3}!` and `4d6!R{<3}` are the same roll. See the
 [RANDSUM Dice Notation Specification](https://notation.randsum.dev/) for the
 complete reference, taxonomy, conformance levels, and modifier pipeline.
 

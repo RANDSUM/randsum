@@ -5,12 +5,10 @@ import { formatHumanList } from '../formatHumanList'
  * Parses a condition string (the `{...}` body of a condition modifier, e.g. for `C{...}`,
  * `R{...}`, `#{...}`) into comparison options.
  *
- * Comma separates multiple conditions; how they combine depends on the part:
- * - Comparison operators (`>`, `>=`, `<`, `<=`) combine via **AND** — `{>3,<10}` matches a die
- *   that is greater than 3 AND less than 10.
- * - Bare numbers and `=N` accumulate into the `exact` list, which matches via **OR** — `{5,10}`
- *   matches a die showing exactly 5 OR exactly 10. Note this is **not** a range: `{5,10}` does
- *   NOT mean "between 5 and 10"; use `{>=5,<=10}` for an inclusive range.
+ * Comma separates conditions, and a die matches when ANY of them holds (RDN 5.2):
+ * `{>=7,<3}` matches a die that is 7 or more, or below 3. Bare numbers and `=N`
+ * gather in the `exact` list. An operator written twice keeps the bound that
+ * matches more, which is what OR means: `{>2,>4}` is `{>2}`.
  *
  * @example
  * parseComparisonNotation('5,10')    // { exact: [5, 10] } — 5 or 10
@@ -29,16 +27,16 @@ export function parseComparisonNotation(conditionString: string): ComparisonOpti
   for (const part of parts) {
     if (part.startsWith('>=')) {
       const num = Number(part.slice(2))
-      if (!isNaN(num)) result.greaterThanOrEqual = num
+      if (!isNaN(num)) result.greaterThanOrEqual = Math.min(num, result.greaterThanOrEqual ?? num)
     } else if (part.startsWith('<=')) {
       const num = Number(part.slice(2))
-      if (!isNaN(num)) result.lessThanOrEqual = num
+      if (!isNaN(num)) result.lessThanOrEqual = Math.max(num, result.lessThanOrEqual ?? num)
     } else if (part.startsWith('>')) {
       const num = Number(part.slice(1))
-      if (!isNaN(num)) result.greaterThan = num
+      if (!isNaN(num)) result.greaterThan = Math.min(num, result.greaterThan ?? num)
     } else if (part.startsWith('<')) {
       const num = Number(part.slice(1))
-      if (!isNaN(num)) result.lessThan = num
+      if (!isNaN(num)) result.lessThan = Math.max(num, result.lessThan ?? num)
     } else if (part.startsWith('=')) {
       const num = Number(part.slice(1))
       if (!isNaN(num)) exact.push(num)

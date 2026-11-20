@@ -196,6 +196,11 @@ describe('vector category coverage', () => {
     const knownCategories = new Set([
       'aliases',
       'case_insensitivity',
+      'conditions',
+      'execution_order',
+      'multiple_pools',
+      'pool_order',
+      'whitespace',
       'dice_expressions',
       'error_cases',
       'extended_coverage',

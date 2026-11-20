@@ -63,7 +63,7 @@ describe(parseArguments, () => {
           description: [
             'Roll 4 6-sided dice',
             'Replace greater than 5 with 1',
-            'Reroll 2 1 and 4 (up to 3 times)',
+            'Reroll 2 1 and 4 (up to 3 dice)',
             'No Duplicate Rolls'
           ]
         })
@@ -307,7 +307,7 @@ describe(parseArguments, () => {
             }
           },
           notation: '4d6R{5,>2,<6}',
-          description: ['Roll 4 6-sided dice', 'Reroll 5, greater than 2 and less than 6']
+          description: ['Roll 4 6-sided dice', 'Reroll 5, greater than 2 or less than 6']
         })
       })
       describe('with a max modifier', () => {
@@ -330,7 +330,7 @@ describe(parseArguments, () => {
             notation: '4d6R{5,4,>2,<6}3',
             description: [
               'Roll 4 6-sided dice',
-              'Reroll 5 and 4, greater than 2 and less than 6 (up to 3 times)'
+              'Reroll 5 and 4, greater than 2 or less than 6 (up to 3 dice)'
             ]
           })
         })
@@ -503,7 +503,7 @@ describe(parseArguments, () => {
               'No Rolls less than 2',
               'Replace 1 with 2',
               'Replace greater than 2 with 6',
-              'Reroll 5 and 2, less than 6 (up to 3 times)',
+              'Reroll 5 and 2, less than 6 (up to 3 dice)',
               'Exploding Dice',
               'No Duplicates (except 5)',
               'Drop 2 and 4',

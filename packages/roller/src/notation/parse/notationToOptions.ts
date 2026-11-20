@@ -57,6 +57,18 @@ export function parsedToOptions(
     }
   })
 
+  // Consecutive repeats multiply, so the limit is on their product: `x1000x1000`
+  // would otherwise ask for a million evaluations.
+  const product = parsed.repeats.reduce((total, { count }) => total * count, 1)
+  if (product > MAX_REPEAT_COUNT) {
+    throw new NotationParseError(
+      notationString,
+      `repeats multiply to ${product}, over the maximum of ${MAX_REPEAT_COUNT}`,
+      undefined,
+      { position: parsed.repeats[0]?.position ?? 0, value: product }
+    )
+  }
+
   return parsed.repeats.reduce<ParsedNotationOptions[]>(
     (options, { count }) => Array.from({ length: count }, () => options).flat(),
     parsed.pools.map(poolToOptions)

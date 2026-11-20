@@ -3,7 +3,7 @@
 The specification of the RANDSUM Dice Notation (RDN), a format for dice rolls in tabletop games (`4d6L`, `1d20+5`, `3d6!{>5}`), with its conformance test vectors and a runner that proves which conformance level an implementation reaches.
 
 - **Read it:** https://notation.randsum.dev/
-- **Version:** 0.9.0, revision 4 (draft community specification)
+- **Version:** 0.9.0, revision 6 (draft community specification)
 - **Vectors:** [`vectors/v0.9.0.json`](vectors/v0.9.0.json), described by [`schema/conformance.schema.json`](schema/conformance.schema.json)
 - **Badges:** https://notation.randsum.dev/conformance/
 
@@ -28,12 +28,12 @@ Conformance comes in four levels, each a superset of the one before (spec Sectio
 3. The runner prints each level's result, the failing vectors and why, and the badge for the highest level reached:
 
    ```
-   RDN 0.9.0 conformance: 61/61 vectors pass
+   RDN 0.9.0 conformance: 105/105 vectors pass
 
-     Level 1 (Core)           pass   23 vectors
-     Level 2 (VTT Baseline)   pass   34 vectors
-     Level 3 (Extended)       pass   54 vectors
-     Level 4 (Full)           pass   61 vectors
+     Level 1 (Core)           pass   40 vectors
+     Level 2 (VTT Baseline)   pass   59 vectors
+     Level 3 (Extended)       pass   91 vectors
+     Level 4 (Full)           pass  105 vectors
 
    RDN 0.9.0 Level 4 (Full) conformant.
 
@@ -56,23 +56,23 @@ You don't have to use the runner: the vectors file stands alone, and spec Sectio
 
 The runner starts the adapter command once and talks to it in [JSON Lines](https://jsonlines.org/): one request per line on the adapter's stdin, one response per line on its stdout, in order. Anything the adapter writes to stderr is shown, not parsed.
 
-**Request:** the vector's `id` and `notation`, and the die values to replay in place of the random number generator. They are consumed in this order: `seedRolls` (the initial pool), then `rerollRolls`, `explodeRolls`, `compoundRolls`, `penetrateRolls`, and last `sequenceRolls`, each of which is the value on its own explode-sequence die. Only the fields a vector uses are present. A value is the face as shown on the die: `-1` for a Fate minus, `0` on a zero-bias die.
+**Request:** the vector's `id` and `notation`, and the die values to replay in place of the random number generator. They are consumed in this order: `seedRolls` (the initial pool), then `rerollRolls`, `explodeRolls`, `compoundRolls`, `penetrateRolls`, and last `sequenceRolls`, each of which is the value on its own explode-sequence die. Only the fields a vector uses are present. A value is the face as shown on the die: `-1` for a Fate minus, `0` on a zero-bias die. On a custom faces die it is the 1-based position of the face in the list. When the notation has several pools (`2d6+1d8`), `seedRolls` feeds them in notation order.
 
 ```json
-{"id":56,"notation":"3d6!","seedRolls":[6,2,6],"explodeRolls":[6,2,3]}
+{"id":56,"notation":"3d6!","seedRolls":[6,4,6],"explodeRolls":[6,2,3]}
 ```
 
 **Response:** one of
 
 ```json
-{"id":56,"pool":[6,6,2,2,6,3],"total":25}
+{"id":56,"pool":[6,4,6,6,2,3],"total":27}
 {"id":28,"error":"Invalid notation: 4d"}
 {"id":33,"pool":[2,5,3],"total":10,"seeded":false}
 ```
 
-- `pool` is the final dice pool after every modifier, in the order the spec defines; `total` is the final result, or `null` when there is none (custom string faces).
-- `error` (any string) means the implementation rejected the notation. It passes an error vector and fails every other.
-- `seeded: false` says the result was rolled without replaying the request's rolls. Custom faces and draw dice depend on how an implementation maps random numbers to faces and shuffles, so for vectors 31, 33 and 51 such a result is checked against the vector's `unseeded` field instead: the right number of dice, every value one of its faces, distinct where it says so, and a numeric total that is the pool's sum. On any other vector `seeded: false` relaxes nothing.
+- `pool` is the final dice pool after every modifier, in the order the spec defines, and for several pools it is the pools one after another in notation order; `total` is the final result, or `null` when there is none (custom string faces).
+- `error` (a message, with no `pool` or `total` beside it) means the implementation rejected the notation. It passes an error vector and fails every other.
+- `seeded: false` says the result was rolled without replaying the request's rolls. Custom faces and draw dice depend on how an implementation maps random numbers to faces and shuffles, so for vectors 31, 33 and 51 such a result is checked against the vector's `unseeded` field instead: the right number of dice, every value one of its faces, distinct where it says so, and a total that is the pool's sum, or `null` where the vector has none. On any other vector `seeded: false` relaxes nothing.
 - `id` is optional; when present it must match the request.
 
 The runner also has a library API for implementations in JavaScript, which skips the process:
@@ -91,7 +91,7 @@ Once a level passes, say so in the form "RDN 0.9.0 Level N (Name) conformant" an
 
 ## Versions and changes
 
-The specification follows semantic versioning. While it is a draft, a revision corrects a version in place; a conformance claim names the version, not the revision. Each revision is tagged here as `v<version>-rev.<n>` (for example `v0.9.0-rev.4`) and listed in the spec's Section 1.5 and in [`CHANGELOG.md`](CHANGELOG.md).
+The specification follows semantic versioning. While it is a draft, a revision corrects a version in place; a conformance claim names the version, not the revision, and is made against the current one. Each revision is tagged here as `v<version>-rev.<n>` (for example `v0.9.0-rev.6`) and listed in the spec's Section 1.5 and in [`CHANGELOG.md`](CHANGELOG.md).
 
 ## Feedback and contributing
 
