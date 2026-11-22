@@ -1,7 +1,7 @@
 import type { RollArgument, RollConfig, RollerRollResult } from '../types'
 import { ValidationError } from '../errors'
 import { parseArguments } from './parseArguments'
-import { executeRollPipeline } from './pipeline'
+import { assertExact, executeRollPipeline } from './pipeline'
 
 /**
  * Type guard to check if an argument is a RollConfig object.
@@ -137,6 +137,8 @@ export function roll<T = string>(
     const factor = cur.parameters.arithmetic === 'subtract' ? -1 : 1
     return acc + cur.total * factor
   }, 0)
+
+  assertExact(total, 'total', rolls.map(r => r.notation).join(' '))
 
   // `values` is honest about what was rolled: custom-faced pools contribute their
   // actual face values (T); numeric pools contribute their actual numbers.

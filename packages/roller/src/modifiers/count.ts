@@ -9,15 +9,26 @@ export const countModifier: ModifierDefinition<CountOptions> = {
   mutatesRolls: false as const,
 
   validate: options => {
-    if (
-      options.deduct &&
-      options.lessThanOrEqual !== undefined &&
-      options.greaterThanOrEqual !== undefined &&
-      options.lessThanOrEqual >= options.greaterThanOrEqual
-    ) {
+    if (!options.deduct) return
+    // In deduct mode a die is a success or a failure, never both: the highest
+    // value that fails must be below the lowest value that succeeds.
+    const { greaterThan, greaterThanOrEqual, lessThan, lessThanOrEqual, exact } = options
+    const successes = [
+      ...(greaterThan !== undefined ? [greaterThan + 1] : []),
+      ...(greaterThanOrEqual !== undefined ? [greaterThanOrEqual] : []),
+      ...(exact ?? [])
+    ]
+    const failures = [
+      ...(lessThan !== undefined ? [lessThan - 1] : []),
+      ...(lessThanOrEqual !== undefined ? [lessThanOrEqual] : [])
+    ]
+    if (successes.length === 0 || failures.length === 0) return
+    const threshold = Math.min(...successes)
+    const botchThreshold = Math.max(...failures)
+    if (botchThreshold >= threshold) {
       throw new ModifierError(
         'count',
-        `botchThreshold (${options.lessThanOrEqual}) must be less than threshold (${options.greaterThanOrEqual})`,
+        `botchThreshold (${botchThreshold}) must be less than threshold (${threshold})`,
         { path: 'modifiers.count', value: options }
       )
     }

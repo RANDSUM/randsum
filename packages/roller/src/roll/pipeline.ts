@@ -1,3 +1,4 @@
+import { RollError } from '../errors'
 import type { RandomFn } from '../lib/random'
 import { coreRandom, coreSpreadRolls } from '../lib/random'
 import { MODIFIER_ORDER, type ModifierContext, applyAllModifiers } from '../modifiers'
@@ -100,6 +101,18 @@ function modify<T>(
 }
 
 /**
+ * A value the roller can report exactly. Past `Number.MAX_SAFE_INTEGER` a
+ * number silently rounds, and `**` or `*` on a large pool can reach infinity.
+ */
+export function assertExact(value: number, what: string, notation: string): void {
+  if (!Number.isFinite(value) || Math.abs(value) > Number.MAX_SAFE_INTEGER) {
+    throw new RollError(
+      `The ${what} of "${notation}" is too large to represent exactly (beyond ${Number.MAX_SAFE_INTEGER})`
+    )
+  }
+}
+
+/**
  * Execute a single dice roll: generate the initial rolls, apply the modifiers,
  * compute the total and build the record.
  *
@@ -119,6 +132,8 @@ export function executeRollPipeline<T>(
   )
 
   const { faces, arithmetic, description, argument, notation, label } = parameters
+  for (const value of rolls) assertExact(value, 'pool', notation)
+  assertExact(total, 'total', notation)
   return {
     ...(faces ? { customResults: initialRolls.map<T>(roll => faces[roll - 1] as T) } : {}),
     parameters,

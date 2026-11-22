@@ -69,6 +69,21 @@ describe('judge', () => {
     expect(judge(multi, { pool: [10], total: 6 }).passed).toBe(false)
   })
 
+  test('a repeated notation answers with every evaluation, each held to its own pool and total', () => {
+    const repeated = vector(106)
+    const results = [
+      { pool: [6, 3, 2], total: 11 },
+      { pool: [4, 4, 5], total: 13 }
+    ]
+    expect(judge(repeated, { results }).passed).toBe(true)
+    expect(judge(repeated, { pool: [6, 3, 2, 4, 4, 5], total: 24 }).reason).toContain('"results"')
+    expect(judge(repeated, { results: results.slice(0, 1) }).reason).toContain('2 results')
+    expect(
+      judge(repeated, { results: [results[0] ?? {}, { pool: [4, 4, 5], total: 24 }] }).reason
+    ).toContain('result 2: expected total 13')
+    expect(judge(vector(28), { error: 'nope', results }).reason).toContain('alone')
+  })
+
   test('a result vector fails on an error, a wrong pool or a wrong total', () => {
     expect(judge(vector(3), { pool: [3, 5, 2], total: 10 }).passed).toBe(true)
     expect(judge(vector(3), { error: 'nope' }).passed).toBe(false)

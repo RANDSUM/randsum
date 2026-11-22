@@ -16,6 +16,7 @@ import sys
 def evaluate(request):
     # return {"pool": [3, 5, 2], "total": 10}
     # return {"pool": [...], "total": ..., "seeded": False}  # rolled at random
+    # return {"results": [{"pool": [...], "total": ...}, ...]}  # a repeat (xN)
     return {"error": "not implemented: " + request["notation"]}
 
 
