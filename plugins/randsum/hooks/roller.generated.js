@@ -259,18 +259,12 @@ var capSchema = defineNotationSchema({
   },
   toDescription: (options) => {
     const { exact, greaterThan, greaterThanOrEqual, lessThan, lessThanOrEqual } = options;
-    const upper = formatComparisonDescription({
-      ...greaterThan !== undefined && { greaterThan },
-      ...greaterThanOrEqual !== undefined && { greaterThanOrEqual }
-    });
-    const lower = formatComparisonDescription({
-      ...lessThan !== undefined && { lessThan },
-      ...lessThanOrEqual !== undefined && { lessThanOrEqual }
-    });
+    const upper = [greaterThanOrEqual, greaterThan].filter((v) => v !== undefined);
+    const lower = [lessThanOrEqual, lessThan].filter((v) => v !== undefined);
     return [
-      ...upper.map((str) => `No Rolls ${str}`),
+      ...upper.map((v) => `No Rolls greater than ${v}`),
       ...(exact ?? []).map((v) => `No Rolls Greater Than ${v}`),
-      ...lower.map((str) => `No Rolls ${str}`)
+      ...lower.map((v) => `No Rolls less than ${v}`)
     ];
   }
 });
@@ -1527,11 +1521,28 @@ function isDiceNotation(argument) {
 }
 
 // packages/roller/src/notation/transformers/optionsToNotation.ts
+function formatDie(quantity, sides, { dieType, fateVariant, customFaces }) {
+  switch (dieType) {
+    case "zeroBias":
+      return `${quantity}z${sides}`;
+    case "geometric":
+      return `${quantity}g${sides}`;
+    case "draw":
+      return `${quantity}DD${sides}`;
+    case "fate":
+      return `${quantity}dF${fateVariant === 2 ? ".2" : ""}`;
+    case "custom":
+      return customFaces === undefined ? `${quantity}d${sides}` : `${quantity}d{${customFaces.join(",")}}`;
+    default:
+      return `${quantity}d${sides}`;
+  }
+}
 function formatNotation(options) {
-  const { modifiers, quantity = 1, arithmetic } = options;
+  const { modifiers, quantity = 1, arithmetic, label } = options;
   const { sides } = optionsToSidesFaces(options);
   const arithmeticPrefix = arithmetic === "subtract" ? "-" : "";
-  return `${arithmeticPrefix}${quantity}d${sides}${modifiersToNotation(modifiers)}`;
+  const annotation = label === undefined ? "" : `[${label}]`;
+  return `${arithmeticPrefix}${formatDie(quantity, sides, options)}${modifiersToNotation(modifiers)}${annotation}`;
 }
 function optionsToNotation(options) {
   const proposed = formatNotation(options);
@@ -1715,8 +1726,24 @@ var countModifier = {
   ...countSchema,
   mutatesRolls: false,
   validate: (options) => {
-    if (options.deduct && options.lessThanOrEqual !== undefined && options.greaterThanOrEqual !== undefined && options.lessThanOrEqual >= options.greaterThanOrEqual) {
-      throw new ModifierError("count", `botchThreshold (${options.lessThanOrEqual}) must be less than threshold (${options.greaterThanOrEqual})`, { path: "modifiers.count", value: options });
+    if (!options.deduct)
+      return;
+    const { greaterThan, greaterThanOrEqual, lessThan, lessThanOrEqual, exact } = options;
+    const successes = [
+      ...greaterThan !== undefined ? [greaterThan + 1] : [],
+      ...greaterThanOrEqual !== undefined ? [greaterThanOrEqual] : [],
+      ...exact ?? []
+    ];
+    const failures = [
+      ...lessThan !== undefined ? [lessThan - 1] : [],
+      ...lessThanOrEqual !== undefined ? [lessThanOrEqual] : []
+    ];
+    if (successes.length === 0 || failures.length === 0)
+      return;
+    const threshold = Math.min(...successes);
+    const botchThreshold = Math.max(...failures);
+    if (botchThreshold >= threshold) {
+      throw new ModifierError("count", `botchThreshold (${botchThreshold}) must be less than threshold (${threshold})`, { path: "modifiers.count", value: options });
     }
   },
   apply: (rolls, options) => {
@@ -2520,11 +2547,19 @@ function modify(params, initialRolls, rng) {
   };
   return applyAllModifiers(modifiers, initialRolls, ctx);
 }
+function assertExact(value, what, notation) {
+  if (!Number.isFinite(value) || Math.abs(value) > Number.MAX_SAFE_INTEGER) {
+    throw new RollError(`The ${what} of "${notation}" is too large to represent exactly (beyond ${Number.MAX_SAFE_INTEGER})`);
+  }
+}
 function executeRollPipeline(parameters, rng = Math.random) {
   const initialRolls = initialRollsFor(parameters, rng);
   const { rolls, logs, totalTransformers } = modify(parameters, initialRolls, rng);
   const total = totalTransformers.reduce((current, transform) => transform(current, rolls), rolls.reduce((acc, cur) => acc + cur, 0));
   const { faces, arithmetic, description, argument, notation, label } = parameters;
+  for (const value of rolls)
+    assertExact(value, "pool", notation);
+  assertExact(total, "total", notation);
   return {
     ...faces ? { customResults: initialRolls.map((roll) => faces[roll - 1]) } : {},
     parameters,
@@ -2559,6 +2594,7 @@ function roll(...args) {
     const factor = cur.parameters.arithmetic === "subtract" ? -1 : 1;
     return acc + cur.total * factor;
   }, 0);
+  assertExact(total, "total", rolls.map((r) => r.notation).join(" "));
   const values = rolls.flatMap((r) => {
     if (r.customResults) {
       return r.customResults;

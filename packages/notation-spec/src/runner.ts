@@ -1,5 +1,5 @@
 import { LEVELS, idsForLevel } from './levels'
-import type { ConformanceFile, ConformanceVector } from './types'
+import type { ConformanceFile, ConformanceVector, ExpectedResult } from './types'
 
 /**
  * What the runner sends an implementation for one vector: the notation and the die
@@ -20,13 +20,18 @@ export interface VectorRequest {
 
 /**
  * What an implementation answers. Either `error` (it rejected the notation), or the
- * final `pool` and `total`. Set `seeded: false` when it could not replay the request's
- * rolls (custom faces, draw dice) and rolled at random instead.
+ * final `pool` and `total`, or for a repeated notation (`xN`) `results`: the pool
+ * and total of each evaluation, in order. Set `seeded: false` when it could not
+ * replay the request's rolls (custom faces, draw dice) and rolled at random instead.
  */
 export interface AdapterResponse {
   readonly id?: number
   readonly pool?: readonly (number | string)[]
   readonly total?: number | null
+  readonly results?: readonly {
+    readonly pool?: readonly (number | string)[]
+    readonly total?: number | null
+  }[]
   readonly error?: string
   readonly seeded?: boolean
 }
@@ -85,6 +90,30 @@ function sameValues(a: readonly unknown[], b: readonly unknown[]): boolean {
   return a.length === b.length && a.every((value, i) => value === b[i])
 }
 
+/** Why a response fails a repeat vector: each evaluation is held to its own pool and total. */
+function repeatFailure(
+  expected: readonly ExpectedResult[],
+  response: AdapterResponse
+): string | undefined {
+  const { results } = response
+  if (!Array.isArray(results)) {
+    return `expected "results" with ${expected.length} evaluations, got ${show(results)}`
+  }
+  if (results.length !== expected.length) {
+    return `expected ${expected.length} results, got ${results.length}`
+  }
+  const reasons = expected.flatMap((want, i) => {
+    const got: AdapterResponse = results[i] ?? {}
+    if (!Array.isArray(got.pool) || !sameValues(got.pool, want.pool)) {
+      return [`result ${i + 1}: expected pool ${show(want.pool)}, got ${show(got.pool)}`]
+    }
+    return got.total === want.total
+      ? []
+      : [`result ${i + 1}: expected total ${show(want.total)}, got ${show(got.total)}`]
+  })
+  return reasons[0]
+}
+
 /** Why a response fails its vector, or undefined when it passes. */
 function failure(vector: ConformanceVector, response: AdapterResponse): string | undefined {
   if (response.error !== undefined && typeof response.error !== 'string') {
@@ -96,11 +125,15 @@ function failure(vector: ConformanceVector, response: AdapterResponse): string |
     }
     if (response.error === '') return 'expected an error message, got an empty string'
     // Rejected notation produces no result (spec Section 9.5)
+    if (response.results !== undefined) {
+      return `expected an error alone, got results ${show(response.results)} with it`
+    }
     return response.pool === undefined && response.total === undefined
       ? undefined
       : `expected an error alone, got pool ${show(response.pool)} total ${show(response.total)} with it`
   }
   if (typeof response.error === 'string') return `expected a result, got error: ${response.error}`
+  if (vector.expectedResults !== undefined) return repeatFailure(vector.expectedResults, response)
   if (!Array.isArray(response.pool)) return `expected a pool array, got ${show(response.pool)}`
   const pool: readonly unknown[] = response.pool
   const total = response.total ?? null

@@ -416,7 +416,7 @@
     },
     {
       "path": "dist/native/roller.js",
-      "limit": "26.6 KB"
+      "limit": "26.75 KB"
     },
     {
       "path": "dist/native/status-line.js",
@@ -468,7 +468,7 @@
     },
     {
       "path": "dist/react/roller.js",
-      "limit": "36.3 KB"
+      "limit": "36.65 KB"
     },
     {
       "path": "dist/react/status-line.js",
@@ -492,15 +492,15 @@
     },
     {
       "path": "dist/roller-state.js",
-      "limit": "13.5 KB"
+      "limit": "13.6 KB"
     },
     {
       "path": "dist/roller.js",
-      "limit": "35.95 KB"
+      "limit": "36.05 KB"
     },
     {
       "path": "dist/scope.js",
-      "limit": "23.6 KB"
+      "limit": "23.85 KB"
     },
     {
       "path": "dist/status-line.js",
@@ -540,7 +540,7 @@
     },
     {
       "path": "dist/vue/roller.js",
-      "limit": "36.3 KB"
+      "limit": "36.55 KB"
     },
     {
       "path": "dist/vue/status-line.js",
@@ -548,7 +548,7 @@
     },
     {
       "path": "dist/vue/use-roller.js",
-      "limit": "13.75 KB"
+      "limit": "13.85 KB"
     }
   ]
 }

@@ -1,9 +1,5 @@
 import type { ComparisonOptions } from '../types'
-import {
-  formatComparisonDescription,
-  formatComparisonNotation,
-  parseComparisonNotation
-} from '../comparison'
+import { formatComparisonNotation, parseComparisonNotation } from '../comparison'
 import { type NotationSchema, defineNotationSchema } from '../schema'
 const capPattern = /[Cc]\{((?:>=|<=|>|<|=)?\d+(?:,(?:>=|<=|>|<|=)?\d+)*)\}/
 
@@ -39,21 +35,16 @@ export const capSchema: NotationSchema<ComparisonOptions> = defineNotationSchema
     },
 
     toDescription: options => {
-      // In the order Cap applies them: upper bounds, then lower bounds
+      // In the order Cap applies them: upper bounds, then lower bounds. `>=N`
+      // clamps to N exactly as `>N` does, so both read "greater than N".
       const { exact, greaterThan, greaterThanOrEqual, lessThan, lessThanOrEqual } = options
-      const upper = formatComparisonDescription({
-        ...(greaterThan !== undefined && { greaterThan }),
-        ...(greaterThanOrEqual !== undefined && { greaterThanOrEqual })
-      })
-      const lower = formatComparisonDescription({
-        ...(lessThan !== undefined && { lessThan }),
-        ...(lessThanOrEqual !== undefined && { lessThanOrEqual })
-      })
+      const upper = [greaterThanOrEqual, greaterThan].filter(v => v !== undefined)
+      const lower = [lessThanOrEqual, lessThan].filter(v => v !== undefined)
 
       return [
-        ...upper.map(str => `No Rolls ${str}`),
+        ...upper.map(v => `No Rolls greater than ${v}`),
         ...(exact ?? []).map(v => `No Rolls Greater Than ${v}`),
-        ...lower.map(str => `No Rolls ${str}`)
+        ...lower.map(v => `No Rolls less than ${v}`)
       ]
     }
   }

@@ -1,3 +1,9 @@
+/** One evaluation of a repeated notation: its pool and its total. */
+export interface ExpectedResult {
+  readonly pool: readonly number[]
+  readonly total: number
+}
+
 /**
  * A single conformance test vector from the RANDSUM Dice Notation Specification
  * (Section 11.3). The vectors live in `vectors/v<version>.json`, which is the source
@@ -23,6 +29,11 @@ export interface ConformanceVector {
   readonly expectedPool?: readonly (number | string)[] | null
   /** Expected total after all arithmetic. Absent on error vectors. Null when there is none. */
   readonly expectedTotal?: number | null
+  /**
+   * On a repeated notation (`xN`), in place of `expectedPool` and `expectedTotal`:
+   * the pool and total of each evaluation, in order (Section 6.8.3).
+   */
+  readonly expectedResults?: readonly ExpectedResult[]
   /** Values consumed by rerolls, after `seedRolls`. */
   readonly rerollRolls?: readonly number[]
   /** Values consumed by explosions, after `rerollRolls`. */

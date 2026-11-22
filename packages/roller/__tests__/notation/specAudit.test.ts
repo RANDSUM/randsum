@@ -3,6 +3,7 @@
 // of the notation without a word.
 import { describe, expect, test } from 'bun:test'
 import { isDiceNotation, roll } from '../../src'
+import { ModifierError, RollError } from '../../src/errors'
 import { createQueueRandom } from '../../src/random'
 import { validateNotation } from '../../src/validate'
 import type { RollArgument } from '../../src/types'
@@ -121,5 +122,53 @@ describe('unique examines the last allowed reroll', () => {
   test('a unique value on the final attempt is kept', () => {
     const rerollRolls = [...Array.from({ length: 98 }, () => 1), 2]
     expect(pool('2d6U', [1, 1], { rerollRolls })).toEqual([1, 2])
+  })
+})
+
+describe('left-over audit items', () => {
+  test.each([
+    ['z6', ['1z6']],
+    ['g6+1', ['1g6+1']],
+    ['3dd6', ['3DD6']],
+    ['4dF+1', ['4dF+1']],
+    ['dF.2', ['1dF.2']],
+    ['d{a,b}', ['1d{a,b}']],
+    ['3d{1,1,2}L', ['3d{1,1,2}L']],
+    ['2d6+3[fire]', ['2d6+3[fire]']],
+    ['1d20+5[a]+2d6[b]', ['1d20+5[a]', '2d6[b]']]
+  ])('validateNotation("%s") echoes notation that rolls the same die', (notation, echoed) => {
+    const result = validateNotation(notation)
+    if (!result.valid) throw new Error(`${notation} should be valid`)
+    expect(result.notation.map(String)).toEqual(echoed)
+    const again = result.notation.map(n => validateNotation(n))
+    expect(again.map(r => (r.valid ? r.options[0] : null))).toEqual(result.options)
+  })
+
+  test('a total too large to represent exactly is an error, not a rounded number', () => {
+    expect(() => roll('2d6*9007199254740991')).toThrow(RollError)
+    expect(roll('2d6*2').total).toBeGreaterThan(0)
+  })
+
+  test.each([
+    '5d10S{7,7}',
+    '5d10#{>=7,<=7}',
+    '5d10#{>=3,<8}',
+    '5d10#{>6,<=7}',
+    '5d10#{=2,>=9,<=2}'
+  ])('Count rejects %s: a die would be both a success and a failure', notation => {
+    expect(() => roll(notation)).toThrow(ModifierError)
+  })
+
+  test.each(['5d10S{7,2}', '5d10#{>7,<8}', '5d10#{=7,>=9,<=2}'])(
+    'Count accepts %s: no value is both',
+    notation => {
+      expect(() => roll(notation)).not.toThrow()
+    }
+  )
+
+  test('Cap describes >= and <= as the clamp they are', () => {
+    expect(validateNotation('4d6C{>=5,<=2}')).toMatchObject({
+      description: [['Roll 4 6-sided dice', 'No Rolls greater than 5', 'No Rolls less than 2']]
+    })
   })
 })

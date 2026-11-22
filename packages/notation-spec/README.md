@@ -3,7 +3,7 @@
 The specification of the RANDSUM Dice Notation (RDN), a format for dice rolls in tabletop games (`4d6L`, `1d20+5`, `3d6!{>5}`), with its conformance test vectors and a runner that proves which conformance level an implementation reaches.
 
 - **Read it:** https://notation.randsum.dev/
-- **Version:** 0.9.0, revision 6 (draft community specification)
+- **Version:** 0.9.0, revision 7 (draft community specification)
 - **Vectors:** [`vectors/v0.9.0.json`](vectors/v0.9.0.json), described by [`schema/conformance.schema.json`](schema/conformance.schema.json)
 - **Badges:** https://notation.randsum.dev/conformance/
 
@@ -28,12 +28,12 @@ Conformance comes in four levels, each a superset of the one before (spec Sectio
 3. The runner prints each level's result, the failing vectors and why, and the badge for the highest level reached:
 
    ```
-   RDN 0.9.0 conformance: 105/105 vectors pass
+   RDN 0.9.0 conformance: 107/107 vectors pass
 
      Level 1 (Core)           pass   40 vectors
      Level 2 (VTT Baseline)   pass   59 vectors
      Level 3 (Extended)       pass   91 vectors
-     Level 4 (Full)           pass  105 vectors
+     Level 4 (Full)           pass  107 vectors
 
    RDN 0.9.0 Level 4 (Full) conformant.
 
@@ -71,7 +71,8 @@ The runner starts the adapter command once and talks to it in [JSON Lines](https
 ```
 
 - `pool` is the final dice pool after every modifier, in the order the spec defines, and for several pools it is the pools one after another in notation order; `total` is the final result, or `null` when there is none (custom string faces).
-- `error` (a message, with no `pool` or `total` beside it) means the implementation rejected the notation. It passes an error vector and fails every other.
+- for a repeated notation (`4d6Lx2`), answer `results` instead: one `{"pool": [...], "total": n}` for each evaluation, in order, as in `{"id":106,"results":[{"pool":[6,3,2],"total":11},{"pool":[4,4,5],"total":13}]}`. The request's `seedRolls` feed the evaluations one after another
+- `error` (a message, with no `pool`, `total` or `results` beside it) means the implementation rejected the notation. It passes an error vector and fails every other.
 - `seeded: false` says the result was rolled without replaying the request's rolls. Custom faces and draw dice depend on how an implementation maps random numbers to faces and shuffles, so for vectors 31, 33 and 51 such a result is checked against the vector's `unseeded` field instead: the right number of dice, every value one of its faces, distinct where it says so, and a total that is the pool's sum, or `null` where the vector has none. On any other vector `seeded: false` relaxes nothing.
 - `id` is optional; when present it must match the request.
 

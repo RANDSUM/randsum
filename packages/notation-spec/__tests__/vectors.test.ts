@@ -133,8 +133,22 @@ describe('non-error vectors have full rollout data', () => {
     }
   })
 
+  // A repeat vector states each evaluation's pool and total instead
+  const single = nonError.filter(v => v.expectedResults === undefined)
+
+  test('a repeat vector gives a pool and a total for every evaluation, and nothing else', () => {
+    const repeated = nonError.filter(v => v.expectedResults !== undefined)
+    expect(repeated.length).toBeGreaterThan(0)
+    for (const v of repeated) {
+      expect(v.notation).toMatch(/x\d+$/i)
+      expect(v.expectedPool).toBeUndefined()
+      expect(v.expectedTotal).toBeUndefined()
+      expect(v.expectedResults?.length).toBeGreaterThan(1)
+    }
+  })
+
   test('expectedPool is an array (possibly null only when indeterminate is documented via note)', () => {
-    for (const v of nonError) {
+    for (const v of single) {
       if (v.expectedPool === null) {
         expect(typeof v.note).toBe('string')
         continue
@@ -144,7 +158,7 @@ describe('non-error vectors have full rollout data', () => {
   })
 
   test('expectedTotal is a finite number or explicitly null', () => {
-    for (const v of nonError) {
+    for (const v of single) {
       if (v.expectedTotal === null) continue
       expect(typeof v.expectedTotal).toBe('number')
       expect(Number.isFinite(v.expectedTotal!)).toBe(true)
@@ -200,6 +214,7 @@ describe('vector category coverage', () => {
       'execution_order',
       'multiple_pools',
       'pool_order',
+      'repeat',
       'whitespace',
       'dice_expressions',
       'error_cases',

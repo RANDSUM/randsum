@@ -102,6 +102,12 @@ function replayed(request: VectorRequest): () => number {
   }
 }
 
+/** How many evaluations the notation's trailing repeats ask for (`4d6x2x3` is six). */
+function repeatCount(notation: string): number {
+  const repeats = /(?:x\d+)+$/i.exec(notation)?.[0] ?? ''
+  return [...repeats.matchAll(/x(\d+)/gi)].reduce((n, [, count = '1']) => n * Number(count), 1)
+}
+
 export function evaluate(request: VectorRequest): AdapterResponse {
   const { id } = request
   const notation = request.notation.trim()
@@ -116,6 +122,19 @@ export function evaluate(request: VectorRequest): AdapterResponse {
     if (record === undefined) return { id, error: 'roll() returned no pool' }
     const custom = record.customResults
     if (custom !== undefined) return { id, pool: custom, total: null, seeded: false }
+    // A repeated notation answers with each evaluation's pool and total
+    const repeats = repeatCount(notation)
+    if (repeats > 1) {
+      const perEvaluation = result.rolls.length / repeats
+      const results = Array.from({ length: repeats }, (_, i) => {
+        const records = result.rolls.slice(i * perEvaluation, (i + 1) * perEvaluation)
+        return {
+          pool: records.flatMap(pooled => pooled.rolls),
+          total: records.reduce((sum, pooled) => sum + pooled.appliedTotal, 0)
+        }
+      })
+      return { id, results }
+    }
     // Several pools answer as one: their dice one after another, in notation order
     const pool = result.rolls.flatMap(pooled => pooled.rolls)
     return { id, pool, total: result.total, ...(unseeded ? { seeded: false } : {}) }
